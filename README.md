@@ -1,4 +1,5 @@
 # Snow Cafeteria Portal
+[![Build and Deploy the Api and Web Projects](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/code-checks.yml/badge.svg)](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/code-checks.yml)
 
 ## Project Structure
 
