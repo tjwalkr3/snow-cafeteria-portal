@@ -46,12 +46,12 @@ jobs:
     - name: Check out the code. 
       uses: actions/checkout@v4
 
+    - name: Setup .NET 9.0
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
     - name: Run the unit tests.
       run: |
-        docker build \
-          -f ./docker/Cafeteria.Tests.Dockerfile \
-          -t cafeteria_test_container \
-          .
-
-        docker run --rm cafeteria_test_container
+        dotnet test
         echo "going to deploy!!!"
