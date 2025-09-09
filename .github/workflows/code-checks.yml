@@ -1,4 +1,4 @@
-name: Build and Deploy the Api and Web Projects
+name: Lint, Check for Warnings, and Run the Tests
 
 on:
   push:
