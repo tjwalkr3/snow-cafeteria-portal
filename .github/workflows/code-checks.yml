@@ -1,0 +1,47 @@
+name: Build and Deploy the Api and Web Projects
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    types: [created, opened, reopened]
+  workflow_dispatch:
+
+jobs:
+  format_verification:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Linting with Dotnet Format
+      run: |
+        dotnet format --verify-no-changes --verbosity diagnostic
+
+  check_for_warnings:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Check for warnings with dotnet format  --warnaserror
+      run: |
+        dotnet build --warnaserror
+
+  run_unit_tests:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Run the unit tests.
+      run: |
+        docker build \
+          -f ./docker/Cafeteria.Tests.Dockerfile \
+          -t cafeteria_test_container \
+          .
+
+        docker run --rm cafeteria_test_container
+        echo "going to deploy!!!"
