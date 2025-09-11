@@ -4,8 +4,8 @@ public class Ingredient
 {
     #region Properties
     public string Name { get; private set; }
+    public string ImageUrl { get; set; }
     public decimal Price { get; private set; }
-    // TODO: add property for image url
     #endregion
 
     #region Constructor
