@@ -9,10 +9,11 @@ public class Ingredient
     #endregion
 
     #region Constructor
-    public Ingredient(string name, decimal price)
+    public Ingredient(string name, string imgUrl, decimal price)
     {
         Name = name;
         Price = price;
+        ImageUrl = imgUrl;
     }
     #endregion
 }
