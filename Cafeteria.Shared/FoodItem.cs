@@ -17,6 +17,7 @@ public class FoodItem
         Name = name;
         Description = description;
         ImageUrl = imgUrl;
+        Price = price;
         Ingredients = ingredients;
     }
     #endregion
