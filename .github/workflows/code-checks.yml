@@ -3,8 +3,7 @@ name: Lint, Check for Warnings, and Run the Tests
 on:
   push:
     branches:
-      - main
-      - dev
+      - '*'
   pull_request:
     types: [created, opened, reopened]
   workflow_dispatch:
