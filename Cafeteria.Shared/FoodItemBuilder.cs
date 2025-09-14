@@ -1,75 +1,77 @@
-using System.Collections.Immutable;
-
 namespace Cafeteria.Shared;
 
-public class FoodItemBuilder
+public class FoodItemBuilderService
 {
-    private string _name = string.Empty;
+    private string? _name;
     private string? _description;
-    private string _imageUrl = string.Empty;
+    private string? _imageUrl;
     private decimal _price;
     private Dictionary<IngredientType, Ingredient>? _ingredients;
 
-    public FoodItemBuilder SetName(string name)
+    public FoodItemBuilderService SetName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be null or empty", nameof(name));
+        
         _name = name;
         return this;
     }
 
-    public FoodItemBuilder SetDescription(string? description)
+    public FoodItemBuilderService SetDescription(string? description)
     {
         _description = description;
         return this;
     }
 
-    public FoodItemBuilder SetImageUrl(string imageUrl)
+    public FoodItemBuilderService SetImageUrl(string imageUrl)
     {
+        if (string.IsNullOrWhiteSpace(imageUrl))
+            throw new ArgumentException("Image URL cannot be null or empty", nameof(imageUrl));
+        
         _imageUrl = imageUrl;
         return this;
     }
 
-    public FoodItemBuilder SetPrice(decimal price)
+    public FoodItemBuilderService SetPrice(decimal price)
     {
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative", nameof(price));
+        
         _price = price;
         return this;
     }
 
-    public FoodItemBuilder AddIngredient(IngredientType ingredientType, Ingredient ingredient)
+    public FoodItemBuilderService AddIngredient(IngredientType type, Ingredient ingredient)
     {
         _ingredients ??= new Dictionary<IngredientType, Ingredient>();
-        _ingredients[ingredientType] = ingredient;
-        return this;
-    }
-
-    public FoodItemBuilder SetIngredients(Dictionary<IngredientType, Ingredient>? ingredients)
-    {
-        _ingredients = ingredients;
-        return this;
-    }
-
-    public FoodItemBuilder Reset()
-    {
-        _name = string.Empty;
-        _description = null;
-        _imageUrl = string.Empty;
-        _price = 0;
-        _ingredients = null;
+        _ingredients[type] = ingredient;
         return this;
     }
 
     public FoodItem Build()
     {
-        if (string.IsNullOrEmpty(_name))
+        if (string.IsNullOrWhiteSpace(_name))
             throw new InvalidOperationException("Name is required to build a FoodItem");
+        
+        if (string.IsNullOrWhiteSpace(_imageUrl))
+            throw new InvalidOperationException("Image URL is required to build a FoodItem");
 
-        if (string.IsNullOrEmpty(_imageUrl))
-            throw new InvalidOperationException("ImageUrl is required to build a FoodItem");
+        return new FoodItem(
+            name: _name,
+            imgUrl: _imageUrl,
+            price: _price,
+            description: _description,
+            ingredients: _ingredients?.AsReadOnly()
+        );
+    }
 
-        if (_price < 0)
-            throw new InvalidOperationException("Price cannot be negative");
-
-        var readOnlyIngredients = _ingredients?.ToImmutableDictionary();
-
-        return new FoodItem(_name, _imageUrl, _price, _description, readOnlyIngredients);
+    public FoodItemBuilderService Reset()
+    {
+        _name = null;
+        _description = null;
+        _imageUrl = null;
+        _price = 0;
+        _ingredients = null;
+        return this;
     }
 }

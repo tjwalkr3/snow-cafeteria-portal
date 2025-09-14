@@ -16,7 +16,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Skip HTTPS redirection in Docker/containerized environments
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 
 app.UseAntiforgery();
