@@ -1,4 +1,6 @@
-﻿namespace Cafeteria.Customer.Components.Pages {
-    public class StationSelectVM : IStationSelectViewModel {
+﻿namespace Cafeteria.Customer.Components.Pages
+{
+    public class StationSelectVM : IStationSelectViewModel
+    {
     }
 }

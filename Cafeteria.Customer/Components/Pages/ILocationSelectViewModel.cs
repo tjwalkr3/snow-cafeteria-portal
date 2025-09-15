@@ -1,4 +1,6 @@
-﻿namespace Cafeteria.Customer.Components.Pages {
-    public interface ILocationSelectViewModel {
+﻿namespace Cafeteria.Customer.Components.Pages
+{
+    public interface ILocationSelectViewModel
+    {
     }
 }
