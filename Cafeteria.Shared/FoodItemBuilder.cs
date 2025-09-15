@@ -12,7 +12,7 @@ public class FoodItemBuilderService
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Name cannot be null or empty", nameof(name));
-        
+
         _name = name;
         return this;
     }
@@ -27,7 +27,7 @@ public class FoodItemBuilderService
     {
         if (string.IsNullOrWhiteSpace(imageUrl))
             throw new ArgumentException("Image URL cannot be null or empty", nameof(imageUrl));
-        
+
         _imageUrl = imageUrl;
         return this;
     }
@@ -36,7 +36,7 @@ public class FoodItemBuilderService
     {
         if (price < 0)
             throw new ArgumentException("Price cannot be negative", nameof(price));
-        
+
         _price = price;
         return this;
     }
@@ -52,7 +52,7 @@ public class FoodItemBuilderService
     {
         if (string.IsNullOrWhiteSpace(_name))
             throw new InvalidOperationException("Name is required to build a FoodItem");
-        
+
         if (string.IsNullOrWhiteSpace(_imageUrl))
             throw new InvalidOperationException("Image URL is required to build a FoodItem");
 
