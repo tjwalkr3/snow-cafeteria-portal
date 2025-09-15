@@ -5,6 +5,39 @@ using Cafeteria.Shared;
 
 public static class DummyData
 {
+    #region ============================ Static List Creation =================================
+    public static readonly List<IngredientType> GetIngredientTypeList = new()
+    {
+        CreateBreadType(),
+        CreateMeatType(),
+        CreateCheeseType(),
+        CreateOtherType()
+    };
+
+    public static readonly List<Ingredient> GetIngredientList = new()
+    {
+        CreateWheatBread(),
+        CreateOnion(),
+        CreateLettuce(),
+        CreateGoudaCheese(),
+        CreateRoastBeef(),
+        CreateMarbleRyeBread(),
+        CreateGrilledChicken(),
+        CreateMozzarellaCheeseExtra(),
+        CreateAlfalfaSprouts()
+    };
+
+    public static readonly List<FoodItem> GetFoodItemList = new()
+    {
+        GetDummySandwich(),
+        GetDummySandwichWithExtraCheese(),
+        GetDummyHamburger()
+    };
+    #endregion ============================================================================
+
+
+    
+
     #region =========================== Ingredients Creation ==============================
     public static Ingredient CreateWheatBread()
     {
@@ -130,17 +163,4 @@ public static class DummyData
     }
     #endregion ============================================================================
 
-
-
-    #region ============================== Menu Creation ==================================
-    public static List<FoodItem> GetDummyMenu()
-    {
-        return new List<FoodItem>()
-        {
-            GetDummySandwich(),
-            GetDummySandwichWithExtraCheese(),
-            GetDummyHamburger()
-        };
-    }
-    #endregion ============================================================================
 }
