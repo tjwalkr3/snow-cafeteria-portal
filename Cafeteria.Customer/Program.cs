@@ -1,10 +1,15 @@
 using Cafeteria.Customer.Components;
+using Cafeteria.Customer.Components.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<IItemSelectViewModel, ItemSelectVM>();
+builder.Services.AddScoped<ILocationSelectViewModel, LocationSelectVM>();
+builder.Services.AddScoped<IStationSelectViewModel, StationSelectVM>();
 
 var app = builder.Build();
 

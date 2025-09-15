@@ -1,4 +1,4 @@
 ﻿namespace Cafeteria.Customer.Components.Pages {
-    public class LocationSelectVM {
+    public class LocationSelectVM : ILocationSelectViewModel {
     }
 }
