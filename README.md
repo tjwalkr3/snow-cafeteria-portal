@@ -11,3 +11,6 @@
 | **Cafeteria.Customer.Tests** | Test Project | Unit tests for the customer portal |
 | **Cafeteria.Management** | Blazor Server | Management interface for cafeteria administration |
 | **Cafeteria.Management.Tests** | Test Project | Unit tests for the management portal |
+
+
+# Test
