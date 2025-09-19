@@ -1,15 +1,33 @@
 @page "/food-item"
 @using Cafeteria.Shared
+@using Cafeteria.Customer.Components.Pages
+@inject IFoodItemBuilderViewModel FoodItemBuilderService
 
-<PageTitle>Food Items</PageTitle>
+<PageTitle>Customize Your Menu Item</PageTitle>
 
+@* Show current food builder item using view model*@
+@* <h3 @bind=FoodItem.name></h3> *@
+
+@* Get list of ingredient types and expected quantities for items *@
+
+@* Display all available ingredients in each type *@
+
+@* ingredient types should all show with checkboxes for ingredients, but should warn with popup if you select more than allowed *@
+
+@* checked ingredients should add to view model's ingredients list *@
+
+@* there should be a button to continue (sends you to order page) *@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h2>Available Food Items</h2>
-            <p class="text-muted">Browse our delicious food items</p>
+            <h2>Customize Your Menu Item</h2>
+            <p class="text-muted">Choose toppings or ingredients to include in your meal</p>
         </div>
     </div>
+    <div class="row">
+
+    </div>
+
 
     <div class="row">
         @foreach (var foodItem in foodItems)
@@ -18,7 +36,7 @@
                 <div class="card h-100">
                     @if (!string.IsNullOrEmpty(foodItem.ImageUrl))
                     {
-                        <img src="@foodItem.ImageUrl" class="card-img-top" alt="@foodItem.Name" style="height: 200px; object-fit: cover;" />
+                        @* <img src="@foodItem.ImageUrl" class="card-img-top" alt="@foodItem.Name" style="height: 200px; object-fit: cover;" /> *@
                     }
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">@foodItem.Name</h5>
@@ -63,7 +81,7 @@
 
         foodItems = new List<FoodItem>
         {
-            builder.Reset().SetName("Classic Pizza").SetDescription("Traditional pizza with tomato sauce and mozzarella").SetImageUrl("https://via.placeholder.com/300x200?text=Pizza").SetPrice(12.99m).Build(),
+            @* builder.Reset().SetName("Classic Pizza").SetDescription("Traditional pizza with tomato sauce and mozzarella").SetImageUrl("https://via.placeholder.com/300x200?text=Pizza").SetPrice(12.99m).Build(), *@
             builder.Reset().SetName("Caesar Salad").SetDescription("Fresh romaine lettuce with caesar dressing and croutons").SetImageUrl("https://via.placeholder.com/300x200?text=Salad").SetPrice(8.50m).Build(),
             builder.Reset().SetName("Cheeseburger").SetDescription("Juicy beef patty with cheese, lettuce, tomato").SetImageUrl("https://via.placeholder.com/300x200?text=Burger").SetPrice(10.75m).Build(),
             builder.Reset().SetName("Chicken Wings").SetDescription("Crispy chicken wings with your choice of sauce").SetImageUrl("https://via.placeholder.com/300x200?text=Wings").SetPrice(9.25m).Build(),
