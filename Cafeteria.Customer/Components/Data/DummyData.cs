@@ -90,22 +90,22 @@ public static class DummyData
     #region ========================= Ingredient Type Creation ============================
     public static IngredientType CreateBreadType()
     {
-        return new IngredientType("Bread");
+        return new IngredientType("Bread", 1);
     }
 
     public static IngredientType CreateMeatType()
     {
-        return new IngredientType("Meat");
+        return new IngredientType("Meat", 1);
     }
 
     public static IngredientType CreateCheeseType()
     {
-        return new IngredientType("Cheese");
+        return new IngredientType("Cheese", 1);
     }
 
     public static IngredientType CreateOtherType()
     {
-        return new IngredientType("Other");
+        return new IngredientType("Other", 3);
     }
     #endregion ============================================================================
 
