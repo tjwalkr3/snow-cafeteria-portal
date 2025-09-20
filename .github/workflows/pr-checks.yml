@@ -1,4 +1,4 @@
-name: Lint, Check for Warnings, and Run the Tests
+name: Pull Requests - Lint, Test, Warnings Check
 
 on:
   push:

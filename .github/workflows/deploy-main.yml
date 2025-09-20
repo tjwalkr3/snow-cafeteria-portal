@@ -1,4 +1,4 @@
-name: Check the branch, then deploy it to main
+name: Deploy Main - Lint, Test, Warnings Check, Teams Notification
 
 on:
   push:
@@ -59,4 +59,3 @@ jobs:
         needs: ${{ toJson(needs) }}
         job: ${{ toJson(job) }}
         title: "Snow Cafeteria Portal - Merged Into Main, Deploying"
-        dry_run: true

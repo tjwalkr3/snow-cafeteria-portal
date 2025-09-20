@@ -1,4 +1,4 @@
-name: Run checks on merge into dev and notify
+name: Merge Dev - Lint, Test, Warnings Check, Teams Notification
 
 on:
   push:
@@ -59,4 +59,3 @@ jobs:
         needs: ${{ toJson(needs) }}
         job: ${{ toJson(job) }}
         title: "Snow Cafeteria Portal - Merged Into Dev"
-        dry_run: true
