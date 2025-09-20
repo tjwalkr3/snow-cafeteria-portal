@@ -1,5 +1,6 @@
 ﻿@page "/station-select"
 @using Cafeteria.Shared
+@inject IStationSelectViewModel StationSelectVM
 
 <PageTitle>Select Station</PageTitle>
 
@@ -12,7 +13,7 @@
     </div>
 
     <div class="row justify-content-center">
-        @foreach (var station in stations)
+        @foreach (var station in StationSelectVM.Stations)
         {
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
@@ -30,26 +31,3 @@
         }
     </div>
 </div>
-
-@code {
-    private List<Station> stations = new();
-
-    protected override void OnInitialized()
-    {
-        stations = new List<Station>
-        {
-            new Station(
-                name: "Grill Station",
-                description: "Fresh burgers, fries, and grilled items"
-            ),
-            new Station(
-                name: "Pizza Station",
-                description: "Oven-fired pizzas and calzones"
-            ),
-            new Station(
-                name: "Sandwich Station",
-                description: "Fresh sandwiches and wraps"
-            )
-        };
-    }
-}
