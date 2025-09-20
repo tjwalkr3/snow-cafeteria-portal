@@ -20,7 +20,7 @@ namespace Cafeteria.Customer.Components.Pages
                     address: "GSC Cafeteria on the Ground Floor"
                 ),
                 new Location(
-                    name: "Buster's Bistro", 
+                    name: "Buster's Bistro",
                     address: "Karen H. Huntsman Library Gallery"
                 )
             };
