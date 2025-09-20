@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Cafeteria.Shared
+@inject ILocationSelectViewModel LocationSelectVM
 
 <PageTitle>Select Location</PageTitle>
 
@@ -12,7 +13,7 @@
     </div>
 
     <div class="row justify-content-center">
-        @foreach (var location in locations)
+        @foreach (var location in LocationSelectVM.Locations)
         {
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
@@ -30,22 +31,3 @@
         }
     </div>
 </div>
-
-@code {
-    private List<Location> locations = new();
-
-    protected override void OnInitialized()
-    {
-        locations = new List<Location>
-        {
-            new Location(
-                name: "Badger Den",
-                address: "GSC Cafeteria on the Ground Floor"
-            ),
-            new Location(
-                name: "Buster's Bistro", 
-                address: "Karen H. Huntsman Library Gallery"
-            )
-        };
-    }
-}

@@ -1,6 +1,9 @@
-﻿namespace Cafeteria.Customer.Components.Pages
+﻿using Cafeteria.Shared;
+
+namespace Cafeteria.Customer.Components.Pages
 {
     public interface ILocationSelectViewModel
     {
+        List<Location> Locations { get; }
     }
 }
