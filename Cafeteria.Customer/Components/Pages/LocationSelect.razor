@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Cafeteria.Shared
 @inject ILocationSelectViewModel LocationSelectVM
+@inject NavigationManager Navigation
 
 <PageTitle>Select Location</PageTitle>
 
@@ -21,9 +22,9 @@
                         <h5 class="card-title">@location.Name</h5>
                         <p class="card-text text-muted">@location.Address</p>
                         <div class="mt-auto">
-                            <button type="button" class="btn btn-primary btn-lg w-100">
+                            <a href="/station-select?location=@Uri.EscapeDataString(location.Name)" class="btn btn-primary btn-lg w-100">
                                 Select @location.Name
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -11,6 +11,13 @@ namespace Cafeteria.Customer.Components.Pages
             InitializeLocations();
         }
 
+        public void OnLocationSelected(Location location)
+        {
+            // Business logic for location selection can go here
+            // For example: store selected location, log selection, etc.
+            // Navigation will be handled by the view
+        }
+
         private void InitializeLocations()
         {
             Locations = new List<Location>
