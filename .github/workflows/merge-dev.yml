@@ -1,0 +1,62 @@
+name: Run checks on merge into dev and notify
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  format_verification:
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Linting with Dotnet Format
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet format --verify-no-changes --verbosity diagnostic
+        "
+
+  check_for_warnings:
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Check for warnings with dotnet format  --warnaserror
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet build --warnaserror
+        "
+
+  run_unit_tests:
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Run the unit tests.
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet test
+        "
+        echo "going to deploy!!!"
+
+  notify_teams:
+    runs-on: self-hosted
+    needs: [format_verification, check_for_warnings, run_unit_tests]
+    if: always()
+    steps:
+    - name: Send Teams notification
+      uses: freezer00/teams-webhook-action@v1.4.1
+      with:
+        webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
+        needs: ${{ toJson(needs) }}
+        job: ${{ toJson(job) }}
+        title: "Snow Cafeteria Portal - Merged Into Dev"
+        dry_run: true
