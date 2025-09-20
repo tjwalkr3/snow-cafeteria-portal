@@ -47,15 +47,17 @@ jobs:
         "
         echo "going to deploy!!!"
 
-  notify_teams:
+  notify_discord:
     runs-on: self-hosted
     needs: [format_verification, check_for_warnings, run_unit_tests]
     if: always()
     steps:
-    - name: Send Teams notification
-      uses: freezer00/teams-webhook-action@v1.4.1
+    - name: Send Discord notification
+      uses: sarisia/actions-status-discord@v1
       with:
-        webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
-        needs: ${{ toJson(needs) }}
-        job: ${{ toJson(job) }}
+        webhook: ${{ secrets.DEPLOY_MAIN_DISCORD }}
         title: "Snow Cafeteria Portal - Merged Into Main, Deploying"
+        description: "Deployment workflow completed"
+        url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        status: ${{ job.status }}
+        color: 0xf73232
