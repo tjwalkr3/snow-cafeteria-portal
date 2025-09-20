@@ -1,11 +1,9 @@
-name: Lint, Check for Warnings, and Run the Tests
+name: Deploy Main - Lint, Test, Warnings Check, Teams Notification
 
 on:
   push:
     branches:
-      - '*'
-  pull_request:
-    types: [created, opened, reopened]
+      - main
   workflow_dispatch:
 
 jobs:
@@ -48,3 +46,16 @@ jobs:
           dotnet test
         "
         echo "going to deploy!!!"
+
+  notify_teams:
+    runs-on: self-hosted
+    needs: [format_verification, check_for_warnings, run_unit_tests]
+    if: always()
+    steps:
+    - name: Send Teams notification
+      uses: freezer00/teams-webhook-action@v1.4.1
+      with:
+        webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
+        needs: ${{ toJson(needs) }}
+        job: ${{ toJson(job) }}
+        title: "Snow Cafeteria Portal - Merged Into Main, Deploying"
