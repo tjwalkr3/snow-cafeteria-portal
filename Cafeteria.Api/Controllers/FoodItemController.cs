@@ -8,37 +8,37 @@ namespace Cafeteria.Api.Controllers;
 public class FoodItemController : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FoodItemDto>>> GetFoodItems()
+    public ActionResult<IEnumerable<FoodItemDto>> GetFoodItems()
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<FoodItemDto>> GetFoodItem(int id)
+    public ActionResult<FoodItemDto> GetFoodItem(int id)
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("station/{stationId}")]
-    public async Task<ActionResult<IEnumerable<FoodItemDto>>> GetFoodItemsByStation(int stationId)
+    public ActionResult<IEnumerable<FoodItemDto>> GetFoodItemsByStation(int stationId)
     {
         throw new NotImplementedException();
     }
 
     [HttpPost]
-    public async Task<ActionResult<FoodItemDto>> CreateFoodItem(FoodItemDto foodItemDto)
+    public ActionResult<FoodItemDto> CreateFoodItem(FoodItemDto foodItemDto)
     {
         throw new NotImplementedException();
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateFoodItem(int id, FoodItemDto foodItemDto)
+    public IActionResult UpdateFoodItem(int id, FoodItemDto foodItemDto)
     {
         throw new NotImplementedException();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteFoodItem(int id)
+    public IActionResult DeleteFoodItem(int id)
     {
         throw new NotImplementedException();
     }

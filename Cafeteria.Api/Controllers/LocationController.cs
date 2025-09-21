@@ -8,37 +8,37 @@ namespace Cafeteria.Api.Controllers;
 public class LocationController : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CafeteriaLocationDto>>> GetLocations()
+    public ActionResult<IEnumerable<CafeteriaLocationDto>> GetLocations()
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CafeteriaLocationDto>> GetLocation(int id)
+    public ActionResult<CafeteriaLocationDto> GetLocation(int id)
     {
         throw new NotImplementedException();
     }
 
     [HttpPost]
-    public async Task<ActionResult<CafeteriaLocationDto>> CreateLocation(CafeteriaLocationDto locationDto)
+    public ActionResult<CafeteriaLocationDto> CreateLocation(CafeteriaLocationDto locationDto)
     {
         throw new NotImplementedException();
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateLocation(int id, CafeteriaLocationDto locationDto)
+    public IActionResult UpdateLocation(int id, CafeteriaLocationDto locationDto)
     {
         throw new NotImplementedException();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteLocation(int id)
+    public IActionResult DeleteLocation(int id)
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("{id}/business-hours")]
-    public async Task<ActionResult<IEnumerable<LocationBusinessHoursDto>>> GetLocationBusinessHours(int id)
+    public ActionResult<IEnumerable<LocationBusinessHoursDto>> GetLocationBusinessHours(int id)
     {
         throw new NotImplementedException();
     }
