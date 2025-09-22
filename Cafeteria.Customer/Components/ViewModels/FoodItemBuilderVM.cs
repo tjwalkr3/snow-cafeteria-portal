@@ -58,7 +58,9 @@ public class FoodItemBuilderViewModel : IFoodItemBuilderViewModel
 
         foreach (var type in AvailableIngredientTypes)
         {
-            ingredients[type] = AvailableIngredients.Where(i => i.Type.Name == type.Name).ToList(); // TODO: extract the selection into a method
+            ingredients[type] = AvailableIngredients
+                .Where(i => i.Type != null && i.Type.Name == type.Name)
+                .ToList(); // TODO: extract the selection into a method
         }
 
         return ingredients;
