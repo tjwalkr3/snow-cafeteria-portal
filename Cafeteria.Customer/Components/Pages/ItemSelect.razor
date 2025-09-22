@@ -3,9 +3,6 @@
 @using Cafeteria.Customer.Components.ViewModelInterfaces
 @inject IItemSelectViewModel ItemSelectVM
 
-@page "/food-item"
-@using Cafeteria.Shared
-
 <PageTitle>Choose Your Menu Item</PageTitle>
 
 <div class="container">
@@ -64,16 +61,6 @@
 
     protected override void OnInitialized()
     {
-        var builder = new FoodItemBuilderService();
-
-        foodItems = new List<FoodItem>
-        {
-            builder.Reset().SetName("Classic Pizza").SetDescription("Traditional pizza with tomato sauce and mozzarella").SetImageUrl("https://via.placeholder.com/300x200?text=Pizza").SetPrice(12.99m).Build(),
-            builder.Reset().SetName("Caesar Salad").SetDescription("Fresh romaine lettuce with caesar dressing and croutons").SetImageUrl("https://via.placeholder.com/300x200?text=Salad").SetPrice(8.50m).Build(),
-            builder.Reset().SetName("Cheeseburger").SetDescription("Juicy beef patty with cheese, lettuce, tomato").SetImageUrl("https://via.placeholder.com/300x200?text=Burger").SetPrice(10.75m).Build(),
-            builder.Reset().SetName("Chicken Wings").SetDescription("Crispy chicken wings with your choice of sauce").SetImageUrl("https://via.placeholder.com/300x200?text=Wings").SetPrice(9.25m).Build(),
-            builder.Reset().SetName("Fish Tacos").SetDescription("Fresh fish with cabbage slaw in soft tortillas").SetImageUrl("https://via.placeholder.com/300x200?text=Tacos").SetPrice(11.50m).Build(),
-            builder.Reset().SetName("Chocolate Cake").SetDescription("Rich chocolate cake with chocolate frosting").SetImageUrl("https://via.placeholder.com/300x200?text=Cake").SetPrice(5.99m).Build()
-        };
+        foodItems = ItemSelectVM.GetFoodItems();
     }
 }
