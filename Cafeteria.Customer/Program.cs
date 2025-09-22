@@ -1,5 +1,6 @@
 using Cafeteria.Customer.Components;
-using Cafeteria.Customer.Components.Pages;
+using Cafeteria.Customer.Components.ViewModels;
+using Cafeteria.Customer.Components.ViewModelInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
