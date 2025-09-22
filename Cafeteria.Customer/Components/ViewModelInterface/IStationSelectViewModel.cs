@@ -1,9 +1,8 @@
 ﻿using Cafeteria.Shared;
 
-namespace Cafeteria.Customer.Components.Pages
+namespace Cafeteria.Customer.Components.ViewModelInterfaces;
+
+public interface IStationSelectViewModel
 {
-    public interface IStationSelectViewModel
-    {
-        List<Station> Stations { get; }
-    }
+    List<Station> Stations { get; }
 }

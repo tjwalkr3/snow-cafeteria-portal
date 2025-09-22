@@ -41,47 +41,65 @@ public static class DummyData
     #region =========================== Ingredients Creation ==============================
     public static Ingredient CreateWheatBread()
     {
-        return new Ingredient("Wheat Bread", "https://picsum.photos/id/98/150/150", 0m);
+        var ingredient = new Ingredient("Wheat Bread", "https://picsum.photos/id/98/150/150", 0m);
+        ingredient.Type = CreateBreadType();
+        return ingredient;
     }
 
     public static Ingredient CreateOnion()
     {
-        return new Ingredient("Onion", "https://picsum.photos/id/292/150/150", 0m);
+        var ingredient = new Ingredient("Onion", "https://picsum.photos/id/292/150/150", 0m);
+        ingredient.Type = CreateOtherType();
+        return ingredient;
     }
 
     public static Ingredient CreateLettuce()
     {
-        return new Ingredient("Lettuce", "https://picsum.photos/id/189/150/150", 0m);
+        var ingredient = new Ingredient("Lettuce", "https://picsum.photos/id/189/150/150", 0m);
+        ingredient.Type = CreateOtherType();
+        return ingredient;
     }
 
     public static Ingredient CreateGoudaCheese()
     {
-        return new Ingredient("Gouda Cheese", "https://picsum.photos/id/835/150/150", 0m);
+        var ingredient = new Ingredient("Gouda Cheese", "https://picsum.photos/id/835/150/150", 0m);
+        ingredient.Type = CreateCheeseType();
+        return ingredient;
     }
 
     public static Ingredient CreateRoastBeef()
     {
-        return new Ingredient("Roast Beef", "https://picsum.photos/id/200/150/150", 0m);
+        var ingredient = new Ingredient("Roast Beef", "https://picsum.photos/id/200/150/150", 0m);
+        ingredient.Type = CreateMeatType();
+        return ingredient;
     }
 
     public static Ingredient CreateMarbleRyeBread()
     {
-        return new Ingredient("Marble Rye Bread", "https://picsum.photos/id/98/150/150", 0m);
+        var ingredient = new Ingredient("Marble Rye Bread", "https://picsum.photos/id/98/150/150", 0m);
+        ingredient.Type = CreateBreadType();
+        return ingredient;
     }
 
     public static Ingredient CreateGrilledChicken()
     {
-        return new Ingredient("Grilled Chicken", "https://picsum.photos/id/200/150/150", 0m);
+        var ingredient = new Ingredient("Grilled Chicken", "https://picsum.photos/id/200/150/150", 0m);
+        ingredient.Type = CreateMeatType();
+        return ingredient;
     }
 
     public static Ingredient CreateMozzarellaCheeseExtra()
     {
-        return new Ingredient("Mozzarella Cheese", "https://picsum.photos/id/835/150/150", 0.79m);
+        var ingredient = new Ingredient("Mozzarella Cheese", "https://picsum.photos/id/835/150/150", 0.79m);
+        ingredient.Type = CreateCheeseType();
+        return ingredient;
     }
 
     public static Ingredient CreateAlfalfaSprouts()
     {
-        return new Ingredient("Alfalfa Sprouts", "https://picsum.photos/id/400/150/150", 0m);
+        var ingredient = new Ingredient("Alfalfa Sprouts", "https://picsum.photos/id/400/150/150", 0m);
+        ingredient.Type = CreateOtherType();
+        return ingredient;
     }
     #endregion ==========================================================================
 
@@ -90,22 +108,22 @@ public static class DummyData
     #region ========================= Ingredient Type Creation ============================
     public static IngredientType CreateBreadType()
     {
-        return new IngredientType("Bread");
+        return new IngredientType("Bread", 1);
     }
 
     public static IngredientType CreateMeatType()
     {
-        return new IngredientType("Meat");
+        return new IngredientType("Meat", 1);
     }
 
     public static IngredientType CreateCheeseType()
     {
-        return new IngredientType("Cheese");
+        return new IngredientType("Cheese", 1);
     }
 
     public static IngredientType CreateOtherType()
     {
-        return new IngredientType("Other");
+        return new IngredientType("Other", 3);
     }
     #endregion ============================================================================
 
@@ -114,13 +132,19 @@ public static class DummyData
     #region =========================== Food Item Creation ================================
     public static FoodItem GetDummySandwich()
     {
+        var breadType = CreateBreadType();
+        var meatType = CreateMeatType();
+        var cheeseType = CreateCheeseType();
+        var otherType1 = CreateOtherType();
+        var otherType2 = CreateOtherType();
+
         IReadOnlyDictionary<IngredientType, Ingredient> normalSandwichIngredients = new Dictionary<IngredientType, Ingredient>()
         {
-            { CreateBreadType(), CreateWheatBread() },
-            { CreateMeatType(), CreateRoastBeef() },
-            { CreateCheeseType(), CreateGoudaCheese() },
-            { CreateOtherType(), CreateLettuce() },
-            { CreateOtherType(), CreateOnion() }
+            { breadType, CreateWheatBread() },
+            { meatType, CreateRoastBeef() },
+            { cheeseType, CreateGoudaCheese() },
+            { otherType1, CreateLettuce() },
+            { otherType2, CreateOnion() }
         };
 
         return new FoodItem(
@@ -134,13 +158,19 @@ public static class DummyData
 
     public static FoodItem GetDummySandwichWithExtraCheese()
     {
+        var breadType = CreateBreadType();
+        var meatType = CreateMeatType();
+        var cheeseType1 = CreateCheeseType();
+        var cheeseType2 = CreateCheeseType();
+        var otherType = CreateOtherType();
+
         IReadOnlyDictionary<IngredientType, Ingredient> sandwichIngredientsWithExtraCheese = new Dictionary<IngredientType, Ingredient>()
         {
-            { CreateBreadType(), CreateMarbleRyeBread() },
-            { CreateMeatType(), CreateGrilledChicken() },
-            { CreateCheeseType(), CreateGoudaCheese() },
-            { CreateCheeseType(), CreateMozzarellaCheeseExtra() }, // second piece of cheese adds $0.79
-            { CreateOtherType(), CreateAlfalfaSprouts() },
+            { breadType, CreateMarbleRyeBread() },
+            { meatType, CreateGrilledChicken() },
+            { cheeseType1, CreateGoudaCheese() },
+            { cheeseType2, CreateMozzarellaCheeseExtra() }, // second piece of cheese adds $0.79
+            { otherType, CreateAlfalfaSprouts() },
         };
 
         return new FoodItem(
