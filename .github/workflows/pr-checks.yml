@@ -1,0 +1,48 @@
+name: Pull Requests - Lint, Test, Warnings Check
+
+on:
+  push:
+  pull_request:
+    types: [created, opened, reopened]
+  workflow_dispatch:
+
+jobs:
+  format_verification:
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Linting with Dotnet Format
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet format --verify-no-changes --verbosity diagnostic
+        "
+
+  check_for_warnings:
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Check for warnings with dotnet format  --warnaserror
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet build --warnaserror
+        "
+
+  run_unit_tests:
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Run the unit tests.
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet test
+        "
+        echo "going to deploy!!!"
