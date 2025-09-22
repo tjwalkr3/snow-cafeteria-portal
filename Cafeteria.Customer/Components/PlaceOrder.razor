@@ -1,0 +1,35 @@
+@page "/place-order"
+@using Cafeteria.Shared
+
+<h2>Review Your Order</h2>
+<ul style="list-style-type:disc;" class="ps-3">
+    @foreach (var foodItem in foodItems)
+    {
+        <li>
+            @foodItem.Name
+            @if (foodItem.Ingredients != null && foodItem.Ingredients.Any())
+            {
+                <ul style="list-style-type:circle;" class="ps-2 mt-1">
+                    @foreach (var ingredient in foodItem.Ingredients.Values)
+                    {
+                        <li>@ingredient.Name</li>
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul>
+<button>Place Order</button>
+@code {
+    private List<FoodItem> foodItems = new();
+
+    protected override void OnInitialized()
+    {
+        var builder = new FoodItemBuilderService();
+
+        foodItems = [
+            Data.DummyData.GetDummySandwichWithExtraCheese(),
+            Data.DummyData.GetDummyHamburger()
+        ];
+    }
+}
