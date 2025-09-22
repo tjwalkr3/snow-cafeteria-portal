@@ -11,5 +11,4 @@ public interface IFoodItemBuilderViewModel
     Dictionary<IngredientType, List<Ingredient>> IngredientsByType { get; set; }
     void SelectIngredient(Ingredient ingredient);
     void UnselectIngredient(Ingredient ingredient);
-    Dictionary<IngredientType, List<Ingredient>> GetIngredientsByType();
 }
