@@ -11,6 +11,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<IItemSelectViewModel, ItemSelectVM>();
 builder.Services.AddScoped<ILocationSelectViewModel, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectViewModel, StationSelectVM>();
+builder.Services.AddScoped<IFoodItemBuilderViewModel, FoodItemBuilderVM>();
 
 var app = builder.Build();
 

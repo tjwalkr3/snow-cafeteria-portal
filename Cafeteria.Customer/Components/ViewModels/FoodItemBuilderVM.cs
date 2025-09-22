@@ -3,12 +3,12 @@ using Cafeteria.Customer.Components.Data;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 
 namespace Cafeteria.Customer.Components.ViewModels;
-public class FoodItemBuilderViewModel : IFoodItemBuilderViewModel
+public class FoodItemBuilderVM : IFoodItemBuilderViewModel
 {
     /// <summary>
     /// This constructor should be used only with dummy data/for testing
     /// </summary>
-    public FoodItemBuilderViewModel()
+    public FoodItemBuilderVM()
     {
         SelectedFoodItem = DummyData.GetDummySandwich();
         AvailableIngredients = DummyData.GetIngredientList;
@@ -16,7 +16,7 @@ public class FoodItemBuilderViewModel : IFoodItemBuilderViewModel
 
     }
 
-    public FoodItemBuilderViewModel(FoodItem selectedItem)
+    public FoodItemBuilderVM(FoodItem selectedItem)
     {
         SelectedFoodItem = selectedItem;
     }
