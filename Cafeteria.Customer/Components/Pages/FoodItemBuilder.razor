@@ -3,70 +3,135 @@
 @using Cafeteria.Customer.Components.Pages
 @using Cafeteria.Customer.Components.ViewModelInterfaces
 @inject IFoodItemBuilderViewModel FoodItemBuilderService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Customize Your Menu Item</PageTitle>
 
-@* Show current food builder item using view model*@
-@* <h3 @bind=FoodItem.name></h3> *@
-
-@* Get list of ingredient types and expected quantities for items *@
-
-@* Display all available ingredients in each type *@
-
-@* ingredient types should all show with checkboxes for ingredients, but should warn with popup if you select more than allowed *@
-
-@* checked ingredients should add to view model's ingredients list *@
-
-@* there should be a button to continue (sends you to order page) *@
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h2>Customize Your Menu Item</h2>
-            <p class="text-muted">Choose toppings or ingredients to include in your meal</p>
-        </div>
-    </div>
-    <div class="row">
-
-    </div>
-
-
-    <div class="row">
-        @foreach (var foodItem in foodItems)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    @if (!string.IsNullOrEmpty(foodItem.ImageUrl))
-                    {
-                        @* <img src="@foodItem.ImageUrl" class="card-img-top" alt="@foodItem.Name" style="height: 200px; object-fit: cover;" /> *@
-                    }
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">@foodItem.Name</h5>
-                        @if (!string.IsNullOrEmpty(foodItem.Description))
-                        {
-                            <p class="card-text text-muted">@foodItem.Description</p>
-                        }
-                        <div class="mt-auto">
-                            <h4 class="text-success">$@foodItem.Price.ToString("F2")</h4>
-                            @if (foodItem.Ingredients?.Any() == true)
+    @* Show current food builder item using view model *@
+    @if (FoodItemBuilderService.SelectedFoodItem != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(FoodItemBuilderService.SelectedFoodItem.ImageUrl))
                             {
-                                <small class="text-muted">
-                                    Ingredients: @string.Join(", ", foodItem.Ingredients.Values.Select(i => i.Name))
-                                </small>
+                                <img src="@FoodItemBuilderService.SelectedFoodItem.ImageUrl" class="img-fluid rounded-start h-100" alt="@FoodItemBuilderService.SelectedFoodItem.Name" style="object-fit: cover;" />
                             }
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h2 class="card-title">Customize Your @FoodItemBuilderService.SelectedFoodItem.Name</h2>
+                                @if (!string.IsNullOrEmpty(FoodItemBuilderService.SelectedFoodItem.Description))
+                                {
+                                    <p class="card-text text-muted mb-3">@FoodItemBuilderService.SelectedFoodItem.Description</p>
+                                }
+                                <h4 class="text-success">Base Price: $@FoodItemBuilderService.SelectedFoodItem.Price.ToString("F2")</h4>
+                                @if (selectedIngredientPrice > 0)
+                                {
+                                    <small class="text-info">+ $@selectedIngredientPrice.ToString("F2") for additional ingredients</small>
+                                    <h5 class="text-primary mt-2">Total: $@((FoodItemBuilderService.SelectedFoodItem.Price + selectedIngredientPrice).ToString("F2"))</h5>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        }
-    </div>
+        </div>
 
-    @if (!foodItems.Any())
+        @* Get list of ingredient types for items and show ingredient types as sub-headers *@
+        @* Display all available ingredients each under corresponding type; show as checkbox items *@
+        @if (FoodItemBuilderService.IngredientsByType.Any())
+        {
+            <div class="row">
+                <div class="col-12">
+                    <h3>Customize Your Ingredients</h3>
+                    <p class="text-muted mb-4">Select additional ingredients for your meal. Some ingredient types have quantity limits.</p>
+                </div>
+            </div>
+
+            @foreach (var ingredientGroup in FoodItemBuilderService.IngredientsByType)
+            {
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="mb-0">
+                                    @ingredientGroup.Key.Name 
+                                    <small class="text-muted">(Max: @ingredientGroup.Key.Quantity)</small>
+                                    @if (GetSelectedIngredientCountForType(ingredientGroup.Key) > 0)
+                                    {
+                                        <span class="badge bg-primary ms-2">@GetSelectedIngredientCountForType(ingredientGroup.Key) selected</span>
+                                    }
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    @foreach (var ingredient in ingredientGroup.Value)
+                                    {
+                                        <div class="col-md-6 col-lg-4 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" 
+                                                       type="checkbox" 
+                                                       id="ingredient_@ingredient.Name.Replace(" ", "_")"
+                                                       checked="@IsIngredientSelected(ingredient)"
+                                                       @onchange="@((e) => HandleIngredientSelection(e, ingredient, ingredientGroup.Key))" />
+                                                <label class="form-check-label d-flex align-items-center" for="ingredient_@ingredient.Name.Replace(" ", "_")">
+                                                    <div class="me-2">
+                                                        @if (!string.IsNullOrEmpty(ingredient.ImageUrl))
+                                                        {
+                                                            <img src="@ingredient.ImageUrl" alt="@ingredient.Name" class="rounded" style="width: 40px; height: 40px; object-fit: cover;" />
+                                                        }
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">@ingredient.Name</div>
+                                                        @if (ingredient.Price > 0)
+                                                        {
+                                                            <small class="text-success">+$@ingredient.Price.ToString("F2")</small>
+                                                        }
+                                                        else
+                                                        {
+                                                            <small class="text-muted">Free</small>
+                                                        }
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        @* there should be a button to continue that sends you to the order page *@
+        <div class="row">
+            <div class="col-12 text-center">
+                <button type="button" class="btn btn-primary btn-lg" @onclick="ContinueToOrder">
+                    Continue to Order
+                    @if (FoodItemBuilderService.SelectedIngredients.Any())
+                    {
+                        <span class="badge bg-light text-dark ms-2">@FoodItemBuilderService.SelectedIngredients.Count ingredients selected</span>
+                    }
+                </button>
+            </div>
+        </div>
+    }
+    else
     {
         <div class="row">
             <div class="col-12 text-center">
-                <div class="alert alert-info">
-                    <h4>No food items available</h4>
-                    <p>Check back later for our delicious offerings!</p>
+                <div class="alert alert-warning">
+                    <h4>No food item selected</h4>
+                    <p>Please select a food item first.</p>
+                    <button type="button" class="btn btn-secondary" @onclick="GoBackToMenu">
+                        Go Back to Menu
+                    </button>
                 </div>
             </div>
         </div>
@@ -74,20 +139,66 @@
 </div>
 
 @code {
-    private List<FoodItem> foodItems = new();
+    private decimal selectedIngredientPrice = 0m;
 
     protected override void OnInitialized()
     {
-        var builder = new FoodItemBuilderService();
+        // Calculate initial selected ingredient price
+        UpdateSelectedIngredientPrice();
+    }
 
-        foodItems = new List<FoodItem>
+    private void UpdateSelectedIngredientPrice()
+    {
+        selectedIngredientPrice = FoodItemBuilderService.SelectedIngredients.Sum(i => i.Price);
+    }
+
+    private bool IsIngredientSelected(Ingredient ingredient)
+    {
+        return FoodItemBuilderService.SelectedIngredients.Contains(ingredient);
+    }
+
+    private int GetSelectedIngredientCountForType(IngredientType ingredientType)
+    {
+        return FoodItemBuilderService.SelectedIngredients
+            .Count(i => i.Type != null && i.Type.Name == ingredientType.Name);
+    }
+
+    @* ingredients should warn with popup if you select more than qty of ingredient type *@
+    private async Task HandleIngredientSelection(ChangeEventArgs e, Ingredient ingredient, IngredientType ingredientType)
+    {
+        bool isChecked = (bool)e.Value!;
+        
+        if (isChecked)
         {
-            @* builder.Reset().SetName("Classic Pizza").SetDescription("Traditional pizza with tomato sauce and mozzarella").SetImageUrl("https://via.placeholder.com/300x200?text=Pizza").SetPrice(12.99m).Build(), *@
-            builder.Reset().SetName("Caesar Salad").SetDescription("Fresh romaine lettuce with caesar dressing and croutons").SetImageUrl("https://via.placeholder.com/300x200?text=Salad").SetPrice(8.50m).Build(),
-            builder.Reset().SetName("Cheeseburger").SetDescription("Juicy beef patty with cheese, lettuce, tomato").SetImageUrl("https://via.placeholder.com/300x200?text=Burger").SetPrice(10.75m).Build(),
-            builder.Reset().SetName("Chicken Wings").SetDescription("Crispy chicken wings with your choice of sauce").SetImageUrl("https://via.placeholder.com/300x200?text=Wings").SetPrice(9.25m).Build(),
-            builder.Reset().SetName("Fish Tacos").SetDescription("Fresh fish with cabbage slaw in soft tortillas").SetImageUrl("https://via.placeholder.com/300x200?text=Tacos").SetPrice(11.50m).Build(),
-            builder.Reset().SetName("Chocolate Cake").SetDescription("Rich chocolate cake with chocolate frosting").SetImageUrl("https://via.placeholder.com/300x200?text=Cake").SetPrice(5.99m).Build()
-        };
+            // Check if adding this ingredient would exceed the limit
+            int currentCount = GetSelectedIngredientCountForType(ingredientType);
+            if (currentCount >= ingredientType.Quantity)
+            {
+                // Show warning popup
+                await JSRuntime.InvokeVoidAsync("alert", 
+                    $"You can only select {ingredientType.Quantity} item(s) from the {ingredientType.Name} category. Please unselect another {ingredientType.Name} item first.");
+                return;
+            }
+            
+            FoodItemBuilderService.SelectIngredient(ingredient);
+        }
+        else
+        {
+            FoodItemBuilderService.UnselectIngredient(ingredient);
+        }
+        
+        UpdateSelectedIngredientPrice();
+        StateHasChanged();
+    }
+
+    private void ContinueToOrder()
+    {
+        // Navigate to order page - you may need to adjust this route based on your routing setup
+        Navigation.NavigateTo("/order");
+    }
+
+    private void GoBackToMenu()
+    {
+        Navigation.NavigateTo("/");
     }
 }

@@ -46,21 +46,21 @@ public class FoodItemBuilderVM : IFoodItemBuilderViewModel
     {
         Dictionary<IngredientType, List<Ingredient>> ingredients = new();
 
-        // Get all distinct ingredient types from SelectedFoodItem's ingredient list keys
-        if (SelectedFoodItem?.Ingredients != null)
-        {
-            AvailableIngredientTypes = SelectedFoodItem.Ingredients.Keys.Distinct().ToList();
-        }
-        else
-        {
-            AvailableIngredientTypes = new List<IngredientType>();
-        }
+        // Get all distinct ingredient types from available ingredients
+        var distinctTypes = AvailableIngredients
+            .Where(i => i.Type != null)
+            .Select(i => i.Type!)
+            .GroupBy(t => t.Name)
+            .Select(g => g.First()) // Take the first instance of each type name
+            .ToList();
+
+        AvailableIngredientTypes = distinctTypes;
 
         foreach (var type in AvailableIngredientTypes)
         {
             ingredients[type] = AvailableIngredients
                 .Where(i => i.Type != null && i.Type.Name == type.Name)
-                .ToList(); // TODO: extract the selection into a method
+                .ToList();
         }
 
         return ingredients;
