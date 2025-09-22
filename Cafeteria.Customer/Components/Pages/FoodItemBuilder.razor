@@ -29,7 +29,7 @@
                                 {
                                     <p class="card-text text-muted mb-3">@FoodItemBuilderService.SelectedFoodItem.Description</p>
                                 }
-                                <h4 class="text-success">Base Price: $@FoodItemBuilderService.SelectedFoodItem.Price.ToString("F2")</h4>
+                                <h4 class="text-success">Price: $@FoodItemBuilderService.SelectedFoodItem.Price.ToString("F2")</h4>
                                 @if (selectedIngredientPrice > 0)
                                 {
                                     <small class="text-info">+ $@selectedIngredientPrice.ToString("F2") for additional ingredients</small>
@@ -49,7 +49,7 @@
             <div class="row">
                 <div class="col-12">
                     <h3>Customize Your Ingredients</h3>
-                    <p class="text-muted mb-4">Select additional ingredients for your meal. Some ingredient types have quantity limits.</p>
+                    <p class="text-muted mb-4">Choose additional ingredients/toppings for your meal. Selecting more than the included quantity will add extra cost to your meal.</p>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@
                             <div class="card-header">
                                 <h4 class="mb-0">
                                     @ingredientGroup.Key.Name 
-                                    <small class="text-muted">(Max: @ingredientGroup.Key.Quantity)</small>
+                                    <small class="text-muted">(Choose @ingredientGroup.Key.Quantity)</small>
                                     @if (GetSelectedIngredientCountForType(ingredientGroup.Key) > 0)
                                     {
                                         <span class="badge bg-primary ms-2">@GetSelectedIngredientCountForType(ingredientGroup.Key) selected</span>
@@ -80,22 +80,8 @@
                                                        checked="@IsIngredientSelected(ingredient)"
                                                        @onchange="@((e) => HandleIngredientSelection(e, ingredient, ingredientGroup.Key))" />
                                                 <label class="form-check-label d-flex align-items-center" for="ingredient_@ingredient.Name.Replace(" ", "_")">
-                                                    <div class="me-2">
-                                                        @if (!string.IsNullOrEmpty(ingredient.ImageUrl))
-                                                        {
-                                                            <img src="@ingredient.ImageUrl" alt="@ingredient.Name" class="rounded" style="width: 40px; height: 40px; object-fit: cover;" />
-                                                        }
-                                                    </div>
                                                     <div>
                                                         <div class="fw-bold">@ingredient.Name</div>
-                                                        @if (ingredient.Price > 0)
-                                                        {
-                                                            <small class="text-success">+$@ingredient.Price.ToString("F2")</small>
-                                                        }
-                                                        else
-                                                        {
-                                                            <small class="text-muted">Free</small>
-                                                        }
                                                     </div>
                                                 </label>
                                             </div>
