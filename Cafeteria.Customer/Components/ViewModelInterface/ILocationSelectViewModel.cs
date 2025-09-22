@@ -1,10 +1,9 @@
 ﻿using Cafeteria.Shared;
 
-namespace Cafeteria.Customer.Components.Pages
+namespace Cafeteria.Customer.Components.ViewModelInterfaces;
+
+public interface ILocationSelectViewModel
 {
-    public interface ILocationSelectViewModel
-    {
-        List<Location> Locations { get; }
-        void OnLocationSelected(Location location);
-    }
+    List<Location> Locations { get; }
+    void OnLocationSelected(Location location);
 }

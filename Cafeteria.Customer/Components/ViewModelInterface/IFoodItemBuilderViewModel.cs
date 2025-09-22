@@ -1,6 +1,6 @@
 using Cafeteria.Shared;
 
-namespace Cafeteria.Customer.Components.Pages;
+namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
 public interface IFoodItemBuilderViewModel
 {
