@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
-                                <h2 class="card-title">Customize Your @FoodItemBuilderService.SelectedFoodItem.Name</h2>
+                                <h2 class="card-title">@FoodItemBuilderService.SelectedFoodItem.Name</h2>
                                 @if (!string.IsNullOrEmpty(FoodItemBuilderService.SelectedFoodItem.Description))
                                 {
                                     <p class="card-text text-muted mb-3">@FoodItemBuilderService.SelectedFoodItem.Description</p>
@@ -48,7 +48,7 @@
         {
             <div class="row">
                 <div class="col-12">
-                    <h3>Customize Your Ingredients</h3>
+                    <h3>Choose Your Ingredients</h3>
                     <p class="text-muted mb-4">Choose additional ingredients/toppings for your meal. Selecting more than the included quantity will add extra cost to your meal.</p>
                 </div>
             </div>
@@ -95,16 +95,11 @@
             }
         }
 
-        @* there should be a button to continue that sends you to the order page *@
         <div class="row">
             <div class="col-12 text-center">
-                <button type="button" class="btn btn-primary btn-lg" @onclick="ContinueToOrder">
-                    Continue to Order
-                    @if (FoodItemBuilderService.SelectedIngredients.Any())
-                    {
-                        <span class="badge bg-light text-dark ms-2">@FoodItemBuilderService.SelectedIngredients.Count ingredients selected</span>
-                    }
-                </button>
+                    <a href="/place-order" class="btn btn-primary btn-lg w-100">
+                        Review and Order
+                    </a>
             </div>
         </div>
     }
