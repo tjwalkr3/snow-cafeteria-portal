@@ -1,5 +1,6 @@
 using Cafeteria.Customer.Components;
-using Cafeteria.Customer.Components.Pages;
+using Cafeteria.Customer.Components.ViewModels;
+using Cafeteria.Customer.Components.ViewModelInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<IItemSelectViewModel, ItemSelectVM>();
 builder.Services.AddScoped<ILocationSelectViewModel, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectViewModel, StationSelectVM>();
+builder.Services.AddScoped<IFoodItemBuilderViewModel, FoodItemBuilderVM>();
 
 var app = builder.Build();
 
