@@ -3,14 +3,15 @@ using Cafeteria.Customer.Components.Data;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 
 namespace Cafeteria.Customer.Components.ViewModels;
+
 public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
     public FoodItemBuilderVM()
     {
         SelectedFoodItem = DummyData.CreateTurkeysandwich();
         AvailableIngredients = DummyData.GetIngredientList;
-        IngredientsByType = GetIngredientsByType();
-
+        AvailableIngredientTypes = DummyData.GetIngredientTypeList;
+        IngredientsByType = DummyData.GetIngredientsByType();
     }
 
     public FoodItemBuilderVM(FoodItemDto selectedItem)
@@ -37,27 +38,5 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         {
             SelectedIngredients.Remove(ingredient);
         }
-    }
-
-    private Dictionary<IngredientTypeDto, List<IngredientDto>> GetIngredientsByType()
-    {
-        Dictionary<IngredientTypeDto, List<IngredientDto>> ingredients = new();
-
-        AvailableIngredientTypes = DummyData.GetIngredientTypeList;
-        var ingredientTypeMappings = DummyData.GetIngredientIngredientTypeList;
-
-        foreach (var type in AvailableIngredientTypes)
-        {
-            var ingredientIdsForType = ingredientTypeMappings
-                .Where(mapping => mapping.IngredientTypeId == type.Id)
-                .Select(mapping => mapping.IngredientId)
-                .ToList();
-
-            ingredients[type] = AvailableIngredients
-                .Where(ingredient => ingredientIdsForType.Contains(ingredient.Id))
-                .ToList();
-        }
-
-        return ingredients;
     }
 }

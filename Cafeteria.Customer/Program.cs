@@ -12,6 +12,7 @@ builder.Services.AddScoped<IItemSelectVM, ItemSelectVM>();
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
 builder.Services.AddScoped<IFoodItemBuilderVM, FoodItemBuilderVM>();
+builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
 
 var app = builder.Build();
 

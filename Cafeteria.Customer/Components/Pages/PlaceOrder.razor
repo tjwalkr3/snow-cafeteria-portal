@@ -34,13 +34,6 @@
 
     private List<IngredientDto> GetIngredientsForFoodItem(int foodItemId)
     {
-        var ingredientMappings = DummyData.GetFoodBuilderItemIngredientList
-            .Where(mapping => mapping.FoodItemId == foodItemId)
-            .Select(mapping => mapping.IngredientId)
-            .ToList();
-
-        return DummyData.GetIngredientList
-            .Where(ingredient => ingredientMappings.Contains(ingredient.Id))
-            .ToList();
+        return DummyData.GetDefaultIngredientsForFoodItem(foodItemId);
     }
 }

@@ -50,36 +50,7 @@ public static class DummyData
         CreateGreenSalad()
     };
 
-    public static readonly List<IngredientIngredientTypeDto> GetIngredientIngredientTypeList = new()
-    {
-        CreateIngredientIngredientType(1, 1, 1),   // Wheat Bread -> Bread Type
-        CreateIngredientIngredientType(2, 2, 2),   // Turkey -> Meat Type
-        CreateIngredientIngredientType(3, 3, 3),   // Lettuce -> Vegetable Type
-        CreateIngredientIngredientType(4, 4, 3)    // Tomato -> Vegetable Type
-    };
 
-    public static readonly List<FoodItemIngredientTypeDto> GetFoodItemIngredientTypeList = new()
-    {
-        // Turkey Sandwich - requires bread, meat, vegetable
-        CreateFoodItemIngredientType(1, 1, 1), // Turkey Sandwich -> Bread Type
-        CreateFoodItemIngredientType(2, 1, 2), // Turkey Sandwich -> Meat Type
-        CreateFoodItemIngredientType(3, 1, 3), // Turkey Sandwich -> Vegetable Type
-        
-        // Green Salad - requires vegetables only
-        CreateFoodItemIngredientType(4, 2, 3)  // Green Salad -> Vegetable Type
-    };
-
-    public static readonly List<FoodBuilderItemIngredientDto> GetFoodBuilderItemIngredientList = new()
-    {
-        // Turkey Sandwich default ingredients
-        CreateFoodBuilderItemIngredient(1, 1, 1),  // Turkey Sandwich -> Wheat Bread
-        CreateFoodBuilderItemIngredient(2, 1, 2),  // Turkey Sandwich -> Turkey
-        CreateFoodBuilderItemIngredient(3, 1, 3),  // Turkey Sandwich -> Lettuce
-        
-        // Green Salad default ingredients
-        CreateFoodBuilderItemIngredient(4, 2, 3),  // Green Salad -> Lettuce
-        CreateFoodBuilderItemIngredient(5, 2, 4)   // Green Salad -> Tomato
-    };
     #endregion ============================================================================
 
     #region ============================ Weekday Creation ==================================
@@ -194,26 +165,52 @@ public static class DummyData
     };
     #endregion ============================================================================
 
-    #region ====================== Relational Table Creation ============================
-    public static IngredientIngredientTypeDto CreateIngredientIngredientType(int id, int ingredientId, int ingredientTypeId) => new()
+    #region ========================== API-like Methods ===================================
+    public static Dictionary<IngredientTypeDto, List<IngredientDto>> GetIngredientsByType()
     {
-        Id = id,
-        IngredientId = ingredientId,
-        IngredientTypeId = ingredientTypeId
-    };
+        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+        
+        var breadType = CreateBreadType();
+        result[breadType] = new List<IngredientDto> { CreateWheatBread() };
+        
+        var meatType = CreateMeatType();
+        result[meatType] = new List<IngredientDto> { CreateTurkey() };
+        
+        var vegetableType = CreateVegetableType();
+        result[vegetableType] = new List<IngredientDto> { CreateLettuce(), CreateTomato() };
+        
+        return result;
+    }
 
-    public static FoodItemIngredientTypeDto CreateFoodItemIngredientType(int id, int foodItemId, int ingredientTypeId) => new()
+    public static List<IngredientDto> GetIngredientsForType(int ingredientTypeId)
     {
-        Id = id,
-        FoodItemId = foodItemId,
-        IngredientTypeId = ingredientTypeId
-    };
+        return ingredientTypeId switch
+        {
+            1 => new List<IngredientDto> { CreateWheatBread() },
+            2 => new List<IngredientDto> { CreateTurkey() },
+            3 => new List<IngredientDto> { CreateLettuce(), CreateTomato() },
+            _ => new List<IngredientDto>()
+        };
+    }
 
-    public static FoodBuilderItemIngredientDto CreateFoodBuilderItemIngredient(int id, int foodItemId, int ingredientId) => new()
+    public static List<IngredientTypeDto> GetIngredientTypesForFoodItem(int foodItemId)
     {
-        Id = id,
-        FoodItemId = foodItemId,
-        IngredientId = ingredientId
-    };
+        return foodItemId switch
+        {
+            1 => new List<IngredientTypeDto> { CreateBreadType(), CreateMeatType(), CreateVegetableType() },
+            2 => new List<IngredientTypeDto> { CreateVegetableType() },
+            _ => new List<IngredientTypeDto>()
+        };
+    }
+
+    public static List<IngredientDto> GetDefaultIngredientsForFoodItem(int foodItemId)
+    {
+        return foodItemId switch
+        {
+            1 => new List<IngredientDto> { CreateWheatBread(), CreateTurkey(), CreateLettuce() },
+            2 => new List<IngredientDto> { CreateLettuce(), CreateTomato() },
+            _ => new List<IngredientDto>()
+        };
+    }
     #endregion ============================================================================
 }
