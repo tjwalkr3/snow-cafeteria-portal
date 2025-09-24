@@ -4,7 +4,7 @@ using Cafeteria.Customer.Components.Data;
 
 namespace Cafeteria.Customer.Components.ViewModels;
 
-public class LocationSelectVM : ILocationSelectViewModel
+public class LocationSelectVM : ILocationSelectVM
 {
     public List<CafeteriaLocationDto> Locations { get; private set; } = new();
 

@@ -2,7 +2,7 @@
 
 namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
-public interface IItemSelectViewModel
+public interface IItemSelectVM
 {
     List<FoodItemDto> GetFoodItems();
 }

@@ -2,7 +2,7 @@ using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
-public interface IFoodItemBuilderViewModel
+public interface IFoodItemBuilderVM
 {
     FoodItemDto SelectedFoodItem { get; set; }
     List<IngredientTypeDto> AvailableIngredientTypes { get; set; }

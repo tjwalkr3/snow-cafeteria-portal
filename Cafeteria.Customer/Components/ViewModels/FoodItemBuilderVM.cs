@@ -3,7 +3,7 @@ using Cafeteria.Customer.Components.Data;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 
 namespace Cafeteria.Customer.Components.ViewModels;
-public class FoodItemBuilderVM : IFoodItemBuilderViewModel
+public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
     public FoodItemBuilderVM()
     {

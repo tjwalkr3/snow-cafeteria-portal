@@ -8,10 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped<IItemSelectViewModel, ItemSelectVM>();
-builder.Services.AddScoped<ILocationSelectViewModel, LocationSelectVM>();
-builder.Services.AddScoped<IStationSelectViewModel, StationSelectVM>();
-builder.Services.AddScoped<IFoodItemBuilderViewModel, FoodItemBuilderVM>();
+builder.Services.AddScoped<IItemSelectVM, ItemSelectVM>();
+builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
+builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
+builder.Services.AddScoped<IFoodItemBuilderVM, FoodItemBuilderVM>();
 
 var app = builder.Build();
 

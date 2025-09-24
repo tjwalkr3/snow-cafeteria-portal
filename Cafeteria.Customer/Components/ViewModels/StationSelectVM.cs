@@ -3,7 +3,7 @@ using Cafeteria.Customer.Components.ViewModelInterfaces;
 using Cafeteria.Customer.Components.Data;
 
 namespace Cafeteria.Customer.Components.ViewModels;
-public class StationSelectVM : IStationSelectViewModel
+public class StationSelectVM : IStationSelectVM
 {
     public List<StationDto> Stations { get; private set; } = new();
 

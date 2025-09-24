@@ -2,7 +2,7 @@
 
 namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
-public interface IStationSelectViewModel
+public interface IStationSelectVM
 {
     List<StationDto> Stations { get; }
 }
