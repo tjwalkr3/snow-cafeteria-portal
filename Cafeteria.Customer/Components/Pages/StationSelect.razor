@@ -1,5 +1,5 @@
 ﻿@page "/station-select"
-@using Cafeteria.Shared
+@using Cafeteria.Shared.DTOs
 @using Cafeteria.Customer.Components.ViewModelInterfaces
 @inject IStationSelectViewModel StationSelectVM
 
@@ -19,11 +19,11 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <div class="card-body d-flex flex-column text-center">
-                        <h5 class="card-title">@station.Name</h5>
-                        <p class="card-text text-muted">@station.Description</p>
+                        <h5 class="card-title">@station.StationName</h5>
+                        <p class="card-text text-muted">@station.StationDescription</p>
                         <div class="mt-auto">
-                            <a href="/item-select?station=@Uri.EscapeDataString(station.Name)" class="btn btn-primary btn-lg w-100">
-                                Select @station.Name
+                            <a href="/item-select?station=@Uri.EscapeDataString(station.StationName)" class="btn btn-primary btn-lg w-100">
+                                Select @station.StationName
                             </a>
                         </div>
                     </div>
