@@ -1,196 +1,210 @@
 namespace Cafeteria.Customer.Components.Data;
 
-using System;
-using Cafeteria.Shared;
+using Cafeteria.Shared.DTOs;
 
 public static class DummyData
 {
     #region ============================ Static List Creation =================================
-    public static readonly List<IngredientType> GetIngredientTypeList = new()
+    public static readonly List<WeekDayDto> GetWeekDayList = new()
+    {
+        CreateMonday(),
+        CreateFriday()
+    };
+
+    public static readonly List<CafeteriaLocationDto> GetLocationList = new()
+    {
+        CreateMainCampusLocation()
+    };
+
+    public static readonly List<LocationBusinessHoursDto> GetBusinessHoursList = new()
+    {
+        CreateBusinessHours(1, 1, new TimeOnly(8, 0), new TimeOnly(18, 0)),   // Monday
+        CreateBusinessHours(2, 1, new TimeOnly(8, 0), new TimeOnly(16, 0))    // Friday
+    };
+
+    public static readonly List<StationDto> GetStationList = new()
+    {
+        CreateSandwichStation(),
+        CreateSaladStation()
+    };
+
+    public static readonly List<IngredientTypeDto> GetIngredientTypeList = new()
     {
         CreateBreadType(),
         CreateMeatType(),
-        CreateCheeseType(),
-        CreateOtherType()
+        CreateVegetableType()
     };
 
-    public static readonly List<Ingredient> GetIngredientList = new()
+    public static readonly List<IngredientDto> GetIngredientList = new()
     {
         CreateWheatBread(),
-        CreateOnion(),
+        CreateTurkey(),
         CreateLettuce(),
-        CreateGoudaCheese(),
-        CreateRoastBeef(),
-        CreateMarbleRyeBread(),
-        CreateGrilledChicken(),
-        CreateMozzarellaCheeseExtra(),
-        CreateAlfalfaSprouts()
+        CreateTomato()
     };
 
-    public static readonly List<FoodItem> GetFoodItemList = new()
+    public static readonly List<FoodItemDto> GetFoodItemList = new()
     {
-        GetDummySandwich(),
-        GetDummySandwichWithExtraCheese(),
-        GetDummyHamburger()
+        CreateTurkeysandwich(),
+        CreateGreenSalad()
+    };
+
+    public static readonly List<IngredientIngredientTypeDto> GetIngredientIngredientTypeList = new()
+    {
+        CreateIngredientIngredientType(1, 1, 1),   // Wheat Bread -> Bread Type
+        CreateIngredientIngredientType(2, 2, 2),   // Turkey -> Meat Type
+        CreateIngredientIngredientType(3, 3, 3),   // Lettuce -> Vegetable Type
+        CreateIngredientIngredientType(4, 4, 3)    // Tomato -> Vegetable Type
+    };
+
+    public static readonly List<FoodItemIngredientTypeDto> GetFoodItemIngredientTypeList = new()
+    {
+        // Turkey Sandwich - requires bread, meat, vegetable
+        CreateFoodItemIngredientType(1, 1, 1), // Turkey Sandwich -> Bread Type
+        CreateFoodItemIngredientType(2, 1, 2), // Turkey Sandwich -> Meat Type
+        CreateFoodItemIngredientType(3, 1, 3), // Turkey Sandwich -> Vegetable Type
+        
+        // Green Salad - requires vegetables only
+        CreateFoodItemIngredientType(4, 2, 3)  // Green Salad -> Vegetable Type
+    };
+
+    public static readonly List<FoodBuilderItemIngredientDto> GetFoodBuilderItemIngredientList = new()
+    {
+        // Turkey Sandwich default ingredients
+        CreateFoodBuilderItemIngredient(1, 1, 1),  // Turkey Sandwich -> Wheat Bread
+        CreateFoodBuilderItemIngredient(2, 1, 2),  // Turkey Sandwich -> Turkey
+        CreateFoodBuilderItemIngredient(3, 1, 3),  // Turkey Sandwich -> Lettuce
+        
+        // Green Salad default ingredients
+        CreateFoodBuilderItemIngredient(4, 2, 3),  // Green Salad -> Lettuce
+        CreateFoodBuilderItemIngredient(5, 2, 4)   // Green Salad -> Tomato
     };
     #endregion ============================================================================
 
+    #region ============================ Weekday Creation ==================================
+    public static WeekDayDto CreateMonday() => new() { Id = 1, WeekdayName = "Monday" };
+    public static WeekDayDto CreateFriday() => new() { Id = 5, WeekdayName = "Friday" };
+    #endregion ============================================================================
 
-
-
-    #region =========================== Ingredients Creation ==============================
-    public static Ingredient CreateWheatBread()
+    #region ========================= Location Creation ===================================
+    public static CafeteriaLocationDto CreateMainCampusLocation() => new()
     {
-        var ingredient = new Ingredient("Wheat Bread", "https://picsum.photos/id/98/150/150", 0m);
-        ingredient.Type = CreateBreadType();
-        return ingredient;
-    }
+        Id = 1,
+        LocationName = "Main Campus Cafeteria",
+        LocationDescription = "The primary dining facility serving fresh meals throughout the day",
+        Address = "100 University Way, Campus Center Building"
+    };
+    #endregion ============================================================================
 
-    public static Ingredient CreateOnion()
+    #region ======================= Business Hours Creation =============================
+    public static LocationBusinessHoursDto CreateBusinessHours(int id, int locationId, TimeOnly openTime, TimeOnly closeTime) => new()
     {
-        var ingredient = new Ingredient("Onion", "https://picsum.photos/id/292/150/150", 0m);
-        ingredient.Type = CreateOtherType();
-        return ingredient;
-    }
+        Id = id,
+        LocationId = locationId,
+        WeekdayId = ((id - 1) % 7) + 1, // Cycles through weekdays 1-7
+        OpenTime = openTime,
+        CloseTime = closeTime
+    };
+    #endregion ============================================================================
 
-    public static Ingredient CreateLettuce()
+    #region =========================== Station Creation =================================
+    public static StationDto CreateSandwichStation() => new()
     {
-        var ingredient = new Ingredient("Lettuce", "https://picsum.photos/id/189/150/150", 0m);
-        ingredient.Type = CreateOtherType();
-        return ingredient;
-    }
+        Id = 1,
+        LocationId = 1,
+        StationName = "Sandwich Station",
+        StationDescription = "Fresh made-to-order sandwiches"
+    };
 
-    public static Ingredient CreateGoudaCheese()
+    public static StationDto CreateSaladStation() => new()
     {
-        var ingredient = new Ingredient("Gouda Cheese", "https://picsum.photos/id/835/150/150", 0m);
-        ingredient.Type = CreateCheeseType();
-        return ingredient;
-    }
-
-    public static Ingredient CreateRoastBeef()
-    {
-        var ingredient = new Ingredient("Roast Beef", "https://picsum.photos/id/200/150/150", 0m);
-        ingredient.Type = CreateMeatType();
-        return ingredient;
-    }
-
-    public static Ingredient CreateMarbleRyeBread()
-    {
-        var ingredient = new Ingredient("Marble Rye Bread", "https://picsum.photos/id/98/150/150", 0m);
-        ingredient.Type = CreateBreadType();
-        return ingredient;
-    }
-
-    public static Ingredient CreateGrilledChicken()
-    {
-        var ingredient = new Ingredient("Grilled Chicken", "https://picsum.photos/id/200/150/150", 0m);
-        ingredient.Type = CreateMeatType();
-        return ingredient;
-    }
-
-    public static Ingredient CreateMozzarellaCheeseExtra()
-    {
-        var ingredient = new Ingredient("Mozzarella Cheese", "https://picsum.photos/id/835/150/150", 0.79m);
-        ingredient.Type = CreateCheeseType();
-        return ingredient;
-    }
-
-    public static Ingredient CreateAlfalfaSprouts()
-    {
-        var ingredient = new Ingredient("Alfalfa Sprouts", "https://picsum.photos/id/400/150/150", 0m);
-        ingredient.Type = CreateOtherType();
-        return ingredient;
-    }
-    #endregion ==========================================================================
-
-
+        Id = 2,
+        LocationId = 1,
+        StationName = "Salad Bar",
+        StationDescription = "Fresh salads and healthy options"
+    };
+    #endregion ============================================================================
 
     #region ========================= Ingredient Type Creation ============================
-    public static IngredientType CreateBreadType()
-    {
-        return new IngredientType("Bread", 1);
-    }
-
-    public static IngredientType CreateMeatType()
-    {
-        return new IngredientType("Meat", 1);
-    }
-
-    public static IngredientType CreateCheeseType()
-    {
-        return new IngredientType("Cheese", 1);
-    }
-
-    public static IngredientType CreateOtherType()
-    {
-        return new IngredientType("Other", 3);
-    }
+    public static IngredientTypeDto CreateBreadType() => new() { Id = 1, TypeName = "Bread", Quantity = 1 };
+    public static IngredientTypeDto CreateMeatType() => new() { Id = 2, TypeName = "Meat", Quantity = 1 };
+    public static IngredientTypeDto CreateVegetableType() => new() { Id = 3, TypeName = "Vegetable", Quantity = 2 };
     #endregion ============================================================================
 
+    #region =========================== Ingredients Creation ==============================
+    public static IngredientDto CreateWheatBread() => new()
+    {
+        Id = 1,
+        IngredientName = "Wheat Bread",
+        ImageUrl = "https://picsum.photos/id/98/150/150",
+        IngredientPrice = 0m
+    };
 
+    public static IngredientDto CreateTurkey() => new()
+    {
+        Id = 2,
+        IngredientName = "Sliced Turkey",
+        ImageUrl = "https://picsum.photos/id/429/150/150",
+        IngredientPrice = 2.50m
+    };
+
+    public static IngredientDto CreateLettuce() => new()
+    {
+        Id = 3,
+        IngredientName = "Fresh Lettuce",
+        ImageUrl = "https://picsum.photos/id/550/150/150",
+        IngredientPrice = 0m
+    };
+
+    public static IngredientDto CreateTomato() => new()
+    {
+        Id = 4,
+        IngredientName = "Sliced Tomato",
+        ImageUrl = "https://picsum.photos/id/189/150/150",
+        IngredientPrice = 0.25m
+    };
+    #endregion ============================================================================
 
     #region =========================== Food Item Creation ================================
-    public static FoodItem GetDummySandwich()
+    public static FoodItemDto CreateTurkeysandwich() => new()
     {
-        var breadType = CreateBreadType();
-        var meatType = CreateMeatType();
-        var cheeseType = CreateCheeseType();
-        var otherType1 = CreateOtherType();
-        var otherType2 = CreateOtherType();
+        Id = 1,
+        StationId = 1,
+        ItemDescription = "Turkey sandwich with lettuce on wheat bread",
+        ImageUrl = "https://picsum.photos/id/488/150/150",
+        ItemPrice = 6.50m
+    };
 
-        IReadOnlyDictionary<IngredientType, Ingredient> normalSandwichIngredients = new Dictionary<IngredientType, Ingredient>()
-        {
-            { breadType, CreateWheatBread() },
-            { meatType, CreateRoastBeef() },
-            { cheeseType, CreateGoudaCheese() },
-            { otherType1, CreateLettuce() },
-            { otherType2, CreateOnion() }
-        };
-
-        return new FoodItem(
-            name: "Test Sandwich",
-            description: "A delicious test sandwich.",
-            price: 5.99m,
-            imgUrl: "https://picsum.photos/id/488/150/150",
-            ingredients: normalSandwichIngredients
-        );
-    }
-
-    public static FoodItem GetDummySandwichWithExtraCheese()
+    public static FoodItemDto CreateGreenSalad() => new()
     {
-        var breadType = CreateBreadType();
-        var meatType = CreateMeatType();
-        var cheeseType1 = CreateCheeseType();
-        var cheeseType2 = CreateCheeseType();
-        var otherType = CreateOtherType();
-
-        IReadOnlyDictionary<IngredientType, Ingredient> sandwichIngredientsWithExtraCheese = new Dictionary<IngredientType, Ingredient>()
-        {
-            { breadType, CreateMarbleRyeBread() },
-            { meatType, CreateGrilledChicken() },
-            { cheeseType1, CreateGoudaCheese() },
-            { cheeseType2, CreateMozzarellaCheeseExtra() }, // second piece of cheese adds $0.79
-            { otherType, CreateAlfalfaSprouts() },
-        };
-
-        return new FoodItem(
-            name: "Test Sandwich With Extra Cheese",
-            description: "A delicious test sandwich with mozzarella and gouda cheese!",
-            price: 5.99m,
-            imgUrl: "https://picsum.photos/id/488/150/150",
-            ingredients: sandwichIngredientsWithExtraCheese
-        );
-    }
-
-    public static FoodItem GetDummyHamburger()
-    {
-        return new FoodItem(
-            name: "Test Hamburger",
-            description: "Hamburgers have default ingredients and don't need to go through the food builder.",
-            price: 5.99m,
-            imgUrl: "https://picsum.photos/id/488/150/150"
-        );
-    }
+        Id = 2,
+        StationId = 2,
+        ItemDescription = "Fresh green salad with lettuce and tomato",
+        ImageUrl = "https://picsum.photos/id/550/150/150",
+        ItemPrice = 4.95m
+    };
     #endregion ============================================================================
 
+    #region ====================== Relational Table Creation ============================
+    public static IngredientIngredientTypeDto CreateIngredientIngredientType(int id, int ingredientId, int ingredientTypeId) => new()
+    {
+        Id = id,
+        IngredientId = ingredientId,
+        IngredientTypeId = ingredientTypeId
+    };
+
+    public static FoodItemIngredientTypeDto CreateFoodItemIngredientType(int id, int foodItemId, int ingredientTypeId) => new()
+    {
+        Id = id,
+        FoodItemId = foodItemId,
+        IngredientTypeId = ingredientTypeId
+    };
+
+    public static FoodBuilderItemIngredientDto CreateFoodBuilderItemIngredient(int id, int foodItemId, int ingredientId) => new()
+    {
+        Id = id,
+        FoodItemId = foodItemId,
+        IngredientId = ingredientId
+    };
+    #endregion ============================================================================
 }
