@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Cafeteria.Api.DTOs;
+using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Api.Controllers;
 
