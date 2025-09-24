@@ -1,7 +1,7 @@
 ﻿namespace Cafeteria.Customer.Components.ViewModelInterfaces;
-using Cafeteria.Shared;
+using Cafeteria.Shared.DTOs;
 
 public interface IItemSelectViewModel
 {
-    List<FoodItem> GetFoodItems();
+    List<FoodItemDto> GetFoodItems();
 }

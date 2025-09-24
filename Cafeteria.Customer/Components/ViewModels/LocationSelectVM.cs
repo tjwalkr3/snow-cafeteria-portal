@@ -15,7 +15,9 @@ public class LocationSelectVM : ILocationSelectViewModel
 
     public void OnLocationSelected(CafeteriaLocationDto location)
     {
-        
+        // Business logic for location selection can go here
+        // For example: store selected location, log selection, etc.
+        // Navigation will be handled by the view
     }
 
     private void InitializeLocations()
