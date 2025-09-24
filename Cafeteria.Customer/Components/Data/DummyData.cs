@@ -13,7 +13,8 @@ public static class DummyData
 
     public static readonly List<CafeteriaLocationDto> GetLocationList = new()
     {
-        CreateMainCampusLocation()
+        CreateBadgerDenLocation(),
+        CreateBustersBistroLocation()
     };
 
     public static readonly List<LocationBusinessHoursDto> GetBusinessHoursList = new()
@@ -87,12 +88,20 @@ public static class DummyData
     #endregion ============================================================================
 
     #region ========================= Location Creation ===================================
-    public static CafeteriaLocationDto CreateMainCampusLocation() => new()
+    public static CafeteriaLocationDto CreateBadgerDenLocation() => new()
     {
         Id = 1,
-        LocationName = "Main Campus Cafeteria",
-        LocationDescription = "The primary dining facility serving fresh meals throughout the day",
-        Address = "100 University Way, Campus Center Building"
+        LocationName = "Badger Den",
+        LocationDescription = "Campus dining location in the GSC",
+        Address = "GSC Cafeteria on the Ground Floor"
+    };
+
+    public static CafeteriaLocationDto CreateBustersBistroLocation() => new()
+    {
+        Id = 2,
+        LocationName = "Buster's Bistro",
+        LocationDescription = "Library dining location",
+        Address = "Karen H. Huntsman Library Gallery"
     };
     #endregion ============================================================================
 

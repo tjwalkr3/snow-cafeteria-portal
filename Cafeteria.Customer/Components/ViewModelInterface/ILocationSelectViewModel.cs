@@ -1,9 +1,9 @@
-﻿using Cafeteria.Shared;
+﻿using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
 public interface ILocationSelectViewModel
 {
-    List<Location> Locations { get; }
-    void OnLocationSelected(Location location);
+    List<CafeteriaLocationDto> Locations { get; }
+    void OnLocationSelected(CafeteriaLocationDto location);
 }
