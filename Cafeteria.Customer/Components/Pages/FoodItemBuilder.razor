@@ -1,7 +1,8 @@
 @page "/food-item"
-@using Cafeteria.Shared
+@using Cafeteria.Shared.DTOs
 @using Cafeteria.Customer.Components.Pages
 @using Cafeteria.Customer.Components.ViewModelInterfaces
+@using Cafeteria.Customer.Components.Data
 @inject IFoodItemBuilderViewModel FoodItemBuilderService
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
@@ -19,21 +20,17 @@
                         <div class="col-md-4">
                             @if (!string.IsNullOrEmpty(FoodItemBuilderService.SelectedFoodItem.ImageUrl))
                             {
-                                <img src="@FoodItemBuilderService.SelectedFoodItem.ImageUrl" class="img-fluid rounded-start h-100" alt="@FoodItemBuilderService.SelectedFoodItem.Name" style="object-fit: cover;" />
+                                <img src="@FoodItemBuilderService.SelectedFoodItem.ImageUrl" class="img-fluid rounded-start h-100" alt="@FoodItemBuilderService.SelectedFoodItem.ItemDescription" style="object-fit: cover;" />
                             }
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
-                                <h2 class="card-title">@FoodItemBuilderService.SelectedFoodItem.Name</h2>
-                                @if (!string.IsNullOrEmpty(FoodItemBuilderService.SelectedFoodItem.Description))
-                                {
-                                    <p class="card-text text-muted mb-3">@FoodItemBuilderService.SelectedFoodItem.Description</p>
-                                }
-                                <h4 class="text-success">Price: $@FoodItemBuilderService.SelectedFoodItem.Price.ToString("F2")</h4>
+                                <h2 class="card-title">@FoodItemBuilderService.SelectedFoodItem.ItemDescription</h2>
+                                <h4 class="text-success">Price: $@FoodItemBuilderService.SelectedFoodItem.ItemPrice.ToString("F2")</h4>
                                 @if (selectedIngredientPrice > 0)
                                 {
                                     <small class="text-info">+ $@selectedIngredientPrice.ToString("F2") for additional ingredients</small>
-                                    <h5 class="text-primary mt-2">Total: $@((FoodItemBuilderService.SelectedFoodItem.Price + selectedIngredientPrice).ToString("F2"))</h5>
+                                    <h5 class="text-primary mt-2">Total: $@((FoodItemBuilderService.SelectedFoodItem.ItemPrice + selectedIngredientPrice).ToString("F2"))</h5>
                                 }
                             </div>
                         </div>
@@ -60,7 +57,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="mb-0">
-                                    @ingredientGroup.Key.Name 
+                                    @ingredientGroup.Key.TypeName 
                                     <small class="text-muted">(Choose @ingredientGroup.Key.Quantity)</small>
                                     @if (GetSelectedIngredientCountForType(ingredientGroup.Key) > 0)
                                     {
@@ -76,12 +73,12 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" 
                                                        type="checkbox" 
-                                                       id="ingredient_@ingredient.Name.Replace(" ", "_")"
+                                                       id="ingredient_@ingredient.IngredientName.Replace(" ", "_")"
                                                        checked="@IsIngredientSelected(ingredient)"
                                                        @onchange="@((e) => HandleIngredientSelection(e, ingredient, ingredientGroup.Key))" />
-                                                <label class="form-check-label d-flex align-items-center" for="ingredient_@ingredient.Name.Replace(" ", "_")">
+                                                <label class="form-check-label d-flex align-items-center" for="ingredient_@ingredient.IngredientName.Replace(" ", "_")">
                                                     <div>
-                                                        <div class="fw-bold">@ingredient.Name</div>
+                                                        <div class="fw-bold">@ingredient.IngredientName</div>
                                                     </div>
                                                 </label>
                                             </div>
@@ -130,22 +127,28 @@
 
     private void UpdateSelectedIngredientPrice()
     {
-        selectedIngredientPrice = FoodItemBuilderService.SelectedIngredients.Sum(i => i.Price);
+        selectedIngredientPrice = FoodItemBuilderService.SelectedIngredients.Sum(i => i.IngredientPrice ?? 0);
     }
 
-    private bool IsIngredientSelected(Ingredient ingredient)
+    private bool IsIngredientSelected(IngredientDto ingredient)
     {
         return FoodItemBuilderService.SelectedIngredients.Contains(ingredient);
     }
 
-    private int GetSelectedIngredientCountForType(IngredientType ingredientType)
+    private int GetSelectedIngredientCountForType(IngredientTypeDto ingredientType)
     {
+        var ingredientTypeMappings = DummyData.GetIngredientIngredientTypeList;
+        var ingredientIdsForType = ingredientTypeMappings
+            .Where(mapping => mapping.IngredientTypeId == ingredientType.Id)
+            .Select(mapping => mapping.IngredientId)
+            .ToList();
+        
         return FoodItemBuilderService.SelectedIngredients
-            .Count(i => i.Type != null && i.Type.Name == ingredientType.Name);
+            .Count(ingredient => ingredientIdsForType.Contains(ingredient.Id));
     }
 
     @* ingredients should warn with popup if you select more than qty of ingredient type *@
-    private async Task HandleIngredientSelection(ChangeEventArgs e, Ingredient ingredient, IngredientType ingredientType)
+    private async Task HandleIngredientSelection(ChangeEventArgs e, IngredientDto ingredient, IngredientTypeDto ingredientType)
     {
         bool isChecked = (bool)e.Value!;
         
@@ -157,7 +160,7 @@
             {
                 // Show warning popup
                 await JSRuntime.InvokeVoidAsync("alert", 
-                    $"You can only select {ingredientType.Quantity} item(s) from the {ingredientType.Name} category. Please unselect another {ingredientType.Name} item first.");
+                    $"You can only select {ingredientType.Quantity} item(s) from the {ingredientType.TypeName} category. Please unselect another {ingredientType.TypeName} item first.");
                 return;
             }
             

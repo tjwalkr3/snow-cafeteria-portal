@@ -1,14 +1,14 @@
-using Cafeteria.Shared;
+using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
 public interface IFoodItemBuilderViewModel
 {
-    FoodItem SelectedFoodItem { get; set; }
-    List<IngredientType> AvailableIngredientTypes { get; set; }
-    List<Ingredient> AvailableIngredients { get; set; }
-    List<Ingredient> SelectedIngredients { get; set; }
-    Dictionary<IngredientType, List<Ingredient>> IngredientsByType { get; set; }
-    void SelectIngredient(Ingredient ingredient);
-    void UnselectIngredient(Ingredient ingredient);
+    FoodItemDto SelectedFoodItem { get; set; }
+    List<IngredientTypeDto> AvailableIngredientTypes { get; set; }
+    List<IngredientDto> AvailableIngredients { get; set; }
+    List<IngredientDto> SelectedIngredients { get; set; }
+    Dictionary<IngredientTypeDto, List<IngredientDto>> IngredientsByType { get; set; }
+    void SelectIngredient(IngredientDto ingredient);
+    void UnselectIngredient(IngredientDto ingredient);
 }
