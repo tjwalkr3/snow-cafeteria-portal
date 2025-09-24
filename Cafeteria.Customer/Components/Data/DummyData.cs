@@ -169,16 +169,16 @@ public static class DummyData
     public static Dictionary<IngredientTypeDto, List<IngredientDto>> GetIngredientsByType()
     {
         var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
-        
+
         var breadType = CreateBreadType();
         result[breadType] = new List<IngredientDto> { CreateWheatBread() };
-        
+
         var meatType = CreateMeatType();
         result[meatType] = new List<IngredientDto> { CreateTurkey() };
-        
+
         var vegetableType = CreateVegetableType();
         result[vegetableType] = new List<IngredientDto> { CreateLettuce(), CreateTomato() };
-        
+
         return result;
     }
 
