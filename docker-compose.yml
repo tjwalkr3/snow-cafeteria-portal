@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: docker/Cafeteria.Api.Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=Host=database;Database=cafeteria;Username=cafeteria_admin;Password=SnowCafe
+      - DB_CONN=Host=database;Database=cafeteria;Username=cafeteria_admin;Password=SnowCafe
     ports:
       - "8080:8080"
     depends_on:
