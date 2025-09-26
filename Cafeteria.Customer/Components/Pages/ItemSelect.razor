@@ -59,7 +59,7 @@
 
     private string GetFoodItemUrl(string foodItemId)
     {
-        return $"/food-item?id={Uri.EscapeDataString(foodItemId)}";
+        return $"/food-item?item-id={Uri.EscapeDataString(foodItemId)}"; // TODO: this line has a magic string in it for the route parameter of the food-item page that we should perhaps make into a variable somewhere...maybe in an enum?
     }
 }
 

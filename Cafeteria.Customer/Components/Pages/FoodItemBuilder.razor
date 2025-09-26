@@ -64,10 +64,10 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" 
                                                        type="checkbox" 
-                                                       id="ingredient.Id"
+                                                       id="@ingredient.Id"
                                                        checked="@BuilderViewModel.IngredientIsSelected(ingredient)"
-                                                       @onchange="@(() => BuilderViewModel.ToggleIngredientSelection(ingredient))" />
-                                                <label class="form-check-label d-flex align-items-center" for="ingredient.Id)">
+                                                       @onchange="@((ChangeEventArgs e) => HandleIngredientChange(e, ingredient))" />
+                                                <label class="form-check-label d-flex align-items-center" for="@ingredient.Id">
                                                     <div>
                                                         <div class="fw-bold">@ingredient.IngredientName</div>
                                                     </div>
@@ -85,7 +85,7 @@
 
         <div class="row">
             <div class="col-12 text-center">
-                    <a href="/place-order" class="btn btn-primary btn-lg w-100">
+                    <a href="@("/place-order" + new Uri(Navigation.Uri).Query + BuilderViewModel.GetPartialQueryStringOfIngredients())" class="btn btn-primary btn-lg w-100">
                         Review and Order
                     </a>
             </div>

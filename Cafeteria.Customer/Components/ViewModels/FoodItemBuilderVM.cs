@@ -53,4 +53,24 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
             SelectedIngredients.Remove(ingredient);
         }
     }
+
+    public void GetDataFromRouteParameters(string uri)
+    {
+        string queryString = uri.Substring(uri.IndexOf('?') + 1);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
+        // have query params for ingredients be formatted like "&with-ingredient=1"
+    }
+
+    public string GetPartialQueryStringOfIngredients()
+    {
+        if (SelectedIngredients.Count == 0)
+        {
+            return string.Empty;
+        }
+        else
+        {
+            var queryParts = SelectedIngredients.Select(ing => $"with-ingredient={ing.Id}");
+            return "&" + string.Join("&", queryParts);
+        }
+    }
 }
