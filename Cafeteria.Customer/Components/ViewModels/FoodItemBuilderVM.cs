@@ -24,6 +24,20 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
     public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
     public Dictionary<IngredientTypeDto, List<IngredientDto>> IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
 
+    public void ToggleIngredientSelection(IngredientDto ingredient)
+    {
+        if (IngredientIsSelected(ingredient))
+        {
+            UnselectIngredient(ingredient);
+        }
+        else SelectIngredient(ingredient);
+    }
+
+    public bool IngredientIsSelected(IngredientDto ingredient)
+    {
+        return SelectedIngredients.Contains(ingredient);
+    }
+
     public void SelectIngredient(IngredientDto ingredient)
     {
         if (!SelectedIngredients.Contains(ingredient))
