@@ -2,8 +2,8 @@ services:
   database:
     image: postgres:17-trixie
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=SnowCafe
+      - POSTGRES_USER=cafeteria_admin
       - POSTGRES_DB=cafeteria
     volumes:
       - ./docker/config/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: docker/Cafeteria.Api.Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=Host=database;Database=cafeteria;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Host=database;Database=cafeteria;Username=cafeteria_admin;Password=SnowCafe
     ports:
       - "8080:8080"
     depends_on:
