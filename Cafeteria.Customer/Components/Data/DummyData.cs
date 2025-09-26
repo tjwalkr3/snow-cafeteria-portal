@@ -64,7 +64,7 @@ public static class DummyData
         Id = 1,
         LocationName = "Badger Den",
         LocationDescription = "Campus dining location in the GSC",
-        Address = "GSC Cafeteria on the Ground Floor"
+        LocationAddress = "GSC Cafeteria on the Ground Floor"
     };
 
     public static CafeteriaLocationDto CreateBustersBistroLocation() => new()
@@ -72,7 +72,7 @@ public static class DummyData
         Id = 2,
         LocationName = "Buster's Bistro",
         LocationDescription = "Library dining location",
-        Address = "Karen H. Huntsman Library Gallery"
+        LocationAddress = "Karen H. Huntsman Library Gallery"
     };
     #endregion ============================================================================
 

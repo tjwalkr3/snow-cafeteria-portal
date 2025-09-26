@@ -16,5 +16,5 @@ public class CafeteriaLocationDto
 
     [Required]
     [StringLength(200)]
-    public string Address { get; set; } = string.Empty;
+    public string LocationAddress { get; set; } = string.Empty;
 }
