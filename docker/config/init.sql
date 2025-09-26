@@ -90,6 +90,7 @@ CREATE TABLE cafeteria.food_builder_item_ingredient (
 
 INSERT INTO cafeteria.cafeteria_location (location_name, location_description, location_address) VALUES
     ('Badger Den', 'Located on the main floor of the Greenwood Student Center', '242-260 E 100 N, Ephraim, UT 84627'),
+    ('Breakfast', 'Located on the main floor of the Greenwood Student Center', '242-260 E 100 N, Ephraim, UT 84627'),
     ('Busters Bistro', 'Located on the main floor of the Karen H Huntsman Library', '141 E Center St, Ephraim, UT 84627');
 
 INSERT INTO cafeteria.week_day (weekday_name) VALUES
@@ -101,20 +102,28 @@ INSERT INTO cafeteria.week_day (weekday_name) VALUES
     ('Saturday'),
     ('Sunday');
 
-INSERT INTO cafeteria.cafeteria_location (location_name, location_description, location_address) VALUES
-    ('Badger Den', 'Located on the main floor of the Greenwood Student Center', '242-260 E 100 N, Ephraim, UT 84627'),
-    ('Busters Bistro', 'Located on the main floor of the Karen H Huntsman Library', '141 E Center St, Ephraim, UT 84627');
-
 INSERT INTO cafeteria.location_business_hours (location_id, weekday_id, open_time, close_time) VALUES
-    (1, 1, '08:00:00', '19:30:00'),
-    (1, 2, '08:00:00', '19:30:00'),
-    (1, 3, '08:00:00', '19:30:00'),
-    (1, 4, '08:00:00', '19:30:00'),
-    (1, 5, '08:00:00', '19:30:00'),
+    (1, 1, '11:00:00', '19:30:00'),
+    (1, 2, '11:00:00', '19:30:00'),
+    (1, 3, '11:00:00', '19:30:00'),
+    (1, 4, '11:00:00', '19:30:00'),
+    (1, 5, '11:00:00', '19:30:00'),
     (1, 6, '17:00:00', '19:00:00'),
     (1, 7, '17:00:00', '19:00:00'),
-    (2, 1, '10:00:00', '19:30:00'),
-    (2, 2, '10:00:00', '19:30:00'),
-    (2, 3, '10:00:00', '19:30:00'),
-    (2, 4, '10:00:00', '19:30:00'),
-    (2, 5, '10:00:00', '15:00:00');
+    (2, 1, '08:00:00', '11:00:00'),
+    (2, 2, '08:00:00', '11:00:00'),
+    (2, 3, '08:00:00', '11:00:00'),
+    (2, 4, '08:00:00', '11:00:00'),
+    (2, 5, '08:00:00', '11:00:00'),
+    (3, 1, '10:00:00', '19:30:00'),
+    (3, 2, '10:00:00', '19:30:00'),
+    (3, 3, '10:00:00', '19:30:00'),
+    (3, 4, '10:00:00', '19:30:00'),
+    (3, 5, '10:00:00', '15:00:00');
+
+INSERT INTO cafeteria.station (location_id, station_name, station_description) VALUES
+    (1, 'Sandwich', 'Fresh made-to-order sandwiches'),
+    (1, 'Grill', 'Burgers, grilled items, and hot entrees'),
+    (1, 'Pizza', 'Hand-tossed pizzas with customizable toppings'),
+    (2, 'Breakfast Grill', 'Breakfast sandwiches, eggs, and pancakes'),
+    (3, 'Wraps', 'Fresh wraps with various fillings');
