@@ -57,23 +57,6 @@ public class MenuService
         return await _dbConnection.QueryAsync<FoodItemDto>(sql, new { StationId = stationId });
     }
 
-    public async Task<IEnumerable<IngredientDto>> GetAllIngredients()
-    {
-        const string sql = @"
-            SELECT id, ingredient_name as IngredientName, image_url as ImageUrl, ingredient_price as IngredientPrice
-            FROM cafeteria.ingredient";
-
-        return await _dbConnection.QueryAsync<IngredientDto>(sql);
-    }
-
-    public async Task<IEnumerable<IngredientTypeDto>> GetAllIngredientTypes()
-    {
-        const string sql = @"
-            SELECT id, type_name as TypeName, quantity
-            FROM cafeteria.ingredient_type";
-
-        return await _dbConnection.QueryAsync<IngredientTypeDto>(sql);
-    }
 
     public async Task<IEnumerable<FoodItemDto>> GetAllFoodItems()
     {
