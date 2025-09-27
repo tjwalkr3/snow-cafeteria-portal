@@ -1,6 +1,7 @@
 using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Components.Data;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
+using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.ViewModels;
 
@@ -8,7 +9,8 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
     public FoodItemBuilderVM()
     {
-        SelectedFoodItem = DummyData.CreateTurkeysandwich();
+        // SelectedFoodItem = DummyData.CreateTurkeysandwich(); // uncomment this line to use for testing
+        // SelectedFoodItem gets initialized in the GetDataFromRouteParameters method, which is called in the Blazor page's OnInitialized method
         AvailableIngredients = DummyData.GetIngredientList;
         AvailableIngredientTypes = DummyData.GetIngredientTypeList;
         IngredientsByType = DummyData.GetIngredientsByType();
@@ -18,7 +20,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
     {
         SelectedFoodItem = selectedItem;
     }
-    public FoodItemDto SelectedFoodItem { get; set; }
+    public FoodItemDto? SelectedFoodItem { get; set; }
     public List<IngredientTypeDto> AvailableIngredientTypes { get; set; } = new List<IngredientTypeDto>();
     public List<IngredientDto> AvailableIngredients { get; set; } = new List<IngredientDto>();
     public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
@@ -58,7 +60,20 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
     {
         string queryString = uri.Substring(uri.IndexOf('?') + 1);
         var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
-        // have query params for ingredients be formatted like "&with-ingredient=1"
+
+        try
+        {
+            FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
+
+            SelectedFoodItem = foodItem;
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception (e.g., log it)
+            Console.WriteLine($"Error deserializing food item: {ex.Message}");
+            SelectedFoodItem = null; // or set to a default value
+            throw new Exception("At least we got here!");
+        }
     }
 
     public string GetPartialQueryStringOfIngredients()
@@ -69,7 +84,8 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         }
         else
         {
-            var queryParts = SelectedIngredients.Select(ing => $"with-ingredient={ing.Id}");
+            var queryParts = AvailableIngredients.Select(ingredient => JsonSerializer.Serialize(ingredient));
+            // var queryParts = SelectedIngredients.Select(ingredient => JsonSerializer.Serialize(ingredient));
             return "&" + string.Join("&", queryParts);
         }
     }

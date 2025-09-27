@@ -1,6 +1,7 @@
 ﻿@page "/item-select"
 @using Cafeteria.Shared.DTOs
 @using Cafeteria.Customer.Components.ViewModelInterfaces
+@using System.Text.Json
 @inject IItemSelectVM ItemSelectVM
 @inject NavigationManager Navigation
 
@@ -15,10 +16,10 @@
     </div>
 
     <div class="row">
-        @foreach (var foodItem in foodItems)
+        @foreach (FoodItemDto foodItem in foodItems)
         {
             <div class="col-md-4 mb-4">
-                <a href="@GetFoodItemUrl(foodItem.Id.ToString())" class="text-decoration-none">
+                <a href="@("food-item?" + JsonSerializer.Serialize(foodItem)))" class="text-decoration-none">
                     <div class="card h-100 food-item-card">
                         @if (!string.IsNullOrEmpty(foodItem.ImageUrl))
                         {

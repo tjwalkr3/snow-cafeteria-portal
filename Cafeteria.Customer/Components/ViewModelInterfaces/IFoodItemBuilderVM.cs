@@ -4,7 +4,7 @@ namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
 public interface IFoodItemBuilderVM
 {
-    FoodItemDto SelectedFoodItem { get; set; }
+    FoodItemDto? SelectedFoodItem { get; set; }
     List<IngredientTypeDto> AvailableIngredientTypes { get; set; }
     List<IngredientDto> AvailableIngredients { get; set; }
     List<IngredientDto> SelectedIngredients { get; set; }
