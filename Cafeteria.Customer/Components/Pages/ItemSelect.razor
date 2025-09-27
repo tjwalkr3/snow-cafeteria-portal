@@ -10,16 +10,40 @@
 <PageTitle>Choose Your Menu Item</PageTitle>
 
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h2>Available Items</h2>
-            <p class="text-muted">Browse our delicious food options</p>
+    @if (foodItems == null && IsInitialized == false)
+    {
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="alert alert-warning">
+                    <h4>Loading menu items...</h4>
+                    <p>Please wait while we load the available items.</p>
+                </div>
+            </div>
         </div>
-    </div>
+    }
+    else if (IsInitialized == true && ItemSelectVM.ErrorOccurredWhileParsingSelectedStation())
+    {
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="alert alert-danger">
+                    <h4>Error loading menu items</h4>
+                    <p>Please contact a developer.</p>
+                </div>
+            </div>
+        </div>
+    }
+    else if (foodItems != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <h2>Available Items</h2>
+                <p class="text-muted">Browse our delicious food options</p>
+            </div>
+        </div>
 
-    <div class="row">
-        @foreach (FoodItemDto foodItem in foodItems)
-        {
+        <div class="row">
+            @foreach (FoodItemDto foodItem in foodItems)
+            {
             <div class="col-md-4 mb-4">
                 <a href="@(QueryHelpers.AddQueryString(uri: "/food-item", queryString: new Dictionary<string, string?> { { "food-item", JsonSerializer.Serialize(foodItem) } }))" class="text-decoration-none">
                     <div class="card h-100 food-item-card">
@@ -36,35 +60,24 @@
                     </div>
                 </a>
             </div>
-        }
-    </div>
+            }
+        </div>
 
-    @if (!foodItems.Any())
-    {
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="alert alert-info">
-                    <h4>No items available to show</h4>
-                    <p>Check back later for our delicious offerings!</p>
+        @if (!foodItems.Any())
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">
+                        <h4>No items available to show</h4>
+                        <p>Check back later for our delicious offerings!</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     }
 </div>
 
-@code {
-    private List<FoodItemDto> foodItems = new();
 
-    protected override void OnInitialized()
-    {
-        foodItems = ItemSelectVM.GetFoodItems();
-    }
-
-    private string GetFoodItemUrl(string foodItemId)
-    {
-        return $"/food-item?item-id={Uri.EscapeDataString(foodItemId)}"; // TODO: this line has a magic string in it for the route parameter of the food-item page that we should perhaps make into a variable somewhere...maybe in an enum?
-    }
-}
 
 <style>
     .food-item-card {
