@@ -1,32 +1,42 @@
-﻿using Cafeteria.Shared;
+﻿using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
+using Cafeteria.Customer.Components.Data;
+using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.ViewModels;
-public class StationSelectVM : IStationSelectViewModel
+public class StationSelectVM : IStationSelectVM
 {
-    public List<Station> Stations { get; private set; } = new();
+    string errorString = "Error";
+    public bool IsInitialized { get; private set; } = false;
+    public CafeteriaLocationDto? SelectedLocation { get; private set; }
+    public List<StationDto>? Stations { get; private set; }
 
     public StationSelectVM()
     {
-        InitializeStations();
+        Stations = DummyData.GetStationList;
     }
 
-    private void InitializeStations()
+    public async Task GetDataFromRouteParameters(string uri)
     {
-        Stations = new List<Station>
+        await Task.Delay(0); // Simulate async work
+
+        string queryString = uri.Substring(uri.IndexOf('?') + 1);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
+        try
         {
-            new Station(
-                name: "Grill Station",
-                description: "Fresh burgers, fries, and grilled items"
-            ),
-            new Station(
-                name: "Pizza Station",
-                description: "Oven-fired pizzas and calzones"
-            ),
-            new Station(
-                name: "Sandwich Station",
-                description: "Fresh sandwiches and wraps"
-            )
-        };
+            CafeteriaLocationDto location = JsonSerializer.Deserialize<CafeteriaLocationDto>(queryParams.Get("location") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize location from query parameter.");
+            SelectedLocation = location;
+            Stations = DummyData.GetStationsByLocation(SelectedLocation.Id);
+        }
+        catch
+        {
+            SelectedLocation = new();
+            SelectedLocation.LocationName = errorString;
+        }
+    }
+
+    public bool ErrorOccurredWhileParsingSelectedLocation()
+    {
+        return SelectedLocation != null && SelectedLocation.LocationName == errorString;
     }
 }

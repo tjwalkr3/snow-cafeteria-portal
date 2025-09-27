@@ -1,32 +1,32 @@
-using Cafeteria.Shared;
+using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Components.Data;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
+using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.ViewModels;
-public class FoodItemBuilderVM : IFoodItemBuilderViewModel
+
+public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
-    /// <summary>
-    /// This constructor should be used only with dummy data/for testing
-    /// </summary>
-    public FoodItemBuilderVM()
-    {
-        SelectedFoodItem = DummyData.GetDummySandwich();
-        AvailableIngredients = DummyData.GetIngredientList;
-        IngredientsByType = GetIngredientsByType();
+    string errorString = "Error";
+    public FoodItemDto? SelectedFoodItem { get; set; }
+    public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
+    public Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
 
+    public void ToggleIngredientSelection(IngredientDto ingredient)
+    {
+        if (IngredientIsSelected(ingredient))
+        {
+            UnselectIngredient(ingredient);
+        }
+        else SelectIngredient(ingredient);
     }
 
-    public FoodItemBuilderVM(FoodItem selectedItem)
+    public bool IngredientIsSelected(IngredientDto ingredient)
     {
-        SelectedFoodItem = selectedItem;
+        return SelectedIngredients.Contains(ingredient);
     }
-    public FoodItem SelectedFoodItem { get; set; }
-    public List<IngredientType> AvailableIngredientTypes { get; set; } = new List<IngredientType>();
-    public List<Ingredient> AvailableIngredients { get; set; } = new List<Ingredient>();
-    public List<Ingredient> SelectedIngredients { get; set; } = new List<Ingredient>();
-    public Dictionary<IngredientType, List<Ingredient>> IngredientsByType { get; set; } = new Dictionary<IngredientType, List<Ingredient>>();
 
-    public void SelectIngredient(Ingredient ingredient)
+    public void SelectIngredient(IngredientDto ingredient)
     {
         if (!SelectedIngredients.Contains(ingredient))
         {
@@ -34,7 +34,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderViewModel
         }
     }
 
-    public void UnselectIngredient(Ingredient ingredient)
+    public void UnselectIngredient(IngredientDto ingredient)
     {
         if (SelectedIngredients.Contains(ingredient))
         {
@@ -42,27 +42,45 @@ public class FoodItemBuilderVM : IFoodItemBuilderViewModel
         }
     }
 
-    private Dictionary<IngredientType, List<Ingredient>> GetIngredientsByType()
+    public async Task GetDataFromRouteParameters(string uri)
     {
-        Dictionary<IngredientType, List<Ingredient>> ingredients = new();
+        await Task.Delay(0); // Simulate async work
 
-        // Get all distinct ingredient types from available ingredients
-        var distinctTypes = AvailableIngredients
-            .Where(i => i.Type != null)
-            .Select(i => i.Type!)
-            .GroupBy(t => t.Name)
-            .Select(g => g.First()) // Take the first instance of each type name
-            .ToList();
+        string queryString = uri.Substring(uri.IndexOf('?') + 1);
 
-        AvailableIngredientTypes = distinctTypes;
+        var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
 
-        foreach (var type in AvailableIngredientTypes)
+        try
         {
-            ingredients[type] = AvailableIngredients
-                .Where(i => i.Type != null && i.Type.Name == type.Name)
-                .ToList();
+            FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
+            SelectedFoodItem = foodItem;
+            List<IngredientTypeDto> ingredientTypes = DummyData.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
+            IngredientsByType = DummyData.GetIngredientsByType(ingredientTypes);
         }
+        catch
+        {
+            SelectedFoodItem = new();
+            SelectedFoodItem.ItemDescription = errorString;
+        }
+    }
 
-        return ingredients;
+    public Dictionary<string, string?> GetOrderAsJson()
+    {
+        Dictionary<string, string?> orderAsJson = new()
+        {
+            { "food-item", JsonSerializer.Serialize(SelectedFoodItem) }
+        };
+
+        foreach (var ingredient in SelectedIngredients)
+        {
+            string json = JsonSerializer.Serialize(ingredient);
+            orderAsJson.Add(ingredient.IngredientName, json);
+        }
+        return orderAsJson;
+    }
+
+    public bool ErrorOccurredWhileParsingSelectedFoodItem()
+    {
+        return SelectedFoodItem != null && SelectedFoodItem.ItemDescription == errorString;
     }
 }
