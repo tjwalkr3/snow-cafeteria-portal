@@ -7,24 +7,10 @@ namespace Cafeteria.Customer.Components.ViewModels;
 
 public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
-    public FoodItemBuilderVM()
-    {
-        // SelectedFoodItem = DummyData.CreateTurkeysandwich(); // uncomment this line to use for testing
-        // SelectedFoodItem gets initialized in the GetDataFromRouteParameters method, which is called in the Blazor page's OnInitialized method
-        AvailableIngredients = DummyData.GetIngredientList;
-        AvailableIngredientTypes = DummyData.GetIngredientTypeList;
-        IngredientsByType = DummyData.GetIngredientsByType();
-    }
-
-    public FoodItemBuilderVM(FoodItemDto selectedItem)
-    {
-        SelectedFoodItem = selectedItem;
-    }
+    string errorString = "Error";
     public FoodItemDto? SelectedFoodItem { get; set; }
-    public List<IngredientTypeDto> AvailableIngredientTypes { get; set; } = new List<IngredientTypeDto>();
-    public List<IngredientDto> AvailableIngredients { get; set; } = new List<IngredientDto>();
     public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
-    public Dictionary<IngredientTypeDto, List<IngredientDto>> IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+    public Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
 
     public void ToggleIngredientSelection(IngredientDto ingredient)
     {
@@ -59,32 +45,42 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
     public async Task GetDataFromRouteParameters(string uri)
     {
         await Task.Delay(0); // Simulate async work
+
         string queryString = uri.Substring(uri.IndexOf('?') + 1);
+
         var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
 
         try
         {
             FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
             SelectedFoodItem = foodItem;
+            List<IngredientTypeDto> ingredientTypes = DummyData.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
+            IngredientsByType = DummyData.GetIngredientsByType(ingredientTypes);
         }
         catch
         {
             SelectedFoodItem = new();
-            SelectedFoodItem.ItemDescription = IFoodItemBuilderVM.ItemDescriptionWhenError; // TODO: this feels like a jenky way of handling this, so probably consider refactoring
+            SelectedFoodItem.ItemDescription = errorString;
         }
     }
 
-    public string GetPartialQueryStringOfIngredients()
+    public Dictionary<string, string?> GetOrderAsJson()
     {
-        if (SelectedIngredients.Count == 0)
+        Dictionary<string, string?> orderAsJson = new()
         {
-            return string.Empty;
-        }
-        else
+            { "food-item", JsonSerializer.Serialize(SelectedFoodItem) }
+        };
+        
+        foreach (var ingredient in SelectedIngredients)
         {
-            var queryParts = AvailableIngredients.Select(ingredient => JsonSerializer.Serialize(ingredient));
-            // var queryParts = SelectedIngredients.Select(ingredient => JsonSerializer.Serialize(ingredient));
-            return "&" + string.Join("&", queryParts);
+            string json = JsonSerializer.Serialize(ingredient);
+            orderAsJson.Add(ingredient.IngredientName, json);
         }
+        return orderAsJson;
+    }
+
+    public bool ErrorOccurredWhileParsingSelectedFoodItem()
+    {
+        return SelectedFoodItem != null && SelectedFoodItem.ItemDescription == errorString;
     }
 }

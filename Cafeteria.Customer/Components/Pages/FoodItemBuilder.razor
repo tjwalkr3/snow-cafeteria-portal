@@ -4,6 +4,7 @@
 @using Cafeteria.Customer.Components.Pages
 @using Cafeteria.Customer.Components.ViewModelInterfaces
 @using Cafeteria.Customer.Components.Data
+@using Microsoft.AspNetCore.WebUtilities
 
 @inject IFoodItemBuilderVM BuilderViewModel
 @inject NavigationManager Navigation
@@ -30,7 +31,7 @@
     }
     else if (BuilderViewModel.SelectedFoodItem != null)
     {
-        @if (IsInitialized == true && BuilderViewModel.SelectedFoodItem.ItemDescription == IFoodItemBuilderVM.ItemDescriptionWhenError) {
+        @if (IsInitialized == true && BuilderViewModel.ErrorOccurredWhileParsingSelectedFoodItem()) {
             <div class="row">
                 <div class="col-12 text-center">
                     <div class="alert alert-danger">
@@ -63,7 +64,7 @@
             </div>
 
             @* Display ingredients as checkbox items, nested under labels showing their respective ingredient types *@
-            @if (BuilderViewModel.IngredientsByType.Any())
+            @if (BuilderViewModel.IngredientsByType != null && BuilderViewModel.IngredientsByType.Any())
             {
                 <div class="row">
                     <div class="col-12">
@@ -113,7 +114,7 @@
 
             <div class="row">
                 <div class="col-12 text-center">
-                        <a href="@("/place-order" + new Uri(Navigation.Uri).Query + BuilderViewModel.GetPartialQueryStringOfIngredients())" class="btn btn-primary btn-lg w-100">
+                        <a href="@(QueryHelpers.AddQueryString(uri: "/place-order", BuilderViewModel.GetOrderAsJson()))" class="btn btn-primary btn-lg w-100">
                             Review and Order
                         </a>
                 </div>
