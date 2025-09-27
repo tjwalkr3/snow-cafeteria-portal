@@ -47,7 +47,14 @@ public static class DummyData
     public static readonly List<FoodItemDto> GetFoodItemList = new()
     {
         CreateTurkeysandwich(),
-        CreateGreenSalad()
+        CreateGreenSalad(),
+        CreateHamSandwich(),
+        CreateVeggieSandwich(),
+        CreateCaesarSalad(),
+        CreateCobbSalad(),
+        CreateCheeseburger(),
+        CreateGrilledChicken(),
+        CreateFrenchFries()
     };
 
 
@@ -189,6 +196,72 @@ public static class DummyData
         ImageUrl = "https://picsum.photos/id/550/150/150",
         ItemPrice = 4.95m
     };
+
+    // Additional Sandwich Station Items
+    public static FoodItemDto CreateHamSandwich() => new()
+    {
+        Id = 3,
+        StationId = 1,
+        ItemDescription = "Ham and cheese sandwich on sourdough bread",
+        ImageUrl = "https://picsum.photos/id/490/150/150",
+        ItemPrice = 6.25m
+    };
+
+    public static FoodItemDto CreateVeggieSandwich() => new()
+    {
+        Id = 4,
+        StationId = 1,
+        ItemDescription = "Vegetarian sandwich with avocado and sprouts",
+        ImageUrl = "https://picsum.photos/id/491/150/150",
+        ItemPrice = 5.75m
+    };
+
+    // Additional Salad Bar Items
+    public static FoodItemDto CreateCaesarSalad() => new()
+    {
+        Id = 5,
+        StationId = 2,
+        ItemDescription = "Classic Caesar salad with croutons and parmesan",
+        ImageUrl = "https://picsum.photos/id/551/150/150",
+        ItemPrice = 5.50m
+    };
+
+    public static FoodItemDto CreateCobbSalad() => new()
+    {
+        Id = 6,
+        StationId = 2,
+        ItemDescription = "Cobb salad with bacon, eggs, and blue cheese",
+        ImageUrl = "https://picsum.photos/id/552/150/150",
+        ItemPrice = 6.75m
+    };
+
+    // Grill Station Items
+    public static FoodItemDto CreateCheeseburger() => new()
+    {
+        Id = 7,
+        StationId = 3,
+        ItemDescription = "Classic cheeseburger with lettuce and tomato",
+        ImageUrl = "https://picsum.photos/id/600/150/150",
+        ItemPrice = 8.50m
+    };
+
+    public static FoodItemDto CreateGrilledChicken() => new()
+    {
+        Id = 8,
+        StationId = 3,
+        ItemDescription = "Grilled chicken breast with seasoned vegetables",
+        ImageUrl = "https://picsum.photos/id/101/150/150",
+        ItemPrice = 9.25m
+    };
+
+    public static FoodItemDto CreateFrenchFries() => new()
+    {
+        Id = 9,
+        StationId = 3,
+        ItemDescription = "Crispy golden french fries",
+        ImageUrl = "https://picsum.photos/id/602/150/150",
+        ItemPrice = 3.50m
+    };
     #endregion ============================================================================
 
     #region ========================== API-like Methods ===================================
@@ -258,6 +331,17 @@ public static class DummyData
             1 => new List<StationDto> { CreateSandwichStation(), CreateSaladStation(), CreateGrillStation() },
             2 => new List<StationDto> { CreateSandwichStation() },
             _ => new List<StationDto>()
+        };
+    }
+
+    public static List<FoodItemDto> GetFoodItemsByStation(int stationId)
+    {
+        return stationId switch
+        {
+            1 => new List<FoodItemDto> { CreateTurkeysandwich(), CreateHamSandwich(), CreateVeggieSandwich() }, 
+            2 => new List<FoodItemDto> { CreateGreenSalad(), CreateCaesarSalad(), CreateCobbSalad() }, 
+            3 => new List<FoodItemDto> { CreateCheeseburger(), CreateGrilledChicken(), CreateFrenchFries() }, 
+            _ => new List<FoodItemDto>() 
         };
     }
     #endregion ============================================================================
