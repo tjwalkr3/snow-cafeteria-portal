@@ -103,6 +103,14 @@ public static class DummyData
         StationName = "Salad Bar",
         StationDescription = "Fresh salads and healthy options"
     };
+
+    public static StationDto CreateGrillStation() => new()
+    {
+        Id = 3,
+        LocationId = 2,
+        StationName = "Grill Station",
+        StationDescription = "Burgers, fries, and more"
+    };
     #endregion ============================================================================
 
     #region ========================= Ingredient Type Creation ============================
@@ -240,6 +248,16 @@ public static class DummyData
             1 => new List<IngredientDto> { CreateWheatBread(), CreateTurkey(), CreateLettuce() },
             2 => new List<IngredientDto> { CreateLettuce(), CreateTomato() },
             _ => new List<IngredientDto>()
+        };
+    }
+
+    public static List<StationDto> GetStationsByLocation(int id)
+    {
+        return id switch
+        {
+            1 => new List<StationDto> { CreateSandwichStation(), CreateSaladStation(), CreateGrillStation() },
+            2 => new List<StationDto> { CreateSandwichStation() },
+            _ => new List<StationDto>()
         };
     }
     #endregion ============================================================================
