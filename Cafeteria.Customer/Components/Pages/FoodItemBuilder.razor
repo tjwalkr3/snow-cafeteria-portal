@@ -3,6 +3,7 @@
 @using Cafeteria.Customer.Components.Pages
 @using Cafeteria.Customer.Components.ViewModelInterfaces
 @using Cafeteria.Customer.Components.Data
+
 @inject IFoodItemBuilderVM BuilderViewModel
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
@@ -11,7 +12,22 @@
 
 <div class="container">
     @* Show current food builder item using view model *@
-    @if (BuilderViewModel.SelectedFoodItem != null)
+    @if (BuilderViewModel.SelectedFoodItem == null && IsInitialized == false)
+    {
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="alert alert-warning">
+                    <h4>No food item selected</h4>
+                    <p>Please select a food item first.</p>
+                    @* TODO: make empty state more interesting *@
+                    <a href="/item-select" class="btn btn-primary btn-lg w-100">
+                        Go to Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else if (BuilderViewModel.SelectedFoodItem != null)
     {
         <div class="row mb-4">
             <div class="col-12">
@@ -88,21 +104,6 @@
                     <a href="@("/place-order" + new Uri(Navigation.Uri).Query + BuilderViewModel.GetPartialQueryStringOfIngredients())" class="btn btn-primary btn-lg w-100">
                         Review and Order
                     </a>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="alert alert-warning">
-                    <h4>No food item selected</h4>
-                    <p>Please select a food item first.</p>
-                    @* TODO: make empty state more interesting *@
-                    <a href="/item-select" class="btn btn-primary btn-lg w-100">
-                        Go to Menu
-                    </a>
-                </div>
             </div>
         </div>
     }

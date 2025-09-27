@@ -56,8 +56,9 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         }
     }
 
-    public void GetDataFromRouteParameters(string uri)
+    public async Task GetDataFromRouteParameters(string uri)
     {
+        await Task.Delay(0); // Simulate async work
         string queryString = uri.Substring(uri.IndexOf('?') + 1);
         var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
 
@@ -65,6 +66,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         {
             FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
 
+            // throw new Exception("At least we got here!");
             SelectedFoodItem = foodItem;
         }
         catch (Exception ex)
@@ -72,7 +74,6 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
             // Handle the exception (e.g., log it)
             Console.WriteLine($"Error deserializing food item: {ex.Message}");
             SelectedFoodItem = null; // or set to a default value
-            throw new Exception("At least we got here!");
         }
     }
 

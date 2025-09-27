@@ -10,7 +10,7 @@ public interface IFoodItemBuilderVM
     List<IngredientDto> SelectedIngredients { get; set; }
     Dictionary<IngredientTypeDto, List<IngredientDto>> IngredientsByType { get; set; }
     string GetPartialQueryStringOfIngredients();
-    void GetDataFromRouteParameters(string uri);
+    Task GetDataFromRouteParameters(string uri);
     void ToggleIngredientSelection(IngredientDto ingredient);
     bool IngredientIsSelected(IngredientDto ingredient);
 }
