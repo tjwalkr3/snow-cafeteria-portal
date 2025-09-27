@@ -338,10 +338,10 @@ public static class DummyData
     {
         return stationId switch
         {
-            1 => new List<FoodItemDto> { CreateTurkeysandwich(), CreateHamSandwich(), CreateVeggieSandwich() }, 
-            2 => new List<FoodItemDto> { CreateGreenSalad(), CreateCaesarSalad(), CreateCobbSalad() }, 
-            3 => new List<FoodItemDto> { CreateCheeseburger(), CreateGrilledChicken(), CreateFrenchFries() }, 
-            _ => new List<FoodItemDto>() 
+            1 => new List<FoodItemDto> { CreateTurkeysandwich(), CreateHamSandwich(), CreateVeggieSandwich() },
+            2 => new List<FoodItemDto> { CreateGreenSalad(), CreateCaesarSalad(), CreateCobbSalad() },
+            3 => new List<FoodItemDto> { CreateCheeseburger(), CreateGrilledChicken(), CreateFrenchFries() },
+            _ => new List<FoodItemDto>()
         };
     }
 

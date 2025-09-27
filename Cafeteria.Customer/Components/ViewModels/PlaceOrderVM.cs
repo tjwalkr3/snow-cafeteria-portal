@@ -34,7 +34,7 @@ public class PlaceOrderVM : IPlaceOrderVM
 
         string queryString = uri.Substring(uri.IndexOf('?') + 1);
         var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
-        
+
         try
         {
             // Parse food item (required)

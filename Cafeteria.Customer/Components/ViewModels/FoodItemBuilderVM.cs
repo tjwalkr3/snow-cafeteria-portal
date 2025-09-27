@@ -70,7 +70,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         {
             { "food-item", JsonSerializer.Serialize(SelectedFoodItem) }
         };
-        
+
         foreach (var ingredient in SelectedIngredients)
         {
             string json = JsonSerializer.Serialize(ingredient);

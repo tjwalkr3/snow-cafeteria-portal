@@ -7,7 +7,7 @@ public partial class ItemSelect
 {
     public bool IsInitialized { get; set; } = false;
     public List<FoodItemDto> foodItems = new();
-    
+
     protected override async Task OnInitializedAsync()
     {
         await ItemSelectVM.GetDataFromRouteParameters(this.Navigation.Uri);
