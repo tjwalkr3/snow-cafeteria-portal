@@ -1,4 +1,5 @@
 @page "/food-item"
+@using Cafeteria.Customer.Components.ViewModels
 @using Cafeteria.Shared.DTOs
 @using Cafeteria.Customer.Components.Pages
 @using Cafeteria.Customer.Components.ViewModelInterfaces
@@ -29,82 +30,94 @@
     }
     else if (BuilderViewModel.SelectedFoodItem != null)
     {
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            @if (!string.IsNullOrEmpty(BuilderViewModel.SelectedFoodItem.ImageUrl))
-                            {
-                                <img src="@BuilderViewModel.SelectedFoodItem.ImageUrl" class="img-fluid rounded-start h-100" alt="@BuilderViewModel.SelectedFoodItem.ItemDescription" style="object-fit: cover;" />
-                            }
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h2 class="card-title">@BuilderViewModel.SelectedFoodItem.ItemDescription</h2>
-                                <h4 class="text-success">Price: $@BuilderViewModel.SelectedFoodItem.ItemPrice.ToString("F2")</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        @* Display ingredients as checkbox items, nested under labels showing their respective ingredient types *@
-        @if (BuilderViewModel.IngredientsByType.Any())
-        {
+        @if (IsInitialized == true && BuilderViewModel.SelectedFoodItem.ItemDescription == IFoodItemBuilderVM.ItemDescriptionWhenError) {
             <div class="row">
-                <div class="col-12">
-                    <h3>Choose Your Ingredients</h3>
-                    <p class="text-muted mb-4">Choose additional ingredients/toppings for your meal. Selecting more than the included quantity will add extra cost to your meal.</p>
+                <div class="col-12 text-center">
+                    <div class="alert alert-danger">
+                        <h4>Error loading food item</h4>
+                        <p>Please contact a developer.</p>
+                        </div>
                 </div>
             </div>
-
-            @foreach (KeyValuePair<IngredientTypeDto, List<IngredientDto>> ingredientList in BuilderViewModel.IngredientsByType)
-            {
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="mb-0">
-                                    @* Create header for ingredient type *@
-                                    @ingredientList.Key.TypeName 
-                                    <small class="text-muted">(Choose @ingredientList.Key.Quantity)</small>
-                                </h4>
+        }
+        else {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                @if (!string.IsNullOrEmpty(BuilderViewModel.SelectedFoodItem.ImageUrl))
+                                {
+                                    <img src="@BuilderViewModel.SelectedFoodItem.ImageUrl" class="img-fluid rounded-start h-100" alt="@BuilderViewModel.SelectedFoodItem.ItemDescription" style="object-fit: cover;" />
+                                }
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    @foreach (IngredientDto ingredient in ingredientList.Value)
-                                    {
-                                        <div class="col-md-6 col-lg-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" 
-                                                       type="checkbox" 
-                                                       id="@ingredient.Id"
-                                                       checked="@BuilderViewModel.IngredientIsSelected(ingredient)"
-                                                       @onchange="@((ChangeEventArgs e) => HandleIngredientChange(e, ingredient))" />
-                                                <label class="form-check-label d-flex align-items-center" for="@ingredient.Id">
-                                                    <div>
-                                                        <div class="fw-bold">@ingredient.IngredientName</div>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    }
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h2 class="card-title">@BuilderViewModel.SelectedFoodItem.ItemDescription</h2>
+                                    <h4 class="text-success">Price: $@BuilderViewModel.SelectedFoodItem.ItemPrice.ToString("F2")</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            }
-        }
-
-        <div class="row">
-            <div class="col-12 text-center">
-                    <a href="@("/place-order" + new Uri(Navigation.Uri).Query + BuilderViewModel.GetPartialQueryStringOfIngredients())" class="btn btn-primary btn-lg w-100">
-                        Review and Order
-                    </a>
             </div>
-        </div>
+
+            @* Display ingredients as checkbox items, nested under labels showing their respective ingredient types *@
+            @if (BuilderViewModel.IngredientsByType.Any())
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Choose Your Ingredients</h3>
+                        <p class="text-muted mb-4">Choose additional ingredients/toppings for your meal. Selecting more than the included quantity will add extra cost to your meal.</p>
+                    </div>
+                </div>
+
+                @foreach (KeyValuePair<IngredientTypeDto, List<IngredientDto>> ingredientList in BuilderViewModel.IngredientsByType)
+                {
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="mb-0">
+                                        @* Create header for ingredient type *@
+                                        @ingredientList.Key.TypeName 
+                                        <small class="text-muted">(Choose @ingredientList.Key.Quantity)</small>
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach (IngredientDto ingredient in ingredientList.Value)
+                                        {
+                                            <div class="col-md-6 col-lg-4 mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" 
+                                                        type="checkbox" 
+                                                        id="@ingredient.Id"
+                                                        checked="@BuilderViewModel.IngredientIsSelected(ingredient)"
+                                                        @onchange="@((ChangeEventArgs e) => HandleIngredientChange(e, ingredient))" />
+                                                    <label class="form-check-label d-flex align-items-center" for="@ingredient.Id">
+                                                        <div>
+                                                            <div class="fw-bold">@ingredient.IngredientName</div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="row">
+                <div class="col-12 text-center">
+                        <a href="@("/place-order" + new Uri(Navigation.Uri).Query + BuilderViewModel.GetPartialQueryStringOfIngredients())" class="btn btn-primary btn-lg w-100">
+                            Review and Order
+                        </a>
+                </div>
+            </div>
+        }
     }
 </div>

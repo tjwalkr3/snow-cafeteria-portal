@@ -65,15 +65,12 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         try
         {
             FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
-
-            // throw new Exception("At least we got here!");
             SelectedFoodItem = foodItem;
         }
-        catch (Exception ex)
+        catch
         {
-            // Handle the exception (e.g., log it)
-            Console.WriteLine($"Error deserializing food item: {ex.Message}");
-            SelectedFoodItem = null; // or set to a default value
+            SelectedFoodItem = new();
+            SelectedFoodItem.ItemDescription = IFoodItemBuilderVM.ItemDescriptionWhenError; // TODO: this feels like a jenky way of handling this, so probably consider refactoring
         }
     }
 

@@ -5,6 +5,7 @@ namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 public interface IFoodItemBuilderVM
 {
     FoodItemDto? SelectedFoodItem { get; set; }
+    static readonly string ItemDescriptionWhenError = "Error";
     List<IngredientTypeDto> AvailableIngredientTypes { get; set; }
     List<IngredientDto> AvailableIngredients { get; set; }
     List<IngredientDto> SelectedIngredients { get; set; }
