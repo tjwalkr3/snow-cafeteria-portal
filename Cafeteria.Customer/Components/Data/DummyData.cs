@@ -108,7 +108,9 @@ public static class DummyData
     #region ========================= Ingredient Type Creation ============================
     public static IngredientTypeDto CreateBreadType() => new() { Id = 1, TypeName = "Bread", Quantity = 1 };
     public static IngredientTypeDto CreateMeatType() => new() { Id = 2, TypeName = "Meat", Quantity = 1 };
-    public static IngredientTypeDto CreateVegetableType() => new() { Id = 3, TypeName = "Vegetable", Quantity = 2 };
+    public static IngredientTypeDto CreateVegetableType() => new() { Id = 3, TypeName = "Vegetable", Quantity = 3 };
+    private static IngredientTypeDto CreateDressingType() => new() { Id = 4, TypeName = "Dressing", Quantity = 1 };
+
     #endregion ============================================================================
 
     #region =========================== Ingredients Creation ==============================
@@ -141,7 +143,23 @@ public static class DummyData
         Id = 4,
         IngredientName = "Sliced Tomato",
         ImageUrl = "https://picsum.photos/id/189/150/150",
-        IngredientPrice = 0.25m
+        IngredientPrice = 0m
+    };
+
+    public static IngredientDto CreateRanchDressing() => new()
+    {
+        Id = 5,
+        IngredientName = "Ranch Dressing",
+        ImageUrl = "https://picsum.photos/id/292/150/150",
+        IngredientPrice = 0m
+    };
+
+    public static IngredientDto CreateItalianDressing() => new()
+    {
+        Id = 5,
+        IngredientName = "Italian Dressing",
+        ImageUrl = "https://picsum.photos/id/292/150/150",
+        IngredientPrice = 0m
     };
     #endregion ============================================================================
 
@@ -166,20 +184,32 @@ public static class DummyData
     #endregion ============================================================================
 
     #region ========================== API-like Methods ===================================
-    public static Dictionary<IngredientTypeDto, List<IngredientDto>> GetIngredientsByType()
+    public static Dictionary<IngredientTypeDto, List<IngredientDto>> GetIngredientsByType(List<IngredientTypeDto> types)
     {
-        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+        Dictionary<IngredientTypeDto, List<IngredientDto>> ingredientsByType = new();
+        foreach (IngredientTypeDto type in types)
+        {
+            if (type.Quantity >= 0)
+            {
+                ingredientsByType.Add(type, GetIngredientsForType(type.Id));
+            }
+            else if (type.Quantity < 0)
+            {
+                throw new ArgumentException("An ingredient type was found with a negative minimum quantity.");
+            }
+        }
 
-        var breadType = CreateBreadType();
-        result[breadType] = new List<IngredientDto> { CreateWheatBread() };
+        return ingredientsByType;
+    }
 
-        var meatType = CreateMeatType();
-        result[meatType] = new List<IngredientDto> { CreateTurkey() };
-
-        var vegetableType = CreateVegetableType();
-        result[vegetableType] = new List<IngredientDto> { CreateLettuce(), CreateTomato() };
-
-        return result;
+    public static List<IngredientTypeDto> GetIngredientTypesByFoodItem(int foodItemId)
+    {
+        return foodItemId switch
+        {
+            1 => new List<IngredientTypeDto> { CreateBreadType(), CreateMeatType(), CreateVegetableType() },
+            2 => new List<IngredientTypeDto> { CreateVegetableType(), CreateDressingType() },
+            _ => new List<IngredientTypeDto>()
+        };
     }
 
     public static List<IngredientDto> GetIngredientsForType(int ingredientTypeId)
