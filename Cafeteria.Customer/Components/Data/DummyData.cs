@@ -344,5 +344,19 @@ public static class DummyData
             _ => new List<FoodItemDto>() 
         };
     }
+
+    public static IngredientDto? GetIngredientById(int ingredientId)
+    {
+        return ingredientId switch
+        {
+            1 => CreateWheatBread(),
+            2 => CreateTurkey(),
+            3 => CreateLettuce(),
+            4 => CreateTomato(),
+            5 => CreateRanchDressing(),
+            6 => CreateItalianDressing(),
+            _ => null
+        };
+    }
     #endregion ============================================================================
 }
