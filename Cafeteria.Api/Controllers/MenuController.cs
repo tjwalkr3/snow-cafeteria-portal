@@ -15,39 +15,38 @@ public class MenuController : ControllerBase
         _menuService = menuService;
     }
 
-    [HttpGet("ingredients/type/{ingredientTypeId}")]
-    public async Task<ActionResult<IEnumerable<IngredientDto>>> GetIngredientsForType(int ingredientTypeId)
+    [HttpGet("locations")]
+    public async Task<ActionResult<List<LocationDto>>> GetAllLocations()
     {
-        var ingredients = await _menuService.GetIngredientsForType(ingredientTypeId);
-        return Ok(ingredients);
+        var locations = await _menuService.GetAllLocations();
+        return Ok(locations);
     }
 
-    [HttpGet("ingredient-types/food-item/{foodItemId}")]
-    public async Task<ActionResult<IEnumerable<IngredientTypeDto>>> GetIngredientTypesForFoodItem(int foodItemId)
+    [HttpGet("stations/location/{locationId}")]
+    public async Task<ActionResult<List<StationDto>>> GetStationsByLocation(int locationId)
     {
-        var ingredientTypes = await _menuService.GetIngredientTypesForFoodItem(foodItemId);
-        return Ok(ingredientTypes);
-    }
-
-    [HttpGet("default-ingredients/food-item/{foodItemId}")]
-    public async Task<ActionResult<IEnumerable<IngredientDto>>> GetDefaultIngredientsForFoodItem(int foodItemId)
-    {
-        var defaultIngredients = await _menuService.GetDefaultIngredientsForFoodItem(foodItemId);
-        return Ok(defaultIngredients);
+        var stations = await _menuService.GetStationsByLocation(locationId);
+        return Ok(stations);
     }
 
     [HttpGet("food-items/station/{stationId}")]
-    public async Task<ActionResult<IEnumerable<FoodItemDto>>> GetFoodItemsByStation(int stationId)
+    public async Task<ActionResult<List<FoodItemDto>>> GetFoodItemsByStation(int stationId)
     {
         var foodItems = await _menuService.GetFoodItemsByStation(stationId);
         return Ok(foodItems);
     }
 
-
-    [HttpGet("food-items")]
-    public async Task<ActionResult<IEnumerable<FoodItemDto>>> GetAllFoodItems()
+    [HttpGet("ingredient-types/food-item/{foodItemId}")]
+    public async Task<ActionResult<List<IngredientTypeDto>>> GetIngredientTypesByFoodItem(int foodItemId)
     {
-        var foodItems = await _menuService.GetAllFoodItems();
-        return Ok(foodItems);
+        var ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(foodItemId);
+        return Ok(ingredientTypes);
+    }
+
+    [HttpGet("ingredients/type/{ingredientTypeId}")]
+    public async Task<ActionResult<List<IngredientDto>>> GetIngredientsByType(int ingredientTypeId)
+    {
+        var ingredients = await _menuService.GetIngredientsByType(ingredientTypeId);
+        return Ok(ingredients);
     }
 }
