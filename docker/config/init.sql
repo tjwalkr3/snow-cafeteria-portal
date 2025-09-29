@@ -129,176 +129,367 @@ INSERT INTO cafeteria.station (id, location_id, station_name, station_descriptio
     (5, 3, 'Wraps', 'Fresh wraps with various fillings');
 
 INSERT INTO cafeteria.ingredient_type (id, type_name) VALUES
-    (1, 'Bread'),
-    (2, 'Wraps'),
-    (3, 'Meat'),
-    (4, 'Cheese'),
-    (5, 'Dressings'),
-    (6, 'Toppings');
+    (1, 'Omelet Ingredients'),
+    (2, 'Breakfast Sandwich Bread'),
+    (3, 'Breakfast Sandwich Cheese'),
+    (4, 'Breakfast Sandwich Meats'),
+    (5, 'Breakfast Burrito Meats'),
+    (6, 'Side of two eggs'),
+    (7, 'Breakfast Plate'),
+    (8, 'Pizza Toppings'),
+    (9, 'Deli Meats'),
+    (10, 'Deli Cheeses'),
+    (11, 'Deli Toppings'),
+    (12, 'Deli Dressings'),
+    (13, 'Deli Extra Cheeses'),
+    (14, 'Deli Extra Meats'),
+    (15, 'Bistro Meats'),
+    (16, 'Bistro Cheeses'),
+    (17, 'Bistro Toppings'),
+    (18, 'Bistro Dressings'),
+    (19, 'Bistro Extra Cheeses'),
+    (20, 'Bistro Extra Meats');
+
 
 INSERT INTO cafeteria.ingredient (id, ingredient_name) VALUES
-    (1, 'Spinach Wrap'),
-    (2, 'Chipotle Wrap'),
-    (3, 'Garlic-N-Herb'),
-    (4, 'Ham'),
-    (5, 'Turkey'),
-    (6, 'Bacon'),
-    (7, 'Grilled Chicken'),
-    (8, 'American'),
-    (9, 'Provolone'),
-    (10, 'Cheddar'),
-    (11, 'Pepper Jack'),
-    (12, 'Swiss'),
-    (13, 'Spinach'),
-    (14, 'Lettuce'),
-    (15, 'Olives'),
-    (16, 'Cucumber'),
-    (17, 'Tomato'),
-    (18, 'Sprouts'),
-    (19, 'Bell Pepper'),
-    (20, 'Onions'),
-    (21, 'Pickles'),
-    (22, 'Banana Peppers'),
-    (23, 'Oil'),
-    (24, 'Vinegar'),
-    (25, 'Mayo'),
-    (26, '1000 Island'),
-    (27, 'Italian'),
-    (28, 'Caesar'),
-    (29, 'Raspberry Vinaigrette'),
-    (30, 'Honey Mustard'),
-    (31, 'Mayonnaise'),
-    (32, 'Mustard'),
-    (33, 'Tuna Salad'),
-    (34, 'Pastrami'),
-    (35, 'Chicken Salad'),
-    (36, 'Pretzel Bun'),
-    (37, 'Marble Rye'),
-    (38, 'Sourdough'),
-    (39, 'Pita Bread'),
-    (40, 'Wheat'),
-    (41, 'Garlic Flat Bread'),
-    (42, 'White Bread'),
-    (43, 'Salad'),
-    (44, 'Mozzarella'),
-    (45, 'Romaine'),
-    (46, 'Green Leaf'),
-    (47, 'Pineapple'),
-    (48, 'Mushrooms'),
-    (49, 'Extra Cheese'),
-    (50, 'Pepperoni'),
-    (51, 'Bell Peppers'),
-    (52, 'Sausage');
+    
+    -- Eggs
+    (1, '1 Egg'),
+    (2, '2 Eggs'),
+    (3, '3 Eggs'),
+    (4, 'Eggs Scrambled'),
+    (5, 'Eggs Over Easy'),
+    (6, 'Eggs Over Hard'),
+    (7, 'Eggs Sunny Side Up'),
+
+    -- Breakfast Breads
+    (8, 'Croissant'),
+    (9, 'English Muffin'),
+    (10, 'Biscuit'),
+    (11, 'Bagel'),
+
+    -- Meats
+    (12, 'Sausage'),
+    (13, 'Bacon'),
+    (14, 'Ham'),
+    (15, 'Pepperoni'),
+    (16, 'Grilled Chicken'),
+    (17, 'Pastrami'),
+    (18, 'Chicken Salad'),
+    (19, 'Tuna Salad'),
+    (51, 'Turkey'),
+
+
+    -- Cheeses
+    (20, 'American'),
+    (21, 'Cheddar'),
+    (22, 'Pepper Jack'),
+    (23, 'Provolone'),
+    (24, 'Mozzarella'),
+    (25, 'Swiss'),
+
+    -- Toppings
+    (26, 'Bell Peppers'),
+    (27, 'Potatoes'),
+    (28, 'Onions'),
+    (29, 'Mushrooms'),
+    (30, 'Black Olives'),
+    (31, 'Banana Peppers'),
+    (32, 'Pineapple'),
+    (33, 'Extra Cheese'),
+    (34, 'Spinach'),
+    (35, 'Romaine'),
+    (36, 'Green Leaf'),
+    (37, 'Cucumbers'),
+    (38, 'Tomatoes'),
+    (39, 'Sprouts'),
+    (40, 'Pickles'),
+    (52, 'Lettuce'),
+
+    -- Dressings
+    (41, 'Oil'),
+    (42, 'Vinegar'),
+    (43, 'Ranch'),
+    (44, '1000 Island'),
+    (45, 'Italian'),
+    (46, 'Caesar'),
+    (47, 'Raspberry Vinaigrette'),
+    (48, 'Honey Mustard'),
+    (49, 'Mayonnaise'),
+    (50, 'Mustard')
 
 INSERT INTO cafeteria.ingredient_ingredient_type (ingredient_type_id, ingredient_id) VALUES
-    (2, 1),
-    (2, 2),
-    (2, 3),
-    (3, 4),
-    (3, 5),
-    (3, 6),
-    (3, 7),
-    (4, 8),
-    (4, 9),
-    (4, 10),
-    (4, 11),
-    (4, 12),
-    (6, 13),
-    (6, 14),
-    (6, 15),
-    (6, 16),
-    (6, 17),
-    (6, 18),
-    (6, 19),
-    (6, 20),
-    (6, 21),
-    (6, 22),
-    (5, 23),
-    (5, 24),
-    (5, 25),
-    (5, 26),
-    (5, 27),
-    (5, 28),
-    (5, 29),
-    (5, 30),
-    (5, 31),
-    (5, 32),
-    (3, 33),
-    (3, 34),
-    (3, 35),
-    (1, 36),
-    (1, 37),
-    (1, 38),
-    (1, 39),
-    (1, 40),
-    (1, 41),
-    (1, 42),
-    (1, 43),
-    (4, 44),
-    (6, 45),
-    (6, 46),
-    (6, 47),
-    (6, 48),
-    (6, 49),
-    (6, 50),
-    (6, 51),
-    (6, 52);
+    1, 12
+    1 14
+    1 13
+    1 26
+    1 27
+    1 20
+    1 21
+    1 22
+    1 28
+    1 29
 
-INSERT INTO cafeteria.food_item (station_id, item_description, item_price) VALUES
-    (1, 'Pretzel Bun Sandwich',),
-    (1, 'Marble Rye Sandwich',),
-    (1, 'Sourdough Sandwich',),
-    (1, 'Wheat Sandwich',),
-    (1, 'Garlic Flat Bread Sandwich',),
-    (1, 'White Bread Sandwich',),
-    (1, 'Salad',),
-    (2, 'Hamburger', ),
-    (2, 'Cheeseburger', ),
-    (2, 'Double Cheeseburger', ),
-    (2, 'Bacon Cheeseburger', ),
-    (2, 'Double Bacon Cheeseburger', ),
-    (2, 'Turkey Burger', ),
-    (2, 'Veggie Burger', ),
-    (2, 'Grilled Chicken Sandwich', ),
-    (2, 'Grilled Chicken Breast', ),
-    (2, 'Breaded Chicken Breast', ),
-    (2, 'Breaded Chicken Sandwich', ),
-    (2, 'Philly Cheesesteak', ),
-    (2, 'Chicken Cheesesteak', ),
-    (2, 'Badger Burger', ),
-    (2, 'BLT', ),
-    (2, 'Fish Fillet', ),
-    (2, 'Fish Fillet Sandwich', ),
-    (2, 'Grilled Cheese', ),
-    (2, 'Grilled Cheese and Ham', ),
-    (2, 'Cheese Quesadilla', ),
-    (2, 'Chicken Quesadilla', ),
-    (2, 'Steak Quesadilla', ),
-    (2, 'French Fries', ),
-    (2, 'Waffle Fries', ),
-    (2, 'Onion Rings', ),
-    (2, 'Tater Tots', ),
-    (2, 'Corn Dog', ),
-    (2, 'Chicken Nuggets', ),
-    (3, 'Single Pizza', ),
-    (3, 'Large Pizza', ),
-    (4, 'Breakfast Plate', ),
-    (4, 'Omelette', ),
-    (4, 'Breakfast Sandwich', ),
-    (4, 'Breakfast Burrito', ),
-    (4, 'French Toast', ),
-    (4, '1 Pancake', ),
-    (4, '2 Pancakes', ),
-    (4, 'Biscuits & Gravy', ),
-    (4, '2 Scrambled Eggs', ),
-    (4, '2 Over Easy Eggs', ),
-    (4, '2 Sunny Side Up Eggs', ),
-    (4, 'Bacon', ),
-    (4, 'Sausage Links', ),
-    (4, 'Potatoes', ),
-    (4, 'Tater Tots', ),
-    (4, 'Toast', ),
-    (5, 'Spinach Wrap', ),
-    (5, 'Chipotle Wrap', ),
-    (5, 'Garlic-N-Herb', ),
-    (5, 'Salad', );
+    2 8
+    2 9
+    2 10
+    2 11
+
+    3 20
+    3 25
+    3 21
+    3 22
+
+    4 12
+    4 13
+    4 14
+
+    5 12
+    5 13
+    5 14
+
+    6 4
+    6 5
+    6 7
+
+    7 12
+    7 13
+    7 1
+    7 2
+    7 3
+    7 4
+    7 5
+    7 6
+    7 7
+
+    8 14
+    8 13
+    8 12
+    8 28
+    8 15
+    8 16
+    8 30
+    8 26
+    8 31
+    8 32
+    8 29
+    8 33
+
+    9 14
+    9 51
+    9 17
+    9 16
+    9 13
+    9 18
+    9 19
+
+    10 20
+    10 23
+    10 21
+    10 22
+    10 25
+    10 24
+
+    11 34
+    11 35
+    11 36
+    11 30
+    11 37
+    11 38
+    11 39
+    11 26
+    11 28
+    11 40
+    11 31
+
+    12 41
+    12 42
+    12 43
+    12 44
+    12 45
+    12 46
+    12 47
+    12 48
+    12 49
+    12 50
+
+    13 20
+    13 23
+    13 21
+    13 22
+    13 25
+    13 24
+
+    14 14
+    14 51
+    14 17
+    14 16
+    14 13
+    14 18
+    14 19
+
+    15 14
+    15 51
+    15 13
+    15 16
+
+    16 20
+    16 23
+    16 21
+    16 22
+    16 25
+
+    17 34
+    17 52
+    17 30
+    17 37
+    17 38
+    17 39
+    17 26
+    17 28
+    17 40 
+    17 31
+
+    18 41
+    18 42
+    18 43
+    18 44
+    18 45
+    18 46
+    18 47
+    18 48
+    18 49
+    18 50
+
+    19 20
+    19 23
+    19 21
+    19 22
+    
+    20 14
+    20 51
+    20 13
+    20 16
+
+
+INSERT INTO cafeteria.food_item (id, station_id, item_description, item_price) VALUES
+    (1, 1, 'Pretzel Bun Sandwich',),
+    (2, 1, 'Marble Rye Sandwich',),
+    (3, 1, 'Sourdough Sandwich',),
+    (4, 1, 'Wheat Sandwich',),
+    (5, 1, 'Garlic Flat Bread Sandwich',),
+    (6, 1, 'White Bread Sandwich',),
+    (7, 1, 'Salad',),
+
+    (8, 2, 'Hamburger', ),
+    (9, 2, 'Cheeseburger', ),
+    (10, 2, 'Double Cheeseburger', ),
+    (11, 2, 'Bacon Cheeseburger', ),
+    (12, 2, 'Double Bacon Cheeseburger', ),
+    (13, 2, 'Turkey Burger', ),
+    (14, 2, 'Veggie Burger', ),
+    (15, 2, 'Grilled Chicken Sandwich', ),
+    (16, 2, 'Grilled Chicken Breast', ),
+    (17, 2, 'Breaded Chicken Breast', ),
+    (18, 2, 'Breaded Chicken Sandwich', ),
+    (19, 2, 'Philly Cheesesteak', ),
+    (20, 2, 'Chicken Cheesesteak', ),
+    (21, 2, 'Badger Burger', ),
+    (22, 2, 'BLT', ),
+    (23, 2, 'Fish Fillet', ),
+    (24, 2, 'Fish Fillet Sandwich', ),
+    (25, 2, 'Grilled Cheese', ),
+    (26, 2, 'Grilled Cheese and Ham', ),
+    (27, 2, 'Cheese Quesadilla', ),
+    (28, 2, 'Chicken Quesadilla', ),
+    (29, 2, 'Steak Quesadilla', ),
+    (30, 2, 'French Fries', ),
+    (31, 2, 'Waffle Fries', ),
+    (32, 2, 'Onion Rings', ),
+    (33, 2, 'Tater Tots', ),
+    (34, 2, 'Corn Dog', ),
+    (35, 2, 'Chicken Nuggets', ),
+
+    (36, 3, 'Single Pizza', ),
+    (37, 3, 'Large Pizza', ),
+
+    (38, 4, 'Breakfast Plate', ),
+    (39, 4, 'Omelet', ),
+    (40, 4, 'Breakfast Sandwich', ),
+    (41, 4, 'Breakfast Burrito', ),
+    (42, 4, 'Side of Two Eggs', ),
+    (43, 4, 'French Toast', ),
+    (44, 4, 'Pancake', ),
+    (45, 4, 'Pancakes', ),
+    (46, 4, 'Bacon', ),
+    (47, 4, 'Sausage', ),
+    (48, 4, 'Potatoes', ),
+    (49, 4, 'Tater Tots', ),
+    (50, 4, 'Toast', )
+
+    (51, 5, 'Spinach Wrap', ),
+    (52, 5, 'Chipotle Wrap', ),
+    (53, 5, 'Garlic-N-Herb Wrap', );
+
+INSERT INTO cafeteria.food_item_ingredient_type (food_item_id, ingredient_type_id) VALUES
+    1 9
+    1 10
+    1 11 
+    1 12
+    1 13
+    1 14
+    2 9
+    2 10
+    2 11
+    2 12
+    2 13
+    2 14
+    3 9
+    3 10
+    3 11
+    3 12
+    3 13
+    3 14
+    4 9
+    4 10
+    4 11
+    4 12
+    4 13
+    4 14
+    5 9
+    5 10
+    5 11
+    5 12
+    5 13
+    5 14
+    6 9
+    6 10
+    6 11
+    6 12
+    6 13
+    6 14
+    7 9
+    7 10
+    7 11
+    7 12
+    7 13
+    7 14
+
+    36 8
+    37 8
+
+    38 7
+    39 1
+    40 2
+    40 3
+    40 4
+    41 5
+    42 6
+
+    51 15
+    51 16
+    51 17
+    51 18
+    51 19
+    51 20
+    
