@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Cafeteria.Api.DTOs;
+namespace Cafeteria.Shared.DTOs;
 
 public class CafeteriaLocationDto
 {
