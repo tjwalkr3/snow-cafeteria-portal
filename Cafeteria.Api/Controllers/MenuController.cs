@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Api.DTOs;
 using Cafeteria.Api.Services;
+using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Api.Controllers;
 
@@ -8,6 +9,7 @@ namespace Cafeteria.Api.Controllers;
 [Route("api/[controller]")]
 public class MenuController : ControllerBase
 {
+
     private readonly MenuService _menuService;
 
     public MenuController(MenuService menuService)

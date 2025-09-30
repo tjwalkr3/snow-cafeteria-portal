@@ -1,32 +1,30 @@
-using Cafeteria.Shared;
+using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Components.Data;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 
 namespace Cafeteria.Customer.Components.ViewModels;
-public class FoodItemBuilderVM : IFoodItemBuilderViewModel
+
+public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
-    /// <summary>
-    /// This constructor should be used only with dummy data/for testing
-    /// </summary>
     public FoodItemBuilderVM()
     {
-        SelectedFoodItem = DummyData.GetDummySandwich();
+        SelectedFoodItem = DummyData.CreateTurkeysandwich();
         AvailableIngredients = DummyData.GetIngredientList;
-        IngredientsByType = GetIngredientsByType();
-
+        AvailableIngredientTypes = DummyData.GetIngredientTypeList;
+        IngredientsByType = DummyData.GetIngredientsByType();
     }
 
-    public FoodItemBuilderVM(FoodItem selectedItem)
+    public FoodItemBuilderVM(FoodItemDto selectedItem)
     {
         SelectedFoodItem = selectedItem;
     }
-    public FoodItem SelectedFoodItem { get; set; }
-    public List<IngredientType> AvailableIngredientTypes { get; set; } = new List<IngredientType>();
-    public List<Ingredient> AvailableIngredients { get; set; } = new List<Ingredient>();
-    public List<Ingredient> SelectedIngredients { get; set; } = new List<Ingredient>();
-    public Dictionary<IngredientType, List<Ingredient>> IngredientsByType { get; set; } = new Dictionary<IngredientType, List<Ingredient>>();
+    public FoodItemDto SelectedFoodItem { get; set; }
+    public List<IngredientTypeDto> AvailableIngredientTypes { get; set; } = new List<IngredientTypeDto>();
+    public List<IngredientDto> AvailableIngredients { get; set; } = new List<IngredientDto>();
+    public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
+    public Dictionary<IngredientTypeDto, List<IngredientDto>> IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
 
-    public void SelectIngredient(Ingredient ingredient)
+    public void SelectIngredient(IngredientDto ingredient)
     {
         if (!SelectedIngredients.Contains(ingredient))
         {
@@ -34,35 +32,11 @@ public class FoodItemBuilderVM : IFoodItemBuilderViewModel
         }
     }
 
-    public void UnselectIngredient(Ingredient ingredient)
+    public void UnselectIngredient(IngredientDto ingredient)
     {
         if (SelectedIngredients.Contains(ingredient))
         {
             SelectedIngredients.Remove(ingredient);
         }
-    }
-
-    private Dictionary<IngredientType, List<Ingredient>> GetIngredientsByType()
-    {
-        Dictionary<IngredientType, List<Ingredient>> ingredients = new();
-
-        // Get all distinct ingredient types from available ingredients
-        var distinctTypes = AvailableIngredients
-            .Where(i => i.Type != null)
-            .Select(i => i.Type!)
-            .GroupBy(t => t.Name)
-            .Select(g => g.First()) // Take the first instance of each type name
-            .ToList();
-
-        AvailableIngredientTypes = distinctTypes;
-
-        foreach (var type in AvailableIngredientTypes)
-        {
-            ingredients[type] = AvailableIngredients
-                .Where(i => i.Type != null && i.Type.Name == type.Name)
-                .ToList();
-        }
-
-        return ingredients;
     }
 }
