@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Cafeteria.Api.DTOs;
 using Cafeteria.Api.Services;
 using Cafeteria.Shared.DTOs;
 

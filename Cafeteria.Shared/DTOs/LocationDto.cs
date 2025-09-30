@@ -1,4 +1,4 @@
-namespace Cafeteria.Api.DTOs;
+namespace Cafeteria.Shared.DTOs;
 
 public class LocationDto
 {
