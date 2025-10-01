@@ -10,4 +10,10 @@ public class PlaceOrderVM : IPlaceOrderVM
     {
         return DummyData.GetFoodItemList;
     }
+
+    public List<IngredientDto> GetOrderItemIngredients(int foodItemId)
+    {
+        // TODO: use dummy menu service to get ingredients for food item
+        return new();
+    }
 }

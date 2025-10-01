@@ -7,14 +7,14 @@
 
 <h2>Review Your Order</h2>
 <ul style="list-style-type:disc;" class="ps-3">
-    @foreach (var foodItem in foodItems)
+    @foreach (FoodItemDto foodItem in foodItems)
     {
         <li>
             @foodItem.ItemDescription
-            @if (GetIngredientsForFoodItem(foodItem.Id).Any())
+            @if (PlaceOrderVM.GetOrderItemIngredients(foodItem.Id).Any())
             {
                 <ul style="list-style-type:circle;" class="ps-2 mt-1">
-                    @foreach (var ingredient in GetIngredientsForFoodItem(foodItem.Id))
+                    @foreach (IngredientDto ingredient in PlaceOrderVM.GetOrderItemIngredients(foodItem.Id))
                     {
                         <li>@ingredient.IngredientName</li>
                     }
@@ -24,16 +24,3 @@
     }
 </ul>
 <button>Place Order</button>
-@code {
-    private List<FoodItemDto> foodItems = new();
-
-    protected override void OnInitialized()
-    {
-        foodItems = PlaceOrderVM.GetOrderItems();
-    }
-
-    private List<IngredientDto> GetIngredientsForFoodItem(int foodItemId)
-    {
-        return DummyData.GetDefaultIngredientsForFoodItem(foodItemId);
-    }
-}
