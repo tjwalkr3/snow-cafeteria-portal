@@ -6,14 +6,14 @@ namespace Cafeteria.Customer.Components.ViewModels;
 
 public class LocationSelectVM : ILocationSelectVM
 {
-    public List<CafeteriaLocationDto> Locations { get; private set; } = new();
+    public List<LocationDto> Locations { get; private set; } = new();
 
     public LocationSelectVM()
     {
         InitializeLocations();
     }
 
-    public void OnLocationSelected(CafeteriaLocationDto location)
+    public void OnLocationSelected(LocationDto location)
     {
         // Business logic for location selection can go here
         // For example: store selected location, log selection, etc.
