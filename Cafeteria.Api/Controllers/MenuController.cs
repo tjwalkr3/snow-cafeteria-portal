@@ -38,16 +38,16 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet("ingredient-types/food-item/{foodItemId}")]
-    public async Task<ActionResult<List<IngredientTypeDto>>> GetIngredientTypesByFoodItem(int foodItemId)
+    public async Task<ActionResult<List<IngredientTypeDto>>> GetIngredientTypesForFoodItem(int foodItemId)
     {
-        var ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(foodItemId);
+        var ingredientTypes = await _menuService.GetIngredientTypesForFoodItem(foodItemId);
         return Ok(ingredientTypes);
     }
 
     [HttpGet("ingredients/type/{ingredientTypeId}")]
-    public async Task<ActionResult<List<IngredientDto>>> GetIngredientsForTypes(int ingredientTypeId)
-    {
-        var ingredients = await _menuService.GetIngredientsForTypes(ingredientTypeId);
+    public async Task<ActionResult<List<IngredientDto>>> GetIngredientsOrganizedByType(int ingredientTypeId)
+    { 
+        var ingredients = await _menuService.GetIngredientsOrganizedByType(ingredientTypeId);
         return Ok(ingredients);
     }
 }
