@@ -11,7 +11,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         SelectedFoodItem = DummyData.CreateTurkeysandwich();
         AvailableIngredients = DummyData.GetIngredientList;
         AvailableIngredientTypes = DummyData.GetIngredientTypeList;
-        IngredientsByType = DummyData.GetAllIngredientsByType();
+        IngredientsByType = DummyData.GetIngredientsForTypes();
     }
 
     public FoodItemBuilderVM(FoodItemDto selectedItem)
