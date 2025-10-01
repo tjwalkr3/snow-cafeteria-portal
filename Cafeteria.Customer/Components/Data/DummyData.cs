@@ -166,7 +166,7 @@ public static class DummyData
     #endregion ============================================================================
 
     #region ========================== API-like Methods ===================================
-    public static Dictionary<IngredientTypeDto, List<IngredientDto>> GetIngredientsByType()
+    public static Dictionary<IngredientTypeDto, List<IngredientDto>> GetAllIngredientsByType()
     {
         var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
 

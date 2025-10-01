@@ -45,9 +45,9 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet("ingredients/type/{ingredientTypeId}")]
-    public async Task<ActionResult<List<IngredientDto>>> GetIngredientsByType(int ingredientTypeId)
+    public async Task<ActionResult<List<IngredientDto>>> GetAllIngredientsByType(int ingredientTypeId)
     {
-        var ingredients = await _menuService.GetIngredientsByType(ingredientTypeId);
+        var ingredients = await _menuService.GetAllIngredientsByType(ingredientTypeId);
         return Ok(ingredients);
     }
 }
