@@ -26,7 +26,14 @@ public class DummyMenuService : IMenuService
 
     public Task<List<IngredientTypeDto>> GetIngredientTypesForFoodItem(int foodItemId)
     {
-        throw new NotImplementedException();
+        // NOTE: This currently only returns ingredient types for a dummy sandwich, regardless of what foodItemId is passed in
+        List<IngredientTypeDto> ingredientTypes = new()
+        {
+            DummyData.CreateMeatType(),
+            DummyData.CreateBreadType(),
+            DummyData.CreateVegetableType()
+        };
+        return Task.FromResult(ingredientTypes);
     }
 
     public Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
