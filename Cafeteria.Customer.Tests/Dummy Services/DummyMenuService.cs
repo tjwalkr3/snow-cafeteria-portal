@@ -24,6 +24,11 @@ public class DummyMenuService : IMenuService
         return Task.FromResult(DummyData.GetFoodItemList.Where(f => f.StationId == stationId).ToList() ?? new List<FoodItemDto>());
     }
 
+    public Task<List<IngredientTypeDto>> GetIngredientTypesForFoodItem(int foodItemId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
     {
         var ingredientsAndTypes = new Dictionary<IngredientTypeDto, List<IngredientDto>>
@@ -33,11 +38,6 @@ public class DummyMenuService : IMenuService
             { DummyData.CreateVegetableType(), new List<IngredientDto> { DummyData.CreateLettuce(), DummyData.CreateTomato() } }
         };
         return Task.FromResult(ingredientsAndTypes);
-    }
-
-    public Task<List<IngredientTypeDto>> GetIngredientTypesForFoodItem(int foodItemId)
-    {
-        throw new NotImplementedException();
     }
 
     public Task<List<IngredientDto>> GetIngredientsForType(int ingredientTypeId)

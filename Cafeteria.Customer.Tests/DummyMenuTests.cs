@@ -46,6 +46,14 @@ public class DummyMenuTests
     }
 
     [Fact]
+    public async Task DummyMenuServiceGetsIngredientTypesForDummyFoodItem()
+    {
+        var types = await MenuService.GetIngredientTypesForFoodItem(1);
+        List<IngredientTypeDto> typeList = types.ToList();
+        Assert.True((types != null) && (typeList.Count > 0));
+    }
+
+    [Fact]
     public async Task DummyMenuServiceGetsDictOfIngredientsAndTypes()
     {
         // Arrange: Get ingredient types to test with
