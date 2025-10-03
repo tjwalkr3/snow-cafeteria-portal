@@ -11,7 +11,7 @@ public class DummyMenuService : IMenuService
 {
     public Task<List<LocationDto>> GetAllLocations()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(DummyData.GetLocationList);
     }
 
     public Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
