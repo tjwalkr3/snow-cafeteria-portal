@@ -27,4 +27,12 @@ public class DummyMenuTests
         List<StationDto> stationList = stations.ToList();
         Assert.True((stations is not null) && (stationList.Count > 0));
     }
+
+    [Fact]
+    public async Task DummyMenuServiceGetsFoodItemsForDummyStation()
+    {
+        var foodItems = await MenuService.GetFoodItemsByStation(1);
+        List<FoodItemDto> foodItemList = foodItems.ToList();
+        Assert.True((foodItems is not null) && (foodItemList.Count > 0));
+    }
 }
