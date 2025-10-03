@@ -21,7 +21,7 @@ public class DummyMenuService : IMenuService
 
     public Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(DummyData.GetFoodItemList.Where(f => f.StationId == stationId).ToList() ?? new List<FoodItemDto>());
     }
 
     public Task<IngredientDto> GetIngredientById(int ingredientId)
