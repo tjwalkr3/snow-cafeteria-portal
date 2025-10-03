@@ -49,7 +49,13 @@ public class DummyMenuService : IMenuService
 
     public Task<List<IngredientDto>> GetIngredientsForType(int ingredientTypeId)
     {
-        throw new NotImplementedException();
+        // NOTE: This currently only returns ingredients for a vegetable type, regardless of what ingredientTypeId is passed in
+        List<IngredientDto> ingredients = new()
+        {
+            DummyData.CreateLettuce(),
+            DummyData.CreateTomato()
+        };
+        return Task.FromResult(ingredients);
     }
 
     public Task<IngredientDto> GetIngredientById(int ingredientId)
