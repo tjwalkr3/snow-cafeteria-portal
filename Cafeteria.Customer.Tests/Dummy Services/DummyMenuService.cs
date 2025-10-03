@@ -26,7 +26,7 @@ public class DummyMenuService : IMenuService
 
     public Task<IngredientDto> GetIngredientById(int ingredientId)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(DummyData.GetIngredientList.First(i => i.Id == ingredientId) ?? new IngredientDto());
     }
 
     public Task<List<IngredientDto>> GetIngredientsForType(int ingredientTypeId)
