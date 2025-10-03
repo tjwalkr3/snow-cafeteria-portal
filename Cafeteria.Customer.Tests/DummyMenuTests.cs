@@ -1,4 +1,5 @@
-﻿using Cafeteria.Customer.Tests.DummyServices;
+﻿using Cafeteria.Customer.Components.Data;
+using Cafeteria.Customer.Tests.DummyServices;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Tests;
@@ -42,5 +43,20 @@ public class DummyMenuTests
         var ingredient = await MenuService.GetIngredientById(1);
         IngredientDto ingredientDto = ingredient;
         Assert.True(ingredientDto is not null && ingredientDto.IngredientName is not null && ingredientDto.IngredientName.Length > 0);
+    }
+
+    [Fact]
+    public async Task DummyMenuServiceGetsDictOfIngredientsAndTypes()
+    {
+        // Arrange: Get ingredient types to test with
+        var types = await MenuService.GetIngredientTypesForFoodItem(1);
+        List<IngredientTypeDto> typeList = types.ToList();
+
+        // Act: call method and store result in dictionary
+        var ingredientsAndTypes = await MenuService.GetIngredientsOrganizedByType(typeList);
+        Dictionary<IngredientTypeDto, List<IngredientDto>> ingredientsAndTypesDict = ingredientsAndTypes;
+
+        // Assert
+        Assert.True(ingredientsAndTypesDict is not null && ingredientsAndTypes.Count > 0);
     }
 }
