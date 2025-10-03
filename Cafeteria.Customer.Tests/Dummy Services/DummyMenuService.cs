@@ -14,6 +14,11 @@ public class DummyMenuService : IMenuService
         return Task.FromResult(DummyData.GetLocationList);
     }
 
+    public Task<List<StationDto>> GetStationsByLocation(int locationId)
+    {
+        return Task.FromResult(DummyData.GetStationList.Where(s => s.LocationId == locationId).ToList() ?? new List<StationDto>());
+    }
+
     public Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
     {
         throw new NotImplementedException();
@@ -35,11 +40,6 @@ public class DummyMenuService : IMenuService
     }
 
     public Task<List<IngredientTypeDto>> GetIngredientTypesForFoodItem(int foodItemId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         throw new NotImplementedException();
     }
