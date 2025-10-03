@@ -35,4 +35,12 @@ public class DummyMenuTests
         List<FoodItemDto> foodItemList = foodItems.ToList();
         Assert.True((foodItems is not null) && (foodItemList.Count > 0));
     }
+
+    [Fact]
+    public async Task DummyMenuServiceGetsDummyIngredientById()
+    {
+        var ingredient = await MenuService.GetIngredientById(1);
+        IngredientDto ingredientDto = ingredient;
+        Assert.True(ingredientDto is not null && ingredientDto.IngredientName is not null && ingredientDto.IngredientName.Length > 0);
+    }
 }
