@@ -67,4 +67,12 @@ public class DummyMenuTests
         // Assert
         Assert.True(ingredientsAndTypesDict is not null && ingredientsAndTypes.Count > 0);
     }
+
+    [Fact]
+    public async Task DummyMenuServiceGetsDummyIngredientsForType()
+    {
+        var ingredients = await MenuService.GetIngredientsForType(1);
+        List<IngredientDto> ingredientList = ingredients.ToList();
+        Assert.True((ingredients is not null) && (ingredientList.Count > 0));
+    }
 }
