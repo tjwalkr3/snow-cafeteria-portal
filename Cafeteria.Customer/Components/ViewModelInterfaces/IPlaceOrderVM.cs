@@ -4,6 +4,9 @@ namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 
 public interface IPlaceOrderVM
 {
+    FoodItemDto? SelectedFoodItem { get; }
+    List<IngredientDto> SelectedIngredients { get; }
     List<FoodItemDto> GetOrderItems();
-    List<IngredientDto> GetOrderItemIngredients(int foodItemId);
+    Task GetDataFromRouteParameters(string uri);
+    bool ErrorOccurredWhileParsingSelectedFoodItem();
 }

@@ -1,13 +1,19 @@
-using Cafeteria.Shared.DTOs;
+using Microsoft.AspNetCore.Components;
 
 namespace Cafeteria.Customer.Components.Pages;
 
 public partial class PlaceOrder
 {
-    private List<FoodItemDto> foodItems = new();
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        foodItems = PlaceOrderVM.GetOrderItems();
+        await PlaceOrderVM.GetDataFromRouteParameters(this.Navigation.Uri);
+    }
+
+    private decimal GetTotalPrice()
+    {
+        if (PlaceOrderVM.SelectedFoodItem == null)
+            return 0m;
+
+        return PlaceOrderVM.SelectedFoodItem.ItemPrice + PlaceOrderVM.SelectedIngredients.Sum(i => i.IngredientPrice ?? 0);
     }
 }
