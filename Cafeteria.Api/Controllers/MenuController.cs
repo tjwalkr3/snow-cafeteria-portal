@@ -17,27 +17,25 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet("locations")]
-    public async Task<ActionResult<List<LocationDto>>> GetAllLocations()
+    public async Task<List<LocationDto>> GetAllLocations()
     {
-        var locations = await _menuService.GetAllLocations();
-        return Ok(locations);
+        return await _menuService.GetAllLocations();
     }
 
     [HttpGet("stations/location/{locationId}")]
-    public async Task<ActionResult<List<StationDto>>> GetStationsByLocation(int locationId)
+    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
-        var stations = await _menuService.GetStationsByLocation(locationId);
-        return Ok(stations);
+        return await _menuService.GetStationsByLocation(locationId);
     }
 
     [HttpGet("food-items/station/{stationId}")]
-    public async Task<ActionResult<List<FoodItemDto>>> GetFoodItemsByStation(int stationId)
+    public async Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
     {
-        var foodItems = await _menuService.GetFoodItemsByStation(stationId);
-        return Ok(foodItems);
+        return await _menuService.GetFoodItemsByStation(stationId);
     }
 
     [HttpGet("ingredient-types/food-item/{foodItemId}")]
+
     public async Task<ActionResult<List<IngredientTypeDto>>> GetIngredientTypesForFoodItem(int foodItemId)
     {
         var ingredientTypes = await _menuService.GetIngredientTypesForFoodItem(foodItemId);
@@ -49,5 +47,15 @@ public class MenuController : ControllerBase
     {
         var ingredients = await _menuService.GetIngredientsOrganizedByType(ingredientTypeId);
         return Ok(ingredients);
+=======
+    public async Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
+    {
+        return await _menuService.GetIngredientTypesByFoodItem(foodItemId);
+    }
+
+    [HttpGet("ingredients/type/{ingredientTypeId}")]
+    public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
+    {
+        return await _menuService.GetIngredientsByType(ingredientTypeId);
     }
 }
