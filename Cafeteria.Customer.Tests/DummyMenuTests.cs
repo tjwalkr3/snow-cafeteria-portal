@@ -1,5 +1,5 @@
 ﻿using Cafeteria.Customer.Components.Data;
-using Cafeteria.Customer.Tests.DummyServices;
+using Cafeteria.Shared.Services;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Tests;

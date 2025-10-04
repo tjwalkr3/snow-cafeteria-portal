@@ -8,7 +8,7 @@ public class StationSelectVM : IStationSelectVM
 {
     string errorString = "Error";
     public bool IsInitialized { get; private set; } = false;
-    public CafeteriaLocationDto? SelectedLocation { get; private set; }
+    public LocationDto? SelectedLocation { get; private set; }
     public List<StationDto>? Stations { get; private set; }
 
     public StationSelectVM()
@@ -24,19 +24,19 @@ public class StationSelectVM : IStationSelectVM
         var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
         try
         {
-            CafeteriaLocationDto location = JsonSerializer.Deserialize<CafeteriaLocationDto>(queryParams.Get("location") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize location from query parameter.");
+            LocationDto location = JsonSerializer.Deserialize<LocationDto>(queryParams.Get("location") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize location from query parameter.");
             SelectedLocation = location;
             Stations = DummyData.GetStationsByLocation(SelectedLocation.Id);
         }
         catch
         {
             SelectedLocation = new();
-            SelectedLocation.LocationName = errorString;
+            SelectedLocation.Name = errorString;
         }
     }
 
     public bool ErrorOccurredWhileParsingSelectedLocation()
     {
-        return SelectedLocation != null && SelectedLocation.LocationName == errorString;
+        return SelectedLocation is not null && SelectedLocation.Name == errorString;
     }
 }
