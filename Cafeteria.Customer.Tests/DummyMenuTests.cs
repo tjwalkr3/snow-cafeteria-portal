@@ -1,5 +1,4 @@
-﻿using Cafeteria.Customer.Components.Data;
-using Cafeteria.Shared.Services;
+﻿using Cafeteria.Shared.Services;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Tests;
