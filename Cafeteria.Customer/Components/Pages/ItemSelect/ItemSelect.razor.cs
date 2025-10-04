@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
 
-namespace Cafeteria.Customer.Components.Pages;
+namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 
 public partial class ItemSelect
 {

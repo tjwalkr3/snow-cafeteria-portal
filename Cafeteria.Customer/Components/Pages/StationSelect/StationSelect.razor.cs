@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Cafeteria.Customer.Components.Pages;
+namespace Cafeteria.Customer.Components.Pages.StationSelect;
 
 public partial class StationSelect
 {
