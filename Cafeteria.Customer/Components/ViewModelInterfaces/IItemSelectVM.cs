@@ -5,7 +5,7 @@ namespace Cafeteria.Customer.Components.ViewModelInterfaces;
 public interface IItemSelectVM
 {
     StationDto? SelectedStation { get; }
-    List<FoodItemDto> GetFoodItems();
+    Task<List<FoodItemDto>> GetFoodItemsAsync();
     Task GetDataFromRouteParameters(string uri);
     bool ErrorOccurredWhileParsingSelectedStation();
 }

@@ -11,7 +11,7 @@ public partial class ItemSelect
     protected override async Task OnInitializedAsync()
     {
         await ItemSelectVM.GetDataFromRouteParameters(this.Navigation.Uri);
-        foodItems = ItemSelectVM.GetFoodItems();
+        foodItems = await ItemSelectVM.GetFoodItemsAsync();
         IsInitialized = true;
     }
 
