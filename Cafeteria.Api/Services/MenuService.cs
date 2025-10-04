@@ -43,7 +43,7 @@ public class MenuService
         return result.ToList();
     }
 
-    public async Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
+    public async Task<List<IngredientTypeDto>> GetIngredientTypesForFoodItem(int foodItemId)
     {
         const string sql = @"
             SELECT it.id, it.type_name TypeName, it.quantity
@@ -55,7 +55,7 @@ public class MenuService
         return result.ToList();
     }
 
-    public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
+    public async Task<List<IngredientDto>> GetIngredientsOrganizedByType(int ingredientTypeId)
     {
         const string sql = @"
             SELECT i.id, i.ingredient_name IngredientName, i.image_url ImageUrl, i.ingredient_price IngredientPrice

@@ -1,21 +1,27 @@
 ﻿namespace Cafeteria.Customer.Components.ViewModels;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
-using Cafeteria.Customer.Components.Data;
+using Cafeteria.Shared.Interfaces;
 using Cafeteria.Shared.DTOs;
 using System.Text.Json;
 
 public class ItemSelectVM : IItemSelectVM
 {
+    private readonly IMenuService _menuService;
     string errorString = "Error";
     public StationDto? SelectedStation { get; private set; }
 
-    public List<FoodItemDto> GetFoodItems()
+    public ItemSelectVM(IMenuService menuService)
+    {
+        _menuService = menuService;
+    }
+
+    public async Task<List<FoodItemDto>> GetFoodItemsAsync()
     {
         if (SelectedStation != null && !ErrorOccurredWhileParsingSelectedStation())
         {
-            return DummyData.GetFoodItemsByStation(SelectedStation.Id);
+            return await _menuService.GetFoodItemsByStation(SelectedStation.Id);
         }
-        return DummyData.GetFoodItemList;
+        return new List<FoodItemDto>(); // Return empty list when no station selected
     }
 
     public async Task GetDataFromRouteParameters(string uri)
