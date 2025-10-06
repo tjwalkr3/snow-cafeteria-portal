@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Customer.Components.Data;
+using Cafeteria.Shared.Interfaces;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 using System.Text.Json;
 
@@ -7,10 +7,16 @@ namespace Cafeteria.Customer.Components.ViewModels;
 
 public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
+    private readonly IMenuService _menuService;
     string errorString = "Error";
     public FoodItemDto? SelectedFoodItem { get; set; }
     public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
     public Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+
+    public FoodItemBuilderVM(IMenuService menuService)
+    {
+        _menuService = menuService;
+    }
 
     public void ToggleIngredientSelection(IngredientDto ingredient)
     {
@@ -54,8 +60,8 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         {
             FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
             SelectedFoodItem = foodItem;
-            List<IngredientTypeDto> ingredientTypes = DummyData.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
-            IngredientsByType = DummyData.GetIngredientsByType(ingredientTypes);
+            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesForFoodItem(SelectedFoodItem.Id);
+            IngredientsByType = await _menuService.GetIngredientsOrganizedByType(ingredientTypes);
         }
         catch
         {

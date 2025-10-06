@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
 
-namespace Cafeteria.Customer.Components.Pages;
+namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 
 public partial class ItemSelect
 {
@@ -11,7 +11,7 @@ public partial class ItemSelect
     protected override async Task OnInitializedAsync()
     {
         await ItemSelectVM.GetDataFromRouteParameters(this.Navigation.Uri);
-        foodItems = ItemSelectVM.GetFoodItems();
+        foodItems = await ItemSelectVM.GetFoodItemsAsync();
         IsInitialized = true;
     }
 

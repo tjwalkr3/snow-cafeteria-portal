@@ -1,6 +1,8 @@
 using Cafeteria.Customer.Components;
 using Cafeteria.Customer.Components.ViewModels;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
+using Cafeteria.Shared.Interfaces;
+using Cafeteria.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Register menu service
+builder.Services.AddScoped<IMenuService, DummyMenuService>();
+
+// Register view models
 builder.Services.AddScoped<IItemSelectVM, ItemSelectVM>();
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
