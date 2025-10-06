@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Cafeteria.Customer.Components.Pages;
+namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
 public partial class PlaceOrder
 {

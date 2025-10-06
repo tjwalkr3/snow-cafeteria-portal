@@ -1,7 +1,7 @@
 using Cafeteria.Shared.DTOs;
 using Microsoft.AspNetCore.Components;
 
-namespace Cafeteria.Customer.Components.Pages;
+namespace Cafeteria.Customer.Components.Pages.FoodItemBuilder;
 
 public partial class FoodItemBuilder
 {

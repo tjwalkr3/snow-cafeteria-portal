@@ -37,12 +37,12 @@ public class MenuController : ControllerBase
     [HttpGet("ingredient-types/food-item/{foodItemId}")]
     public async Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
     {
-        return await _menuService.GetIngredientTypesByFoodItem(foodItemId);
+        return await _menuService.GetIngredientTypesForFoodItem(foodItemId);
     }
 
     [HttpGet("ingredients/type/{ingredientTypeId}")]
     public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
     {
-        return await _menuService.GetIngredientsByType(ingredientTypeId);
+        return await _menuService.GetIngredientsOrganizedByType(ingredientTypeId);
     }
 }
