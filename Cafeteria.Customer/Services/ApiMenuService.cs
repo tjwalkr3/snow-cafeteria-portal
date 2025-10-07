@@ -16,7 +16,7 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
     {
         if (locationId < 1)
             throw new ArgumentOutOfRangeException(nameof(locationId));
-        
+
         var response = client.GetAsync($"/stations/location/{locationId}").Result;
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? new List<StationDto>();
@@ -26,7 +26,7 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
     {
         if (stationId < 1)
             throw new ArgumentOutOfRangeException(nameof(stationId));
-        
+
         var response = client.GetAsync($"/food-items/station/{stationId}").Result;
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<FoodItemDto>>() ?? new List<FoodItemDto>();
@@ -36,7 +36,7 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
     {
         if (foodItemId < 1)
             throw new ArgumentOutOfRangeException(nameof(foodItemId));
-        
+
         var response = client.GetAsync($"/ingredient-types/food-item/{foodItemId}").Result;
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<IngredientTypeDto>>() ?? new List<IngredientTypeDto>();
@@ -46,9 +46,19 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
     {
         if (ingredientTypeId < 1)
             throw new ArgumentOutOfRangeException(nameof(ingredientTypeId));
-        
+
         var response = client.GetAsync($"/ingredients/type/{ingredientTypeId}").Result;
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<IngredientDto>>() ?? new List<IngredientDto>();
+    }
+
+    public Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IngredientDto> GetIngredientById(int ingredientId)
+    {
+        throw new NotImplementedException();
     }
 }
