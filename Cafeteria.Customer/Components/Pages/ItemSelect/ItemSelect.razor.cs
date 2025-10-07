@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 
@@ -7,6 +8,8 @@ public partial class ItemSelect
 {
     public bool IsInitialized { get; set; } = false;
     public List<FoodItemDto> foodItems = new();
+    private bool isModalOpen = false;
+    private FoodItemDto? selectedFoodItem = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -15,8 +18,24 @@ public partial class ItemSelect
         IsInitialized = true;
     }
 
-    private string GetFoodItemUrl(string foodItemId)
+    private void OpenFoodItemModal(FoodItemDto foodItem)
     {
-        return $"/food-item?item-id={Uri.EscapeDataString(foodItemId)}"; // TODO: this line has a magic string in it for the route parameter of the food-item page that we should perhaps make into a variable somewhere...maybe in an enum?
+        Console.WriteLine($"Opening modal for: {foodItem.ItemDescription}");
+        selectedFoodItem = foodItem;
+        isModalOpen = true;
+        StateHasChanged();
+    }
+
+    private void CloseModal()
+    {
+        isModalOpen = false;
+        selectedFoodItem = null;
+    }
+
+    private void HandleOrderReady(Dictionary<string, string?> orderData)
+    {
+        // Navigate to place-order page with the order data
+        string url = QueryHelpers.AddQueryString("/place-order", orderData);
+        Navigation.NavigateTo(url);
     }
 }

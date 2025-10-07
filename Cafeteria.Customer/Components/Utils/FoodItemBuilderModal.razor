@@ -1,0 +1,55 @@
+@using Cafeteria.Shared.DTOs
+@using Cafeteria.Customer.Components.Pages.FoodItemBuilder
+
+@if (IsOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Customize Your Menu Item</h5>
+                    <button type="button" class="btn-close" @onclick="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (SelectedFoodItem != null)
+                    {
+                        <FoodItemBuilder @ref="foodItemBuilderRef" FoodItem="@SelectedFoodItem" OnOrderReady="HandleOrderReady" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public FoodItemDto? SelectedFoodItem { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback<Dictionary<string, string?>> OnOrderReady { get; set; }
+
+    private FoodItemBuilder? foodItemBuilderRef;
+
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine($"Modal IsOpen: {IsOpen}, SelectedFoodItem: {SelectedFoodItem?.ItemDescription ?? "null"}");
+    }
+
+    private async Task Close()
+    {
+        IsOpen = false;
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task HandleOrderReady(Dictionary<string, string?> orderData)
+    {
+        await OnOrderReady.InvokeAsync(orderData);
+        await Close();
+    }
+}
