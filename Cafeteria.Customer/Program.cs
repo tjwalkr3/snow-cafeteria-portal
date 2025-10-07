@@ -1,6 +1,7 @@
 using Cafeteria.Customer.Components;
 using Cafeteria.Customer.Components.ViewModels;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
+using Cafeteria.Customer.Services;
 using Cafeteria.Shared.Interfaces;
 using Cafeteria.Shared.Services;
 
@@ -9,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:8080");
+});
 
 // Register menu service
 builder.Services.AddScoped<IMenuService, DummyMenuService>();

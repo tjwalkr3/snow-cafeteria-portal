@@ -4,9 +4,9 @@ namespace Cafeteria.Customer.Services;
 
 public interface IApiMenuService
 {
-    List<LocationDto> GetAllLocations();
-    List<StationDto> GetStationsByLocation(int locationId);
-    List<FoodItemDto> GetFoodItemsByStation(int stationId);
-    List<IngredientTypeDto> GetIngredientTypesByFoodItem(int foodItemId);
-    List<IngredientDto> GetIngredientsByType(int ingredientTypeId);
+    Task<List<LocationDto>> GetAllLocations();
+    Task<List<StationDto>> GetStationsByLocation(int locationId);
+    Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId);
+    Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId);
+    Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId);
 }
