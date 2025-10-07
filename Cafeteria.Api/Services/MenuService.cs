@@ -1,10 +1,11 @@
 using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.Interfaces;
 
 namespace Cafeteria.Api.Services;
 
-public class MenuService
+public class MenuService : IMenuService
 {
     private readonly IDbConnection _dbConnection;
 
@@ -65,5 +66,41 @@ public class MenuService
 
         var result = await _dbConnection.QueryAsync<IngredientDto>(sql, new { ingredient_type_id = ingredientTypeId });
         return result.ToList();
+    }
+
+    public async Task<List<IngredientDto>> GetIngredientsForType(int ingredientTypeId)
+    {
+        const string sql = @"
+            SELECT i.id, i.ingredient_name IngredientName, i.image_url ImageUrl, i.ingredient_price IngredientPrice
+            FROM cafeteria.ingredient i
+            JOIN cafeteria.ingredient_ingredient_type iit ON i.id = iit.ingredient_id
+            WHERE iit.ingredient_type_id = @ingredient_type_id";
+
+        var result = await _dbConnection.QueryAsync<IngredientDto>(sql, new { ingredient_type_id = ingredientTypeId });
+        return result.ToList();
+    }
+
+    public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
+    {
+        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+
+        foreach (var type in types)
+        {
+            var ingredients = await GetIngredientsForType(type.Id);
+            result[type] = ingredients;
+        }
+
+        return result;
+    }
+
+    public async Task<IngredientDto> GetIngredientById(int ingredientId)
+    {
+        const string sql = @"
+            SELECT id, ingredient_name IngredientName, image_url ImageUrl, ingredient_price IngredientPrice
+            FROM cafeteria.ingredient
+            WHERE id = @ingredient_id";
+
+        var result = await _dbConnection.QuerySingleOrDefaultAsync<IngredientDto>(sql, new { ingredient_id = ingredientId });
+        return result ?? throw new InvalidOperationException($"Ingredient with ID {ingredientId} not found.");
     }
 }
