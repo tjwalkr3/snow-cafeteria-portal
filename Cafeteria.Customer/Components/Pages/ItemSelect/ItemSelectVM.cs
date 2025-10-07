@@ -7,7 +7,7 @@ using System.Text.Json;
 public class ItemSelectVM : IItemSelectVM
 {
     private readonly IMenuService _menuService;
-    string errorString = "Error";
+    private bool urlParsingFailed = false;
     public StationDto? SelectedStation { get; private set; }
 
     public ItemSelectVM(IMenuService menuService)
@@ -37,13 +37,12 @@ public class ItemSelectVM : IItemSelectVM
         }
         catch
         {
-            SelectedStation = new();
-            SelectedStation.StationName = errorString;
+            urlParsingFailed = true;
         }
     }
 
     public bool ErrorOccurredWhileParsingSelectedStation()
     {
-        return SelectedStation != null && SelectedStation.StationName == errorString;
+        return urlParsingFailed;
     }
 }
