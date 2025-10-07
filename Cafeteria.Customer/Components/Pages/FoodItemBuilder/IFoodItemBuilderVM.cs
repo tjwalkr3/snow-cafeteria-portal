@@ -9,6 +9,7 @@ public interface IFoodItemBuilderVM
     Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; }
     Dictionary<string, string?> GetOrderAsJson();
     Task GetDataFromRouteParameters(string uri);
+    Task InitializeWithFoodItem(FoodItemDto foodItem);
     void ToggleIngredientSelection(IngredientDto ingredient);
     bool IngredientIsSelected(IngredientDto ingredient);
     bool ErrorOccurredWhileParsingSelectedFoodItem();
