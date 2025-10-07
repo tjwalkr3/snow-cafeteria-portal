@@ -18,12 +18,9 @@ public class LocationSelectVM : ILocationSelectVM
     {
         Locations = await _menuService.GetAllLocations();
     }
-
-    public void OnLocationSelected(LocationDto location)
+    public bool ErrorOccurred()
     {
-        // Business logic for location selection can go here
-        // For example: store selected location, log selection, etc.
-        // Navigation will be handled by the view
+        return false; // TODO: check for errors getting locations from Menu Service
     }
 }
 
