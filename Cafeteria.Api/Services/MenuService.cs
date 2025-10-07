@@ -74,7 +74,7 @@ public class MenuService : IMenuService
 
         foreach (var type in types)
         {
-            var ingredients = await GetIngredientsForType(type.Id);
+            var ingredients = await GetIngredientsByType(type.Id);
             result[type] = ingredients;
         }
 
