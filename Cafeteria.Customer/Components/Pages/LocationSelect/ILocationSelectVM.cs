@@ -6,5 +6,5 @@ public interface ILocationSelectVM
 {
     List<LocationDto> Locations { get; }
     Task InitializeLocationsAsync();
-    void OnLocationSelected(LocationDto location);
+    bool ErrorOccurred();
 }

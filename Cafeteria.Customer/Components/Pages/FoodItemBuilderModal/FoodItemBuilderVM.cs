@@ -70,6 +70,22 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         }
     }
 
+    public async Task InitializeWithFoodItem(FoodItemDto foodItem)
+    {
+        try
+        {
+            SelectedFoodItem = foodItem;
+            SelectedIngredients.Clear();
+            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesForFoodItem(SelectedFoodItem.Id);
+            IngredientsByType = await _menuService.GetIngredientsOrganizedByType(ingredientTypes);
+        }
+        catch
+        {
+            SelectedFoodItem = new();
+            SelectedFoodItem.ItemDescription = errorString;
+        }
+    }
+
     public Dictionary<string, string?> GetOrderAsJson()
     {
         Dictionary<string, string?> orderAsJson = new()
