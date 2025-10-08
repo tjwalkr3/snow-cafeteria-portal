@@ -9,7 +9,7 @@ namespace Cafeteria.Customer.Tests;
 
 public class ApiMenuServiceTests
 {
-    private Mock<HttpMessageHandler> CreateMockHttpHandler<T>(List<T> responseData)
+    private Mock<HttpMessageHandler> CreateMockHttpHandler<T>(T responseData)
     {
         var mockHandler = new Mock<HttpMessageHandler>();
         mockHandler.Protected()
@@ -114,5 +114,45 @@ public class ApiMenuServiceTests
 
         Assert.NotNull(result);
         Assert.Single(result);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(1)]
+    public async Task GetIngredientById_ReturnsAnIngredient(int id)
+    {
+        var mockHandler = CreateMockHttpHandler(new IngredientDto { Id = 1 });
+        var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
+        var service = new ApiMenuService(httpClient);
+
+        if (id < 1)
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetIngredientById(id));
+        else
+        {
+            var result = await service.GetIngredientById(id);
+            Assert.NotNull(result);
+        }
+    }
+
+    public static IEnumerable<object[]> GetIngredientsOrganizedByTypeTestData =>
+        [
+            [null!, 0],
+            [new List<IngredientTypeDto>(), 0],
+            [new List<IngredientTypeDto> { new() { Id = 1 } }, 1]
+        ];
+
+    [Theory]
+    [MemberData(nameof(GetIngredientsOrganizedByTypeTestData))]
+    public async Task GetIngredientsOrganizedByType_ReturnsDictionaryBasedOnInput(List<IngredientTypeDto> types, int expectedCount)
+    {
+        var mockHandler = CreateMockHttpHandler(new List<IngredientDto> { new IngredientDto { Id = 1 } });
+        var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
+        var service = new ApiMenuService(httpClient);
+
+        var result = await service.GetIngredientsOrganizedByType(types);
+
+        Assert.NotNull(result);
+        Assert.Equal(expectedCount, result.Count);
     }
 }

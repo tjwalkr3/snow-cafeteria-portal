@@ -52,13 +52,29 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
         return await response.Content.ReadFromJsonAsync<List<IngredientDto>>() ?? new List<IngredientDto>();
     }
 
-    public Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
+    public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
     {
-        throw new NotImplementedException();
+        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+        
+        if (types == null || types.Count == 0)
+            return result;
+
+        foreach (var type in types)
+        {
+            var ingredients = await GetIngredientsByType(type.Id);
+            result[type] = ingredients;
+        }
+
+        return result;
     }
 
-    public Task<IngredientDto> GetIngredientById(int ingredientId)
+    public async Task<IngredientDto> GetIngredientById(int ingredientId)
     {
-        throw new NotImplementedException();
+        if (ingredientId < 1)
+            throw new ArgumentOutOfRangeException(nameof(ingredientId));
+
+        var response = client.GetAsync($"/ingredients/{ingredientId}").Result;
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<IngredientDto>() ?? new IngredientDto();
     }
 }
