@@ -1,6 +1,9 @@
 using Cafeteria.Customer.Components;
-using Cafeteria.Customer.Components.ViewModels;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
+using Cafeteria.Customer.Components.Pages.ItemSelect;
+using Cafeteria.Customer.Components.Pages.LocationSelect;
+using Cafeteria.Customer.Components.Pages.PlaceOrder;
+using Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
+using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Services;
 
 var builder = WebApplication.CreateBuilder(args);

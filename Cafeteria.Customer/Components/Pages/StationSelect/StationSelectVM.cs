@@ -1,9 +1,9 @@
 ﻿using Cafeteria.Shared.DTOs;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
 using Cafeteria.Customer.Services;
 using System.Text.Json;
 
-namespace Cafeteria.Customer.Components.ViewModels;
+namespace Cafeteria.Customer.Components.Pages.StationSelect;
+
 public class StationSelectVM : IStationSelectVM
 {
     private readonly IApiMenuService _menuService;

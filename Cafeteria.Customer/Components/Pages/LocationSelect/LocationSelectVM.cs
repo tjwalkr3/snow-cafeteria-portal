@@ -1,8 +1,7 @@
 ﻿using Cafeteria.Shared.DTOs;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
 using Cafeteria.Customer.Services;
 
-namespace Cafeteria.Customer.Components.ViewModels;
+namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
 public class LocationSelectVM : ILocationSelectVM
 {

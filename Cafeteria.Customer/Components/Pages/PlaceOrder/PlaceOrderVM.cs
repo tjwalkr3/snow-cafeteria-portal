@@ -1,9 +1,8 @@
 using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Services;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
 using System.Text.Json;
 
-namespace Cafeteria.Customer.Components.ViewModels;
+namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
 public class PlaceOrderVM : IPlaceOrderVM
 {

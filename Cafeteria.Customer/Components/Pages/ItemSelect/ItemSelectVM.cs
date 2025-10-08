@@ -1,8 +1,8 @@
-﻿namespace Cafeteria.Customer.Components.ViewModels;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
-using Cafeteria.Customer.Services;
+﻿using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 using System.Text.Json;
+
+namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 
 public class ItemSelectVM : IItemSelectVM
 {

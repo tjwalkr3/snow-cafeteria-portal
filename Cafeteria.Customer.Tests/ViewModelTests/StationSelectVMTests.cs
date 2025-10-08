@@ -1,4 +1,4 @@
-using Cafeteria.Customer.Components.ViewModels;
+using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Services;
 
 namespace Cafeteria.Customer.ViewModels.Tests;
