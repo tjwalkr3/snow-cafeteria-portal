@@ -14,11 +14,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:8080");
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:8080/api");
 });
-
-// Register menu service
-builder.Services.AddScoped<IApiMenuService, DummyMenuService>();
 
 // Register view models
 builder.Services.AddScoped<IItemSelectVM, ItemSelectVM>();
