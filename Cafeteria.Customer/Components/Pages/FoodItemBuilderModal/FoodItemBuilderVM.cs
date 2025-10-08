@@ -60,7 +60,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         {
             FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
             SelectedFoodItem = foodItem;
-            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesForFoodItem(SelectedFoodItem.Id);
+            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
             IngredientsByType = await _menuService.GetIngredientsOrganizedByType(ingredientTypes);
         }
         catch
@@ -76,7 +76,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         {
             SelectedFoodItem = foodItem;
             SelectedIngredients.Clear();
-            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesForFoodItem(SelectedFoodItem.Id);
+            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
             IngredientsByType = await _menuService.GetIngredientsOrganizedByType(ingredientTypes);
         }
         catch
