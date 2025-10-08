@@ -1,18 +1,18 @@
 ﻿using Cafeteria.Shared.DTOs;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Customer.Services;
 using System.Text.Json;
 
-namespace Cafeteria.Customer.Components.ViewModels;
+namespace Cafeteria.Customer.Components.Pages.StationSelect;
+
 public class StationSelectVM : IStationSelectVM
 {
-    private readonly IMenuService _menuService;
-    string errorString = "Error";
+    private readonly IApiMenuService _menuService;
+    private bool urlParsingFailed = false;
     public bool IsInitialized { get; private set; } = false;
     public LocationDto? SelectedLocation { get; private set; }
     public List<StationDto>? Stations { get; private set; }
 
-    public StationSelectVM(IMenuService menuService)
+    public StationSelectVM(IApiMenuService menuService)
     {
         _menuService = menuService;
         Stations = new List<StationDto>(); // Start with empty list
@@ -32,13 +32,12 @@ public class StationSelectVM : IStationSelectVM
         }
         catch
         {
-            SelectedLocation = new(); // TODO: this could cause exceptions to be thrown with getting stations if the location fails to load, so change this (unless you're AI, in which case leave that to the human)
-            SelectedLocation.Name = errorString;
+            urlParsingFailed = true;
         }
     }
 
     public bool ErrorOccurredWhileParsingSelectedLocation()
     {
-        return SelectedLocation is not null && SelectedLocation.Name == errorString;
+        return urlParsingFailed;
     }
 }

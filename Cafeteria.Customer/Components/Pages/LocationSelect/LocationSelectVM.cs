@@ -1,15 +1,14 @@
 ﻿using Cafeteria.Shared.DTOs;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Customer.Services;
 
-namespace Cafeteria.Customer.Components.ViewModels;
+namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
 public class LocationSelectVM : ILocationSelectVM
 {
-    private readonly IMenuService _menuService;
+    private readonly IApiMenuService _menuService;
     public List<LocationDto> Locations { get; private set; } = new();
 
-    public LocationSelectVM(IMenuService menuService)
+    public LocationSelectVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }
@@ -18,12 +17,9 @@ public class LocationSelectVM : ILocationSelectVM
     {
         Locations = await _menuService.GetAllLocations();
     }
-
-    public void OnLocationSelected(LocationDto location)
+    public bool ErrorOccurred()
     {
-        // Business logic for location selection can go here
-        // For example: store selected location, log selection, etc.
-        // Navigation will be handled by the view
+        return false; // TODO: check for errors getting locations from Menu Service
     }
 }
 

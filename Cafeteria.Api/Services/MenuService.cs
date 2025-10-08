@@ -1,10 +1,11 @@
 using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs;
+using Cafeteria.Api.Services;
 
 namespace Cafeteria.Api.Services;
 
-public class MenuService
+public class MenuService : IMenuService
 {
     private readonly IDbConnection _dbConnection;
 
@@ -15,7 +16,13 @@ public class MenuService
 
     public async Task<List<LocationDto>> GetAllLocations()
     {
-        const string sql = @"select * from cafeteria_location";
+        const string sql = @"
+            SELECT 
+                id, 
+                location_name AS Name, 
+                location_description AS Description, 
+                location_address AS Address 
+            FROM cafeteria.cafeteria_location";
 
         var result = await _dbConnection.QueryAsync<LocationDto>(sql);
         return result.ToList();
@@ -43,7 +50,7 @@ public class MenuService
         return result.ToList();
     }
 
-    public async Task<List<IngredientTypeDto>> GetIngredientTypesForFoodItem(int foodItemId)
+    public async Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
     {
         const string sql = @"
             SELECT it.id, it.type_name TypeName, it.quantity
@@ -55,7 +62,7 @@ public class MenuService
         return result.ToList();
     }
 
-    public async Task<List<IngredientDto>> GetIngredientsOrganizedByType(int ingredientTypeId)
+    public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
     {
         const string sql = @"
             SELECT i.id, i.ingredient_name IngredientName, i.image_url ImageUrl, i.ingredient_price IngredientPrice
@@ -65,5 +72,16 @@ public class MenuService
 
         var result = await _dbConnection.QueryAsync<IngredientDto>(sql, new { ingredient_type_id = ingredientTypeId });
         return result.ToList();
+    }
+
+    public async Task<IngredientDto> GetIngredientById(int ingredientId)
+    {
+        const string sql = @"
+            SELECT id, ingredient_name IngredientName, image_url ImageUrl, ingredient_price IngredientPrice
+            FROM cafeteria.ingredient
+            WHERE id = @ingredient_id";
+
+        var result = await _dbConnection.QuerySingleOrDefaultAsync<IngredientDto>(sql, new { ingredient_id = ingredientId });
+        return result ?? throw new InvalidOperationException($"Ingredient with ID {ingredientId} not found.");
     }
 }

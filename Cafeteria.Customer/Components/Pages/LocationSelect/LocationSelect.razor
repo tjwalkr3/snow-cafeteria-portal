@@ -1,6 +1,5 @@
 ﻿@page "/"
 @using Cafeteria.Shared.DTOs
-@using Cafeteria.Customer.Components.ViewModelInterfaces
 @using System.Text.Json
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Text.Json.Nodes
@@ -10,36 +9,50 @@
 <PageTitle>Select Location</PageTitle>
 
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h2>Select Your Location</h2>
-            <p class="text-muted">Please choose your cafeteria location to continue</p>
+    @if (LocationSelectVM.Locations == null && IsInitialized == false)
+    // Loading state:
+    {
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="alert alert-warning">
+                    <h4>Loading locations...</h4>
+                    <p>Please wait available locations are loading.</p>
+                </div>
+            </div>
         </div>
-    </div>
+    }
+    // Error state:
+    else if (IsInitialized == true && LocationSelectVM.ErrorOccurred())
+    {
+        Navigation.NavigateTo("/error", false);
+    }
+    // Main content:
+    else if (LocationSelectVM.Locations != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <h2>Select Your Location</h2>
+                <p class="text-muted">Please choose your cafeteria location to continue</p>
+            </div>
+        </div>
 
-    <div class="row justify-content-center">
-        @foreach (var location in LocationSelectVM.Locations)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column text-center">
-                        <h5 class="card-title">@location.Name</h5>
-                        <p class="card-text text-muted">@location.Address</p>
-                        <div class="mt-auto">
-                            <a href="@(QueryHelpers.AddQueryString(uri: "/station-select", queryString: new Dictionary<string, string?> {{ "location", JsonSerializer.Serialize(location)}}))" class="btn btn-primary btn-lg w-100">
-                                Select @location.Name
-                            </a>
+        <div class="row justify-content-center">
+            @foreach (var location in LocationSelectVM.Locations)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column text-center">
+                            <h5 class="card-title">@location.Name</h5>
+                            <p class="card-text text-muted">@location.Address</p>
+                            <div class="mt-auto">
+                                <a href="@(QueryHelpers.AddQueryString(uri: "/station-select", queryString: new Dictionary<string, string?> {{ "location", JsonSerializer.Serialize(location)}}))" class="btn btn-primary btn-lg w-100">
+                                    Select @location.Name
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-</div>
-
-@code {
-    protected override async Task OnInitializedAsync()
-    {
-        await LocationSelectVM.InitializeLocationsAsync();
+            }
+        </div>
     }
-}
+</div>

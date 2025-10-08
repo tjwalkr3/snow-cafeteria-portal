@@ -1,4 +1,4 @@
-﻿using Cafeteria.Shared.Services;
+﻿using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Tests;
@@ -47,7 +47,7 @@ public class DummyMenuTests
     [Fact]
     public async Task DummyMenuServiceGetsIngredientTypesForDummyFoodItem()
     {
-        var types = await MenuService.GetIngredientTypesForFoodItem(1);
+        var types = await MenuService.GetIngredientTypesByFoodItem(1);
         List<IngredientTypeDto> typeList = types.ToList();
         Assert.True((types != null) && (typeList.Count > 0));
     }
@@ -56,7 +56,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceGetsDictOfIngredientsAndTypes()
     {
         // Arrange: Get ingredient types to test with
-        var types = await MenuService.GetIngredientTypesForFoodItem(1);
+        var types = await MenuService.GetIngredientTypesByFoodItem(1);
         List<IngredientTypeDto> typeList = types.ToList();
 
         // Act: call method and store result in dictionary
@@ -70,7 +70,7 @@ public class DummyMenuTests
     [Fact]
     public async Task DummyMenuServiceGetsDummyIngredientsForType()
     {
-        var ingredients = await MenuService.GetIngredientsForType(1);
+        var ingredients = await MenuService.GetIngredientsByType(1);
         List<IngredientDto> ingredientList = ingredients.ToList();
         Assert.True((ingredients is not null) && (ingredientList.Count > 0));
     }

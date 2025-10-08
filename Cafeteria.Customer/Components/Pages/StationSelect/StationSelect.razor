@@ -1,6 +1,5 @@
 ﻿@page "/station-select"
 @using Cafeteria.Shared.DTOs
-@using Cafeteria.Customer.Components.ViewModelInterfaces
 @using System.Text.Json
 @using Microsoft.AspNetCore.WebUtilities
 @inject IStationSelectVM StationSelectVM
@@ -9,7 +8,8 @@
 <PageTitle>Select Station</PageTitle>
 
 <div class="container">
-    @if (StationSelectVM.Stations == null && IsInitialized == false)
+    @if (StationSelectVM.Stations == null && IsInitialized == false) 
+    // Loading state:
     {
         <div class="row">
             <div class="col-12 text-center">
@@ -20,17 +20,12 @@
             </div>
         </div>
     }
+    // Error state:
     else if (IsInitialized == true && StationSelectVM.ErrorOccurredWhileParsingSelectedLocation())
     {
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="alert alert-danger">
-                    <h4>Error loading stations</h4>
-                    <p>Please contact a developer.</p>
-                </div>
-            </div>
-        </div>
+        Navigation.NavigateTo("/error", false);
     }
+    // Main content:
     else if (StationSelectVM.Stations != null)
     {
         <div class="row">

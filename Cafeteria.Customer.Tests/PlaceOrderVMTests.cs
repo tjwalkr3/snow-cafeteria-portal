@@ -1,21 +1,22 @@
-using Cafeteria.Customer.Components.ViewModels;
-using Cafeteria.Shared.Services;
+using Cafeteria.Customer.Components.Pages.PlaceOrder;
+using Cafeteria.Customer.Services;
+using Moq;
 
 namespace Cafeteria.Customer.Tests;
 
 public class PlaceOrderVMTests
 {
-    private DummyMenuService MenuService;
+    private Mock<IApiMenuService> MockMenuService;
 
     public PlaceOrderVMTests()
     {
-        MenuService = new DummyMenuService();
+        MockMenuService = new Mock<IApiMenuService>();
     }
 
     [Fact]
     public async Task ErrorOccurredWhileParsingSelectedFoodItem_ReturnsTrue_WhenUrlParsingFails()
     {
-        var viewModel = new PlaceOrderVM(MenuService);
+        var viewModel = new PlaceOrderVM(MockMenuService.Object);
         string invalidUri = "https://example.com/placeorder?food-item=invalid-json";
 
         await viewModel.GetDataFromRouteParameters(invalidUri);

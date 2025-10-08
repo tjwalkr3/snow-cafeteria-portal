@@ -1,10 +1,10 @@
 ﻿using Cafeteria.Shared.DTOs;
 
-namespace Cafeteria.Customer.Components.ViewModelInterfaces;
+namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
 public interface ILocationSelectVM
 {
     List<LocationDto> Locations { get; }
     Task InitializeLocationsAsync();
-    void OnLocationSelected(LocationDto location);
+    bool ErrorOccurred();
 }
