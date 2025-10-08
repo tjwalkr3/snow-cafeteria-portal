@@ -68,19 +68,6 @@ public class MenuService : IMenuService
         return result.ToList();
     }
 
-    public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
-    {
-        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
-
-        foreach (var type in types)
-        {
-            var ingredients = await GetIngredientsByType(type.Id);
-            result[type] = ingredients;
-        }
-
-        return result;
-    }
-
     public async Task<IngredientDto> GetIngredientById(int ingredientId)
     {
         const string sql = @"
@@ -90,5 +77,11 @@ public class MenuService : IMenuService
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<IngredientDto>(sql, new { ingredient_id = ingredientId });
         return result ?? throw new InvalidOperationException($"Ingredient with ID {ingredientId} not found.");
+    }
+
+    // This can be deleted once this method is removed from the interface
+    public Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -45,12 +45,6 @@ public class MenuController : ControllerBase
         return await _menuService.GetIngredientsByType(ingredientTypeId);
     }
 
-    [HttpPost("ingredients/organized-by-types")]
-    public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType([FromBody] List<IngredientTypeDto> types)
-    {
-        return await _menuService.GetIngredientsOrganizedByType(types);
-    }
-
     [HttpGet("ingredients/{ingredientId}")]
     public async Task<IngredientDto> GetIngredientById(int ingredientId)
     {
