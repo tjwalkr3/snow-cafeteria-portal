@@ -1,4 +1,4 @@
-﻿using Cafeteria.Shared.Services;
+﻿using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Tests;

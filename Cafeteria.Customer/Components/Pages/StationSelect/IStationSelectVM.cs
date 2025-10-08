@@ -1,6 +1,6 @@
 ﻿using Cafeteria.Shared.DTOs;
 
-namespace Cafeteria.Customer.Components.ViewModelInterfaces;
+namespace Cafeteria.Customer.Components.Pages.StationSelect;
 
 public interface IStationSelectVM
 {

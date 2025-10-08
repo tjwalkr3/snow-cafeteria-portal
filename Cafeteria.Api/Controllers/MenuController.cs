@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Api.Services;
 
 namespace Cafeteria.Api.Controllers;
 
@@ -43,12 +43,6 @@ public class MenuController : ControllerBase
     public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
     {
         return await _menuService.GetIngredientsByType(ingredientTypeId);
-    }
-
-    [HttpPost("ingredients/organized-by-types")]
-    public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType([FromBody] List<IngredientTypeDto> types)
-    {
-        return await _menuService.GetIngredientsOrganizedByType(types);
     }
 
     [HttpGet("ingredients/{ingredientId}")]

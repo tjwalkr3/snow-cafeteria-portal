@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Api.Services;
 
 namespace Cafeteria.Api.Services;
 
@@ -16,7 +16,13 @@ public class MenuService : IMenuService
 
     public async Task<List<LocationDto>> GetAllLocations()
     {
-        const string sql = @"select * from cafeteria_location";
+        const string sql = @"
+            SELECT 
+                id, 
+                location_name AS Name, 
+                location_description AS Description, 
+                location_address AS Address 
+            FROM cafeteria.cafeteria_location";
 
         var result = await _dbConnection.QueryAsync<LocationDto>(sql);
         return result.ToList();
@@ -66,19 +72,6 @@ public class MenuService : IMenuService
 
         var result = await _dbConnection.QueryAsync<IngredientDto>(sql, new { ingredient_type_id = ingredientTypeId });
         return result.ToList();
-    }
-
-    public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
-    {
-        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
-
-        foreach (var type in types)
-        {
-            var ingredients = await GetIngredientsByType(type.Id);
-            result[type] = ingredients;
-        }
-
-        return result;
     }
 
     public async Task<IngredientDto> GetIngredientById(int ingredientId)

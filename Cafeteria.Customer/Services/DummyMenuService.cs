@@ -1,13 +1,12 @@
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Shared.Interfaces;
 using Cafeteria.Shared.Data;
 
-namespace Cafeteria.Shared.Services;
+namespace Cafeteria.Customer.Services;
 
 /// <summary>
 /// This dummy implementation of the IMenuService uses static dummy data from the DummyData class and mimics behavior of a MenuService.
 /// </summary>
-public class DummyMenuService : IMenuService
+public class DummyMenuService : IApiMenuService
 {
     public Task<List<LocationDto>> GetAllLocations()
     {

@@ -1,19 +1,18 @@
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Shared.Interfaces;
-using Cafeteria.Customer.Components.ViewModelInterfaces;
+using Cafeteria.Customer.Services;
 using System.Text.Json;
 
-namespace Cafeteria.Customer.Components.ViewModels;
+namespace Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 
 public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
-    private readonly IMenuService _menuService;
+    private readonly IApiMenuService _menuService;
     string errorString = "Error";
     public FoodItemDto? SelectedFoodItem { get; set; }
     public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
     public Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
 
-    public FoodItemBuilderVM(IMenuService menuService)
+    public FoodItemBuilderVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }
