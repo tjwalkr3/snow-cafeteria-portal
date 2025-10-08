@@ -55,7 +55,7 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
     public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
     {
         var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
-        
+
         if (types == null || types.Count == 0)
             return result;
 
