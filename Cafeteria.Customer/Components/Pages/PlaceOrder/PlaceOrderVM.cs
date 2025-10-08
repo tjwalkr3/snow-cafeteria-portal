@@ -8,7 +8,7 @@ namespace Cafeteria.Customer.Components.ViewModels;
 public class PlaceOrderVM : IPlaceOrderVM
 {
     private readonly IMenuService _menuService;
-    string errorString = "Error";
+    private bool urlParsingFailed = false;
     public FoodItemDto? SelectedFoodItem { get; private set; }
     public List<IngredientDto> SelectedIngredients { get; private set; } = new();
 
@@ -33,8 +33,7 @@ public class PlaceOrderVM : IPlaceOrderVM
         if (!uri.Contains('?'))
         {
             // No query parameters, set error state
-            SelectedFoodItem = new();
-            SelectedFoodItem.ItemDescription = errorString;
+            urlParsingFailed = true;
             return;
         }
 
@@ -65,14 +64,13 @@ public class PlaceOrderVM : IPlaceOrderVM
         }
         catch
         {
-            SelectedFoodItem = new();
-            SelectedFoodItem.ItemDescription = errorString;
+            urlParsingFailed = true;
             SelectedIngredients.Clear();
         }
     }
 
     public bool ErrorOccurredWhileParsingSelectedFoodItem()
     {
-        return SelectedFoodItem != null && SelectedFoodItem.ItemDescription == errorString;
+        return urlParsingFailed;
     }
 }
