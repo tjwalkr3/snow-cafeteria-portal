@@ -1,6 +1,6 @@
 using Cafeteria.Shared.DTOs;
 
-namespace Cafeteria.Shared.Interfaces;
+namespace Cafeteria.Api.Services;
 
 public interface IMenuService
 {
