@@ -1,18 +1,18 @@
 ﻿using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Customer.Services;
 using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.ViewModels;
 public class StationSelectVM : IStationSelectVM
 {
-    private readonly IMenuService _menuService;
+    private readonly IApiMenuService _menuService;
     private bool urlParsingFailed = false;
     public bool IsInitialized { get; private set; } = false;
     public LocationDto? SelectedLocation { get; private set; }
     public List<StationDto>? Stations { get; private set; }
 
-    public StationSelectVM(IMenuService menuService)
+    public StationSelectVM(IApiMenuService menuService)
     {
         _menuService = menuService;
         Stations = new List<StationDto>(); // Start with empty list

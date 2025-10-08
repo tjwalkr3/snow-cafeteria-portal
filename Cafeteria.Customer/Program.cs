@@ -2,8 +2,6 @@ using Cafeteria.Customer.Components;
 using Cafeteria.Customer.Components.ViewModels;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.Interfaces;
-using Cafeteria.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +15,7 @@ builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
 });
 
 // Register menu service
-builder.Services.AddScoped<IMenuService, DummyMenuService>();
+builder.Services.AddScoped<IApiMenuService, DummyMenuService>();
 
 // Register view models
 builder.Services.AddScoped<IItemSelectVM, ItemSelectVM>();

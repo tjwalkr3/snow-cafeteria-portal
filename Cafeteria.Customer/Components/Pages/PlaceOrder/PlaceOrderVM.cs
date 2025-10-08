@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 using System.Text.Json;
 
@@ -7,12 +7,12 @@ namespace Cafeteria.Customer.Components.ViewModels;
 
 public class PlaceOrderVM : IPlaceOrderVM
 {
-    private readonly IMenuService _menuService;
+    private readonly IApiMenuService _menuService;
     string errorString = "Error";
     public FoodItemDto? SelectedFoodItem { get; private set; }
     public List<IngredientDto> SelectedIngredients { get; private set; } = new();
 
-    public PlaceOrderVM(IMenuService menuService)
+    public PlaceOrderVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }

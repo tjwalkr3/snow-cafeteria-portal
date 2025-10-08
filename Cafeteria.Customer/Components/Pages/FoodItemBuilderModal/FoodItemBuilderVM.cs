@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
 using System.Text.Json;
 
@@ -7,13 +7,13 @@ namespace Cafeteria.Customer.Components.ViewModels;
 
 public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
-    private readonly IMenuService _menuService;
+    private readonly IApiMenuService _menuService;
     string errorString = "Error";
     public FoodItemDto? SelectedFoodItem { get; set; }
     public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
     public Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
 
-    public FoodItemBuilderVM(IMenuService menuService)
+    public FoodItemBuilderVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }

@@ -1,16 +1,16 @@
 ﻿namespace Cafeteria.Customer.Components.ViewModels;
 using Cafeteria.Customer.Components.ViewModelInterfaces;
-using Cafeteria.Shared.Interfaces;
+using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 using System.Text.Json;
 
 public class ItemSelectVM : IItemSelectVM
 {
-    private readonly IMenuService _menuService;
+    private readonly IApiMenuService _menuService;
     private bool urlParsingFailed = false;
     public StationDto? SelectedStation { get; private set; }
 
-    public ItemSelectVM(IMenuService menuService)
+    public ItemSelectVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }

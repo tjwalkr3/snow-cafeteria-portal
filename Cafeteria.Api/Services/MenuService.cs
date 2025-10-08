@@ -78,10 +78,4 @@ public class MenuService : IMenuService
         var result = await _dbConnection.QuerySingleOrDefaultAsync<IngredientDto>(sql, new { ingredient_id = ingredientId });
         return result ?? throw new InvalidOperationException($"Ingredient with ID {ingredientId} not found.");
     }
-
-    // This can be deleted once this method is removed from the interface
-    public Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
-    {
-        throw new NotImplementedException();
-    }
 }
