@@ -12,10 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Api Data Service
 builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:8080/api");
 });
+
+// Dummy Data Service
+// builder.Services.AddScoped<IApiMenuService, DummyMenuService>();
 
 // Register view models
 builder.Services.AddScoped<IItemSelectVM, ItemSelectVM>();
