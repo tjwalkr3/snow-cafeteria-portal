@@ -16,7 +16,7 @@ public class MenuService : IMenuService
 
     public async Task<List<LocationDto>> GetAllLocations()
     {
-        const string sql = @"select * from cafeteria_location";
+        const string sql = @"select * from cafeteria.cafeteria_location";
 
         var result = await _dbConnection.QueryAsync<LocationDto>(sql);
         return result.ToList();
