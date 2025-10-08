@@ -24,7 +24,7 @@ public class DummyMenuService : IMenuService
         return Task.FromResult(DummyData.GetFoodItemList.Where(f => f.StationId == stationId).ToList() ?? new List<FoodItemDto>());
     }
 
-    public Task<List<IngredientTypeDto>> GetIngredientTypesForFoodItem(int foodItemId)
+    public Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
     {
         // NOTE: This currently only returns ingredient types for a dummy sandwich, regardless of what foodItemId is passed in
         List<IngredientTypeDto> ingredientTypes = new()
@@ -47,7 +47,7 @@ public class DummyMenuService : IMenuService
         return Task.FromResult(ingredientsAndTypes);
     }
 
-    public Task<List<IngredientDto>> GetIngredientsForType(int ingredientTypeId)
+    public Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
     {
         // NOTE: This currently only returns ingredients for a vegetable type, regardless of what ingredientTypeId is passed in
         List<IngredientDto> ingredients = new()
