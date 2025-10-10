@@ -1,0 +1,92 @@
+@page "/place-order"
+@using Cafeteria.Shared.DTOs
+@using Cafeteria.Customer.Components.Pages
+@inject IPlaceOrderVM PlaceOrderVM
+@inject NavigationManager Navigation
+
+<PageTitle>Review Your Order</PageTitle>
+
+<div class="container">
+    @if (PlaceOrderVM.ErrorOccurredWhileParsingSelectedFoodItem())
+    {
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="alert alert-danger">
+                    <h4>Error loading order</h4>
+                    <p>No current order has been found. Please build an order first.</p>
+                    <a href="/" class="btn btn-primary">Start an Order</a>
+                </div>
+            </div>
+        </div>
+    }
+    else if (PlaceOrderVM.SelectedFoodItem != null && !PlaceOrderVM.ErrorOccurredWhileParsingSelectedFoodItem())
+    {
+        <div class="row">
+            <div class="col-12">
+                <h2>Review Your Order</h2>
+                <p class="text-muted">Please review your selections before placing your order</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="row g-0">
+                        @if (!string.IsNullOrEmpty(PlaceOrderVM.SelectedFoodItem.ImageUrl))
+                        {
+                            <div class="col-md-4">
+                                <img src="@PlaceOrderVM.SelectedFoodItem.ImageUrl" class="img-fluid rounded-start h-100" alt="@PlaceOrderVM.SelectedFoodItem.ItemDescription" style="object-fit: cover;" />
+                            </div>
+                        }
+                        <div class="@(string.IsNullOrEmpty(PlaceOrderVM.SelectedFoodItem.ImageUrl) ? "col-12" : "col-md-8")">
+                            <div class="card-body">
+                                <h5 class="card-title">@PlaceOrderVM.SelectedFoodItem.ItemDescription</h5>
+                                <h4 class="text-success mb-3">$@PlaceOrderVM.SelectedFoodItem.ItemPrice.ToString("F2")</h4>
+                                
+                                @if (PlaceOrderVM.SelectedIngredients.Any())
+                                {
+                                    <h6 class="card-subtitle mb-2 text-muted">Selected Ingredients:</h6>
+                                    <ul class="list-group list-group-flush">
+                                        @foreach (var ingredient in PlaceOrderVM.SelectedIngredients)
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                @ingredient.IngredientName
+                                                @if (ingredient.IngredientPrice > 0)
+                                                {
+                                                    <span class="badge bg-secondary rounded-pill">+$@ingredient.IngredientPrice?.ToString("F2")</span>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                    
+                                    @if (PlaceOrderVM.SelectedIngredients.Any(i => i.IngredientPrice > 0))
+                                    {
+                                        <hr />
+                                        <div class="d-flex justify-content-between">
+                                            <strong>Total Price:</strong>
+                                            <strong class="text-success">$@GetTotalPrice().ToString("F2")</strong>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No additional ingredients selected</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Ready to Order?</h5>
+                        <p class="card-text">Click below to place your order</p>
+                        <button class="btn btn-success btn-lg w-100">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

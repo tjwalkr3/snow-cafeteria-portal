@@ -1,4 +1,4 @@
-namespace Cafeteria.Customer.Components.Data;
+namespace Cafeteria.Shared.Data;
 
 using Cafeteria.Shared.DTOs;
 
@@ -11,7 +11,7 @@ public static class DummyData
         CreateFriday()
     };
 
-    public static readonly List<CafeteriaLocationDto> GetLocationList = new()
+    public static readonly List<LocationDto> GetLocationList = new()
     {
         CreateBadgerDenLocation(),
         CreateBustersBistroLocation()
@@ -59,19 +59,19 @@ public static class DummyData
     #endregion ============================================================================
 
     #region ========================= Location Creation ===================================
-    public static CafeteriaLocationDto CreateBadgerDenLocation() => new()
+    public static LocationDto CreateBadgerDenLocation() => new()
     {
         Id = 1,
-        LocationName = "Badger Den",
-        LocationDescription = "Campus dining location in the GSC",
+        Name = "Badger Den",
+        Description = "Campus dining location in the GSC",
         Address = "GSC Cafeteria on the Ground Floor"
     };
 
-    public static CafeteriaLocationDto CreateBustersBistroLocation() => new()
+    public static LocationDto CreateBustersBistroLocation() => new()
     {
         Id = 2,
-        LocationName = "Buster's Bistro",
-        LocationDescription = "Library dining location",
+        Name = "Buster's Bistro",
+        Description = "Library dining location",
         Address = "Karen H. Huntsman Library Gallery"
     };
     #endregion ============================================================================
@@ -163,54 +163,5 @@ public static class DummyData
         ImageUrl = "https://picsum.photos/id/550/150/150",
         ItemPrice = 4.95m
     };
-    #endregion ============================================================================
-
-    #region ========================== API-like Methods ===================================
-    public static Dictionary<IngredientTypeDto, List<IngredientDto>> GetIngredientsByType()
-    {
-        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
-
-        var breadType = CreateBreadType();
-        result[breadType] = new List<IngredientDto> { CreateWheatBread() };
-
-        var meatType = CreateMeatType();
-        result[meatType] = new List<IngredientDto> { CreateTurkey() };
-
-        var vegetableType = CreateVegetableType();
-        result[vegetableType] = new List<IngredientDto> { CreateLettuce(), CreateTomato() };
-
-        return result;
-    }
-
-    public static List<IngredientDto> GetIngredientsForType(int ingredientTypeId)
-    {
-        return ingredientTypeId switch
-        {
-            1 => new List<IngredientDto> { CreateWheatBread() },
-            2 => new List<IngredientDto> { CreateTurkey() },
-            3 => new List<IngredientDto> { CreateLettuce(), CreateTomato() },
-            _ => new List<IngredientDto>()
-        };
-    }
-
-    public static List<IngredientTypeDto> GetIngredientTypesForFoodItem(int foodItemId)
-    {
-        return foodItemId switch
-        {
-            1 => new List<IngredientTypeDto> { CreateBreadType(), CreateMeatType(), CreateVegetableType() },
-            2 => new List<IngredientTypeDto> { CreateVegetableType() },
-            _ => new List<IngredientTypeDto>()
-        };
-    }
-
-    public static List<IngredientDto> GetDefaultIngredientsForFoodItem(int foodItemId)
-    {
-        return foodItemId switch
-        {
-            1 => new List<IngredientDto> { CreateWheatBread(), CreateTurkey(), CreateLettuce() },
-            2 => new List<IngredientDto> { CreateLettuce(), CreateTomato() },
-            _ => new List<IngredientDto>()
-        };
-    }
     #endregion ============================================================================
 }

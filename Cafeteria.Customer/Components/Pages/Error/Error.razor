@@ -1,0 +1,24 @@
+﻿@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>Error</PageTitle>
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="alert alert-danger">
+                    <h4>Error</h4>
+                    <p>An error occurred while processing your request.</p>
+                </div>
+            </div>
+        </div>
+
+<a href="/" class="btn btn-primary">Start a New Order</a>
+
+@code{
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; } 
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}
