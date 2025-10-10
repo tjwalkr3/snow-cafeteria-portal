@@ -31,7 +31,11 @@ public class MenuService : IMenuService
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         const string sql = @"
-            SELECT *
+            SELECT 
+                id,
+                location_id AS LocationId,
+                station_name AS StationName,
+                station_description AS StationDescription
             FROM cafeteria.station
             WHERE location_id = @location_id";
 
@@ -42,7 +46,12 @@ public class MenuService : IMenuService
     public async Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
     {
         const string sql = @"
-            SELECT *
+            SELECT 
+                id,
+                station_id AS StationId,
+                item_description AS ItemDescription,
+                image_url AS ImageUrl,
+                item_price AS ItemPrice
             FROM cafeteria.food_item
             WHERE station_id = @station_id";
 
@@ -53,7 +62,10 @@ public class MenuService : IMenuService
     public async Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
     {
         const string sql = @"
-            SELECT it.id, it.type_name TypeName, it.quantity
+            SELECT 
+                it.id, 
+                it.type_name AS TypeName, 
+                it.quantity
             FROM cafeteria.ingredient_type it
             JOIN cafeteria.food_item_ingredient_type fiit ON it.id = fiit.ingredient_type_id
             WHERE fiit.food_item_id = @food_item_id";
@@ -65,7 +77,11 @@ public class MenuService : IMenuService
     public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
     {
         const string sql = @"
-            SELECT i.id, i.ingredient_name IngredientName, i.image_url ImageUrl, i.ingredient_price IngredientPrice
+            SELECT 
+                i.id, 
+                i.ingredient_name AS IngredientName, 
+                i.image_url AS ImageUrl, 
+                i.ingredient_price AS IngredientPrice
             FROM cafeteria.ingredient i
             JOIN cafeteria.ingredient_ingredient_type iit ON i.id = iit.ingredient_id
             WHERE iit.ingredient_type_id = @ingredient_type_id";
@@ -77,7 +93,11 @@ public class MenuService : IMenuService
     public async Task<IngredientDto> GetIngredientById(int ingredientId)
     {
         const string sql = @"
-            SELECT id, ingredient_name IngredientName, image_url ImageUrl, ingredient_price IngredientPrice
+            SELECT 
+                id, 
+                ingredient_name AS IngredientName, 
+                image_url AS ImageUrl, 
+                ingredient_price AS IngredientPrice
             FROM cafeteria.ingredient
             WHERE id = @ingredient_id";
 
