@@ -6,6 +6,7 @@ labels: ''
 assignees: ''
 
 ---
+*Remember to follow the title format:* Description of the task R#N.n
 
 ## Acceptance Criteria
 
