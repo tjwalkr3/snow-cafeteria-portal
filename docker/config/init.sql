@@ -116,45 +116,77 @@ CREATE TABLE
         PRIMARY KEY (id)
     );
 
--- INSERT INTO cafeteria.cafeteria_location (id, location_name, location_description, location_address) VALUES
---     (1, 'Badger Den', 'Campus dining location in the GSC', 'GSC Cafeteria on the Ground Floor'),
---     (2, 'Buster''s Bistro', 'Library dining location', 'Karen H. Huntsman Library Gallery');
+INSERT INTO cafeteria.cafeteria_location (location_name, location_description, image_url) VALUES
+    ('Badger Den', 'Located on the main floor of the Greenwood Student Center', 'https://picsum.photos/id/292/300/200'),
+    ('Busters Bistro', 'Located on the main floor of the Karen H Huntsman Library', 'https://picsum.photos/id/326/300/200');
 
--- INSERT INTO cafeteria.week_day (id, weekday_name) VALUES
---     (1, 'Monday'),
---     (5, 'Friday');
+INSERT INTO cafeteria.week_day (weekday_name) VALUES
+    ('Monday'),
+    ('Tuesday'),
+    ('Wednesday'),
+    ('Thursday'),
+    ('Friday'),
+    ('Saturday'),
+    ('Sunday');
 
--- INSERT INTO cafeteria.location_business_hours (id, location_id, weekday_id, open_time, close_time) VALUES
---     (1, 1, 1, '08:00:00', '18:00:00'),
---     (2, 1, 5, '08:00:00', '16:00:00');
+INSERT INTO cafeteria.location_business_hours (location_id, weekday_id, open_time) VALUES
+    -- Badger Den Breakfast hours (Mon-Fri)
+    (1, 1, '[08:00:00,11:00:00)'),
+    (1, 2, '[08:00:00,11:00:00)'),
+    (1, 3, '[08:00:00,11:00:00)'),
+    (1, 4, '[08:00:00,11:00:00)'),
+    (1, 5, '[08:00:00,11:00:00)'),
+    -- Badger Den Lunch/Dinner hours (Mon-Fri)
+    (1, 1, '[11:00:00,19:30:00)'),
+    (1, 2, '[11:00:00,19:30:00)'),
+    (1, 3, '[11:00:00,19:30:00)'),
+    (1, 4, '[11:00:00,19:30:00)'),
+    (1, 5, '[11:00:00,19:30:00)'),
+    -- Badger Den Weekend hours (Sat-Sun)
+    (1, 6, '[17:00:00,19:00:00)'),
+    (1, 7, '[17:00:00,19:00:00)'),
+    -- Busters Bistro hours (Mon-Fri)
+    (2, 1, '[10:00:00,19:30:00)'),
+    (2, 2, '[10:00:00,19:30:00)'),
+    (2, 3, '[10:00:00,19:30:00)'),
+    (2, 4, '[10:00:00,19:30:00)'),
+    (2, 5, '[10:00:00,15:00:00)');
 
--- INSERT INTO cafeteria.station (id, location_id, station_name, station_description) VALUES
---     (1, 1, 'Sandwich Station', 'Fresh made-to-order sandwiches'),
---     (2, 1, 'Salad Bar', 'Fresh salads and healthy options');
+INSERT INTO cafeteria.station (location_id, station_name, station_description) VALUES
+    (1, 'Sandwich Station', 'Fresh made-to-order sandwiches'),
+    (1, 'Salad Bar', 'Fresh salads and healthy options'),
+    (2, 'Grill', 'Hot entrees and burgers');
 
--- INSERT INTO cafeteria.ingredient_type (id, type_name, quantity) VALUES
---     (1, 'Bread', 1),
---     (2, 'Meat', 1),
---     (3, 'Vegetable', 2);
+INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price, image_url) VALUES
+    (1, 'Turkey Sandwich', 'Turkey sandwich with lettuce on wheat bread', 6.50, 'https://picsum.photos/id/488/150/150'),
+    (3, 'Cheeseburger', 'Classic cheeseburger with lettuce and tomato', 7.95, 'https://picsum.photos/id/431/150/150');
 
--- INSERT INTO cafeteria.ingredient (id, ingredient_name, image_url, ingredient_price) VALUES
---     (1, 'Wheat Bread', 'https://picsum.photos/id/98/150/150', 0),
---     (2, 'Sliced Turkey', 'https://picsum.photos/id/429/150/150', 2.50),
---     (3, 'Fresh Lettuce', 'https://picsum.photos/id/550/150/150', 0),
---     (4, 'Sliced Tomato', 'https://picsum.photos/id/189/150/150', 0.25);
+INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, image_url) VALUES
+    (2, 'Garden Salad', 'Fresh green salad with lettuce and tomato', 4.95, 'https://picsum.photos/id/550/150/150'),
+    (3, 'French Fries', 'Crispy golden french fries', 2.50, 'https://picsum.photos/id/225/150/150');
 
--- INSERT INTO cafeteria.food_item (id, station_id, item_description, image_url, item_price) VALUES
---     (1, 1, 'Turkey sandwich with lettuce on wheat bread', 'https://picsum.photos/id/488/150/150', 6.50),
---     (2, 2, 'Fresh green salad with lettuce and tomato', 'https://picsum.photos/id/550/150/150', 4.95);
+INSERT INTO cafeteria.drink (station_id, drink_name, drink_description, drink_price, image_url) VALUES
+    (1, 'Soda', 'Assorted soft drinks', 1.99, 'https://picsum.photos/id/163/150/150'),
+    (2, 'Iced Tea', 'Freshly brewed iced tea', 1.99, 'https://picsum.photos/id/225/150/150'),
+    (3, 'Water', 'Bottled water', 0.99, 'https://picsum.photos/id/1025/150/150');
 
--- INSERT INTO cafeteria.ingredient_ingredient_type (ingredient_id, ingredient_type_id) VALUES
---     (1, 1),
---     (2, 2),
---     (3, 3),
---     (4, 3);
+INSERT INTO cafeteria.meal (entree_id, side_id, drink_id) VALUES
+    (1, 1, 1),
+    (2, 2, 2);
 
--- INSERT INTO cafeteria.food_item_ingredient_type (food_item_id, ingredient_type_id) VALUES
---     (1, 1),
---     (1, 2),
---     (1, 3),
---     (2, 3);
+INSERT INTO cafeteria.food_option (food_option_name, in_stock, image_url) VALUES
+    ('Wheat Bread', true, 'https://picsum.photos/id/98/150/150'),
+    ('Sliced Turkey', true, 'https://picsum.photos/id/429/150/150'),
+    ('Fresh Lettuce', true, 'https://picsum.photos/id/550/150/150'),
+    ('Sliced Tomato', true, 'https://picsum.photos/id/189/150/150');
+
+INSERT INTO cafeteria.food_option_type (food_option_type_name, num_included, max_amount, food_option_price, entree_id, side_id) VALUES
+    ('Bread', 1, 1, 0.00, 1, NULL),
+    ('Meat', 1, 2, 0.00, 1, NULL),
+    ('Vegetable', 2, 5, 0.25, 1, NULL);
+
+INSERT INTO cafeteria.option_option_type (food_option_id, food_option_type_id) VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 3);
