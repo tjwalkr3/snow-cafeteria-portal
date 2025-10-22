@@ -10,7 +10,7 @@ public class StationDto
     public int LocationId { get; set; }
 
     [Required]
-    [StringLength(100)]
+    [StringLength(50)]
     public string StationName { get; set; } = string.Empty;
 
     [Required]
