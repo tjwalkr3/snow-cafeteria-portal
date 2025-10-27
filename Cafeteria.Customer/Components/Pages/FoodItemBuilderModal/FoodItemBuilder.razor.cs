@@ -1,4 +1,4 @@
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using Microsoft.AspNetCore.Components;
 
 namespace Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;

@@ -1,5 +1,5 @@
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using Moq;
 using Moq.Protected;
 using System.Net;

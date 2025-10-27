@@ -1,6 +1,6 @@
 namespace Cafeteria.Shared.Data;
 
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 
 public static class DummyData
 {

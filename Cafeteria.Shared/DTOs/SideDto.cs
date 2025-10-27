@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Cafeteria.Shared.DTOs2;
+namespace Cafeteria.Shared.DTOs;
 
 public class SideDto
 {

@@ -1,5 +1,5 @@
 ﻿using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 
 namespace Cafeteria.Customer.Tests;
 

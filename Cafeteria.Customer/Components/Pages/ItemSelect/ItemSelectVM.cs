@@ -1,5 +1,5 @@
 ﻿using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.Pages.ItemSelect;
