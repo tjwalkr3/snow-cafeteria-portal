@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Cafeteria.Shared.DTOs;
+namespace Cafeteria.Shared.DTOs2;
 
 public class FoodOptionTypeDto
 {

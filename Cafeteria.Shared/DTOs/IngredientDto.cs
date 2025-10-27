@@ -2,17 +2,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cafeteria.Shared.DTOs;
 
-public class FoodOptionDto
+public class IngredientDto
 {
     public int Id { get; set; }
 
     [Required]
     [StringLength(100)]
-    public string FoodOptionName { get; set; } = string.Empty;
+    public string IngredientName { get; set; } = string.Empty;
 
-    [Required]
-    public bool InStock { get; set; } = true;
-
-    [StringLength(500)]
+    [StringLength(300)]
     public string? ImageUrl { get; set; }
+
+    [Range(0.01, 999.99)]
+    public decimal? IngredientPrice { get; set; }
 }
