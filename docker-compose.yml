@@ -12,62 +12,62 @@ services:
     networks:
       - cafeteria-network
 
-  # api:
-  #   image: mcr.microsoft.com/dotnet/sdk:9.0
-  #   working_dir: /app
-  #   command: dotnet watch run --project Cafeteria.Api/Cafeteria.Api.csproj --no-launch-profile
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_URLS=http://+:8080
-  #     - DB_CONN=Host=database;Database=cafeteria;Username=cafeteria_admin;Password=SnowCafe
-  #     - DOTNET_USE_POLLING_FILE_WATCHER=true
-  #   volumes:
-  #     - ./:/app
-  #     - ~/.nuget/packages:/root/.nuget/packages
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - database
-  #   networks:
-  #     - cafeteria-network
+  api:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    working_dir: /app
+    command: dotnet watch run --project Cafeteria.Api/Cafeteria.Api.csproj --no-launch-profile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - DB_CONN=Host=database;Database=cafeteria;Username=cafeteria_admin;Password=SnowCafe
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+    volumes:
+      - ./:/app
+      - ~/.nuget/packages:/root/.nuget/packages
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - cafeteria-network
 
-  # customer:
-  #   image: mcr.microsoft.com/dotnet/sdk:9.0
-  #   working_dir: /app
-  #   command: dotnet watch run --project Cafeteria.Customer/Cafeteria.Customer.csproj --no-launch-profile
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_URLS=http://+:8080
-  #     - ApiBaseUrl=http://api:8080/api/
-  #     - DOTNET_USE_POLLING_FILE_WATCHER=true
-  #   volumes:
-  #     - ./:/app
-  #     - ~/.nuget/packages:/root/.nuget/packages
-  #   ports:
-  #     - "8081:8080"
-  #   depends_on:
-  #     - api
-  #   networks:
-  #     - cafeteria-network
+  customer:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    working_dir: /app
+    command: dotnet watch run --project Cafeteria.Customer/Cafeteria.Customer.csproj --no-launch-profile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ApiBaseUrl=http://api:8080/api/
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+    volumes:
+      - ./:/app
+      - ~/.nuget/packages:/root/.nuget/packages
+    ports:
+      - "8081:8080"
+    depends_on:
+      - api
+    networks:
+      - cafeteria-network
 
-  # management:
-  #   image: mcr.microsoft.com/dotnet/sdk:9.0
-  #   working_dir: /app
-  #   command: dotnet watch run --project Cafeteria.Management/Cafeteria.Management.csproj --no-launch-profile
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_URLS=http://+:8080
-  #     - ApiBaseUrl=http://api:8080/api/
-  #     - DOTNET_USE_POLLING_FILE_WATCHER=true
-  #   volumes:
-  #     - ./:/app
-  #     - ~/.nuget/packages:/root/.nuget/packages
-  #   ports:
-  #     - "8082:8080"
-  #   depends_on:
-  #     - api
-  #   networks:
-  #     - cafeteria-network
+  management:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    working_dir: /app
+    command: dotnet watch run --project Cafeteria.Management/Cafeteria.Management.csproj --no-launch-profile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ApiBaseUrl=http://api:8080/api/
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+    volumes:
+      - ./:/app
+      - ~/.nuget/packages:/root/.nuget/packages
+    ports:
+      - "8082:8080"
+    depends_on:
+      - api
+    networks:
+      - cafeteria-network
 
 networks:
   cafeteria-network:
