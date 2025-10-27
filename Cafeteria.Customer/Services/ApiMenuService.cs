@@ -4,66 +4,66 @@ namespace Cafeteria.Customer.Services;
 
 public class ApiMenuService(HttpClient client) : IApiMenuService
 {
-    public async Task<List<LocationDto>> GetAllLocations()
+    public async Task<List<LocationDtoOld>> GetAllLocations()
     {
         var response = await client.GetAsync("menu/locations");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<LocationDto>>() ?? new List<LocationDto>();
+        return await response.Content.ReadFromJsonAsync<List<LocationDtoOld>>() ?? new List<LocationDtoOld>();
     }
 
-    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
+    public async Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
     {
         if (locationId < 1)
             throw new ArgumentOutOfRangeException(nameof(locationId));
 
         var response = await client.GetAsync($"menu/stations/location/{locationId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? new List<StationDto>();
+        return await response.Content.ReadFromJsonAsync<List<StationDtoOld>>() ?? new List<StationDtoOld>();
     }
 
-    public async Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
+    public async Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
     {
         if (stationId < 1)
             throw new ArgumentOutOfRangeException(nameof(stationId));
 
         var response = await client.GetAsync($"menu/food-items/station/{stationId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<FoodItemDto>>() ?? new List<FoodItemDto>();
+        return await response.Content.ReadFromJsonAsync<List<FoodItemDtoOld>>() ?? new List<FoodItemDtoOld>();
     }
 
-    public async Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
+    public async Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId)
     {
         if (foodItemId < 1)
             throw new ArgumentOutOfRangeException(nameof(foodItemId));
 
         var response = await client.GetAsync($"menu/ingredient-types/food-item/{foodItemId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<IngredientTypeDto>>() ?? new List<IngredientTypeDto>();
+        return await response.Content.ReadFromJsonAsync<List<IngredientTypeDtoOld>>() ?? new List<IngredientTypeDtoOld>();
     }
 
-    public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
+    public async Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId)
     {
         if (ingredientTypeId < 1)
             throw new ArgumentOutOfRangeException(nameof(ingredientTypeId));
 
         var response = await client.GetAsync($"menu/ingredients/type/{ingredientTypeId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<IngredientDto>>() ?? new List<IngredientDto>();
+        return await response.Content.ReadFromJsonAsync<List<IngredientDtoOld>>() ?? new List<IngredientDtoOld>();
     }
 
-    public async Task<IngredientDto> GetIngredientById(int ingredientId)
+    public async Task<IngredientDtoOld> GetIngredientById(int ingredientId)
     {
         if (ingredientId < 1)
             throw new ArgumentOutOfRangeException(nameof(ingredientId));
 
         var response = await client.GetAsync($"menu/ingredients/{ingredientId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<IngredientDto>() ?? new IngredientDto();
+        return await response.Content.ReadFromJsonAsync<IngredientDtoOld>() ?? new IngredientDtoOld();
     }
 
-    public async Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
+    public async Task<Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>> GetIngredientsOrganizedByType(List<IngredientTypeDtoOld> types)
     {
-        var result = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+        var result = new Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>();
 
         if (types == null || types.Count == 0)
             return result;

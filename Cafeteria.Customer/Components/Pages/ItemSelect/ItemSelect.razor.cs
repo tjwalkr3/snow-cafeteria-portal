@@ -7,9 +7,9 @@ namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 public partial class ItemSelect
 {
     public bool IsInitialized { get; set; } = false;
-    public List<FoodItemDto> foodItems = new();
+    public List<FoodItemDtoOld> foodItems = new();
     private bool isModalOpen = false;
-    private FoodItemDto? selectedFoodItem = null;
+    private FoodItemDtoOld? selectedFoodItem = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -18,7 +18,7 @@ public partial class ItemSelect
         IsInitialized = true;
     }
 
-    private void OpenFoodItemModal(FoodItemDto foodItem)
+    private void OpenFoodItemModal(FoodItemDtoOld foodItem)
     {
         Console.WriteLine($"Opening modal for: {foodItem.ItemDescription}");
         selectedFoodItem = foodItem;

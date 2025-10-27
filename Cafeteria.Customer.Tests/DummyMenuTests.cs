@@ -16,7 +16,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceReturnsDummyLocationList()
     {
         var locations = await MenuService.GetAllLocations();
-        List<LocationDto> locationList = locations.ToList();
+        List<LocationDtoOld> locationList = locations.ToList();
         Assert.True((locations is not null) && (locationList.Count > 0));
     }
 
@@ -24,7 +24,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceGetsStationsForDummyLocation()
     {
         var stations = await MenuService.GetStationsByLocation(1);
-        List<StationDto> stationList = stations.ToList();
+        List<StationDtoOld> stationList = stations.ToList();
         Assert.True((stations is not null) && (stationList.Count > 0));
     }
 
@@ -32,7 +32,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceGetsFoodItemsForDummyStation()
     {
         var foodItems = await MenuService.GetFoodItemsByStation(1);
-        List<FoodItemDto> foodItemList = foodItems.ToList();
+        List<FoodItemDtoOld> foodItemList = foodItems.ToList();
         Assert.True((foodItems is not null) && (foodItemList.Count > 0));
     }
 
@@ -40,7 +40,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceGetsDummyIngredientById()
     {
         var ingredient = await MenuService.GetIngredientById(1);
-        IngredientDto ingredientDto = ingredient;
+        IngredientDtoOld ingredientDto = ingredient;
         Assert.True(ingredientDto is not null && ingredientDto.IngredientName is not null && ingredientDto.IngredientName.Length > 0);
     }
 
@@ -48,7 +48,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceGetsIngredientTypesForDummyFoodItem()
     {
         var types = await MenuService.GetIngredientTypesByFoodItem(1);
-        List<IngredientTypeDto> typeList = types.ToList();
+        List<IngredientTypeDtoOld> typeList = types.ToList();
         Assert.True((types != null) && (typeList.Count > 0));
     }
 
@@ -57,11 +57,11 @@ public class DummyMenuTests
     {
         // Arrange: Get ingredient types to test with
         var types = await MenuService.GetIngredientTypesByFoodItem(1);
-        List<IngredientTypeDto> typeList = types.ToList();
+        List<IngredientTypeDtoOld> typeList = types.ToList();
 
         // Act: call method and store result in dictionary
         var ingredientsAndTypes = await MenuService.GetIngredientsOrganizedByType(typeList);
-        Dictionary<IngredientTypeDto, List<IngredientDto>> ingredientsAndTypesDict = ingredientsAndTypes;
+        Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>> ingredientsAndTypesDict = ingredientsAndTypes;
 
         // Assert
         Assert.True(ingredientsAndTypesDict is not null && ingredientsAndTypes.Count > 0);
@@ -71,7 +71,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceGetsDummyIngredientsForType()
     {
         var ingredients = await MenuService.GetIngredientsByType(1);
-        List<IngredientDto> ingredientList = ingredients.ToList();
+        List<IngredientDtoOld> ingredientList = ingredients.ToList();
         Assert.True((ingredients is not null) && (ingredientList.Count > 0));
     }
 }

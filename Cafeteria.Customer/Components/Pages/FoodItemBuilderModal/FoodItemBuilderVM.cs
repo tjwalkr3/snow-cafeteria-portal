@@ -8,16 +8,16 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
 {
     private readonly IApiMenuService _menuService;
     string errorString = "Error";
-    public FoodItemDto? SelectedFoodItem { get; set; }
-    public List<IngredientDto> SelectedIngredients { get; set; } = new List<IngredientDto>();
-    public Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; } = new Dictionary<IngredientTypeDto, List<IngredientDto>>();
+    public FoodItemDtoOld? SelectedFoodItem { get; set; }
+    public List<IngredientDtoOld> SelectedIngredients { get; set; } = new List<IngredientDtoOld>();
+    public Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>? IngredientsByType { get; set; } = new Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>();
 
     public FoodItemBuilderVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }
 
-    public void ToggleIngredientSelection(IngredientDto ingredient)
+    public void ToggleIngredientSelection(IngredientDtoOld ingredient)
     {
         if (IngredientIsSelected(ingredient))
         {
@@ -26,12 +26,12 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         else SelectIngredient(ingredient);
     }
 
-    public bool IngredientIsSelected(IngredientDto ingredient)
+    public bool IngredientIsSelected(IngredientDtoOld ingredient)
     {
         return SelectedIngredients.Contains(ingredient);
     }
 
-    public void SelectIngredient(IngredientDto ingredient)
+    public void SelectIngredient(IngredientDtoOld ingredient)
     {
         if (!SelectedIngredients.Contains(ingredient))
         {
@@ -39,7 +39,7 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         }
     }
 
-    public void UnselectIngredient(IngredientDto ingredient)
+    public void UnselectIngredient(IngredientDtoOld ingredient)
     {
         if (SelectedIngredients.Contains(ingredient))
         {
@@ -57,9 +57,9 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
 
         try
         {
-            FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
+            FoodItemDtoOld foodItem = JsonSerializer.Deserialize<FoodItemDtoOld>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
             SelectedFoodItem = foodItem;
-            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
+            List<IngredientTypeDtoOld> ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
             IngredientsByType = await _menuService.GetIngredientsOrganizedByType(ingredientTypes);
         }
         catch
@@ -69,13 +69,13 @@ public class FoodItemBuilderVM : IFoodItemBuilderVM
         }
     }
 
-    public async Task InitializeWithFoodItem(FoodItemDto foodItem)
+    public async Task InitializeWithFoodItem(FoodItemDtoOld foodItem)
     {
         try
         {
             SelectedFoodItem = foodItem;
             SelectedIngredients.Clear();
-            List<IngredientTypeDto> ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
+            List<IngredientTypeDtoOld> ingredientTypes = await _menuService.GetIngredientTypesByFoodItem(SelectedFoodItem.Id);
             IngredientsByType = await _menuService.GetIngredientsOrganizedByType(ingredientTypes);
         }
         catch

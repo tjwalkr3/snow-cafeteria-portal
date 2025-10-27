@@ -69,7 +69,7 @@
                     </div>
                 </div>
 
-                @foreach (KeyValuePair<IngredientTypeDto, List<IngredientDto>> ingredientList in BuilderViewModel.IngredientsByType)
+                @foreach (KeyValuePair<IngredientTypeDtoOld, List<IngredientDtoOld>> ingredientList in BuilderViewModel.IngredientsByType)
                 {
                     <div class="row mb-4">
                         <div class="col-12">
@@ -83,7 +83,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        @foreach (IngredientDto ingredient in ingredientList.Value)
+                                        @foreach (IngredientDtoOld ingredient in ingredientList.Value)
                                         {
                                             <div class="col-md-6 col-lg-4 mb-3">
                                                 <div class="form-check">

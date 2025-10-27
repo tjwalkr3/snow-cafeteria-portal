@@ -4,13 +4,13 @@ namespace Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 
 public interface IFoodItemBuilderVM
 {
-    FoodItemDto? SelectedFoodItem { get; set; }
-    List<IngredientDto> SelectedIngredients { get; set; }
-    Dictionary<IngredientTypeDto, List<IngredientDto>>? IngredientsByType { get; set; }
+    FoodItemDtoOld? SelectedFoodItem { get; set; }
+    List<IngredientDtoOld> SelectedIngredients { get; set; }
+    Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>? IngredientsByType { get; set; }
     Dictionary<string, string?> GetOrderAsJson();
     Task GetDataFromRouteParameters(string uri);
-    Task InitializeWithFoodItem(FoodItemDto foodItem);
-    void ToggleIngredientSelection(IngredientDto ingredient);
-    bool IngredientIsSelected(IngredientDto ingredient);
+    Task InitializeWithFoodItem(FoodItemDtoOld foodItem);
+    void ToggleIngredientSelection(IngredientDtoOld ingredient);
+    bool IngredientIsSelected(IngredientDtoOld ingredient);
     bool ErrorOccurredWhileParsingSelectedFoodItem();
 }

@@ -6,7 +6,7 @@ namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 public class LocationSelectVM : ILocationSelectVM
 {
     private readonly IApiMenuService _menuService;
-    public List<LocationDto> Locations { get; private set; } = new();
+    public List<LocationDtoOld> Locations { get; private set; } = new();
 
     public LocationSelectVM(IApiMenuService menuService)
     {

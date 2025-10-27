@@ -6,7 +6,7 @@ namespace Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 public partial class FoodItemBuilder
 {
     [Parameter]
-    public FoodItemDto? FoodItem { get; set; }
+    public FoodItemDtoOld? FoodItem { get; set; }
 
     [Parameter]
     public EventCallback<Dictionary<string, string?>> OnOrderReady { get; set; }
@@ -35,7 +35,7 @@ public partial class FoodItemBuilder
         }
     }
 
-    private void HandleIngredientChange(ChangeEventArgs e, IngredientDto ingredient)
+    private void HandleIngredientChange(ChangeEventArgs e, IngredientDtoOld ingredient)
     {
         BuilderViewModel.ToggleIngredientSelection(ingredient);
     }

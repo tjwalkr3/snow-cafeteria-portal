@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cafeteria.Shared.DTOs;
 
-public class StationDto
+public class LocationBusinessHoursDtoOld
 {
     public int Id { get; set; }
 
@@ -10,10 +10,11 @@ public class StationDto
     public int LocationId { get; set; }
 
     [Required]
-    [StringLength(100)]
-    public string StationName { get; set; } = string.Empty;
+    public int WeekdayId { get; set; }
 
     [Required]
-    [StringLength(200)]
-    public string StationDescription { get; set; } = string.Empty;
+    public TimeOnly OpenTime { get; set; }
+
+    [Required]
+    public TimeOnly CloseTime { get; set; }
 }

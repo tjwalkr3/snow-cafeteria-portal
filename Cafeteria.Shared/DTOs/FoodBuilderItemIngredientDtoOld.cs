@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cafeteria.Shared.DTOs;
 
-public class FoodBuilderItemIngredientDto
+public class FoodBuilderItemIngredientDtoOld
 {
     public int Id { get; set; }
 

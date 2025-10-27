@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cafeteria.Shared.DTOs;
 
-public class LocationDto
+public class LocationDtoOld
 {
     public int Id { get; set; }
     [Required]
