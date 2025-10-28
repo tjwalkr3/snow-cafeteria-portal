@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.PaymentSelect;
 
-public partial class LocationSelect
+public partial class PaymentSelect
 {
     public string cardUrl = CreateUrl("/location-select", "payment", "card");
     public string swipeUrl = CreateUrl("/location-select", "payment", "swipe");
