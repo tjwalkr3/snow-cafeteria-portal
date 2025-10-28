@@ -7,8 +7,8 @@ namespace Cafeteria.Customer.Components.Pages.PaymentSelect;
 
 public partial class PaymentSelect
 {
-    public string cardUrl = CreateUrl("/location-select", "payment", "card");
-    public string swipeUrl = CreateUrl("/location-select", "payment", "swipe");
+    public string cardParam = CreateUrl("/location-select", "payment", "card");
+    public string swipeParam = CreateUrl("/location-select", "payment", "swipe");
 
     public static string CreateUrl(string path, string parameter, string value)
     {
