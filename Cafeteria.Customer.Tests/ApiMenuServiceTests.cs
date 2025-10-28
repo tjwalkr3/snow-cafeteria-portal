@@ -1,5 +1,5 @@
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using Moq;
 using Moq.Protected;
 using System.Net;
@@ -28,7 +28,7 @@ public class ApiMenuServiceTests
     [InlineData(1)]
     public async Task GetStationsByLocation_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new List<StationDto> { new StationDto { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<StationDtoOld> { new StationDtoOld { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
@@ -48,7 +48,7 @@ public class ApiMenuServiceTests
     [InlineData(1)]
     public async Task GetFoodItemsByStation_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new List<FoodItemDto> { new FoodItemDto { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<FoodItemDtoOld> { new FoodItemDtoOld { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
@@ -68,7 +68,7 @@ public class ApiMenuServiceTests
     [InlineData(1)]
     public async Task GetIngredientTypesByFoodItem_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new List<IngredientTypeDto> { new IngredientTypeDto { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<IngredientTypeDtoOld> { new IngredientTypeDtoOld { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
@@ -88,7 +88,7 @@ public class ApiMenuServiceTests
     [InlineData(1)]
     public async Task GetIngredientsByType_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new List<IngredientDto> { new IngredientDto { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<IngredientDtoOld> { new IngredientDtoOld { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
@@ -105,7 +105,7 @@ public class ApiMenuServiceTests
     [Fact]
     public async Task GetAllLocations_ReturnsListOfLocations()
     {
-        var expectedLocations = new List<LocationDto> { new LocationDto { Id = 1 } };
+        var expectedLocations = new List<LocationDtoOld> { new LocationDtoOld { Id = 1 } };
         var mockHandler = CreateMockHttpHandler(expectedLocations);
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
@@ -122,7 +122,7 @@ public class ApiMenuServiceTests
     [InlineData(1)]
     public async Task GetIngredientById_ReturnsAnIngredient(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new IngredientDto { Id = 1 });
+        var mockHandler = CreateMockHttpHandler(new IngredientDtoOld { Id = 1 });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
@@ -138,15 +138,15 @@ public class ApiMenuServiceTests
     public static IEnumerable<object[]> GetIngredientsOrganizedByTypeTestData =>
         [
             [null!, 0],
-            [new List<IngredientTypeDto>(), 0],
-            [new List<IngredientTypeDto> { new() { Id = 1 } }, 1]
+            [new List<IngredientTypeDtoOld>(), 0],
+            [new List<IngredientTypeDtoOld> { new() { Id = 1 } }, 1]
         ];
 
     [Theory]
     [MemberData(nameof(GetIngredientsOrganizedByTypeTestData))]
-    public async Task GetIngredientsOrganizedByType_ReturnsDictionaryBasedOnInput(List<IngredientTypeDto> types, int expectedCount)
+    public async Task GetIngredientsOrganizedByType_ReturnsDictionaryBasedOnInput(List<IngredientTypeDtoOld> types, int expectedCount)
     {
-        var mockHandler = CreateMockHttpHandler(new List<IngredientDto> { new IngredientDto { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<IngredientDtoOld> { new IngredientDtoOld { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 

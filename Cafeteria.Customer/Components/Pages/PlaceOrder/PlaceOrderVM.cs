@@ -1,4 +1,4 @@
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Customer.Services;
 using System.Text.Json;
 
@@ -8,21 +8,21 @@ public class PlaceOrderVM : IPlaceOrderVM
 {
     private readonly IApiMenuService _menuService;
     private bool urlParsingFailed = false;
-    public FoodItemDto? SelectedFoodItem { get; private set; }
-    public List<IngredientDto> SelectedIngredients { get; private set; } = new();
+    public FoodItemDtoOld? SelectedFoodItem { get; private set; }
+    public List<IngredientDtoOld> SelectedIngredients { get; private set; } = new();
 
     public PlaceOrderVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }
 
-    public List<FoodItemDto> GetOrderItems()
+    public List<FoodItemDtoOld> GetOrderItems()
     {
         if (SelectedFoodItem != null && !ErrorOccurredWhileParsingSelectedFoodItem())
         {
-            return new List<FoodItemDto> { SelectedFoodItem };
+            return new List<FoodItemDtoOld> { SelectedFoodItem };
         }
-        return new List<FoodItemDto>(); // Return empty list when no food item selected
+        return new List<FoodItemDtoOld>(); // Return empty list when no food item selected
     }
 
     public async Task GetDataFromRouteParameters(string uri)
@@ -42,7 +42,7 @@ public class PlaceOrderVM : IPlaceOrderVM
         try
         {
             // Parse food item (required)
-            FoodItemDto foodItem = JsonSerializer.Deserialize<FoodItemDto>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
+            FoodItemDtoOld foodItem = JsonSerializer.Deserialize<FoodItemDtoOld>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
             SelectedFoodItem = foodItem;
 
             // Parse ingredients (optional)
@@ -51,7 +51,7 @@ public class PlaceOrderVM : IPlaceOrderVM
             {
                 try
                 {
-                    IngredientDto ingredient = JsonSerializer.Deserialize<IngredientDto>(queryParams.Get(key) ?? string.Empty) ?? throw new ArgumentException($"Failed to deserialize ingredient from query parameter: {key}");
+                    IngredientDtoOld ingredient = JsonSerializer.Deserialize<IngredientDtoOld>(queryParams.Get(key) ?? string.Empty) ?? throw new ArgumentException($"Failed to deserialize ingredient from query parameter: {key}");
                     SelectedIngredients.Add(ingredient);
                 }
                 catch

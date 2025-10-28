@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 

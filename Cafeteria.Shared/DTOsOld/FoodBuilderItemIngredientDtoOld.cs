@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Cafeteria.Shared.DTOs;
+namespace Cafeteria.Shared.DTOsOld;
 
-public class IngredientIngredientTypeDto
+public class FoodBuilderItemIngredientDtoOld
 {
     public int Id { get; set; }
 
     [Required]
-    public int IngredientTypeId { get; set; }
+    public int FoodItemId { get; set; }
 
     [Required]
     public int IngredientId { get; set; }

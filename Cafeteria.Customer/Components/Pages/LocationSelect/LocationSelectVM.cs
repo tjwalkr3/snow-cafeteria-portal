@@ -1,4 +1,4 @@
-﻿using Cafeteria.Shared.DTOs;
+﻿using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Customer.Services;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
@@ -6,7 +6,7 @@ namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 public class LocationSelectVM : ILocationSelectVM
 {
     private readonly IApiMenuService _menuService;
-    public List<LocationDto> Locations { get; private set; } = new();
+    public List<LocationDtoOld> Locations { get; private set; } = new();
 
     public LocationSelectVM(IApiMenuService menuService)
     {
