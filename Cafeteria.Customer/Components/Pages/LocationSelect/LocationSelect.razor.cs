@@ -5,14 +5,28 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
-public partial class LocationSelect
+public partial class LocationSelect : ComponentBase
 {
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    private ILocationSelectVM LocationSelectVM { get; set; } = default!;
+
+    [SupplyParameterFromQuery(Name = "payment")]
+    public string? Payment { get; set; }
     public bool IsInitialized { get; set; } = false;
 
-    public static string CreateUrl(string path, string parameter, string value)
+    public string CreateUrl(string path, string locationValue)
     {
-        Dictionary<string, string?> queryParameter = new() { { parameter, JsonSerializer.Serialize(value) } };
-        return QueryHelpers.AddQueryString(path, queryParameter);
+        Dictionary<string, string?> queryParameters = new() { { "location", JsonSerializer.Serialize(locationValue) } };
+
+        if (!string.IsNullOrEmpty(Payment))
+        {
+            queryParameters.Add("payment", Payment);
+        }
+
+        return QueryHelpers.AddQueryString(path, queryParameters);
     }
 
     protected override async Task OnInitializedAsync()
@@ -20,6 +34,4 @@ public partial class LocationSelect
         await LocationSelectVM.InitializeLocationsAsync();
         IsInitialized = true;
     }
-
-    // QueryHelpers.AddQueryString(uri: "/station-select", queryString: new Dictionary<string, string?> {{ "location", JsonSerializer.Serialize(location)}})
 }

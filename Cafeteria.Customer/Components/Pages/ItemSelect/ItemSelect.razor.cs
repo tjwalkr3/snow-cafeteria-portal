@@ -4,8 +4,14 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 
-public partial class ItemSelect
+public partial class ItemSelect : ComponentBase
 {
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+    
+    [Inject]
+    private IItemSelectVM ItemSelectVM { get; set; } = default!;
+    
     public bool IsInitialized { get; set; } = false;
     public List<FoodItemDtoOld> foodItems = new();
     private bool isModalOpen = false;
