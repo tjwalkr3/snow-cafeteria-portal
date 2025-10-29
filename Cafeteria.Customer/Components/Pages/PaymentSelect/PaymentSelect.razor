@@ -1,8 +1,10 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @using Cafeteria.Shared.DTOsOld
 @using System.Text.Json
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Text.Json.Nodes
+@using Cafeteria.Customer.Components.Pages.CompleteYourMealModal
 @inject NavigationManager Navigation
 
 <PageTitle>Select Payment Method</PageTitle>
@@ -43,4 +45,28 @@
             </div>
         </div>
     </div>
+
+    @* <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <button type="button" class="btn btn-outline-primary btn-lg w-100" @onclick="OpenCompleteYourMealModal">
+                Complete Your Meal (Demo)
+            </button>
+        </div>
+    </div> *@
 </div>
+
+<CompleteYourMealModal IsOpen="@isModalOpen" OnClose="@CloseModal" />
+
+@code {
+    private bool isModalOpen = false;
+
+    private void OpenCompleteYourMealModal()
+    {
+        isModalOpen = true;
+    }
+
+    private void CloseModal()
+    {
+        isModalOpen = false;
+    }
+}

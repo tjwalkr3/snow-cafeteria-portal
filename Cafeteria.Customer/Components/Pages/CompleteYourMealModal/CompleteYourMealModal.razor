@@ -1,0 +1,190 @@
+@if (IsOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Complete Your Meal</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <ul class="nav nav-tabs nav-fill border-bottom" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @(activeTab == "entrees" ? "active" : "")" 
+                                    type="button" 
+                                    @onclick="@(() => SetActiveTab("entrees"))">
+                                Entrees
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @(activeTab == "sides" ? "active" : "")" 
+                                    type="button" 
+                                    @onclick="@(() => SetActiveTab("sides"))">
+                                Sides
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @(activeTab == "drinks" ? "active" : "")" 
+                                    type="button" 
+                                    @onclick="@(() => SetActiveTab("drinks"))">
+                                Drinks
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="p-3">
+                        @if (activeTab == "entrees")
+                        {
+                            <div class="alert alert-warning" role="alert">
+                                Select 1 entrée with your meal swipe
+                            </div>
+                            
+                            @foreach (var item in entrees)
+                            {
+                                <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
+                                     style="cursor: pointer;" 
+                                     @onclick="() => ToggleItem(item.Id)">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@item.Name</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-primary">$@item.Price.ToString()</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else if (activeTab == "sides")
+                        {
+                            <div class="alert alert-warning" role="alert">
+                                Select sides with your meal swipe
+                            </div>
+                            
+                            @foreach (var item in sides)
+                            {
+                                <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
+                                     style="cursor: pointer;" 
+                                     @onclick="() => ToggleItem(item.Id)">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@item.Name</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-primary">@item.Price.ToString("C")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else if (activeTab == "drinks")
+                        {
+                            <div class="alert alert-warning" role="alert">
+                                Select drinks with your meal swipe
+                            </div>
+                            
+                            @foreach (var item in drinks)
+                            {
+                                <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
+                                     style="cursor: pointer;" 
+                                     @onclick="() => ToggleItem(item.Id)">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@item.Name</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-primary">@item.Price.ToString("C")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <span>@selectedItems.Count items selected</span>
+                        <button type="button" 
+                                class="btn btn-secondary btn-lg" 
+                                disabled="@(selectedItems.Count == 0)"
+                                @onclick="AddToOrder">
+                            Add to Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private string activeTab = "entrees";
+    private HashSet<int> selectedItems = new HashSet<int>();
+
+    private List<MenuItem> entrees = new List<MenuItem>
+    {
+        new MenuItem { Id = 1, Name = "Cheeseburger", Price = 4.99m },
+        new MenuItem { Id = 2, Name = "Grilled Chicken Sandwich", Price = 5.19m },
+        new MenuItem { Id = 3, Name = "BLT Sandwich", Price = 4.89m },
+        new MenuItem { Id = 4, Name = "Personal Pizza", Price = 5.69m }
+    };
+
+    private List<MenuItem> sides = new List<MenuItem>
+    {
+        new MenuItem { Id = 5, Name = "French Fries", Price = 2.49m },
+        new MenuItem { Id = 6, Name = "Onion Rings", Price = 2.99m },
+        new MenuItem { Id = 7, Name = "Side Salad", Price = 2.79m },
+        new MenuItem { Id = 8, Name = "Fruit Cup", Price = 2.29m }
+    };
+
+    private List<MenuItem> drinks = new List<MenuItem>
+    {
+        new MenuItem { Id = 9, Name = "Fountain Drink", Price = 1.99m },
+        new MenuItem { Id = 10, Name = "Bottled Water", Price = 1.49m },
+        new MenuItem { Id = 11, Name = "Juice", Price = 2.29m },
+        new MenuItem { Id = 12, Name = "Milk", Price = 1.79m }
+    };
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private void ToggleItem(int itemId)
+    {
+        if (selectedItems.Contains(itemId))
+        {
+            selectedItems.Remove(itemId);
+        }
+        else
+        {
+            selectedItems.Add(itemId);
+        }
+    }
+
+    private async Task Close()
+    {
+        IsOpen = false;
+        selectedItems.Clear();
+        activeTab = "entrees";
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task AddToOrder()
+    {
+        await Close();
+    }
+
+    private class MenuItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+    }
+}
