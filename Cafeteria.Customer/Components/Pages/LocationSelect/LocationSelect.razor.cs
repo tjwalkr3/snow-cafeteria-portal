@@ -17,15 +17,14 @@ public partial class LocationSelect : ComponentBase
     public string? Payment { get; set; }
     public bool IsInitialized { get; set; } = false;
 
-    public string CreateUrl(string path, string locationValue)
+    public string CreateUrl(string path, int locationId)
     {
-        Dictionary<string, string?> queryParameters = new() { { "location", JsonSerializer.Serialize(locationValue) } };
+        Dictionary<string, string?> queryParameters = new() { };
 
         if (!string.IsNullOrEmpty(Payment))
-        {
             queryParameters.Add("payment", Payment);
-        }
-
+        queryParameters.Add("location", locationId.ToString());
+        
         return QueryHelpers.AddQueryString(path, queryParameters);
     }
 
