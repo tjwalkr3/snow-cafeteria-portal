@@ -9,6 +9,10 @@ find . -type d -name "bin" -exec rm -rf {} + 2>/dev/null
 find . -type d -name "obj" -exec rm -rf {} + 2>/dev/null
 
 echo "Bin and obj folders deleted."
+echo "Restoring packages locally for IntelliSense..."
+
+dotnet restore
+
 echo "Running docker compose down and rebuild..."
 
 # Run docker compose commands
