@@ -1,6 +1,7 @@
 using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOsOld;
+using Cafeteria.Shared.DTOs;
 using Cafeteria.Api.Services;
 
 namespace Cafeteria.Api.Services;
@@ -14,17 +15,17 @@ public class MenuService : IMenuService
         _dbConnection = dbConnection;
     }
 
-    public async Task<List<LocationDtoOld>> GetAllLocations()
+    public async Task<List<LocationDto>> GetAllLocations()
     {
         const string sql = @"
             SELECT 
-                id, 
-                location_name AS Name, 
-                location_description AS Description, 
-                location_address AS Address 
+                id AS Id, 
+                location_name AS LocationName, 
+                location_description AS LocationDescription, 
+                image_url AS ImageUrl
             FROM cafeteria.cafeteria_location";
 
-        var result = await _dbConnection.QueryAsync<LocationDtoOld>(sql);
+        var result = await _dbConnection.QueryAsync<LocationDto>(sql);
         return result.ToList();
     }
 
