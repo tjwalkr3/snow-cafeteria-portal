@@ -1,5 +1,6 @@
 ﻿using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOsOld;
+using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Tests;
 
@@ -16,7 +17,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceReturnsDummyLocationList()
     {
         var locations = await MenuService.GetAllLocations();
-        List<LocationDtoOld> locationList = locations.ToList();
+        List<LocationDto> locationList = locations.ToList();
         Assert.True((locations is not null) && (locationList.Count > 0));
     }
 

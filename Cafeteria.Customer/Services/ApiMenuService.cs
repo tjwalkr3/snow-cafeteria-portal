@@ -1,14 +1,15 @@
 using Cafeteria.Shared.DTOsOld;
+using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Services;
 
 public class ApiMenuService(HttpClient client) : IApiMenuService
 {
-    public async Task<List<LocationDtoOld>> GetAllLocations()
+    public async Task<List<LocationDto>> GetAllLocations()
     {
         var response = await client.GetAsync("menu/locations");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<LocationDtoOld>>() ?? new List<LocationDtoOld>();
+        return await response.Content.ReadFromJsonAsync<List<LocationDto>>() ?? new List<LocationDto>();
     }
 
     public async Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
