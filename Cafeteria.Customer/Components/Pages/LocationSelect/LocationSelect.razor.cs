@@ -30,6 +30,7 @@ public partial class LocationSelect : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        LocationSelectVM.ValidatePaymentParameter(Payment);
         await LocationSelectVM.InitializeLocationsAsync();
         IsInitialized = true;
     }

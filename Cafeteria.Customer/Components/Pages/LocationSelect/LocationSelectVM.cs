@@ -6,6 +6,7 @@ namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 public class LocationSelectVM : ILocationSelectVM
 {
     private readonly IApiMenuService _menuService;
+    private bool paymentParameterMissing = false;
     public List<LocationDto> Locations { get; private set; } = new();
 
     public LocationSelectVM(IApiMenuService menuService)
@@ -17,9 +18,15 @@ public class LocationSelectVM : ILocationSelectVM
     {
         Locations = await _menuService.GetAllLocations();
     }
+
+    public void ValidatePaymentParameter(string? payment)
+    {
+        paymentParameterMissing = string.IsNullOrEmpty(payment);
+    }
+
     public bool ErrorOccurred()
     {
-        return false; // TODO: check for errors getting locations from Menu Service
+        return Locations == null || Locations.Count == 0 || paymentParameterMissing;
     }
 }
 
