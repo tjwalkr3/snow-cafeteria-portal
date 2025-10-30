@@ -24,7 +24,7 @@ public partial class LocationSelect : ComponentBase
         if (!string.IsNullOrEmpty(Payment))
             queryParameters.Add("payment", Payment);
         queryParameters.Add("location", locationId.ToString());
-        
+
         return QueryHelpers.AddQueryString(path, queryParameters);
     }
 
