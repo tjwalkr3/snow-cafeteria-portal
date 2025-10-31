@@ -1,121 +1,114 @@
-@if (IsOpen)
-{
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Complete Your Meal</h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="Close"></button>
+<GenericModal IsOpen="@IsOpen" 
+              Title="Complete Your Meal" 
+              OnClose="@Close"
+              ModalSize="modal-xl"
+              IsScrollable="true"
+              ShowCloseButton="true">
+    <ChildContent>
+        <ul class="nav nav-tabs nav-fill border-bottom" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "entrees" ? "active" : "")" 
+                        type="button" 
+                        @onclick="@(() => SetActiveTab("entrees"))">
+                    Entrees
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "sides" ? "active" : "")" 
+                        type="button" 
+                        @onclick="@(() => SetActiveTab("sides"))">
+                    Sides
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == "drinks" ? "active" : "")" 
+                        type="button" 
+                        @onclick="@(() => SetActiveTab("drinks"))">
+                    Drinks
+                </button>
+            </li>
+        </ul>
+        <div class="p-3">
+            @if (activeTab == "entrees")
+            {
+                <div class="alert alert-warning" role="alert">
+                    Select 1 entrée with your meal swipe
                 </div>
-                <div class="modal-body p-0">
-                    <ul class="nav nav-tabs nav-fill border-bottom" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link @(activeTab == "entrees" ? "active" : "")" 
-                                    type="button" 
-                                    @onclick="@(() => SetActiveTab("entrees"))">
-                                Entrees
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link @(activeTab == "sides" ? "active" : "")" 
-                                    type="button" 
-                                    @onclick="@(() => SetActiveTab("sides"))">
-                                Sides
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link @(activeTab == "drinks" ? "active" : "")" 
-                                    type="button" 
-                                    @onclick="@(() => SetActiveTab("drinks"))">
-                                Drinks
-                            </button>
-                        </li>
-                    </ul>
-
-                    <div class="p-3">
-                        @if (activeTab == "entrees")
-                        {
-                            <div class="alert alert-warning" role="alert">
-                                Select 1 entrée with your meal swipe
+                
+                @foreach (var item in entrees)
+                {
+                    <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
+                            style="cursor: pointer;" 
+                            @onclick="() => ToggleItem(item.Id)">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@item.Name</strong>
                             </div>
-                            
-                            @foreach (var item in entrees)
-                            {
-                                <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
-                                     style="cursor: pointer;" 
-                                     @onclick="() => ToggleItem(item.Id)">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>@item.Name</strong>
-                                        </div>
-                                        <div>
-                                            <span class="text-primary">$@item.Price.ToString()</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
-                        else if (activeTab == "sides")
-                        {
-                            <div class="alert alert-warning" role="alert">
-                                Select sides with your meal swipe
+                            <div>
+                                <span class="text-primary">$@item.Price.ToString()</span>
                             </div>
-                            
-                            @foreach (var item in sides)
-                            {
-                                <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
-                                     style="cursor: pointer;" 
-                                     @onclick="() => ToggleItem(item.Id)">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>@item.Name</strong>
-                                        </div>
-                                        <div>
-                                            <span class="text-primary">@item.Price.ToString("C")</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
-                        else if (activeTab == "drinks")
-                        {
-                            <div class="alert alert-warning" role="alert">
-                                Select drinks with your meal swipe
-                            </div>
-                            
-                            @foreach (var item in drinks)
-                            {
-                                <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
-                                     style="cursor: pointer;" 
-                                     @onclick="() => ToggleItem(item.Id)">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>@item.Name</strong>
-                                        </div>
-                                        <div>
-                                            <span class="text-primary">@item.Price.ToString("C")</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
+                        </div>
                     </div>
+                }
+            }
+            else if (activeTab == "sides")
+            {
+                <div class="alert alert-warning" role="alert">
+                    Select sides with your meal swipe
                 </div>
-                <div class="modal-footer bg-light">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <span>@selectedItems.Count items selected</span>
-                        <button type="button" 
-                                class="btn btn-secondary btn-lg" 
-                                disabled="@(selectedItems.Count == 0)"
-                                @onclick="AddToOrder">
-                            Add to Order
-                        </button>
+                
+                @foreach (var item in sides)
+                {
+                    <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
+                            style="cursor: pointer;" 
+                            @onclick="() => ToggleItem(item.Id)">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@item.Name</strong>
+                            </div>
+                            <div>
+                                <span class="text-primary">@item.Price.ToString("C")</span>
+                            </div>
+                        </div>
                     </div>
+                }
+            }
+            else if (activeTab == "drinks")
+            {
+                <div class="alert alert-warning" role="alert">
+                    Select drinks with your meal swipe
                 </div>
-            </div>
+                
+                @foreach (var item in drinks)
+                {
+                    <div class="card mb-2 @(selectedItems.Contains(item.Id) ? "border-primary" : "")" 
+                            style="cursor: pointer;" 
+                            @onclick="() => ToggleItem(item.Id)">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@item.Name</strong>
+                            </div>
+                            <div>
+                                <span class="text-primary">@item.Price.ToString("C")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
         </div>
-    </div>
-}
+    </ChildContent>
+    <FooterContent>
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <span>@selectedItems.Count items selected</span>
+            <button type="button" 
+                    class="btn btn-secondary btn-lg" 
+                    disabled="@(selectedItems.Count == 0)"
+                    @onclick="AddToOrder">
+                Add to Order
+            </button>
+        </div>
+    </FooterContent>
+</GenericModal>
 
 @code {
     [Parameter]
