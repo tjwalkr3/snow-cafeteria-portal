@@ -8,10 +8,10 @@ public partial class ItemSelect : ComponentBase
 {
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
-    
+
     [Inject]
     private IItemSelectVM ItemSelectVM { get; set; } = default!;
-    
+
     public bool IsInitialized { get; set; } = false;
     public List<FoodItemDtoOld> foodItems = new();
     private bool isModalOpen = false;
