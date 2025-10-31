@@ -6,7 +6,7 @@ namespace Cafeteria.Api.Services;
 public interface IMenuService
 {
     Task<List<LocationDto>> GetAllLocations();
-    Task<List<StationDtoOld>> GetStationsByLocation(int locationId);
+    Task<List<StationDto>> GetStationsByLocation(int locationId);
     Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId);
     Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId);
     Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId);

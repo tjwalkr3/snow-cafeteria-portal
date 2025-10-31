@@ -23,7 +23,7 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet("stations/location/{locationId}")]
-    public async Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
+    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         return await _menuService.GetStationsByLocation(locationId);
     }
