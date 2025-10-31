@@ -14,9 +14,9 @@ public class DummyMenuService : IApiMenuService
         return Task.FromResult(DummyData.GetLocationList);
     }
 
-    public Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
+    public Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
-        return Task.FromResult(DummyData.GetStationList.Where(s => s.LocationId == locationId).ToList() ?? new List<StationDtoOld>());
+        return Task.FromResult(DummyData.GetStationList.Where(s => s.LocationId == locationId).ToList() ?? new List<StationDto>());
     }
 
     public Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
