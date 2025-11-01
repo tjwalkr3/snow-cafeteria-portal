@@ -1,0 +1,117 @@
+@page "/deli-demo"
+@rendermode InteractiveServer
+@using Cafeteria.Customer.Components.Pages.SelectionModal
+@using Cafeteria.Shared.DTOs
+
+<PageTitle>Deli Station Demo</PageTitle>
+
+<div class="container my-5">
+    <h1 class="text-center mb-5">
+        <i class="bi bi-cup-straw me-3"></i>Deli Station
+    </h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-warning shadow-sm">
+                <div class="card-header bg-warning text-dark text-center py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-credit-card me-2"></i>Meal Plan/Swipe Orders
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger mb-3" role="alert">
+                        <strong>NO SUBSTITUTIONS!!</strong>
+                    </div>
+                    
+                    <p class="text-muted mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Build your custom sandwich. Choose bread, meat, cheese, toppings, and dressing.
+                        Comes with a Fountain Drink and 1 side.
+                    </p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="fw-bold mb-2">Options Include:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle text-warning me-2"></i>6 Bread choices (including Gluten Free)</li>
+                                <li><i class="bi bi-check-circle text-warning me-2"></i>6 Meat options</li>
+                                <li><i class="bi bi-check-circle text-warning me-2"></i>6 Cheese varieties</li>
+                                <li><i class="bi bi-check-circle text-warning me-2"></i>11 Toppings (choose up to 3)</li>
+                                <li><i class="bi bi-check-circle text-warning me-2"></i>10 Dressing options</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-warning btn-lg w-100" @onclick="OpenDeliModal">
+                        <i class="bi bi-plus-circle me-2"></i>Order with Meal Swipe
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (orderConfirmation != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+            <h5 class="alert-heading">
+                <i class="bi bi-check-circle-fill me-2"></i>Order Added!
+            </h5>
+            <hr>
+            <p class="mb-0"><strong>@orderConfirmation</strong></p>
+            <button type="button" class="btn-close" @onclick="() => orderConfirmation = null"></button>
+        </div>
+    }
+</div>
+
+<DeliSwipeModal 
+    IsOpen="@showDeliModal"
+    OnClose="@CloseDeliModal"
+    OnOrderSelected="@HandleDeliOrder"
+    Sides="@deliSides"
+    Drinks="@deliDrinks" />
+
+@code {
+    private bool showDeliModal = false;
+    private string? orderConfirmation = null;
+
+    private List<SideDto> deliSides = new List<SideDto>
+    {
+        new SideDto { Id = 1, StationId = 3, SideName = "Bacon", SidePrice = 2.49m },
+        new SideDto { Id = 2, StationId = 3, SideName = "Cheese", SidePrice = 1.99m },
+        new SideDto { Id = 3, StationId = 3, SideName = "Additional Meats", SidePrice = 2.99m },
+        new SideDto { Id = 4, StationId = 3, SideName = "Rice", SidePrice = 1.99m },
+        new SideDto { Id = 5, StationId = 3, SideName = "Vegetables", SidePrice = 2.49m },
+        new SideDto { Id = 6, StationId = 3, SideName = "Fruit Cup", SidePrice = 2.29m },
+        new SideDto { Id = 7, StationId = 3, SideName = "Chips", SidePrice = 1.79m },
+        new SideDto { Id = 8, StationId = 3, SideName = "Side Salad", SidePrice = 2.79m }
+    };
+
+    private List<DrinkDto> deliDrinks = new List<DrinkDto>
+    {
+        new DrinkDto { Id = 1, StationId = 3, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 2, StationId = 3, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 3, StationId = 3, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 4, StationId = 3, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 5, StationId = 3, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
+    };
+
+    private void OpenDeliModal()
+    {
+        showDeliModal = true;
+    }
+
+    private void CloseDeliModal()
+    {
+        showDeliModal = false;
+    }
+
+    private void HandleDeliOrder(MealDto meal)
+    {
+        var side = deliSides.FirstOrDefault(s => s.Id == meal.SideId);
+        var drink = deliDrinks.FirstOrDefault(d => d.Id == meal.DrinkId);
+
+        orderConfirmation = $"Meal Plan/Swipe: Custom Deli Sandwich with {side?.SideName ?? "Unknown"}";
+        
+        Console.WriteLine($"Deli Order: SideId={meal.SideId}, DrinkId={meal.DrinkId}");
+    }
+}

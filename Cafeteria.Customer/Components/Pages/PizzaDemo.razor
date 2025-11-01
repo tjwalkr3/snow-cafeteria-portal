@@ -1,0 +1,158 @@
+@page "/pizza-demo"
+@rendermode InteractiveServer
+@using Cafeteria.Customer.Components.Pages.SelectionModal
+@using Cafeteria.Shared.DTOs
+
+<PageTitle>Pizza Station Demo</PageTitle>
+
+<div class="container my-5">
+    <h1 class="text-center mb-5">
+        <i class="bi bi-emoji-smile me-3"></i>Pizza Station
+    </h1>
+
+    <div class="row justify-content-center">
+        <!-- Meal Plan/Swipe Card -->
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white text-center py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-credit-card me-2"></i>Meal Plan/Swipe Orders
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Please circle your choice of 2 Toppings. 
+                        <span class="text-danger fw-bold">NO SUBSTITUTIONS!!</span>
+                        Additional toppings $0.50 each. Includes chips and a drink.
+                    </p>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="fw-bold mb-2">Available Toppings:</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Extra Cheese
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Pepperoni
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Sausage
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Bacon
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Chicken
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Ham
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Olives
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Mushrooms
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Onions
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Pineapple
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Bell Peppers
+                                        </div>
+                                        <div class="list-group-item py-1">
+                                            <i class="bi bi-check-circle text-danger me-2"></i>Banana Peppers
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-danger btn-lg w-100" @onclick="OpenPizzaModal">
+                        <i class="bi bi-plus-circle me-2"></i>Order with Meal Swipe
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (orderConfirmation != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+            <h5 class="alert-heading">
+                <i class="bi bi-check-circle-fill me-2"></i>Order Added!
+            </h5>
+            <hr>
+            <p class="mb-0"><strong>@orderConfirmation</strong></p>
+            <button type="button" class="btn-close" @onclick="() => orderConfirmation = null"></button>
+        </div>
+    }
+</div>
+
+<!-- Pizza Swipe Modal -->
+<PizzaSwipeModal 
+    IsOpen="@showPizzaModal"
+    OnClose="@ClosePizzaModal"
+    OnOrderSelected="@HandlePizzaOrder"
+    Entrees="@pizzaEntrees"
+    Sides="@pizzaSides"
+    Drinks="@pizzaDrinks" />
+
+@code {
+    private bool showPizzaModal = false;
+    private string? orderConfirmation = null;
+
+    // Sample data - in real app, this would come from API
+    private List<EntreeDto> pizzaEntrees = new List<EntreeDto>
+    {
+        new EntreeDto { Id = 1, StationId = 2, EntreeName = "Personal Pizza", EntreeDescription = "Choose 2 toppings included", EntreePrice = 5.69m }
+    };
+
+    private List<SideDto> pizzaSides = new List<SideDto>
+    {
+        new SideDto { Id = 1, StationId = 2, SideName = "Chips", SideDescription = "Included with your meal", SidePrice = 0.00m }
+    };
+
+    private List<DrinkDto> pizzaDrinks = new List<DrinkDto>
+    {
+        new DrinkDto { Id = 1, StationId = 2, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 2, StationId = 2, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 3, StationId = 2, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 4, StationId = 2, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 5, StationId = 2, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
+    };
+
+    private void OpenPizzaModal()
+    {
+        showPizzaModal = true;
+    }
+
+    private void ClosePizzaModal()
+    {
+        showPizzaModal = false;
+    }
+
+    private void HandlePizzaOrder(MealDto meal)
+    {
+        // Find the selected items by their IDs
+        var entree = pizzaEntrees.FirstOrDefault(e => e.Id == meal.EntreeId);
+        var side = pizzaSides.FirstOrDefault(s => s.Id == meal.SideId);
+        var drink = pizzaDrinks.FirstOrDefault(d => d.Id == meal.DrinkId);
+
+        orderConfirmation = $"Meal Plan/Swipe: {entree?.EntreeName ?? "Personal Pizza"} with {side?.SideName ?? "Chips"} and {drink?.DrinkName ?? "Drink"}";
+        
+        // Here you would typically send this to your API/service
+        Console.WriteLine($"Pizza Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}");
+    }
+}

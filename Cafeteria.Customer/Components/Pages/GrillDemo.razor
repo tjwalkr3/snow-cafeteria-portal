@@ -1,0 +1,180 @@
+@page "/grill-demo"
+@rendermode InteractiveServer
+@using Cafeteria.Customer.Components.Pages.SelectionModal
+@using Cafeteria.Shared.DTOs
+
+<PageTitle>Grill Station Demo</PageTitle>
+
+<div class="container my-5">
+    <h1 class="text-center mb-5">
+        <i class="bi bi-fire me-3"></i>Grill Station
+    </h1>
+
+    <div class="row justify-content-center">
+        <!-- Meal Plan/Swipe Card -->
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-success shadow-sm">
+                <div class="card-header bg-success text-white text-center py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-credit-card me-2"></i>Meal Plan/Swipe Orders
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Circle the Grill Item you want and write name on slip. 
+                        Choose ONE grill item and ONE side. Each meal includes a Fountain Drink.
+                    </p>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Grill Items:</h6>
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-check-circle text-success me-2"></i>Hamburger
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-check-circle text-success me-2"></i>Cheeseburger
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-check-circle text-success me-2"></i>Badger Burger
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-check-circle text-success me-2"></i>Grilled Cheese
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-check-circle text-success me-2"></i>BLT
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-check-circle text-success me-2"></i>Quesadillas
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-check-circle text-success me-2"></i>And more...
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Choose One Side:</h6>
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-circle text-muted me-2"></i>Fries
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-circle text-muted me-2"></i>Tator Tots
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-circle text-muted me-2"></i>Waffle Fries
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-circle text-muted me-2"></i>Rice
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-circle text-muted me-2"></i>Side Salad
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-circle text-muted me-2"></i>Fruit Cup
+                                </div>
+                                <div class="list-group-item py-1">
+                                    <i class="bi bi-circle text-muted me-2"></i>Vegetables
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success btn-lg w-100" @onclick="OpenGrillModal">
+                        <i class="bi bi-plus-circle me-2"></i>Order with Meal Swipe
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (orderConfirmation != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+            <h5 class="alert-heading">
+                <i class="bi bi-check-circle-fill me-2"></i>Order Added!
+            </h5>
+            <hr>
+            <p class="mb-0"><strong>@orderConfirmation</strong></p>
+            <button type="button" class="btn-close" @onclick="() => orderConfirmation = null"></button>
+        </div>
+    }
+</div>
+
+<!-- Grill Swipe Modal -->
+<GrillSwipeModal 
+    IsOpen="@showGrillModal"
+    OnClose="@CloseGrillModal"
+    OnOrderSelected="@HandleGrillOrder"
+    Entrees="@grillEntrees"
+    Sides="@grillSides"
+    Drinks="@grillDrinks" />
+
+@code {
+    private bool showGrillModal = false;
+    private string? orderConfirmation = null;
+
+    // Sample data - in real app, this would come from API
+    private List<EntreeDto> grillEntrees = new List<EntreeDto>
+    {
+        new EntreeDto { Id = 1, StationId = 1, EntreeName = "Hamburger", EntreePrice = 4.99m },
+        new EntreeDto { Id = 2, StationId = 1, EntreeName = "Cheeseburger", EntreePrice = 4.99m },
+        new EntreeDto { Id = 3, StationId = 1, EntreeName = "Badger Burger", EntreePrice = 5.49m },
+        new EntreeDto { Id = 4, StationId = 1, EntreeName = "Grilled Cheese", EntreePrice = 4.49m },
+        new EntreeDto { Id = 5, StationId = 1, EntreeName = "Grilled Ham & Cheese", EntreePrice = 4.79m },
+        new EntreeDto { Id = 6, StationId = 1, EntreeName = "BLT Sandwich", EntreePrice = 4.89m },
+        new EntreeDto { Id = 7, StationId = 1, EntreeName = "Chicken Nuggets", EntreePrice = 4.99m },
+        new EntreeDto { Id = 8, StationId = 1, EntreeName = "Breaded Chicken Sandwich", EntreePrice = 5.19m },
+        new EntreeDto { Id = 9, StationId = 1, EntreeName = "Philly Cheesesteak", EntreePrice = 5.99m },
+        new EntreeDto { Id = 10, StationId = 1, EntreeName = "Corn Dog", EntreePrice = 3.99m },
+        new EntreeDto { Id = 11, StationId = 1, EntreeName = "Cheese Quesadilla", EntreePrice = 4.79m },
+        new EntreeDto { Id = 12, StationId = 1, EntreeName = "Chicken Quesadilla", EntreePrice = 5.29m },
+        new EntreeDto { Id = 13, StationId = 1, EntreeName = "Steak Quesadilla", EntreePrice = 5.79m },
+        new EntreeDto { Id = 14, StationId = 1, EntreeName = "Vegetarian Chicken Tenders", EntreePrice = 4.99m },
+        new EntreeDto { Id = 15, StationId = 1, EntreeName = "Vegetarian Burger", EntreePrice = 5.29m }
+    };
+
+    private List<SideDto> grillSides = new List<SideDto>
+    {
+        new SideDto { Id = 1, StationId = 1, SideName = "Fries", SidePrice = 2.49m },
+        new SideDto { Id = 2, StationId = 1, SideName = "Tator Tots", SidePrice = 2.79m },
+        new SideDto { Id = 3, StationId = 1, SideName = "Waffle Fries", SidePrice = 2.99m },
+        new SideDto { Id = 4, StationId = 1, SideName = "Rice", SidePrice = 1.99m },
+        new SideDto { Id = 5, StationId = 1, SideName = "Side Salad", SidePrice = 2.79m },
+        new SideDto { Id = 6, StationId = 1, SideName = "Fruit Cup", SidePrice = 2.29m },
+        new SideDto { Id = 7, StationId = 1, SideName = "Vegetables", SidePrice = 2.49m }
+    };
+
+    private List<DrinkDto> grillDrinks = new List<DrinkDto>
+    {
+        new DrinkDto { Id = 1, StationId = 1, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 2, StationId = 1, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 3, StationId = 1, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 4, StationId = 1, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 5, StationId = 1, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
+    };
+
+    private void OpenGrillModal()
+    {
+        showGrillModal = true;
+    }
+
+    private void CloseGrillModal()
+    {
+        showGrillModal = false;
+    }
+
+    private void HandleGrillOrder(MealDto meal)
+    {
+        // Find the selected items by their IDs
+        var entree = grillEntrees.FirstOrDefault(e => e.Id == meal.EntreeId);
+        var side = grillSides.FirstOrDefault(s => s.Id == meal.SideId);
+        var drink = grillDrinks.FirstOrDefault(d => d.Id == meal.DrinkId);
+
+        orderConfirmation = $"Meal Plan/Swipe: {entree?.EntreeName ?? "Unknown"} with {side?.SideName ?? "Unknown"}";
+        
+        // Here you would typically send this to your API/service
+        Console.WriteLine($"Grill Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}");
+    }
+}
