@@ -10,11 +10,14 @@ public partial class StationSelect : ComponentBase
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
+    [SupplyParameterFromQuery(Name = "location")]
+    public int Location { get; set; }
     public bool IsInitialized { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await StationSelectVM.GetDataFromRouteParameters(this.Navigation.Uri);
+        StationSelectVM.ValidateLocationParameter(Location);
+        await StationSelectVM.InitializeStations(Location);
         IsInitialized = true;
     }
 }

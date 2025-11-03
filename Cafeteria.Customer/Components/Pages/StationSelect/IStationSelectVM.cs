@@ -5,6 +5,7 @@ namespace Cafeteria.Customer.Components.Pages.StationSelect;
 public interface IStationSelectVM
 {
     List<StationDto>? Stations { get; }
-    Task GetDataFromRouteParameters(string uri);
+    void ValidateLocationParameter(int location);
+    Task InitializeStations(int locationId);
     bool ErrorOccurredWhileParsingSelectedLocation();
 }
