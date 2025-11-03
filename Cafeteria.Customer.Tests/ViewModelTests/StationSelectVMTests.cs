@@ -1,21 +1,99 @@
 using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Services;
+using Cafeteria.Shared.DTOs;
+using Moq;
 
 namespace Cafeteria.Customer.ViewModels.Tests;
 
 public class StationSelectVMTests
 {
-    [Fact]
-    public void ErrorOccurredWhileParsingSelectedLocation_ReturnsFalse_WhenUrlParsingFailedIsFalse()
+    private readonly Mock<IApiMenuService> _mockMenuService;
+
+    public StationSelectVMTests()
     {
-        // Arrange
-        var stationSelectVM = new StationSelectVM(new DummyMenuService()); // menu service isn't needed in this test
+        _mockMenuService = new Mock<IApiMenuService>();
+    }
 
-        // Act
-        // Don't parse; error occurred should be false by default
-        bool result = stationSelectVM.ErrorOccurredWhileParsingSelectedLocation();
+    [Fact]
+    public void ValidateLocationParameter_SetsLocationParameterInvalid_WhenLocationIsZero()
+    {
+        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
 
-        // Assert
-        Assert.False(result);
+        stationSelectVM.ValidateLocationParameter(0, "valid-payment");
+
+        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
+    }
+
+    [Fact]
+    public void ValidateLocationParameter_SetsLocationParameterInvalid_WhenLocationIsNegative()
+    {
+        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
+
+        stationSelectVM.ValidateLocationParameter(-1, "valid-payment");
+
+        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
+    }
+
+    [Fact]
+    public void ValidateLocationParameter_SetsPaymentParameterMissing_WhenPaymentIsNull()
+    {
+        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
+
+        stationSelectVM.ValidateLocationParameter(1, null);
+
+        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
+    }
+
+    [Fact]
+    public void ValidateLocationParameter_SetsPaymentParameterMissing_WhenPaymentIsEmpty()
+    {
+        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
+
+        stationSelectVM.ValidateLocationParameter(1, string.Empty);
+
+        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
+    }
+
+    [Fact]
+    public void ValidateLocationParameter_DoesNotSetErrors_WhenParametersAreValid()
+    {
+        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
+
+        stationSelectVM.ValidateLocationParameter(1, "valid-payment");
+
+        Assert.False(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
+    }
+
+    [Fact]
+    public async Task ErrorOccurredWhileParsingSelectedLocation_ReturnsTrue_WhenInitializeStationsFails()
+    {
+        _mockMenuService.Setup(m => m.GetStationsByLocation(It.IsAny<int>()))
+            .ThrowsAsync(new Exception("API Error"));
+
+        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
+
+        await stationSelectVM.InitializeStations(1);
+
+        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
+    }
+
+    [Fact]
+    public async Task InitializeStations_SetsStations_WhenApiCallSucceeds()
+    {
+        var expectedStations = new List<StationDto>
+        {
+            new StationDto { Id = 1, StationName = "Station 1" },
+            new StationDto { Id = 2, StationName = "Station 2" }
+        };
+
+        _mockMenuService.Setup(m => m.GetStationsByLocation(1))
+            .ReturnsAsync(expectedStations);
+
+        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
+
+        await stationSelectVM.InitializeStations(1);
+
+        Assert.Equal(expectedStations, stationSelectVM.Stations);
+        Assert.False(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
     }
 }
