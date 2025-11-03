@@ -28,6 +28,7 @@ builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
 builder.Services.AddScoped<IFoodItemBuilderVM, FoodItemBuilderVM>();
 builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
+builder.Services.AddScoped<ThankYouPageVM>();
 
 var app = builder.Build();
 
