@@ -8,8 +8,8 @@ public class StationSelectVM : IStationSelectVM
     private readonly IApiMenuService _menuService;
     private bool urlParsingFailed = false;
     private bool locationParameterInvalid = false;
+    private bool paymentParameterMissing = false;
     public bool IsInitialized { get; private set; } = false;
-    public LocationDto? SelectedLocation { get; private set; }
     public List<StationDto>? Stations { get; private set; }
 
     public StationSelectVM(IApiMenuService menuService)
@@ -18,9 +18,10 @@ public class StationSelectVM : IStationSelectVM
         Stations = new List<StationDto>();
     }
 
-    public void ValidateLocationParameter(int location)
+    public void ValidateLocationParameter(int location, string? payment)
     {
         locationParameterInvalid = location <= 0;
+        paymentParameterMissing = string.IsNullOrEmpty(payment);
     }
 
     public async Task InitializeStations(int locationId)
@@ -37,6 +38,6 @@ public class StationSelectVM : IStationSelectVM
 
     public bool ErrorOccurredWhileParsingSelectedLocation()
     {
-        return urlParsingFailed || locationParameterInvalid;
+        return urlParsingFailed || locationParameterInvalid || paymentParameterMissing;
     }
 }

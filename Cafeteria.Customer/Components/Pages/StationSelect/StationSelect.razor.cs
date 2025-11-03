@@ -12,11 +12,15 @@ public partial class StationSelect : ComponentBase
 
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
+
+    [SupplyParameterFromQuery(Name = "payment")]
+    public string? Payment { get; set; }
+
     public bool IsInitialized { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-        StationSelectVM.ValidateLocationParameter(Location);
+        StationSelectVM.ValidateLocationParameter(Location, Payment);
         await StationSelectVM.InitializeStations(Location);
         IsInitialized = true;
     }
