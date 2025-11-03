@@ -6,7 +6,7 @@ using Moq.Protected;
 using System.Net;
 using System.Text.Json;
 
-namespace Cafeteria.Customer.Tests;
+namespace Cafeteria.Customer.Tests.ServiceTests;
 
 public class ApiMenuServiceTests
 {
