@@ -2,7 +2,7 @@ namespace Cafeteria.Api.Tests.IntegrationTests;
 
 public static class DBSql
 {
-  public static readonly string SqlData = """
+    public static readonly string SqlData = """
     CREATE SCHEMA IF NOT EXISTS cafeteria;
 
     CREATE TABLE

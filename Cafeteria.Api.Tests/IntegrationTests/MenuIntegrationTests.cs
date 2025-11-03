@@ -92,16 +92,16 @@ public class MenuIntegrationTests : IAsyncLifetime
         var response = await _client.GetAsync("/api/menu/locations");
         response.EnsureSuccessStatusCode();
         var locationsAfter = await response.Content.ReadFromJsonAsync<List<LocationDto>>();
-        
+
         // Assert
         Assert.NotNull(locationsAfter);
         Assert.Equal(2, locationsAfter.Count);
-        
+
         Assert.Equal(locationsBefore[0].Id, locationsAfter[0].Id);
         Assert.Equal(locationsBefore[0].LocationName, locationsAfter[0].LocationName);
         Assert.Equal(locationsBefore[0].LocationDescription, locationsAfter[0].LocationDescription);
         Assert.Equal(locationsBefore[0].ImageUrl, locationsAfter[0].ImageUrl);
-        
+
         Assert.Equal(locationsBefore[1].Id, locationsAfter[1].Id);
         Assert.Equal(locationsBefore[1].LocationName, locationsAfter[1].LocationName);
         Assert.Equal(locationsBefore[1].LocationDescription, locationsAfter[1].LocationDescription);
@@ -115,7 +115,7 @@ public class MenuIntegrationTests : IAsyncLifetime
         var insertLocationSql = @"
             INSERT INTO cafeteria.cafeteria_location (location_name, location_description, image_url)
             VALUES (@LocationName, @LocationDescription, @ImageUrl)";
-        
+
         var locationDto = new LocationDto
         {
             Id = 1,
@@ -128,7 +128,7 @@ public class MenuIntegrationTests : IAsyncLifetime
         var insertStationSql = @"
             INSERT INTO cafeteria.station (location_id, station_name, station_description)
             VALUES (@LocationId, @StationName, @StationDescription)";
-        
+
         List<StationDto> stationsBefore = [
             new() {
                 Id = 1,
@@ -150,16 +150,16 @@ public class MenuIntegrationTests : IAsyncLifetime
         var response = await _client.GetAsync("/api/menu/stations/location/1");
         response.EnsureSuccessStatusCode();
         var stationsAfter = await response.Content.ReadFromJsonAsync<List<StationDto>>();
-        
+
         // Assert
         Assert.NotNull(stationsAfter);
         Assert.Equal(2, stationsAfter.Count);
-        
+
         Assert.Equal(stationsBefore[0].Id, stationsAfter[0].Id);
         Assert.Equal(stationsBefore[0].LocationId, stationsAfter[0].LocationId);
         Assert.Equal(stationsBefore[0].StationName, stationsAfter[0].StationName);
         Assert.Equal(stationsBefore[0].StationDescription, stationsAfter[0].StationDescription);
-        
+
         Assert.Equal(stationsBefore[1].Id, stationsAfter[1].Id);
         Assert.Equal(stationsBefore[1].LocationId, stationsAfter[1].LocationId);
         Assert.Equal(stationsBefore[1].StationName, stationsAfter[1].StationName);
