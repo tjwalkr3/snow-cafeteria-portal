@@ -7,6 +7,7 @@ public class LocationSelectVM : ILocationSelectVM
 {
     private readonly IApiMenuService _menuService;
     private bool paymentParameterMissing = false;
+    private bool initializationFailed = false;
     public List<LocationDto> Locations { get; private set; } = new();
 
     public LocationSelectVM(IApiMenuService menuService)
@@ -16,7 +17,14 @@ public class LocationSelectVM : ILocationSelectVM
 
     public async Task InitializeLocationsAsync()
     {
-        Locations = await _menuService.GetAllLocations();
+        try
+        {
+            Locations = await _menuService.GetAllLocations();
+        }
+        catch
+        {
+            initializationFailed = true;
+        }
     }
 
     public void ValidatePaymentParameter(string? payment)
@@ -26,7 +34,7 @@ public class LocationSelectVM : ILocationSelectVM
 
     public bool ErrorOccurred()
     {
-        return Locations == null || Locations.Count == 0 || paymentParameterMissing;
+        return Locations == null || Locations.Count == 0 || paymentParameterMissing || initializationFailed;
     }
 }
 

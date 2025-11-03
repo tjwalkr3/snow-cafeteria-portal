@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.WebUtilities;
+using Cafeteria.Shared.DTOs;
+using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.Pages.StationSelect;
 
@@ -17,6 +20,18 @@ public partial class StationSelect : ComponentBase
     public string? Payment { get; set; }
 
     public bool IsInitialized { get; set; } = false;
+
+    public string CreateUrl(string path, int stationId)
+    {
+        Dictionary<string, string?> queryParameters = new() { };
+
+        if (!string.IsNullOrEmpty(Payment))
+            queryParameters.Add("payment", Payment);
+        queryParameters.Add("location", Location.ToString());
+        queryParameters.Add("station", stationId.ToString());
+
+        return QueryHelpers.AddQueryString(path, queryParameters);
+    }
 
     protected override async Task OnInitializedAsync()
     {
