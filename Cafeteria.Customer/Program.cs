@@ -4,6 +4,7 @@ using Cafeteria.Customer.Components.Pages.LocationSelect;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 using Cafeteria.Customer.Components.Pages.StationSelect;
+using Cafeteria.Customer.Components.Pages.ThankYouPage;
 using Cafeteria.Customer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
