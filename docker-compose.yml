@@ -6,7 +6,7 @@ services:
       - POSTGRES_USER=cafeteria_admin
       - POSTGRES_DB=cafeteria
     volumes:
-      - ./docker/config/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
