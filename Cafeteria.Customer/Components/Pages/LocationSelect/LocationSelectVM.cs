@@ -29,8 +29,8 @@ public class LocationSelectVM : ILocationSelectVM
 
     public void ValidatePaymentParameter(string? payment)
     {
-        paymentParameterMissing = string.IsNullOrEmpty(payment) 
-            && payment != "card" 
+        paymentParameterMissing = string.IsNullOrEmpty(payment)
+            && payment != "card"
             && payment != "swipe";
     }
 
