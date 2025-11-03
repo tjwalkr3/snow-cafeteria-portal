@@ -1,6 +1,7 @@
 namespace Cafeteria.Shared.Data;
 
 using Cafeteria.Shared.DTOsOld;
+using Cafeteria.Shared.DTOs;
 
 public static class DummyData
 {
@@ -11,7 +12,7 @@ public static class DummyData
         CreateFriday()
     };
 
-    public static readonly List<LocationDtoOld> GetLocationList = new()
+    public static readonly List<LocationDto> GetLocationList = new()
     {
         CreateBadgerDenLocation(),
         CreateBustersBistroLocation()
@@ -23,7 +24,7 @@ public static class DummyData
         CreateBusinessHours(2, 1, new TimeOnly(8, 0), new TimeOnly(16, 0))    // Friday
     };
 
-    public static readonly List<StationDtoOld> GetStationList = new()
+    public static readonly List<StationDto> GetStationList = new()
     {
         CreateSandwichStation(),
         CreateSaladStation()
@@ -59,20 +60,18 @@ public static class DummyData
     #endregion ============================================================================
 
     #region ========================= Location Creation ===================================
-    public static LocationDtoOld CreateBadgerDenLocation() => new()
+    public static LocationDto CreateBadgerDenLocation() => new()
     {
         Id = 1,
-        Name = "Badger Den",
-        Description = "Campus dining location in the GSC",
-        Address = "GSC Cafeteria on the Ground Floor"
+        LocationName = "Badger Den",
+        LocationDescription = "Campus dining location in the GSC",
     };
 
-    public static LocationDtoOld CreateBustersBistroLocation() => new()
+    public static LocationDto CreateBustersBistroLocation() => new()
     {
         Id = 2,
-        Name = "Buster's Bistro",
-        Description = "Library dining location",
-        Address = "Karen H. Huntsman Library Gallery"
+        LocationName = "Buster's Bistro",
+        LocationDescription = "Library dining location"
     };
     #endregion ============================================================================
 
@@ -88,7 +87,7 @@ public static class DummyData
     #endregion ============================================================================
 
     #region =========================== Station Creation =================================
-    public static StationDtoOld CreateSandwichStation() => new()
+    public static StationDto CreateSandwichStation() => new()
     {
         Id = 1,
         LocationId = 1,
@@ -96,7 +95,7 @@ public static class DummyData
         StationDescription = "Fresh made-to-order sandwiches"
     };
 
-    public static StationDtoOld CreateSaladStation() => new()
+    public static StationDto CreateSaladStation() => new()
     {
         Id = 2,
         LocationId = 1,

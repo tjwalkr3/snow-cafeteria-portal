@@ -1,4 +1,5 @@
 using Cafeteria.Shared.DTOsOld;
+using Cafeteria.Shared.DTOs;
 using Cafeteria.Shared.Data;
 
 namespace Cafeteria.Customer.Services;
@@ -8,14 +9,14 @@ namespace Cafeteria.Customer.Services;
 /// </summary>
 public class DummyMenuService : IApiMenuService
 {
-    public Task<List<LocationDtoOld>> GetAllLocations()
+    public Task<List<LocationDto>> GetAllLocations()
     {
         return Task.FromResult(DummyData.GetLocationList);
     }
 
-    public Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
+    public Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
-        return Task.FromResult(DummyData.GetStationList.Where(s => s.LocationId == locationId).ToList() ?? new List<StationDtoOld>());
+        return Task.FromResult(DummyData.GetStationList.Where(s => s.LocationId == locationId).ToList() ?? new List<StationDto>());
     }
 
     public Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)

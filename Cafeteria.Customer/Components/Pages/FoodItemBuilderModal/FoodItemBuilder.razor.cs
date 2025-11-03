@@ -1,10 +1,20 @@
 using Cafeteria.Shared.DTOsOld;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 
-public partial class FoodItemBuilder
+public partial class FoodItemBuilder : ComponentBase
 {
+    [Inject]
+    private IFoodItemBuilderVM BuilderViewModel { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+
     [Parameter]
     public FoodItemDtoOld? FoodItem { get; set; }
 
