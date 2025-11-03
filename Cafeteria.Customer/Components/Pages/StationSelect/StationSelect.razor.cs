@@ -21,7 +21,7 @@ public partial class StationSelect : ComponentBase
 
     public bool IsInitialized { get; set; } = false;
 
-    public string CreateUrl(string path, int stationId)
+    public string CreateUrl(int stationId)
     {
         Dictionary<string, string?> queryParameters = new() { };
 
@@ -30,12 +30,14 @@ public partial class StationSelect : ComponentBase
         queryParameters.Add("location", Location.ToString());
         queryParameters.Add("station", stationId.ToString());
 
-        return QueryHelpers.AddQueryString(path, queryParameters);
+        if (Payment == "card")
+            return QueryHelpers.AddQueryString("/card-menu", queryParameters);
+        return QueryHelpers.AddQueryString("/swipe-menu", queryParameters);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        StationSelectVM.ValidateLocationParameter(Location, Payment);
+        StationSelectVM.ValidateParameters(Location, Payment);
         await StationSelectVM.InitializeStations(Location);
         IsInitialized = true;
     }

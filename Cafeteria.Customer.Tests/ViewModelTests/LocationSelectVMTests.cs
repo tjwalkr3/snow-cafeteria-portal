@@ -48,7 +48,7 @@ public class LocationSelectVMTests
         var locationSelectVM = new LocationSelectVM(_mockMenuService.Object);
         await locationSelectVM.InitializeLocationsAsync();
 
-        locationSelectVM.ValidatePaymentParameter("valid-payment");
+        locationSelectVM.ValidatePaymentParameter("swipe");
 
         Assert.False(locationSelectVM.ErrorOccurred());
     }

@@ -18,10 +18,12 @@ public class StationSelectVM : IStationSelectVM
         Stations = new List<StationDto>();
     }
 
-    public void ValidateLocationParameter(int location, string? payment)
+    public void ValidateParameters(int location, string? payment)
     {
         locationParameterInvalid = location <= 0;
-        paymentParameterMissing = string.IsNullOrEmpty(payment);
+        paymentParameterMissing = string.IsNullOrEmpty(payment)
+            && payment != "card"
+            && payment != "swipe";
     }
 
     public async Task InitializeStations(int locationId)

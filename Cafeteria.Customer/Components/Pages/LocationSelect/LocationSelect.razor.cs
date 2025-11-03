@@ -17,7 +17,7 @@ public partial class LocationSelect : ComponentBase
     public string? Payment { get; set; }
     public bool IsInitialized { get; set; } = false;
 
-    public string CreateUrl(string path, int locationId)
+    public string CreateUrl(int locationId)
     {
         Dictionary<string, string?> queryParameters = new() { };
 
@@ -25,7 +25,7 @@ public partial class LocationSelect : ComponentBase
             queryParameters.Add("payment", Payment);
         queryParameters.Add("location", locationId.ToString());
 
-        return QueryHelpers.AddQueryString(path, queryParameters);
+        return QueryHelpers.AddQueryString("/station-select", queryParameters);
     }
 
     protected override async Task OnInitializedAsync()

@@ -19,7 +19,7 @@ public class StationSelectVMTests
     {
         var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
 
-        stationSelectVM.ValidateLocationParameter(0, "valid-payment");
+        stationSelectVM.ValidateParameters(0, "card");
 
         Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
     }
@@ -29,7 +29,7 @@ public class StationSelectVMTests
     {
         var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
 
-        stationSelectVM.ValidateLocationParameter(-1, "valid-payment");
+        stationSelectVM.ValidateParameters(-1, "card");
 
         Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
     }
@@ -39,7 +39,7 @@ public class StationSelectVMTests
     {
         var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
 
-        stationSelectVM.ValidateLocationParameter(1, null);
+        stationSelectVM.ValidateParameters(1, null);
 
         Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
     }
@@ -49,7 +49,7 @@ public class StationSelectVMTests
     {
         var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
 
-        stationSelectVM.ValidateLocationParameter(1, string.Empty);
+        stationSelectVM.ValidateParameters(1, string.Empty);
 
         Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
     }
@@ -59,7 +59,7 @@ public class StationSelectVMTests
     {
         var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
 
-        stationSelectVM.ValidateLocationParameter(1, "valid-payment");
+        stationSelectVM.ValidateParameters(1, "card");
 
         Assert.False(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
     }
