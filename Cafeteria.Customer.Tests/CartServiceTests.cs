@@ -23,6 +23,12 @@ public class CartServiceTests
             }
             return ValueTask.FromResult(new StorageResult<T>(false, default));
         }
+
+        public ValueTask SetAsync<T>(string key, T value)
+        {
+            _storage[key] = value!;
+            return ValueTask.CompletedTask;
+        }
     }
 
     [Fact]
@@ -59,5 +65,66 @@ public class CartServiceTests
 
         // Assert
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task AddEntree_AddsEntreeToNewOrder()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+        var entree = new OrderEntreeItem
+        {
+            Entree = new EntreeDto { Id = 1, EntreeName = "Turkey Sandwich", EntreePrice = 6.50m }
+        };
+
+        // Act
+        await cartService.AddEntree("test-order", entree);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.Single(order.Entrees);
+        Assert.Equal("Turkey Sandwich", order.Entrees[0].Entree.EntreeName);
+    }
+
+    [Fact]
+    public async Task AddSide_AddsSideToExistingOrder()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+        storage.SetValue("test-order", new BrowserOrder { IsCardOrder = true });
+        var side = new OrderSideItem
+        {
+            Side = new SideDto { Id = 1, SideName = "French Fries", SidePrice = 2.50m }
+        };
+
+        // Act
+        await cartService.AddSide("test-order", side);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.Single(order.Sides);
+        Assert.Equal("French Fries", order.Sides[0].Side.SideName);
+    }
+
+    [Fact]
+    public async Task AddDrink_AddsDrinkToOrder()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+        var drink = new DrinkDto { Id = 1, DrinkName = "Soda", DrinkPrice = 1.99m };
+
+        // Act
+        await cartService.AddDrink("test-order", drink);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.Single(order.Drinks);
+        Assert.Equal("Soda", order.Drinks[0].DrinkName);
     }
 }

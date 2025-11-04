@@ -16,4 +16,9 @@ public class ProtectedStorageWrapper : IProtectedStorageWrapper
         var result = await _protectedLocalStorage.GetAsync<T>(key);
         return new StorageResult<T>(result.Success, result.Value);
     }
+
+    public ValueTask SetAsync<T>(string key, T value)
+    {
+        return _protectedLocalStorage.SetAsync(key, value!);
+    }
 }
