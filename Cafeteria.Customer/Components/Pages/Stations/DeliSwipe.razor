@@ -7,34 +7,27 @@
 <div class="my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">
-            <i class="bi bi-cup-straw me-3"></i>Complete Your Meal - Deli Station
+            <i class="bi bi-cup-straw me-3"></i>Deli Station
         </h1>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Deli Station</h4>
-        </div>
-
+    <div>
         <ul class="nav nav-tabs nav-fill border-bottom" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link @(activeTab == "sandwich" ? "active" : "")"
-                        type="button"
-                        @onclick="@(() => SetActiveTab("sandwich"))">
+                <button class="nav-link @(activeTab == "sandwich" ? "active" : "")" type="button"
+                    @onclick="@(() => SetActiveTab("sandwich"))">
                     Sandwich
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link @(activeTab == "sides" ? "active" : "")"
-                        type="button"
-                        @onclick="@(() => SetActiveTab("sides"))">
+                <button class="nav-link @(activeTab == "sides" ? "active" : "")" type="button"
+                    @onclick="@(() => SetActiveTab("sides"))">
                     Sides
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link @(activeTab == "drinks" ? "active" : "")"
-                        type="button"
-                        @onclick="@(() => SetActiveTab("drinks"))">
+                <button class="nav-link @(activeTab == "drinks" ? "active" : "")" type="button"
+                    @onclick="@(() => SetActiveTab("drinks"))">
                     Drinks
                 </button>
             </li>
@@ -53,13 +46,12 @@
                     </div>
 
                     <h5 class="mb-3">Bread (1):</h5>
-                    <div class="row row-cols-2 row-cols-md-3 g-2 mb-4">
+                    <div class="row row-cols-2 row-cols-md-6 g-2 mb-4">
                         @foreach (var bread in BreadOptions)
                         {
                             <div class="col">
                                 <div class="card h-100 @(selectedBread == bread ? "border-primary border-2" : "")"
-                                     style="cursor: pointer;"
-                                     @onclick="() => selectedBread = bread">
+                                    style="cursor: pointer;" @onclick="() => selectedBread = bread">
                                     <div class="card-body p-2 text-center">
                                         <small>@bread</small>
                                     </div>
@@ -69,13 +61,12 @@
                     </div>
 
                     <h5 class="mb-3">Meat (1): <small class="text-muted">Additional Meats $0.75</small></h5>
-                    <div class="row row-cols-2 row-cols-md-3 g-2 mb-4">
+                    <div class="row row-cols-2 row-cols-md-6 g-2 mb-4">
                         @foreach (var meat in MeatOptions)
                         {
                             <div class="col">
                                 <div class="card h-100 @(selectedMeat == meat ? "border-primary border-2" : "")"
-                                     style="cursor: pointer;"
-                                     @onclick="() => selectedMeat = meat">
+                                    style="cursor: pointer;" @onclick="() => selectedMeat = meat">
                                     <div class="card-body p-2 text-center">
                                         <small>@meat</small>
                                     </div>
@@ -85,13 +76,12 @@
                     </div>
 
                     <h5 class="mb-3">Cheese (1):</h5>
-                    <div class="row row-cols-2 row-cols-md-3 g-2 mb-4">
+                    <div class="row row-cols-2 row-cols-md-6 g-2 mb-4">
                         @foreach (var cheese in CheeseOptions)
                         {
                             <div class="col">
                                 <div class="card h-100 @(selectedCheese == cheese ? "border-primary border-2" : "")"
-                                     style="cursor: pointer;"
-                                     @onclick="() => selectedCheese = cheese">
+                                    style="cursor: pointer;" @onclick="() => selectedCheese = cheese">
                                     <div class="card-body p-2 text-center">
                                         <small>@cheese</small>
                                     </div>
@@ -101,13 +91,12 @@
                     </div>
 
                     <h5 class="mb-3">Toppings (3): <small class="text-muted">Additional toppings $0.50</small></h5>
-                    <div class="row row-cols-2 row-cols-md-3 g-2 mb-4">
+                    <div class="row row-cols-2 row-cols-md-6 g-2 mb-4">
                         @foreach (var topping in ToppingOptions)
                         {
                             <div class="col">
                                 <div class="card h-100 @(selectedToppings.Contains(topping) ? "border-success border-2" : "")"
-                                     style="cursor: pointer;"
-                                     @onclick="() => ToggleTopping(topping)">
+                                    style="cursor: pointer;" @onclick="() => ToggleTopping(topping)">
                                     <div class="card-body p-2 text-center">
                                         <small>@topping</small>
                                         @if (selectedToppings.Contains(topping))
@@ -121,13 +110,12 @@
                     </div>
 
                     <h5 class="mb-3">Dressing (1):</h5>
-                    <div class="row row-cols-2 row-cols-md-3 g-2 mb-4">
+                    <div class="row row-cols-2 row-cols-md-6 g-2 mb-4">
                         @foreach (var dressing in DressingOptions)
                         {
                             <div class="col">
                                 <div class="card h-100 @(selectedDressing == dressing ? "border-primary border-2" : "")"
-                                     style="cursor: pointer;"
-                                     @onclick="() => selectedDressing = dressing">
+                                    style="cursor: pointer;" @onclick="() => selectedDressing = dressing">
                                     <div class="card-body p-2 text-center">
                                         <small>@dressing</small>
                                     </div>
@@ -145,8 +133,7 @@
                     @foreach (var side in Sides)
                     {
                         <div class="card mb-2 @(selectedSide?.Id == side.Id ? "border-primary border-2" : "")"
-                             style="cursor: pointer;"
-                             @onclick="() => SelectSide(side)">
+                            style="cursor: pointer;" @onclick="() => SelectSide(side)">
                             <div class="card-body d-flex justify-content-between align-items-center py-3">
                                 <div>
                                     <strong>@side.SideName</strong>
@@ -173,8 +160,7 @@
                         @foreach (var drink in Drinks)
                         {
                             <div class="card mb-2 @(selectedDrink?.Id == drink.Id ? "border-success border-2" : "")"
-                                 style="cursor: pointer;"
-                                 @onclick="() => SelectDrink(drink)">
+                                style="cursor: pointer;" @onclick="() => SelectDrink(drink)">
                                 <div class="card-body d-flex justify-content-between align-items-center py-3">
                                     <div>
                                         <strong>@drink.DrinkName</strong>
@@ -202,10 +188,8 @@
                 <div>
                     <span class="text-muted">@GetSelectionCount() items selected</span>
                 </div>
-                <button type="button"
-                        class="btn btn-primary btn-lg"
-                        disabled="@(!IsValidSelection())"
-                        @onclick="AddToOrder">
+                <button type="button" class="btn btn-primary btn-lg" disabled="@(!IsValidSelection())"
+                    @onclick="AddToOrder">
                     Add to Order
                 </button>
             </div>
@@ -227,25 +211,30 @@
 
 @code {
     private List<SideDto> Sides = new List<SideDto>
-    {
-        new SideDto { Id = 1, StationId = 3, SideName = "Bacon", SidePrice = 2.49m },
-        new SideDto { Id = 2, StationId = 3, SideName = "Cheese", SidePrice = 1.99m },
-        new SideDto { Id = 3, StationId = 3, SideName = "Additional Meats", SidePrice = 2.99m },
-        new SideDto { Id = 4, StationId = 3, SideName = "Rice", SidePrice = 1.99m },
-        new SideDto { Id = 5, StationId = 3, SideName = "Vegetables", SidePrice = 2.49m },
-        new SideDto { Id = 6, StationId = 3, SideName = "Fruit Cup", SidePrice = 2.29m },
-        new SideDto { Id = 7, StationId = 3, SideName = "Chips", SidePrice = 1.79m },
-        new SideDto { Id = 8, StationId = 3, SideName = "Side Salad", SidePrice = 2.79m }
-    };
+{
+new SideDto { Id = 1, StationId = 3, SideName = "Bacon", SidePrice = 2.49m },
+new SideDto { Id = 2, StationId = 3, SideName = "Cheese", SidePrice = 1.99m },
+new SideDto { Id = 3, StationId = 3, SideName = "Additional Meats", SidePrice = 2.99m },
+new SideDto { Id = 4, StationId = 3, SideName = "Rice", SidePrice = 1.99m },
+new SideDto { Id = 5, StationId = 3, SideName = "Vegetables", SidePrice = 2.49m },
+new SideDto { Id = 6, StationId = 3, SideName = "Fruit Cup", SidePrice = 2.29m },
+new SideDto { Id = 7, StationId = 3, SideName = "Chips", SidePrice = 1.79m },
+new SideDto { Id = 8, StationId = 3, SideName = "Side Salad", SidePrice = 2.79m }
+};
 
     private List<DrinkDto> Drinks = new List<DrinkDto>
-    {
-        new DrinkDto { Id = 1, StationId = 3, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 2, StationId = 3, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 3, StationId = 3, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 4, StationId = 3, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 5, StationId = 3, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
-    };
+{
+new DrinkDto { Id = 1, StationId = 3, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal",
+DrinkPrice = 0.00m },
+new DrinkDto { Id = 2, StationId = 3, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice =
+0.00m },
+new DrinkDto { Id = 3, StationId = 3, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal",
+DrinkPrice = 0.00m },
+new DrinkDto { Id = 4, StationId = 3, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal",
+DrinkPrice = 0.00m },
+new DrinkDto { Id = 5, StationId = 3, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal",
+DrinkPrice = 0.00m }
+};
 
     private string activeTab = "sandwich";
     private string? selectedBread = null;
@@ -258,31 +247,31 @@
     private string? orderConfirmation = null;
 
     private List<string> BreadOptions = new()
-    {
-        "Marble Rye", "Sourdough", "Wheat", "White", "Gluten Free", "Salad (no bread)"
-    };
+{
+"Marble Rye", "Sourdough", "Wheat", "White", "Gluten Free", "Salad (no bread)"
+};
 
     private List<string> MeatOptions = new()
-    {
-        "Ham", "Turkey", "Bacon", "Grilled Chicken", "Tuna Fish", "Chicken Salad"
-    };
+{
+"Ham", "Turkey", "Bacon", "Grilled Chicken", "Tuna Fish", "Chicken Salad"
+};
 
     private List<string> CheeseOptions = new()
-    {
-        "American", "Provolone", "Cheddar", "Pepper Jack", "Swiss", "Mozzarella"
-    };
+{
+"American", "Provolone", "Cheddar", "Pepper Jack", "Swiss", "Mozzarella"
+};
 
     private List<string> ToppingOptions = new()
-    {
-        "Spinach", "Romaine", "Green Leaf Lettuce", "Olives", "Cucumber",
-        "Tomato", "Sprouts", "Bell Pepper", "Onions", "Pickles", "Banana Peppers"
-    };
+{
+"Spinach", "Romaine", "Green Leaf Lettuce", "Olives", "Cucumber",
+"Tomato", "Sprouts", "Bell Pepper", "Onions", "Pickles", "Banana Peppers"
+};
 
     private List<string> DressingOptions = new()
-    {
-        "Oil", "Vinegar", "Ranch", "1000 Island", "Italian", "Caesar",
-        "Raspberry Vinaigrette", "Honey Mustard", "Mayonnaise", "Mustard"
-    };
+{
+"Oil", "Vinegar", "Ranch", "1000 Island", "Italian", "Caesar",
+"Raspberry Vinaigrette", "Honey Mustard", "Mayonnaise", "Mustard"
+};
 
     private void SetActiveTab(string tab)
     {
@@ -327,12 +316,12 @@
     private bool IsValidSelection()
     {
         return selectedBread != null
-            && selectedMeat != null
-            && selectedCheese != null
-            && selectedToppings.Any()
-            && selectedDressing != null
-            && selectedSide != null
-            && selectedDrink != null;
+        && selectedMeat != null
+        && selectedCheese != null
+        && selectedToppings.Any()
+        && selectedDressing != null
+        && selectedSide != null
+        && selectedDrink != null;
     }
 
     private void ClearSelections()

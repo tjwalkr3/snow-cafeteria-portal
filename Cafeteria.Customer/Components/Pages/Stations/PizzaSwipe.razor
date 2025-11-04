@@ -7,15 +7,11 @@
 <div class="my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">
-            <i class="bi bi-emoji-smile me-3"></i>Complete Your Meal
+            <i class="bi bi-emoji-smile me-3"></i>Pizza Station
         </h1>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Pizza Station</h4>
-        </div>
-
+    <div >
         <ul class="nav nav-tabs nav-fill border-bottom" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link @(activeTab == "toppings" ? "active" : "")"
@@ -83,7 +79,7 @@
                     <div class="row">
                         @foreach (var topping in availableToppings)
                         {
-                            <div class="col-md-6 mb-2">
+                            <div class="col-md-2 mb-2">
                                 <div class="card @(selectedToppings.Contains(topping) ? "border-primary border-2" : "")"
                                      style="cursor: pointer;"
                                      @onclick="() => ToggleTopping(topping)">
