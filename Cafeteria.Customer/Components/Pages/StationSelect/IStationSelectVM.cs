@@ -1,10 +1,11 @@
-﻿using Cafeteria.Shared.DTOsOld;
+﻿using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.Pages.StationSelect;
 
 public interface IStationSelectVM
 {
-    List<StationDtoOld>? Stations { get; }
-    Task GetDataFromRouteParameters(string uri);
+    List<StationDto>? Stations { get; }
+    void ValidateParameters(int location, string? payment);
+    Task InitializeStations(int locationId);
     bool ErrorOccurredWhileParsingSelectedLocation();
 }

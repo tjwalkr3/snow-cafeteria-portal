@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOsOld;
+using Cafeteria.Shared.DTOs;
 using Cafeteria.Api.Services;
 
 namespace Cafeteria.Api.Controllers;
@@ -16,13 +17,13 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet("locations")]
-    public async Task<List<LocationDtoOld>> GetAllLocations()
+    public async Task<List<LocationDto>> GetAllLocations()
     {
         return await _menuService.GetAllLocations();
     }
 
     [HttpGet("stations/location/{locationId}")]
-    public async Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
+    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         return await _menuService.GetStationsByLocation(locationId);
     }

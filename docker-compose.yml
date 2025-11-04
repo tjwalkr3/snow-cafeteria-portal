@@ -6,7 +6,7 @@ services:
       - POSTGRES_USER=cafeteria_admin
       - POSTGRES_DB=cafeteria
     volumes:
-      - ./docker/config/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
@@ -32,12 +32,18 @@ services:
       - database
     networks:
       - cafeteria-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
 
   customer:
     image: mcr.microsoft.com/dotnet/sdk:9.0
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /app
-    command: dotnet watch run --project Cafeteria.Customer/Cafeteria.Customer.csproj --no-launch-profile
+    command: sh -c "sleep 15 && dotnet watch run --project Cafeteria.Customer/Cafeteria.Customer.csproj --no-launch-profile"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
@@ -58,7 +64,7 @@ services:
     image: mcr.microsoft.com/dotnet/sdk:9.0
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /app
-    command: dotnet watch run --project Cafeteria.Management/Cafeteria.Management.csproj --no-launch-profile
+    command: sh -c "sleep 30 && dotnet watch run --project Cafeteria.Management/Cafeteria.Management.csproj --no-launch-profile"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
