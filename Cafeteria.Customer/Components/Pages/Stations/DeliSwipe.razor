@@ -1,0 +1,405 @@
+@page "/deli"
+@rendermode InteractiveServer
+@using Cafeteria.Shared.DTOs
+
+<PageTitle>Deli Station</PageTitle>
+
+<div class="container my-4">
+    <div class="mb-4">
+        <h1 class="fw-light text-dark mb-1">
+            <i class="bi bi-cup-straw me-2 text-primary"></i>Deli Station
+        </h1>
+    </div>
+
+    <div>
+        <ul class="nav nav-tabs border-0 bg-light" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "sandwich" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
+                        type="button"
+                        @onclick="@(() => SetActiveTab("sandwich"))">
+                    Sandwich
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "sides" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
+                        type="button"
+                        @onclick="@(() => SetActiveTab("sides"))">
+                    Sides
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "drinks" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
+                        type="button"
+                        @onclick="@(() => SetActiveTab("drinks"))">
+                    Drinks
+                </button>
+            </li>
+        </ul>
+
+        <div class="card-body p-4">
+            @if (activeTab == "sandwich")
+            {
+                <div class="alert alert-light border-danger border-start border-4 mb-3" role="alert">
+                    <small class="text-dark">
+                        <strong>NO SUBSTITUTIONS!!</strong>
+                    </small>
+                </div>
+
+                <div class="alert alert-light border-info border-start border-4 mb-4" role="alert">
+                    <small class="text-dark">
+                        ~Comes with a Fountain Drink and 1 side~
+                    </small>
+                </div>
+
+                @* Bread Selection *@
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 fw-semibold">Choose Your Bread</h5>
+                        <span class="badge bg-danger-subtle text-danger">Required</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var bread in BreadOptions)
+                        {
+                            <button type="button"
+                                    class="btn @(selectedBread == bread ? "btn-dark" : "btn-outline-secondary") rounded-pill px-4"
+                                    @onclick="() => selectedBread = bread">
+                                @bread
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @* Meat Selection *@
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="mb-0 fw-semibold d-inline">Choose Your Meat (1)</h5>
+                            <small class="text-muted ms-2">Additional Meats $0.75</small>
+                        </div>
+                        <span class="badge bg-danger-subtle text-danger">Required</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var meat in MeatOptions)
+                        {
+                            <button type="button"
+                                    class="btn @(selectedMeat == meat ? "btn-dark" : "btn-outline-secondary") rounded-pill px-4"
+                                    @onclick="() => selectedMeat = meat">
+                                @meat
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @* Cheese Selection *@
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 fw-semibold">Choose Your Cheese (1)</h5>
+                        <span class="badge bg-danger-subtle text-danger">Required</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var cheese in CheeseOptions)
+                        {
+                            <button type="button"
+                                    class="btn @(selectedCheese == cheese ? "btn-dark" : "btn-outline-secondary") rounded-pill px-4"
+                                    @onclick="() => selectedCheese = cheese">
+                                @cheese
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @* Toppings Selection *@
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="mb-0 fw-semibold d-inline">Choose Your Toppings (3)</h5>
+                            <small class="text-muted ms-2">Additional toppings $0.50</small>
+                        </div>
+                        <span class="badge bg-danger-subtle text-danger">Required</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var topping in ToppingOptions)
+                        {
+                            <button type="button"
+                                    class="btn @(selectedToppings.Contains(topping) ? "btn-dark" : "btn-outline-secondary") rounded-pill px-4"
+                                    @onclick="() => ToggleTopping(topping)">
+                                @topping
+                                @if (selectedToppings.Contains(topping))
+                                {
+                                    <i class="bi bi-check-circle-fill ms-1"></i>
+                                }
+                            </button>
+                        }
+                    </div>
+                    @if (selectedToppings.Count > 3)
+                    {
+                        <div class="alert alert-light border-warning border-start border-4 mt-3" role="alert">
+                            <small class="text-dark">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Additional charge: $@((selectedToppings.Count - 3) * 0.50m) for @(selectedToppings.Count - 3) extra topping(s)
+                            </small>
+                        </div>
+                    }
+                </div>
+
+                @* Dressing Selection *@
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 fw-semibold">Choose Your Dressing (1)</h5>
+                        <span class="badge bg-danger-subtle text-danger">Required</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var dressing in DressingOptions)
+                        {
+                            <button type="button"
+                                    class="btn @(selectedDressing == dressing ? "btn-dark" : "btn-outline-secondary") rounded-pill px-4"
+                                    @onclick="() => selectedDressing = dressing">
+                                @dressing
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+            else if (activeTab == "sides")
+            {
+                <div class="alert alert-light border-warning border-start border-4 mb-4" role="alert">
+                    <small class="text-dark">Select 1 side with your meal swipe</small>
+                </div>
+
+                @foreach (var side in Sides)
+                {
+                    <div class="border rounded mb-2 @(selectedSide?.Id == side.Id ? "border-dark border-2 bg-light" : "border-light")"
+                         style="cursor: pointer;"
+                         @onclick="() => SelectSide(side)">
+                        <div class="p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0 fw-semibold">@side.SideName</h6>
+                                @if (!string.IsNullOrEmpty(side.SideDescription))
+                                {
+                                    <p class="text-muted small mb-0">@side.SideDescription</p>
+                                }
+                            </div>
+                            <div>
+                                <span class="text-dark fw-semibold">$@side.SidePrice.ToString("F2")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (activeTab == "drinks")
+            {
+                <div class="alert alert-light border-info border-start border-4 mb-4" role="alert">
+                    <small class="text-dark">
+                        <i class="bi bi-info-circle me-2"></i>Select 1 drink included with your meal swipe
+                    </small>
+                </div>
+
+                @if (Drinks.Any())
+                {
+                    @foreach (var drink in Drinks)
+                    {
+                        <div class="border rounded mb-2 @(selectedDrink?.Id == drink.Id ? "border-dark border-2 bg-light" : "border-light")"
+                             style="cursor: pointer;"
+                             @onclick="() => SelectDrink(drink)">
+                            <div class="p-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">@drink.DrinkName</h6>
+                                    @if (!string.IsNullOrEmpty(drink.DrinkDescription))
+                                    {
+                                        <p class="text-muted small mb-0">@drink.DrinkDescription</p>
+                                    }
+                                </div>
+                                <div>
+                                    @if (selectedDrink?.Id == drink.Id)
+                                    {
+                                        <i class="bi bi-check-circle-fill text-dark fs-5"></i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+
+        <div class="card-footer bg-white border-top">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">@GetSelectionSummary()</span>
+                </div>
+                <button type="button"
+                        class="btn btn-dark btn-lg px-4"
+                        disabled="@(!IsValidSelection())"
+                        @onclick="AddToOrder">
+                    Add to Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (orderConfirmation != null)
+    {
+        <div class="alert alert-light border-success border-start border-4 mt-4" role="alert">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                <div class="flex-grow-1">
+                    <h6 class="fw-semibold mb-1">Order Added!</h6>
+                    <p class="mb-0 small">@orderConfirmation</p>
+                </div>
+                <button type="button" class="btn-close" @onclick="() => orderConfirmation = null"></button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<SideDto> Sides = new List<SideDto>
+    {
+        new SideDto { Id = 1, StationId = 3, SideName = "Bacon", SidePrice = 2.49m },
+        new SideDto { Id = 2, StationId = 3, SideName = "Cheese", SidePrice = 1.99m },
+        new SideDto { Id = 3, StationId = 3, SideName = "Additional Meats", SidePrice = 2.99m },
+        new SideDto { Id = 4, StationId = 3, SideName = "Rice", SidePrice = 1.99m },
+        new SideDto { Id = 5, StationId = 3, SideName = "Vegetables", SidePrice = 2.49m },
+        new SideDto { Id = 6, StationId = 3, SideName = "Fruit Cup", SidePrice = 2.29m },
+        new SideDto { Id = 7, StationId = 3, SideName = "Chips", SidePrice = 1.79m },
+        new SideDto { Id = 8, StationId = 3, SideName = "Side Salad", SidePrice = 2.79m }
+    };
+
+    private List<DrinkDto> Drinks = new List<DrinkDto>
+    {
+        new DrinkDto { Id = 1, StationId = 3, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 2, StationId = 3, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 3, StationId = 3, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 4, StationId = 3, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
+        new DrinkDto { Id = 5, StationId = 3, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
+    };
+
+    private string activeTab = "sandwich";
+    private string? selectedBread = null;
+    private string? selectedMeat = null;
+    private string? selectedCheese = null;
+    private List<string> selectedToppings = new();
+    private string? selectedDressing = null;
+    private SideDto? selectedSide = null;
+    private DrinkDto? selectedDrink = null;
+    private string? orderConfirmation = null;
+
+    private List<string> BreadOptions = new()
+    {
+        "Pretzel Bun", "Marble Rye", "Sourdough", "Pita Bread", "Wheat", "White Bread"
+    };
+
+    private List<string> MeatOptions = new()
+    {
+        "Ham", "Turkey", "Bacon", "Grilled Chicken", "Tuna Salad"
+    };
+
+    private List<string> CheeseOptions = new()
+    {
+        "American", "Provolone", "Cheddar", "Pepper Jack", "Swiss", "Mozzarella"
+    };
+
+    private List<string> ToppingOptions = new()
+    {
+        "Spinach", "Romaine", "Green Leaf Lettuce", "Olives", "Cucumber",
+        "Tomato", "Sprouts", "Bell Pepper", "Onions", "Pickles", "Banana Peppers"
+    };
+
+    private List<string> DressingOptions = new()
+    {
+        "Oil", "Vinegar", "Ranch", "1000 Island", "Italian", "Caesar",
+        "Raspberry Vinaigrette", "Honey Mustard", "Mayonnaise", "Mustard"
+    };
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private void SelectSide(SideDto side)
+    {
+        selectedSide = side;
+    }
+
+    private void SelectDrink(DrinkDto drink)
+    {
+        selectedDrink = drink;
+    }
+
+    private void ToggleTopping(string topping)
+    {
+        if (selectedToppings.Contains(topping))
+        {
+            selectedToppings.Remove(topping);
+        }
+        else
+        {
+            selectedToppings.Add(topping);
+        }
+    }
+
+    private int GetSelectionCount()
+    {
+        int count = 0;
+        if (selectedBread != null) count++;
+        if (selectedMeat != null) count++;
+        if (selectedCheese != null) count++;
+        if (selectedToppings.Any()) count++;
+        if (selectedDressing != null) count++;
+        if (selectedSide != null) count++;
+        if (selectedDrink != null) count++;
+        return count;
+    }
+
+    private string GetSelectionSummary()
+    {
+        if (!IsValidSelection())
+        {
+            return "Complete all required fields";
+        }
+        return $"{selectedBread}, {selectedMeat}, {selectedCheese}, {selectedToppings.Count} topping(s), {selectedDressing}";
+    }
+
+    private bool IsValidSelection()
+    {
+        return selectedBread != null
+            && selectedMeat != null
+            && selectedCheese != null
+            && selectedToppings.Any()
+            && selectedDressing != null
+            && selectedSide != null
+            && selectedDrink != null;
+    }
+
+    private void ClearSelections()
+    {
+        selectedBread = null;
+        selectedMeat = null;
+        selectedCheese = null;
+        selectedToppings.Clear();
+        selectedDressing = null;
+        selectedSide = null;
+        selectedDrink = null;
+        activeTab = "sandwich";
+    }
+
+    private void AddToOrder()
+    {
+        if (IsValidSelection() && selectedSide != null && selectedDrink != null)
+        {
+            var meal = new MealDto
+            {
+                EntreeId = 0,
+                SideId = selectedSide.Id,
+                DrinkId = selectedDrink.Id
+            };
+
+            var toppingsText = string.Join(", ", selectedToppings);
+            orderConfirmation = $"Custom Deli Sandwich: {selectedBread} with {selectedMeat}, {selectedCheese}, {toppingsText}, and {selectedDressing}. Side: {selectedSide.SideName}";
+
+            Console.WriteLine($"Deli Order: Bread={selectedBread}, Meat={selectedMeat}, Cheese={selectedCheese}, Toppings={toppingsText}, Dressing={selectedDressing}, SideId={meal.SideId}, DrinkId={meal.DrinkId}");
+
+            ClearSelections();
+        }
+    }
+}
