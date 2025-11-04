@@ -28,6 +28,10 @@ builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
 builder.Services.AddScoped<IFoodItemBuilderVM, FoodItemBuilderVM>();
 builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
 
+// Register cart service and storage wrapper
+builder.Services.AddScoped<IProtectedStorageWrapper, ProtectedStorageWrapper>();
+builder.Services.AddScoped<ICartService, CartService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
