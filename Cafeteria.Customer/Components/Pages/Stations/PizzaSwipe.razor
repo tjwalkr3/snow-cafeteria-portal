@@ -4,7 +4,7 @@
 
 <PageTitle>Pizza Station</PageTitle>
 
-<div class="my-4">
+<div class="container my-4">
     <div class="mb-4">
         <h1 class="fw-light text-dark mb-1">
             <i class="bi bi-pizza me-2 text-danger"></i>Pizza Station
@@ -18,13 +18,6 @@
                         type="button"
                         @onclick="@(() => SetActiveTab("toppings"))">
                     Pizza
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "sides" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
-                        type="button"
-                        @onclick="@(() => SetActiveTab("sides"))">
-                    Sides
                 </button>
             </li>
             <li class="nav-item" role="presentation">
@@ -80,32 +73,6 @@
                         </div>
                     }
                 </div>
-            }
-            else if (activeTab == "sides")
-            {
-                <div class="alert alert-light border-warning border-start border-4 mb-4" role="alert">
-                    <small class="text-dark">Select 1 side with your meal swipe</small>
-                </div>
-
-                @foreach (var side in Sides)
-                {
-                    <div class="border rounded mb-2 @(selectedSide?.Id == side.Id ? "border-dark border-2 bg-light" : "border-light")"
-                         style="cursor: pointer;"
-                         @onclick="() => SelectSide(side)">
-                        <div class="p-3 d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-0 fw-semibold">@side.SideName</h6>
-                                @if (!string.IsNullOrEmpty(side.SideDescription))
-                                {
-                                    <p class="text-muted small mb-0">@side.SideDescription</p>
-                                }
-                            </div>
-                            <div>
-                                <span class="text-dark fw-semibold">$@side.SidePrice.ToString("F2")</span>
-                            </div>
-                        </div>
-                    </div>
-                }
             }
             else if (activeTab == "drinks")
             {
@@ -188,11 +155,6 @@
         new EntreeDto { Id = 1, StationId = 2, EntreeName = "Personal Pizza", EntreeDescription = "Choose 2 toppings included", EntreePrice = 5.69m }
     };
 
-    private List<SideDto> Sides = new List<SideDto>
-    {
-        new SideDto { Id = 1, StationId = 2, SideName = "Chips", SideDescription = "Included with your meal", SidePrice = 0.00m }
-    };
-
     private List<DrinkDto> Drinks = new List<DrinkDto>
     {
         new DrinkDto { Id = 1, StationId = 2, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
@@ -204,7 +166,6 @@
 
     private string activeTab = "toppings";
     private EntreeDto? selectedEntree = null;
-    private SideDto? selectedSide = null;
     private DrinkDto? selectedDrink = null;
     private List<string> selectedToppings = new();
     private string? orderConfirmation = null;
@@ -235,11 +196,6 @@
         selectedEntree = entree;
     }
 
-    private void SelectSide(SideDto side)
-    {
-        selectedSide = side;
-    }
-
     private void SelectDrink(DrinkDto drink)
     {
         selectedDrink = drink;
@@ -261,20 +217,18 @@
     {
         int count = 0;
         if (selectedToppings.Count >= 2) count++;
-        if (selectedSide != null) count++;
         if (selectedDrink != null) count++;
         return count;
     }
 
     private bool IsValidSelection()
     {
-        return selectedToppings.Count >= 2 && selectedSide != null && selectedDrink != null;
+        return selectedToppings.Count >= 2 && selectedDrink != null;
     }
 
     private void ClearSelections()
     {
         selectedEntree = null;
-        selectedSide = null;
         selectedDrink = null;
         selectedToppings.Clear();
         activeTab = "toppings";
@@ -282,7 +236,7 @@
 
     private void AddToOrder()
     {
-        if (IsValidSelection() && selectedSide != null && selectedDrink != null)
+        if (IsValidSelection() && selectedDrink != null)
         {
             // Auto-select the personal pizza entree if not already selected
             if (selectedEntree == null && Entrees.Any())
@@ -293,14 +247,14 @@
             var meal = new MealDto
             {
                 EntreeId = selectedEntree?.Id ?? 1,
-                SideId = selectedSide.Id,
+                SideId = 0,  // No side for pizza
                 DrinkId = selectedDrink.Id
             };
 
             var toppingsText = string.Join(", ", selectedToppings);
-            orderConfirmation = $"Personal Pizza with {toppingsText}, {selectedSide.SideName}, and {selectedDrink.DrinkName}";
+            orderConfirmation = $"Personal Pizza with {toppingsText} and {selectedDrink.DrinkName}";
 
-            Console.WriteLine($"Pizza Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}, Toppings={toppingsText}");
+            Console.WriteLine($"Pizza Order: EntreeId={meal.EntreeId}, DrinkId={meal.DrinkId}, Toppings={toppingsText}");
 
             ClearSelections();
         }
