@@ -24,7 +24,7 @@ public static class DummyData
         CreateBusinessHours(2, 1, new TimeOnly(8, 0), new TimeOnly(16, 0))    // Friday
     };
 
-    public static readonly List<StationDtoOld> GetStationList = new()
+    public static readonly List<StationDto> GetStationList = new()
     {
         CreateSandwichStation(),
         CreateSaladStation()
@@ -87,7 +87,7 @@ public static class DummyData
     #endregion ============================================================================
 
     #region =========================== Station Creation =================================
-    public static StationDtoOld CreateSandwichStation() => new()
+    public static StationDto CreateSandwichStation() => new()
     {
         Id = 1,
         LocationId = 1,
@@ -95,7 +95,7 @@ public static class DummyData
         StationDescription = "Fresh made-to-order sandwiches"
     };
 
-    public static StationDtoOld CreateSaladStation() => new()
+    public static StationDto CreateSaladStation() => new()
     {
         Id = 2,
         LocationId = 1,

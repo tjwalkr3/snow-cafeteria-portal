@@ -29,7 +29,7 @@ public class MenuService : IMenuService
         return result.ToList();
     }
 
-    public async Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
+    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         const string sql = @"
             SELECT 
@@ -40,7 +40,7 @@ public class MenuService : IMenuService
             FROM cafeteria.station
             WHERE location_id = @location_id";
 
-        var result = await _dbConnection.QueryAsync<StationDtoOld>(sql, new { location_id = locationId });
+        var result = await _dbConnection.QueryAsync<StationDto>(sql, new { location_id = locationId });
         return result.ToList();
     }
 

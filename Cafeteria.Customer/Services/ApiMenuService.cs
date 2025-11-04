@@ -12,14 +12,14 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
         return await response.Content.ReadFromJsonAsync<List<LocationDto>>() ?? new List<LocationDto>();
     }
 
-    public async Task<List<StationDtoOld>> GetStationsByLocation(int locationId)
+    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         if (locationId < 1)
             throw new ArgumentOutOfRangeException(nameof(locationId));
 
         var response = await client.GetAsync($"menu/stations/location/{locationId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<StationDtoOld>>() ?? new List<StationDtoOld>();
+        return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
     }
 
     public async Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)

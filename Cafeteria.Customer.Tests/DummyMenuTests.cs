@@ -25,7 +25,7 @@ public class DummyMenuTests
     public async Task DummyMenuServiceGetsStationsForDummyLocation()
     {
         var stations = await MenuService.GetStationsByLocation(1);
-        List<StationDtoOld> stationList = stations.ToList();
+        List<StationDto> stationList = stations.ToList();
         Assert.True((stations is not null) && (stationList.Count > 0));
     }
 

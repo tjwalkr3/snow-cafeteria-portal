@@ -1,0 +1,16 @@
+### Get stations by location ID
+
+# Get stations for Badger Den (location_id = 1)
+GET http://localhost:8080/api/menu/stations/location/1
+
+###
+
+# Get stations for Busters Bistro (location_id = 2)
+GET http://localhost:8080/api/menu/stations/location/2
+
+###
+
+# Get the list of all locations
+GET http://localhost:8080/api/menu/locations
+
+###
