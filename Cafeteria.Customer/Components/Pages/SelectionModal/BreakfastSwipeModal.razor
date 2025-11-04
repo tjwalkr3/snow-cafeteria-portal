@@ -53,17 +53,135 @@
                         <div class="card mb-2 @(selectedEntree?.Id == entree.Id ? "border-primary border-2" : "")"
                              style="cursor: pointer;"
                              @onclick="() => SelectEntree(entree)">
-                            <div class="card-body d-flex justify-content-between align-items-center py-3">
-                                <div>
-                                    <strong>@entree.EntreeName</strong>
-                                    @if (!string.IsNullOrEmpty(entree.EntreeDescription))
-                                    {
-                                        <div class="text-muted small">@entree.EntreeDescription</div>
-                                    }
+                            <div class="card-body py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>@entree.EntreeName</strong>
+                                        @if (!string.IsNullOrEmpty(entree.EntreeDescription))
+                                        {
+                                            <div class="text-muted small">@entree.EntreeDescription</div>
+                                        }
+                                    </div>
+                                    <div class="text-muted">
+                                        $@entree.EntreePrice.ToString("F2")
+                                    </div>
                                 </div>
-                                <div class="text-muted">
-                                    $@entree.EntreePrice.ToString("F2")
-                                </div>
+
+                                @* Show customization options when this entree is selected *@
+                                @if (selectedEntree?.Id == entree.Id)
+                                {
+                                    <div class="mt-3 pt-3 border-top">
+                                        @* Breakfast Sandwich - Bread & Meat choice *@
+                                        @if (entree.Id == 1)
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Bread Choice:</label>
+                                                <div class="btn-group w-100" role="group">
+                                                    <input type="radio" class="btn-check" name="bread" id="bread-muffin"
+                                                           checked="@(selectedBreadOption == "English Muffin")"
+                                                           @onchange="@(() => selectedBreadOption = "English Muffin")">
+                                                    <label class="btn btn-outline-primary" for="bread-muffin">English Muffin</label>
+
+                                                    <input type="radio" class="btn-check" name="bread" id="bread-biscuit"
+                                                           checked="@(selectedBreadOption == "Biscuit")"
+                                                           @onchange="@(() => selectedBreadOption = "Biscuit")">
+                                                    <label class="btn btn-outline-primary" for="bread-biscuit">Biscuit</label>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="form-label fw-bold">Meat Choice:</label>
+                                                <div class="btn-group w-100" role="group">
+                                                    <input type="radio" class="btn-check" name="meat1" id="meat1-sausage"
+                                                           checked="@(selectedMeatOption == "Sausage")"
+                                                           @onchange="@(() => selectedMeatOption = "Sausage")">
+                                                    <label class="btn btn-outline-success" for="meat1-sausage">Sausage</label>
+
+                                                    <input type="radio" class="btn-check" name="meat1" id="meat1-bacon"
+                                                           checked="@(selectedMeatOption == "Bacon")"
+                                                           @onchange="@(() => selectedMeatOption = "Bacon")">
+                                                    <label class="btn btn-outline-success" for="meat1-bacon">Bacon</label>
+
+                                                    <input type="radio" class="btn-check" name="meat1" id="meat1-ham"
+                                                           checked="@(selectedMeatOption == "Ham")"
+                                                           @onchange="@(() => selectedMeatOption = "Ham")">
+                                                    <label class="btn btn-outline-success" for="meat1-ham">Ham</label>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @* Breakfast Burrito - Meat choice *@
+                                        @if (entree.Id == 2)
+                                        {
+                                            <div>
+                                                <label class="form-label fw-bold">Meat Choice:</label>
+                                                <div class="btn-group w-100" role="group">
+                                                    <input type="radio" class="btn-check" name="meat2" id="meat2-bacon"
+                                                           checked="@(selectedMeatOption == "Bacon")"
+                                                           @onchange="@(() => selectedMeatOption = "Bacon")">
+                                                    <label class="btn btn-outline-success" for="meat2-bacon">Bacon</label>
+
+                                                    <input type="radio" class="btn-check" name="meat2" id="meat2-ham"
+                                                           checked="@(selectedMeatOption == "Ham")"
+                                                           @onchange="@(() => selectedMeatOption = "Ham")">
+                                                    <label class="btn btn-outline-success" for="meat2-ham">Ham</label>
+
+                                                    <input type="radio" class="btn-check" name="meat2" id="meat2-sausage"
+                                                           checked="@(selectedMeatOption == "Sausage")"
+                                                           @onchange="@(() => selectedMeatOption = "Sausage")">
+                                                    <label class="btn btn-outline-success" for="meat2-sausage">Sausage</label>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @* 1 Pancake and Choice of ONE Meat *@
+                                        @if (entree.Id == 4)
+                                        {
+                                            <div>
+                                                <label class="form-label fw-bold">Meat Choice:</label>
+                                                <div class="btn-group w-100" role="group">
+                                                    <input type="radio" class="btn-check" name="meat4" id="meat4-sausage"
+                                                           checked="@(selectedMeatOption == "Sausage")"
+                                                           @onchange="@(() => selectedMeatOption = "Sausage")">
+                                                    <label class="btn btn-outline-success" for="meat4-sausage">Sausage</label>
+
+                                                    <input type="radio" class="btn-check" name="meat4" id="meat4-bacon"
+                                                           checked="@(selectedMeatOption == "Bacon")"
+                                                           @onchange="@(() => selectedMeatOption = "Bacon")">
+                                                    <label class="btn btn-outline-success" for="meat4-bacon">Bacon</label>
+
+                                                    <input type="radio" class="btn-check" name="meat4" id="meat4-ham"
+                                                           checked="@(selectedMeatOption == "Ham")"
+                                                           @onchange="@(() => selectedMeatOption = "Ham")">
+                                                    <label class="btn btn-outline-success" for="meat4-ham">Ham</label>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @* Breakfast Plate - Meat choice *@
+                                        @if (entree.Id == 7)
+                                        {
+                                            <div>
+                                                <label class="form-label fw-bold">Meat Choice:</label>
+                                                <div class="btn-group w-100" role="group">
+                                                    <input type="radio" class="btn-check" name="meat7" id="meat7-sausage"
+                                                           checked="@(selectedMeatOption == "Sausage")"
+                                                           @onchange="@(() => selectedMeatOption = "Sausage")">
+                                                    <label class="btn btn-outline-success" for="meat7-sausage">Sausage</label>
+
+                                                    <input type="radio" class="btn-check" name="meat7" id="meat7-bacon"
+                                                           checked="@(selectedMeatOption == "Bacon")"
+                                                           @onchange="@(() => selectedMeatOption = "Bacon")">
+                                                    <label class="btn btn-outline-success" for="meat7-bacon">Bacon</label>
+
+                                                    <input type="radio" class="btn-check" name="meat7" id="meat7-ham"
+                                                           checked="@(selectedMeatOption == "Ham")"
+                                                           @onchange="@(() => selectedMeatOption = "Ham")">
+                                                    <label class="btn btn-outline-success" for="meat7-ham">Ham</label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
                             </div>
                         </div>
                     }
@@ -147,6 +265,17 @@
             <div class="d-flex justify-content-between align-items-center w-100">
                 <div>
                     <span class="text-muted">@GetSelectionCount() items selected</span>
+                    @if (selectedEntree != null && RequiresMeatSelection(selectedEntree.Id))
+                    {
+                        @if (!string.IsNullOrEmpty(selectedMeatOption))
+                        {
+                            <span class="badge bg-success ms-2">@selectedMeatOption</span>
+                        }
+                    }
+                    @if (selectedEntree?.Id == 1 && !string.IsNullOrEmpty(selectedBreadOption))
+                    {
+                        <span class="badge bg-info ms-2">@selectedBreadOption</span>
+                    }
                 </div>
                 <button type="button"
                         class="btn btn-primary btn-lg"
@@ -207,6 +336,10 @@
     private DrinkDto? selectedDrink = null;
     private string? orderConfirmation = null;
 
+    // Customization options
+    private string? selectedMeatOption = null;
+    private string? selectedBreadOption = null;
+
     private void SetActiveTab(string tab)
     {
         activeTab = tab;
@@ -215,6 +348,21 @@
     private void SelectEntree(EntreeDto entree)
     {
         selectedEntree = entree;
+
+        // Reset customization options when switching entrees
+        selectedMeatOption = null;
+        selectedBreadOption = null;
+
+        // Set default selections for items that require them
+        if (RequiresBreadSelection(entree.Id))
+        {
+            selectedBreadOption = "English Muffin";
+        }
+
+        if (RequiresMeatSelection(entree.Id))
+        {
+            selectedMeatOption = "Sausage";
+        }
     }
 
     private void SelectSide(SideDto side)
@@ -225,6 +373,16 @@
     private void SelectDrink(DrinkDto drink)
     {
         selectedDrink = drink;
+    }
+
+    private bool RequiresMeatSelection(int entreeId)
+    {
+        return entreeId == 1 || entreeId == 2 || entreeId == 4 || entreeId == 7;
+    }
+
+    private bool RequiresBreadSelection(int entreeId)
+    {
+        return entreeId == 1;
     }
 
     private int GetSelectionCount()
@@ -238,7 +396,17 @@
 
     private bool IsValidSelection()
     {
-        return selectedEntree != null && selectedSide != null && selectedDrink != null;
+        if (selectedEntree == null || selectedSide == null || selectedDrink == null)
+            return false;
+
+        // Validate customization options
+        if (RequiresMeatSelection(selectedEntree.Id) && string.IsNullOrEmpty(selectedMeatOption))
+            return false;
+
+        if (RequiresBreadSelection(selectedEntree.Id) && string.IsNullOrEmpty(selectedBreadOption))
+            return false;
+
+        return true;
     }
 
     private void ClearSelections()
@@ -246,6 +414,8 @@
         selectedEntree = null;
         selectedSide = null;
         selectedDrink = null;
+        selectedMeatOption = null;
+        selectedBreadOption = null;
         activeTab = "entrees";
     }
 
@@ -260,9 +430,16 @@
                 DrinkId = selectedDrink.Id
             };
 
-            orderConfirmation = $"Meal Plan/Swipe: {selectedEntree.EntreeName} with {selectedSide.SideName}";
+            var customizations = new List<string>();
+            if (!string.IsNullOrEmpty(selectedBreadOption))
+                customizations.Add(selectedBreadOption);
+            if (!string.IsNullOrEmpty(selectedMeatOption))
+                customizations.Add(selectedMeatOption);
 
-            Console.WriteLine($"Breakfast Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}");
+            var customizationText = customizations.Any() ? $" ({string.Join(", ", customizations)})" : "";
+            orderConfirmation = $"Meal Plan/Swipe: {selectedEntree.EntreeName}{customizationText} with {selectedSide.SideName}";
+
+            Console.WriteLine($"Breakfast Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}, Meat={selectedMeatOption}, Bread={selectedBreadOption}");
 
             ClearSelections();
         }
