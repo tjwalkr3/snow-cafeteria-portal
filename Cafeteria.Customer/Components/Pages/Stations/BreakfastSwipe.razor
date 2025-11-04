@@ -15,21 +15,21 @@
     <div class="card border-0 shadow-sm">
         <ul class="nav nav-tabs border-0 bg-light" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link border-0 @(activeTab == "entrees" ? "active bg-white" : "text-muted")"
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "entrees" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
                         type="button"
                         @onclick="@(() => SetActiveTab("entrees"))">
                     Entrees
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link border-0 @(activeTab == "sides" ? "active bg-white" : "text-muted")"
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "sides" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
                         type="button"
                         @onclick="@(() => SetActiveTab("sides"))">
                     Sides
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link border-0 @(activeTab == "drinks" ? "active bg-white" : "text-muted")"
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "drinks" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
                         type="button"
                         @onclick="@(() => SetActiveTab("drinks"))">
                     Drinks
@@ -50,7 +50,7 @@
                 @foreach (var entree in Entrees)
                 {
                     <div class="border rounded mb-3 @(selectedEntree?.Id == entree.Id ? "border-dark border-2 bg-light" : "border-light")"
-                         style="cursor: pointer; transition: all 0.2s;"
+                         style="cursor: pointer;"
                          @onclick="() => SelectEntree(entree)">
                         <div class="p-3">
                             <div class="d-flex justify-content-between align-items-start">
@@ -66,20 +66,22 @@
                                 </div>
                             </div>
 
+                            @* Show customization options when this entree is selected *@
                             @if (selectedEntree?.Id == entree.Id)
                             {
                                 <div class="mt-3 pt-3 border-top border-light">
+                                    @* Breakfast Sandwich - Bread & Meat choice *@
                                     @if (entree.Id == 1)
                                     {
                                         <div class="mb-3">
                                             <label class="form-label small fw-semibold text-muted mb-2">BREAD CHOICE</label>
                                             <div class="btn-group w-100" role="group">
-                                                <input type="radio" class="btn-check" name="bread" id="bread-muffin"
+                                                <input type="radio" class="btn-check" name="bread" id="bread-muffin" autocomplete="off"
                                                        checked="@(selectedBreadOption == "English Muffin")"
                                                        @onchange="@(() => selectedBreadOption = "English Muffin")">
                                                 <label class="btn btn-sm btn-outline-dark" for="bread-muffin">English Muffin</label>
 
-                                                <input type="radio" class="btn-check" name="bread" id="bread-biscuit"
+                                                <input type="radio" class="btn-check" name="bread" id="bread-biscuit" autocomplete="off"
                                                        checked="@(selectedBreadOption == "Biscuit")"
                                                        @onchange="@(() => selectedBreadOption = "Biscuit")">
                                                 <label class="btn btn-sm btn-outline-dark" for="bread-biscuit">Biscuit</label>
@@ -88,17 +90,17 @@
                                         <div>
                                             <label class="form-label small fw-semibold text-muted mb-2">MEAT CHOICE</label>
                                             <div class="btn-group w-100" role="group">
-                                                <input type="radio" class="btn-check" name="meat1" id="meat1-sausage"
+                                                <input type="radio" class="btn-check" name="meat1" id="meat1-sausage" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Sausage")"
                                                        @onchange="@(() => selectedMeatOption = "Sausage")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat1-sausage">Sausage</label>
 
-                                                <input type="radio" class="btn-check" name="meat1" id="meat1-bacon"
+                                                <input type="radio" class="btn-check" name="meat1" id="meat1-bacon" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Bacon")"
                                                        @onchange="@(() => selectedMeatOption = "Bacon")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat1-bacon">Bacon</label>
 
-                                                <input type="radio" class="btn-check" name="meat1" id="meat1-ham"
+                                                <input type="radio" class="btn-check" name="meat1" id="meat1-ham" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Ham")"
                                                        @onchange="@(() => selectedMeatOption = "Ham")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat1-ham">Ham</label>
@@ -106,22 +108,23 @@
                                         </div>
                                     }
 
+                                    @* Breakfast Burrito - Meat choice *@
                                     @if (entree.Id == 2)
                                     {
                                         <div>
                                             <label class="form-label small fw-semibold text-muted mb-2">MEAT CHOICE</label>
                                             <div class="btn-group w-100" role="group">
-                                                <input type="radio" class="btn-check" name="meat2" id="meat2-bacon"
+                                                <input type="radio" class="btn-check" name="meat2" id="meat2-bacon" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Bacon")"
                                                        @onchange="@(() => selectedMeatOption = "Bacon")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat2-bacon">Bacon</label>
 
-                                                <input type="radio" class="btn-check" name="meat2" id="meat2-ham"
+                                                <input type="radio" class="btn-check" name="meat2" id="meat2-ham" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Ham")"
                                                        @onchange="@(() => selectedMeatOption = "Ham")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat2-ham">Ham</label>
 
-                                                <input type="radio" class="btn-check" name="meat2" id="meat2-sausage"
+                                                <input type="radio" class="btn-check" name="meat2" id="meat2-sausage" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Sausage")"
                                                        @onchange="@(() => selectedMeatOption = "Sausage")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat2-sausage">Sausage</label>
@@ -129,22 +132,23 @@
                                         </div>
                                     }
 
+                                    @* 1 Pancake and Choice of ONE Meat *@
                                     @if (entree.Id == 4)
                                     {
                                         <div>
                                             <label class="form-label small fw-semibold text-muted mb-2">MEAT CHOICE</label>
                                             <div class="btn-group w-100" role="group">
-                                                <input type="radio" class="btn-check" name="meat4" id="meat4-sausage"
+                                                <input type="radio" class="btn-check" name="meat4" id="meat4-sausage" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Sausage")"
                                                        @onchange="@(() => selectedMeatOption = "Sausage")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat4-sausage">Sausage</label>
 
-                                                <input type="radio" class="btn-check" name="meat4" id="meat4-bacon"
+                                                <input type="radio" class="btn-check" name="meat4" id="meat4-bacon" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Bacon")"
                                                        @onchange="@(() => selectedMeatOption = "Bacon")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat4-bacon">Bacon</label>
 
-                                                <input type="radio" class="btn-check" name="meat4" id="meat4-ham"
+                                                <input type="radio" class="btn-check" name="meat4" id="meat4-ham" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Ham")"
                                                        @onchange="@(() => selectedMeatOption = "Ham")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat4-ham">Ham</label>
@@ -152,22 +156,23 @@
                                         </div>
                                     }
 
+                                    @* Breakfast Plate - Meat choice *@
                                     @if (entree.Id == 7)
                                     {
                                         <div>
                                             <label class="form-label small fw-semibold text-muted mb-2">MEAT CHOICE</label>
                                             <div class="btn-group w-100" role="group">
-                                                <input type="radio" class="btn-check" name="meat7" id="meat7-sausage"
+                                                <input type="radio" class="btn-check" name="meat7" id="meat7-sausage" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Sausage")"
                                                        @onchange="@(() => selectedMeatOption = "Sausage")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat7-sausage">Sausage</label>
 
-                                                <input type="radio" class="btn-check" name="meat7" id="meat7-bacon"
+                                                <input type="radio" class="btn-check" name="meat7" id="meat7-bacon" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Bacon")"
                                                        @onchange="@(() => selectedMeatOption = "Bacon")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat7-bacon">Bacon</label>
 
-                                                <input type="radio" class="btn-check" name="meat7" id="meat7-ham"
+                                                <input type="radio" class="btn-check" name="meat7" id="meat7-ham" autocomplete="off"
                                                        checked="@(selectedMeatOption == "Ham")"
                                                        @onchange="@(() => selectedMeatOption = "Ham")">
                                                 <label class="btn btn-sm btn-outline-dark" for="meat7-ham">Ham</label>
@@ -189,7 +194,7 @@
                 @foreach (var side in Sides)
                 {
                     <div class="border rounded mb-2 @(selectedSide?.Id == side.Id ? "border-dark border-2 bg-light" : "border-light")"
-                         style="cursor: pointer; transition: all 0.2s;"
+                         style="cursor: pointer;"
                          @onclick="() => SelectSide(side)">
                         <div class="p-3 d-flex justify-content-between align-items-center">
                             <div>
@@ -219,7 +224,7 @@
                     @foreach (var drink in Drinks)
                     {
                         <div class="border rounded mb-2 @(selectedDrink?.Id == drink.Id ? "border-dark border-2 bg-light" : "border-light")"
-                             style="cursor: pointer; transition: all 0.2s;"
+                             style="cursor: pointer;"
                              @onclick="() => SelectDrink(drink)">
                             <div class="p-3 d-flex justify-content-between align-items-center">
                                 <div>
@@ -297,34 +302,6 @@
     }
 </div>
 
-<style>
-    .nav-link {
-        color: #6c757d;
-        font-weight: 500;
-        padding: 1rem 1.5rem;
-        transition: all 0.2s;
-    }
-
-    .nav-link.active {
-        color: #212529;
-        border-bottom: 2px solid #212529 !important;
-    }
-
-    .nav-link:hover {
-        color: #212529;
-    }
-
-    .btn-outline-dark:hover {
-        background-color: #212529;
-        border-color: #212529;
-    }
-
-    .btn-check:checked + .btn-outline-dark {
-        background-color: #212529;
-        border-color: #212529;
-    }
-</style>
-
 @code {
     private List<EntreeDto> Entrees = new List<EntreeDto>
     {
@@ -361,6 +338,7 @@
     private DrinkDto? selectedDrink = null;
     private string? orderConfirmation = null;
 
+    // Customization options
     private string? selectedMeatOption = null;
     private string? selectedBreadOption = null;
 
@@ -373,9 +351,11 @@
     {
         selectedEntree = entree;
 
+        // Reset customization options when switching entrees
         selectedMeatOption = null;
         selectedBreadOption = null;
 
+        // Set default selections for items that require them
         if (RequiresBreadSelection(entree.Id))
         {
             selectedBreadOption = "English Muffin";
@@ -421,6 +401,7 @@
         if (selectedEntree == null || selectedSide == null || selectedDrink == null)
             return false;
 
+        // Validate customization options
         if (RequiresMeatSelection(selectedEntree.Id) && string.IsNullOrEmpty(selectedMeatOption))
             return false;
 
