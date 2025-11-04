@@ -37,7 +37,7 @@ public class CartService : ICartService
         order.Drinks.Add(drink);
         await _protectedStorage.SetAsync(key, order);
     }
-    
+
     public async Task AddEntreeOption(string key, int entreeId, FoodOptionDto option, FoodOptionTypeDto optionType)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
@@ -65,5 +65,5 @@ public class CartService : ICartService
         item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
         await _protectedStorage.SetAsync(key, order);
     }
-    
+
 }
