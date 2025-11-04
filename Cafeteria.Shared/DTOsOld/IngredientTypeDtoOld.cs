@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Cafeteria.Shared.DTOs;
+namespace Cafeteria.Shared.DTOsOld;
 
-public class IngredientTypeDto
+public class IngredientTypeDtoOld
 {
     public int Id { get; set; }
 

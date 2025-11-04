@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Shared.DTOs;
 using Cafeteria.Api.Services;
 
@@ -28,25 +29,25 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet("food-items/station/{stationId}")]
-    public async Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
+    public async Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
     {
         return await _menuService.GetFoodItemsByStation(stationId);
     }
 
     [HttpGet("ingredient-types/food-item/{foodItemId}")]
-    public async Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
+    public async Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId)
     {
         return await _menuService.GetIngredientTypesByFoodItem(foodItemId);
     }
 
     [HttpGet("ingredients/type/{ingredientTypeId}")]
-    public async Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
+    public async Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId)
     {
         return await _menuService.GetIngredientsByType(ingredientTypeId);
     }
 
     [HttpGet("ingredients/{ingredientId}")]
-    public async Task<IngredientDto> GetIngredientById(int ingredientId)
+    public async Task<IngredientDtoOld> GetIngredientById(int ingredientId)
     {
         return await _menuService.GetIngredientById(ingredientId);
     }

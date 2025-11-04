@@ -2,15 +2,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cafeteria.Shared.DTOs;
 
-public class LocationDto
+public class FoodOptionDto
 {
     public int Id { get; set; }
+
     [Required]
     [StringLength(100)]
-    public string LocationName { get; set; } = string.Empty;
+    public string FoodOptionName { get; set; } = string.Empty;
+
     [Required]
-    [StringLength(200)]
-    public string LocationDescription { get; set; } = string.Empty;
+    public bool InStock { get; set; } = true;
+
     [StringLength(500)]
     public string? ImageUrl { get; set; }
 }

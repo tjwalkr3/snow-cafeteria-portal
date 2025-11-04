@@ -1,3 +1,4 @@
+using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Shared.DTOs;
 using Cafeteria.Shared.Data;
 
@@ -18,15 +19,15 @@ public class DummyMenuService : IApiMenuService
         return Task.FromResult(DummyData.GetStationList.Where(s => s.LocationId == locationId).ToList() ?? new List<StationDto>());
     }
 
-    public Task<List<FoodItemDto>> GetFoodItemsByStation(int stationId)
+    public Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
     {
-        return Task.FromResult(DummyData.GetFoodItemList.Where(f => f.StationId == stationId).ToList() ?? new List<FoodItemDto>());
+        return Task.FromResult(DummyData.GetFoodItemList.Where(f => f.StationId == stationId).ToList() ?? new List<FoodItemDtoOld>());
     }
 
-    public Task<List<IngredientTypeDto>> GetIngredientTypesByFoodItem(int foodItemId)
+    public Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId)
     {
         // NOTE: This currently only returns ingredient types for a dummy sandwich, regardless of what foodItemId is passed in
-        List<IngredientTypeDto> ingredientTypes = new()
+        List<IngredientTypeDtoOld> ingredientTypes = new()
         {
             DummyData.CreateMeatType(),
             DummyData.CreateBreadType(),
@@ -35,21 +36,21 @@ public class DummyMenuService : IApiMenuService
         return Task.FromResult(ingredientTypes);
     }
 
-    public Task<Dictionary<IngredientTypeDto, List<IngredientDto>>> GetIngredientsOrganizedByType(List<IngredientTypeDto> types)
+    public Task<Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>> GetIngredientsOrganizedByType(List<IngredientTypeDtoOld> types)
     {
-        var ingredientsAndTypes = new Dictionary<IngredientTypeDto, List<IngredientDto>>
+        var ingredientsAndTypes = new Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>
         {
-            { DummyData.CreateMeatType(), new List<IngredientDto> { DummyData.CreateTurkey() } },
-            { DummyData.CreateBreadType(), new List<IngredientDto> { DummyData.CreateWheatBread() } },
-            { DummyData.CreateVegetableType(), new List<IngredientDto> { DummyData.CreateLettuce(), DummyData.CreateTomato() } }
+            { DummyData.CreateMeatType(), new List<IngredientDtoOld> { DummyData.CreateTurkey() } },
+            { DummyData.CreateBreadType(), new List<IngredientDtoOld> { DummyData.CreateWheatBread() } },
+            { DummyData.CreateVegetableType(), new List<IngredientDtoOld> { DummyData.CreateLettuce(), DummyData.CreateTomato() } }
         };
         return Task.FromResult(ingredientsAndTypes);
     }
 
-    public Task<List<IngredientDto>> GetIngredientsByType(int ingredientTypeId)
+    public Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId)
     {
         // NOTE: This currently only returns ingredients for a vegetable type, regardless of what ingredientTypeId is passed in
-        List<IngredientDto> ingredients = new()
+        List<IngredientDtoOld> ingredients = new()
         {
             DummyData.CreateLettuce(),
             DummyData.CreateTomato()
@@ -57,8 +58,8 @@ public class DummyMenuService : IApiMenuService
         return Task.FromResult(ingredients);
     }
 
-    public Task<IngredientDto> GetIngredientById(int ingredientId)
+    public Task<IngredientDtoOld> GetIngredientById(int ingredientId)
     {
-        return Task.FromResult(DummyData.GetIngredientList.First(i => i.Id == ingredientId) ?? new IngredientDto());
+        return Task.FromResult(DummyData.GetIngredientList.First(i => i.Id == ingredientId) ?? new IngredientDtoOld());
     }
 }

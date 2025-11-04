@@ -1,12 +1,22 @@
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 
-public partial class FoodItemBuilder
+public partial class FoodItemBuilder : ComponentBase
 {
+    [Inject]
+    private IFoodItemBuilderVM BuilderViewModel { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+
     [Parameter]
-    public FoodItemDto? FoodItem { get; set; }
+    public FoodItemDtoOld? FoodItem { get; set; }
 
     [Parameter]
     public EventCallback<Dictionary<string, string?>> OnOrderReady { get; set; }
@@ -35,7 +45,7 @@ public partial class FoodItemBuilder
         }
     }
 
-    private void HandleIngredientChange(ChangeEventArgs e, IngredientDto ingredient)
+    private void HandleIngredientChange(ChangeEventArgs e, IngredientDtoOld ingredient)
     {
         BuilderViewModel.ToggleIngredientSelection(ingredient);
     }

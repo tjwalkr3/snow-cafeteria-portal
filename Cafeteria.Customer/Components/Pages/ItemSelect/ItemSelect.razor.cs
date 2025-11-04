@@ -1,15 +1,21 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 
-public partial class ItemSelect
+public partial class ItemSelect : ComponentBase
 {
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    private IItemSelectVM ItemSelectVM { get; set; } = default!;
+
     public bool IsInitialized { get; set; } = false;
-    public List<FoodItemDto> foodItems = new();
+    public List<FoodItemDtoOld> foodItems = new();
     private bool isModalOpen = false;
-    private FoodItemDto? selectedFoodItem = null;
+    private FoodItemDtoOld? selectedFoodItem = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -18,7 +24,7 @@ public partial class ItemSelect
         IsInitialized = true;
     }
 
-    private void OpenFoodItemModal(FoodItemDto foodItem)
+    private void OpenFoodItemModal(FoodItemDtoOld foodItem)
     {
         Console.WriteLine($"Opening modal for: {foodItem.ItemDescription}");
         selectedFoodItem = foodItem;

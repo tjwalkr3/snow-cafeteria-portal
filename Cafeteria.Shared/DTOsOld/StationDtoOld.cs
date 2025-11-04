@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Cafeteria.Shared.DTOs;
+namespace Cafeteria.Shared.DTOsOld;
 
-public class StationDto
+public class StationDtoOld
 {
     public int Id { get; set; }
 
@@ -10,7 +10,7 @@ public class StationDto
     public int LocationId { get; set; }
 
     [Required]
-    [StringLength(50)]
+    [StringLength(100)]
     public string StationName { get; set; } = string.Empty;
 
     [Required]

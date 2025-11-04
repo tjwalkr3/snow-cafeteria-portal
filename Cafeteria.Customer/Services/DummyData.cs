@@ -1,11 +1,12 @@
 namespace Cafeteria.Shared.Data;
 
+using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Shared.DTOs;
 
 public static class DummyData
 {
     #region ============================ Static List Creation =================================
-    public static readonly List<WeekDayDto> GetWeekDayList = new()
+    public static readonly List<WeekDayDtoOld> GetWeekDayList = new()
     {
         CreateMonday(),
         CreateFriday()
@@ -17,7 +18,7 @@ public static class DummyData
         CreateBustersBistroLocation()
     };
 
-    public static readonly List<LocationBusinessHoursDto> GetBusinessHoursList = new()
+    public static readonly List<LocationBusinessHoursDtoOld> GetBusinessHoursList = new()
     {
         CreateBusinessHours(1, 1, new TimeOnly(8, 0), new TimeOnly(18, 0)),   // Monday
         CreateBusinessHours(2, 1, new TimeOnly(8, 0), new TimeOnly(16, 0))    // Friday
@@ -29,14 +30,14 @@ public static class DummyData
         CreateSaladStation()
     };
 
-    public static readonly List<IngredientTypeDto> GetIngredientTypeList = new()
+    public static readonly List<IngredientTypeDtoOld> GetIngredientTypeList = new()
     {
         CreateBreadType(),
         CreateMeatType(),
         CreateVegetableType()
     };
 
-    public static readonly List<IngredientDto> GetIngredientList = new()
+    public static readonly List<IngredientDtoOld> GetIngredientList = new()
     {
         CreateWheatBread(),
         CreateTurkey(),
@@ -44,7 +45,7 @@ public static class DummyData
         CreateTomato()
     };
 
-    public static readonly List<FoodItemDto> GetFoodItemList = new()
+    public static readonly List<FoodItemDtoOld> GetFoodItemList = new()
     {
         CreateTurkeysandwich(),
         CreateGreenSalad()
@@ -54,30 +55,28 @@ public static class DummyData
     #endregion ============================================================================
 
     #region ============================ Weekday Creation ==================================
-    public static WeekDayDto CreateMonday() => new() { Id = 1, WeekdayName = "Monday" };
-    public static WeekDayDto CreateFriday() => new() { Id = 5, WeekdayName = "Friday" };
+    public static WeekDayDtoOld CreateMonday() => new() { Id = 1, WeekdayName = "Monday" };
+    public static WeekDayDtoOld CreateFriday() => new() { Id = 5, WeekdayName = "Friday" };
     #endregion ============================================================================
 
     #region ========================= Location Creation ===================================
     public static LocationDto CreateBadgerDenLocation() => new()
     {
         Id = 1,
-        Name = "Badger Den",
-        Description = "Campus dining location in the GSC",
-        Address = "GSC Cafeteria on the Ground Floor"
+        LocationName = "Badger Den",
+        LocationDescription = "Campus dining location in the GSC",
     };
 
     public static LocationDto CreateBustersBistroLocation() => new()
     {
         Id = 2,
-        Name = "Buster's Bistro",
-        Description = "Library dining location",
-        Address = "Karen H. Huntsman Library Gallery"
+        LocationName = "Buster's Bistro",
+        LocationDescription = "Library dining location"
     };
     #endregion ============================================================================
 
     #region ======================= Business Hours Creation =============================
-    public static LocationBusinessHoursDto CreateBusinessHours(int id, int locationId, TimeOnly openTime, TimeOnly closeTime) => new()
+    public static LocationBusinessHoursDtoOld CreateBusinessHours(int id, int locationId, TimeOnly openTime, TimeOnly closeTime) => new()
     {
         Id = id,
         LocationId = locationId,
@@ -106,13 +105,13 @@ public static class DummyData
     #endregion ============================================================================
 
     #region ========================= Ingredient Type Creation ============================
-    public static IngredientTypeDto CreateBreadType() => new() { Id = 1, TypeName = "Bread", Quantity = 1 };
-    public static IngredientTypeDto CreateMeatType() => new() { Id = 2, TypeName = "Meat", Quantity = 1 };
-    public static IngredientTypeDto CreateVegetableType() => new() { Id = 3, TypeName = "Vegetable", Quantity = 2 };
+    public static IngredientTypeDtoOld CreateBreadType() => new() { Id = 1, TypeName = "Bread", Quantity = 1 };
+    public static IngredientTypeDtoOld CreateMeatType() => new() { Id = 2, TypeName = "Meat", Quantity = 1 };
+    public static IngredientTypeDtoOld CreateVegetableType() => new() { Id = 3, TypeName = "Vegetable", Quantity = 2 };
     #endregion ============================================================================
 
     #region =========================== Ingredients Creation ==============================
-    public static IngredientDto CreateWheatBread() => new()
+    public static IngredientDtoOld CreateWheatBread() => new()
     {
         Id = 1,
         IngredientName = "Wheat Bread",
@@ -120,7 +119,7 @@ public static class DummyData
         IngredientPrice = 0m
     };
 
-    public static IngredientDto CreateTurkey() => new()
+    public static IngredientDtoOld CreateTurkey() => new()
     {
         Id = 2,
         IngredientName = "Sliced Turkey",
@@ -128,7 +127,7 @@ public static class DummyData
         IngredientPrice = 2.50m
     };
 
-    public static IngredientDto CreateLettuce() => new()
+    public static IngredientDtoOld CreateLettuce() => new()
     {
         Id = 3,
         IngredientName = "Fresh Lettuce",
@@ -136,7 +135,7 @@ public static class DummyData
         IngredientPrice = 0m
     };
 
-    public static IngredientDto CreateTomato() => new()
+    public static IngredientDtoOld CreateTomato() => new()
     {
         Id = 4,
         IngredientName = "Sliced Tomato",
@@ -146,7 +145,7 @@ public static class DummyData
     #endregion ============================================================================
 
     #region =========================== Food Item Creation ================================
-    public static FoodItemDto CreateTurkeysandwich() => new()
+    public static FoodItemDtoOld CreateTurkeysandwich() => new()
     {
         Id = 1,
         StationId = 1,
@@ -155,7 +154,7 @@ public static class DummyData
         ItemPrice = 6.50m
     };
 
-    public static FoodItemDto CreateGreenSalad() => new()
+    public static FoodItemDtoOld CreateGreenSalad() => new()
     {
         Id = 2,
         StationId = 2,

@@ -1,4 +1,4 @@
-@using Cafeteria.Shared.DTOs
+@using Cafeteria.Shared.DTOsOld
 @using Cafeteria.Customer.Components.Pages.FoodItemBuilderModal
 
 @if (IsOpen)
@@ -26,7 +26,7 @@
     public bool IsOpen { get; set; }
 
     [Parameter]
-    public FoodItemDto? SelectedFoodItem { get; set; }
+    public FoodItemDtoOld? SelectedFoodItem { get; set; }
 
     [Parameter]
     public EventCallback OnClose { get; set; }

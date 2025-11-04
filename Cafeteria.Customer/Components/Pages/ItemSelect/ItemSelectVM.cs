@@ -1,5 +1,5 @@
 ﻿using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.Pages.ItemSelect;
@@ -8,20 +8,20 @@ public class ItemSelectVM : IItemSelectVM
 {
     private readonly IApiMenuService _menuService;
     private bool urlParsingFailed = false;
-    public StationDto? SelectedStation { get; private set; }
+    public StationDtoOld? SelectedStation { get; private set; }
 
     public ItemSelectVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }
 
-    public async Task<List<FoodItemDto>> GetFoodItemsAsync()
+    public async Task<List<FoodItemDtoOld>> GetFoodItemsAsync()
     {
         if (SelectedStation != null && !ErrorOccurredWhileParsingSelectedStation())
         {
             return await _menuService.GetFoodItemsByStation(SelectedStation.Id);
         }
-        return new List<FoodItemDto>(); // Return empty list when no station selected
+        return new List<FoodItemDtoOld>(); // Return empty list when no station selected
     }
 
     public async Task GetDataFromRouteParameters(string uri)
@@ -32,7 +32,7 @@ public class ItemSelectVM : IItemSelectVM
         var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
         try
         {
-            StationDto station = JsonSerializer.Deserialize<StationDto>(queryParams.Get("station") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize station from query parameter.");
+            StationDtoOld station = JsonSerializer.Deserialize<StationDtoOld>(queryParams.Get("station") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize station from query parameter.");
             SelectedStation = station;
         }
         catch
