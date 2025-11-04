@@ -51,11 +51,9 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
     {
         SelectedEntree = entree;
 
-        // Reset customization options when switching entrees
         SelectedMeatOption = null;
         SelectedBreadOption = null;
 
-        // Set default selections for items that require them
         if (RequiresBreadSelection(entree.Id))
         {
             SelectedBreadOption = "English Muffin";
@@ -111,7 +109,6 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
         if (SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
             return false;
 
-        // Validate customization options
         if (RequiresMeatSelection(SelectedEntree.Id) && string.IsNullOrEmpty(SelectedMeatOption))
             return false;
 
