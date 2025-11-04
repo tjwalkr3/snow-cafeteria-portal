@@ -127,4 +127,64 @@ public class CartServiceTests
         Assert.Single(order.Drinks);
         Assert.Equal("Soda", order.Drinks[0].DrinkName);
     }
+
+    [Fact]
+    public async Task AddEntreeOption_AddsOptionToExistingEntree()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var existingEntree = new OrderEntreeItem
+        {
+            Entree = new EntreeDto { Id = 10, EntreeName = "Test Entree", EntreePrice = 5.00m }
+        };
+        var initialOrder = new BrowserOrder();
+        initialOrder.Entrees.Add(existingEntree);
+        storage.SetValue("test-order", initialOrder);
+
+        var cartService = new CartService(storage);
+
+        var option = new FoodOptionDto { Id = 1, FoodOptionName = "Lettuce" };
+        var optionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Vegetable", FoodOptionPrice = 0.25m };
+
+        // Act
+        await cartService.AddEntreeOption("test-order", 10, option, optionType);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.Single(order.Entrees);
+        Assert.Single(order.Entrees[0].SelectedOptions);
+        Assert.Equal("Lettuce", order.Entrees[0].SelectedOptions[0].Option.FoodOptionName);
+        Assert.Equal("Vegetable", order.Entrees[0].SelectedOptions[0].OptionType.FoodOptionTypeName);
+    }
+
+    [Fact]
+    public async Task AddSideOption_AddsOptionToExistingSide()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var existingSide = new OrderSideItem
+        {
+            Side = new SideDto { Id = 20, SideName = "Test Side", SidePrice = 1.50m }
+        };
+        var initialOrder = new BrowserOrder();
+        initialOrder.Sides.Add(existingSide);
+        storage.SetValue("test-order", initialOrder);
+
+        var cartService = new CartService(storage);
+
+        var option = new FoodOptionDto { Id = 2, FoodOptionName = "Ketchup" };
+        var optionType = new FoodOptionTypeDto { Id = 2, FoodOptionTypeName = "Condiment", FoodOptionPrice = 0.00m };
+
+        // Act
+        await cartService.AddSideOption("test-order", 20, option, optionType);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.Single(order.Sides);
+        Assert.Single(order.Sides[0].SelectedOptions);
+        Assert.Equal("Ketchup", order.Sides[0].SelectedOptions[0].Option.FoodOptionName);
+        Assert.Equal("Condiment", order.Sides[0].SelectedOptions[0].OptionType.FoodOptionTypeName);
+    }
 }

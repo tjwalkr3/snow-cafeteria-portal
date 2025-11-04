@@ -37,4 +37,33 @@ public class CartService : ICartService
         order.Drinks.Add(drink);
         await _protectedStorage.SetAsync(key, order);
     }
+    
+    public async Task AddEntreeOption(string key, int entreeId, FoodOptionDto option, FoodOptionTypeDto optionType)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        var item = order.Entrees.FirstOrDefault(e => e.Entree.Id == entreeId);
+        if (item == null)
+        {
+            item = new OrderEntreeItem { Entree = new EntreeDto { Id = entreeId } };
+            order.Entrees.Add(item);
+        }
+
+        item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
+        await _protectedStorage.SetAsync(key, order);
+    }
+
+    public async Task AddSideOption(string key, int sideId, FoodOptionDto option, FoodOptionTypeDto optionType)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        var item = order.Sides.FirstOrDefault(s => s.Side.Id == sideId);
+        if (item == null)
+        {
+            item = new OrderSideItem { Side = new SideDto { Id = sideId } };
+            order.Sides.Add(item);
+        }
+
+        item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
+        await _protectedStorage.SetAsync(key, order);
+    }
+    
 }
