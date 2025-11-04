@@ -4,6 +4,7 @@ using Cafeteria.Customer.Components.Pages.LocationSelect;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 using Cafeteria.Customer.Components.Pages.StationSelect;
+using Cafeteria.Customer.Components.Pages.Stations.BreakfastSwipe;
 using Cafeteria.Customer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,7 @@ builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
 builder.Services.AddScoped<IFoodItemBuilderVM, FoodItemBuilderVM>();
 builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
+builder.Services.AddScoped<IBreakfastSwipeVM, BreakfastSwipeVM>();
 
 var app = builder.Build();
 

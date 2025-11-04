@@ -5,31 +5,30 @@
 <PageTitle>Grill Station</PageTitle>
 
 <div class="my-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">
-            <i class="bi bi-fire me-3"></i>Grill Station
+    <div class="mb-4">
+        <h1 class="fw-light text-dark mb-1">
+            <i class="bi bi-fire me-2 text-danger"></i>Grill Station
         </h1>
     </div>
 
     <div>
-
-        <ul class="nav nav-tabs nav-fill border-bottom" role="tablist">
+        <ul class="nav nav-tabs border-0 bg-light" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link @(activeTab == "entrees" ? "active" : "")"
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "entrees" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
                         type="button"
                         @onclick="@(() => SetActiveTab("entrees"))">
                     Entrees
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link @(activeTab == "sides" ? "active" : "")"
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "sides" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
                         type="button"
                         @onclick="@(() => SetActiveTab("sides"))">
                     Sides
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link @(activeTab == "drinks" ? "active" : "")"
+                <button class="nav-link border-0 fw-medium px-4 py-3 @(activeTab == "drinks" ? "active bg-white text-dark border-bottom border-3 border-dark" : "text-muted")"
                         type="button"
                         @onclick="@(() => SetActiveTab("drinks"))">
                     Drinks
@@ -37,116 +36,120 @@
             </li>
         </ul>
 
-        <div class="card-body p-0">
-            <div class="p-3">
-                @if (activeTab == "entrees")
-                {
-                    <div class="alert alert-warning mb-3" role="alert">
+        <div class="card-body p-4">
+            @if (activeTab == "entrees")
+            {
+                <div class="alert alert-light border-warning border-start border-4 mb-4" role="alert">
+                    <small class="text-dark">
                         Select 1 entrée with your meal swipe
-                    </div>
+                    </small>
+                </div>
 
-                    @foreach (var entree in Entrees)
-                    {
-                        <div class="card mb-2 @(selectedEntree?.Id == entree.Id ? "border-primary border-2" : "")"
-                             style="cursor: pointer;"
-                             @onclick="() => SelectEntree(entree)">
-                            <div class="card-body d-flex justify-content-between align-items-center py-3">
-                                <div>
-                                    <strong>@entree.EntreeName</strong>
+                @foreach (var entree in Entrees)
+                {
+                    <div class="border rounded mb-3 @(selectedEntree?.Id == entree.Id ? "border-dark border-2 bg-light" : "border-light")"
+                         style="cursor: pointer;"
+                         @onclick="() => SelectEntree(entree)">
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-semibold">@entree.EntreeName</h6>
                                     @if (!string.IsNullOrEmpty(entree.EntreeDescription))
                                     {
-                                        <div class="text-muted small">@entree.EntreeDescription</div>
+                                        <p class="text-muted small mb-0">@entree.EntreeDescription</p>
                                     }
                                 </div>
-                                <div class="text-muted">
-                                    $@entree.EntreePrice.ToString("F2")
+                                <div class="text-end ms-3">
+                                    <span class="text-dark fw-semibold">$@entree.EntreePrice.ToString("F2")</span>
                                 </div>
                             </div>
                         </div>
-                    }
-                }
-                else if (activeTab == "sides")
-                {
-                    <div class="alert alert-warning mb-3" role="alert">
-                        Select 1 side with your meal swipe
                     </div>
+                }
+            }
+            else if (activeTab == "sides")
+            {
+                <div class="alert alert-light border-warning border-start border-4 mb-4" role="alert">
+                    <small class="text-dark">Select 1 side with your meal swipe</small>
+                </div>
 
-                    @foreach (var side in Sides)
-                    {
-                        <div class="card mb-2 @(selectedSide?.Id == side.Id ? "border-primary border-2" : "")"
-                             style="cursor: pointer;"
-                             @onclick="() => SelectSide(side)">
-                            <div class="card-body d-flex justify-content-between align-items-center py-3">
-                                <div>
-                                    <strong>@side.SideName</strong>
-                                    @if (!string.IsNullOrEmpty(side.SideDescription))
-                                    {
-                                        <div class="text-muted small">@side.SideDescription</div>
-                                    }
-                                </div>
-                                <div>
-                                    <span class="text-primary fw-bold">$@side.SidePrice.ToString("F2")</span>
-                                </div>
+                @foreach (var side in Sides)
+                {
+                    <div class="border rounded mb-2 @(selectedSide?.Id == side.Id ? "border-dark border-2 bg-light" : "border-light")"
+                         style="cursor: pointer;"
+                         @onclick="() => SelectSide(side)">
+                        <div class="p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0 fw-semibold">@side.SideName</h6>
+                                @if (!string.IsNullOrEmpty(side.SideDescription))
+                                {
+                                    <p class="text-muted small mb-0">@side.SideDescription</p>
+                                }
+                            </div>
+                            <div>
+                                <span class="text-dark fw-semibold">$@side.SidePrice.ToString("F2")</span>
                             </div>
                         </div>
-                    }
+                    </div>
                 }
-                else if (activeTab == "drinks")
-                {
-                    <div class="alert alert-info mb-3" role="alert">
+            }
+            else if (activeTab == "drinks")
+            {
+                <div class="alert alert-light border-info border-start border-4 mb-4" role="alert">
+                    <small class="text-dark">
                         <i class="bi bi-info-circle me-2"></i>Select 1 drink included with your meal swipe
-                    </div>
+                    </small>
+                </div>
 
-                    @if (Drinks.Any())
+                @if (Drinks.Any())
+                {
+                    @foreach (var drink in Drinks)
                     {
-                        @foreach (var drink in Drinks)
-                        {
-                            <div class="card mb-2 @(selectedDrink?.Id == drink.Id ? "border-success border-2" : "")"
-                                 style="cursor: pointer;"
-                                 @onclick="() => SelectDrink(drink)">
-                                <div class="card-body d-flex justify-content-between align-items-center py-3">
-                                    <div>
-                                        <strong>@drink.DrinkName</strong>
-                                        @if (!string.IsNullOrEmpty(drink.DrinkDescription))
-                                        {
-                                            <small class="text-muted d-block">@drink.DrinkDescription</small>
-                                        }
-                                    </div>
-                                    <div>
-                                        @if (selectedDrink?.Id == drink.Id)
-                                        {
-                                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="card border-success border-2">
-                            <div class="card-body d-flex justify-content-between align-items-center py-3">
+                        <div class="border rounded mb-2 @(selectedDrink?.Id == drink.Id ? "border-dark border-2 bg-light" : "border-light")"
+                             style="cursor: pointer;"
+                             @onclick="() => SelectDrink(drink)">
+                            <div class="p-3 d-flex justify-content-between align-items-center">
                                 <div>
-                                    <strong>Fountain Drink</strong>
-                                    <small class="text-muted d-block">Included with your meal</small>
+                                    <h6 class="mb-0 fw-semibold">@drink.DrinkName</h6>
+                                    @if (!string.IsNullOrEmpty(drink.DrinkDescription))
+                                    {
+                                        <p class="text-muted small mb-0">@drink.DrinkDescription</p>
+                                    }
                                 </div>
                                 <div>
-                                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                    @if (selectedDrink?.Id == drink.Id)
+                                    {
+                                        <i class="bi bi-check-circle-fill text-dark fs-5"></i>
+                                    }
                                 </div>
                             </div>
                         </div>
                     }
                 }
-            </div>
+                else
+                {
+                    <div class="border border-dark border-2 rounded bg-light">
+                        <div class="p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0 fw-semibold">Fountain Drink</h6>
+                                <p class="text-muted small mb-0">Included with your meal</p>
+                            </div>
+                            <div>
+                                <i class="bi bi-check-circle-fill text-dark fs-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
         </div>
 
-        <div class="card-footer bg-light">
-            <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="card-footer bg-white border-top">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted">@GetSelectionCount() items selected</span>
+                    <span class="text-muted small">@GetSelectionCount() items selected</span>
                 </div>
                 <button type="button"
-                        class="btn btn-primary btn-lg"
+                        class="btn btn-dark btn-lg px-4"
                         disabled="@(!IsValidSelection())"
                         @onclick="AddToOrder">
                     Add to Order
@@ -157,13 +160,15 @@
 
     @if (orderConfirmation != null)
     {
-        <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
-            <h5 class="alert-heading">
-                <i class="bi bi-check-circle-fill me-2"></i>Order Added!
-            </h5>
-            <hr>
-            <p class="mb-0"><strong>@orderConfirmation</strong></p>
-            <button type="button" class="btn-close" @onclick="() => orderConfirmation = null"></button>
+        <div class="alert alert-light border-success border-start border-4 mt-4" role="alert">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                <div class="flex-grow-1">
+                    <h6 class="fw-semibold mb-1">Order Added!</h6>
+                    <p class="mb-0 small">@orderConfirmation</p>
+                </div>
+                <button type="button" class="btn-close" @onclick="() => orderConfirmation = null"></button>
+            </div>
         </div>
     }
 </div>
