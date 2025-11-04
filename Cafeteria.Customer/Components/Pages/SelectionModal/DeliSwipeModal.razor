@@ -330,8 +330,6 @@
     {
         if (IsValidSelection() && selectedSide != null && selectedDrink != null)
         {
-            // For Deli, we'll use a custom EntreeDto with description of the sandwich
-            // In a real app, you'd have a proper Deli sandwich entree in the database
             var meal = new MealDto
             {
                 EntreeId = 0, // This would be set properly with a Deli sandwich entree

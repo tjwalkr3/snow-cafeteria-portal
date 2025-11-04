@@ -11,7 +11,6 @@
     </h1>
 
     <div class="row justify-content-center">
-        <!-- Meal Plan/Swipe Card -->
         <div class="col-md-8 col-lg-6">
             <div class="card border-success shadow-sm">
                 <div class="card-header bg-success text-white text-center py-3">
@@ -102,7 +101,6 @@
     }
 </div>
 
-<!-- Grill Swipe Modal -->
 <GrillSwipeModal 
     IsOpen="@showGrillModal"
     OnClose="@CloseGrillModal"
@@ -115,7 +113,6 @@
     private bool showGrillModal = false;
     private string? orderConfirmation = null;
 
-    // Sample data - in real app, this would come from API
     private List<EntreeDto> grillEntrees = new List<EntreeDto>
     {
         new EntreeDto { Id = 1, StationId = 1, EntreeName = "Hamburger", EntreePrice = 4.99m },
@@ -167,14 +164,12 @@
 
     private void HandleGrillOrder(MealDto meal)
     {
-        // Find the selected items by their IDs
         var entree = grillEntrees.FirstOrDefault(e => e.Id == meal.EntreeId);
         var side = grillSides.FirstOrDefault(s => s.Id == meal.SideId);
         var drink = grillDrinks.FirstOrDefault(d => d.Id == meal.DrinkId);
 
         orderConfirmation = $"Meal Plan/Swipe: {entree?.EntreeName ?? "Unknown"} with {side?.SideName ?? "Unknown"}";
         
-        // Here you would typically send this to your API/service
         Console.WriteLine($"Grill Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}");
     }
 }

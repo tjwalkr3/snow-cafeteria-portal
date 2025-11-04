@@ -11,7 +11,6 @@
     </h1>
 
     <div class="row justify-content-center">
-        <!-- Meal Plan/Swipe Card -->
         <div class="col-md-8 col-lg-6">
             <div class="card border-danger shadow-sm">
                 <div class="card-header bg-danger text-white text-center py-3">
@@ -100,7 +99,6 @@
     }
 </div>
 
-<!-- Pizza Swipe Modal -->
 <PizzaSwipeModal 
     IsOpen="@showPizzaModal"
     OnClose="@ClosePizzaModal"
@@ -113,7 +111,6 @@
     private bool showPizzaModal = false;
     private string? orderConfirmation = null;
 
-    // Sample data - in real app, this would come from API
     private List<EntreeDto> pizzaEntrees = new List<EntreeDto>
     {
         new EntreeDto { Id = 1, StationId = 2, EntreeName = "Personal Pizza", EntreeDescription = "Choose 2 toppings included", EntreePrice = 5.69m }
@@ -145,14 +142,12 @@
 
     private void HandlePizzaOrder(MealDto meal)
     {
-        // Find the selected items by their IDs
         var entree = pizzaEntrees.FirstOrDefault(e => e.Id == meal.EntreeId);
         var side = pizzaSides.FirstOrDefault(s => s.Id == meal.SideId);
         var drink = pizzaDrinks.FirstOrDefault(d => d.Id == meal.DrinkId);
 
         orderConfirmation = $"Meal Plan/Swipe: {entree?.EntreeName ?? "Personal Pizza"} with {side?.SideName ?? "Chips"} and {drink?.DrinkName ?? "Drink"}";
         
-        // Here you would typically send this to your API/service
         Console.WriteLine($"Pizza Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}");
     }
 }
