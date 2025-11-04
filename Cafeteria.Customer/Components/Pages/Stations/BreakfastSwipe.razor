@@ -66,11 +66,9 @@
                                 </div>
                             </div>
 
-                            @* Show customization options when this entree is selected *@
                             @if (selectedEntree?.Id == entree.Id)
                             {
                                 <div class="mt-3 pt-3 border-top border-light">
-                                    @* Breakfast Sandwich - Bread & Meat choice *@
                                     @if (entree.Id == 1)
                                     {
                                         <div class="mb-3">
@@ -108,7 +106,6 @@
                                         </div>
                                     }
 
-                                    @* Breakfast Burrito - Meat choice *@
                                     @if (entree.Id == 2)
                                     {
                                         <div>
@@ -132,7 +129,6 @@
                                         </div>
                                     }
 
-                                    @* 1 Pancake and Choice of ONE Meat *@
                                     @if (entree.Id == 4)
                                     {
                                         <div>
@@ -156,7 +152,6 @@
                                         </div>
                                     }
 
-                                    @* Breakfast Plate - Meat choice *@
                                     @if (entree.Id == 7)
                                     {
                                         <div>
@@ -366,7 +361,6 @@
     private DrinkDto? selectedDrink = null;
     private string? orderConfirmation = null;
 
-    // Customization options
     private string? selectedMeatOption = null;
     private string? selectedBreadOption = null;
 
@@ -379,11 +373,9 @@
     {
         selectedEntree = entree;
 
-        // Reset customization options when switching entrees
         selectedMeatOption = null;
         selectedBreadOption = null;
 
-        // Set default selections for items that require them
         if (RequiresBreadSelection(entree.Id))
         {
             selectedBreadOption = "English Muffin";
@@ -429,7 +421,6 @@
         if (selectedEntree == null || selectedSide == null || selectedDrink == null)
             return false;
 
-        // Validate customization options
         if (RequiresMeatSelection(selectedEntree.Id) && string.IsNullOrEmpty(selectedMeatOption))
             return false;
 
