@@ -1,0 +1,152 @@
+.pizza-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.modern-tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.modern-tab {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #6c757d;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.modern-tab:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #495057;
+}
+
+.modern-tab.active {
+  background: white;
+  color: #212529;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.meal-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.meal-card:hover {
+  border-color: #dee2e6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.meal-card.selected {
+  border-color: #212529;
+  background: #f8f9fa;
+}
+
+.info-banner {
+  background: #f8f9fa;
+  color: #495057;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  border-left: 3px solid #6c757d;
+}
+
+.info-banner.warning {
+  background: #fff5f5;
+  border-left-color: #dc3545;
+  color: #721c24;
+}
+
+.info-banner.info {
+  background: #f0f9ff;
+  border-left-color: #0dcaf0;
+  color: #055160;
+}
+
+.option-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.option-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.5rem 1rem;
+  border: 2px solid #dee2e6;
+  background: white;
+  border-radius: 8px;
+  color: #495057;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-btn:hover {
+  border-color: #adb5bd;
+}
+
+.option-btn.selected {
+  border-color: #0d6efd;
+  background: #0d6efd;
+  color: white;
+}
+
+.footer-bar {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  border-top: 2px solid #e9ecef;
+  padding: 1.5rem;
+  margin: 2rem -1rem -1rem;
+  border-radius: 0 0 12px 12px;
+}
+
+.add-btn {
+  padding: 0.75rem 2rem;
+  background: #212529;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover:not(:disabled) {
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.add-btn:disabled {
+  background: #dee2e6;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.success-alert {
+  background: #198754;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
