@@ -17,8 +17,11 @@ public partial class PlaceOrder : ComponentBase
 
     private BrowserOrder? Order { get; set; } = null;
 
+    private decimal Price { get; set; } = 0.0m;
+
     protected override async Task OnInitializedAsync()
     {
+        // Test data that can be removed after the page before this is complete
         string userName = "test";
         var entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 5.00m };
         var side = new SideDto { Id = 1, SideName = "Fries", SidePrice = 3.00m};
@@ -31,7 +34,9 @@ public partial class PlaceOrder : ComponentBase
         await Cart.AddSide(userName, side);
         await Cart.AddDrink(userName, drink);
 
+        // The code that gets the cart from local storage and calculates the cost
         Order = await GetOrder(userName);
+        if (Order != null) Price = PlaceOrderVM.CalculateTotalPrice(Order);
     }
     
     private async Task<BrowserOrder?> GetOrder(string userName) 
