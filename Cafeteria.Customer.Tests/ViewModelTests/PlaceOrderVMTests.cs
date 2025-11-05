@@ -148,7 +148,7 @@ public class PlaceOrderVMTests
         // Arrange
         var vm = new PlaceOrderVM();
         var order = new BrowserOrder();
-        
+
         // Add entrees with options
         order.Entrees.Add(new OrderEntreeItem
         {
@@ -193,7 +193,7 @@ public class PlaceOrderVMTests
         // Arrange
         var vm = new PlaceOrderVM();
         var order = new BrowserOrder();
-        
+
         order.Entrees.Add(new OrderEntreeItem
         {
             Entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 8.99m }

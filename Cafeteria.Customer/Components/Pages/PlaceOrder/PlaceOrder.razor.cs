@@ -27,9 +27,10 @@ public partial class PlaceOrder : ComponentBase
         {
             // Test data that can be removed after the page before this is complete
             string userName = "test";
-            if (await GetOrder(userName) == null) {
+            if (await GetOrder(userName) == null)
+            {
                 var entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 5.00m };
-                var side = new SideDto { Id = 1, SideName = "Fries", SidePrice = 3.00m};
+                var side = new SideDto { Id = 1, SideName = "Fries", SidePrice = 3.00m };
                 var drink = new DrinkDto { Id = 1, DrinkName = "Coke", DrinkPrice = 2.00m };
                 var option = new FoodOptionDto { Id = 1, FoodOptionName = "Tomato" };
                 var optionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", FoodOptionPrice = 0.50m };
@@ -48,8 +49,8 @@ public partial class PlaceOrder : ComponentBase
             StateHasChanged();
         }
     }
-    
-    private async Task<BrowserOrder?> GetOrder(string userName) 
+
+    private async Task<BrowserOrder?> GetOrder(string userName)
     {
         return await Cart.GetOrder(userName);
     }
