@@ -15,22 +15,27 @@ public partial class PlaceOrder : ComponentBase
     [Inject]
     private ICartService Cart { get; set; } = default!;
 
+    private BrowserOrder? Order { get; set; } = null;
+
     protected override async Task OnInitializedAsync()
     {
-        var entree = new EntreeDto { Id = 1, EntreeName = "Burger" };
-        var side = new SideDto { Id = 1, SideName = "Fries" };
+        string userName = "test";
+        var entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 5.00m };
+        var side = new SideDto { Id = 1, SideName = "Fries", SidePrice = 3.00m};
         var drink = new DrinkDto { Id = 1, DrinkName = "Coke" };
-        var option = new FoodOptionDto { Id = 1, FoodOptionName = "Cheese" };
-        var optionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings" };
-        
-        await Cart.AddEntree("test", entree);
-        await Cart.AddEntreeOption("test", entree.Id, option, optionType);
-        await Cart.AddSide("test", side);
-        await Cart.AddDrink("test", drink);
-    }
+        var option = new FoodOptionDto { Id = 1, FoodOptionName = "Tomato" };
+        var optionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", FoodOptionPrice = 0.50m };
 
-    private decimal GetTotalPrice()
+        await Cart.AddEntree(userName, entree);
+        await Cart.AddEntreeOption(userName, entree.Id, option, optionType);
+        await Cart.AddSide(userName, side);
+        await Cart.AddDrink(userName, drink);
+
+        Order = await GetOrder(userName);
+    }
+    
+    private async Task<BrowserOrder?> GetOrder(string userName) 
     {
-        return 0;
+        return await Cart.GetOrder(userName);
     }
 }
