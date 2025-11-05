@@ -17,6 +17,20 @@ public class CartService : ICartService
         return result.Success ? result.Value : null;
     }
 
+    public async Task SetLocation(string key, LocationDto location)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        order.Location = location;
+        await _protectedStorage.SetAsync(key, order);
+    }
+
+    public async Task SetIsCardOrder(string key, bool isCardOrder)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        order.IsCardOrder = isCardOrder;
+        await _protectedStorage.SetAsync(key, order);
+    }
+
     public async Task AddEntree(string key, OrderEntreeItem entree)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();

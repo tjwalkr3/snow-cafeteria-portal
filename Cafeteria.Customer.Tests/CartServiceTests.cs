@@ -187,4 +187,38 @@ public class CartServiceTests
         Assert.Equal("Ketchup", order.Sides[0].SelectedOptions[0].Option.FoodOptionName);
         Assert.Equal("Condiment", order.Sides[0].SelectedOptions[0].OptionType.FoodOptionTypeName);
     }
+
+    [Fact]
+    public async Task SetLocation_SetsLocationOnOrder()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+        var location = new LocationDto { Id = 1, LocationName = "Badger Den", LocationDescription = "Main cafeteria" };
+
+        // Act
+        await cartService.SetLocation("test-order", location);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.NotNull(order.Location);
+        Assert.Equal("Badger Den", order.Location.LocationName);
+    }
+
+    [Fact]
+    public async Task SetIsCardOrder_SetsCardOrderFlag()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+
+        // Act
+        await cartService.SetIsCardOrder("test-order", true);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.True(order.IsCardOrder);
+    }
 }
