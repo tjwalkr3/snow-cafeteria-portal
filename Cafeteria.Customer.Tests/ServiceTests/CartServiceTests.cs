@@ -95,10 +95,7 @@ public class CartServiceTests
         // Arrange
         var storage = new DictionaryStorageWrapper();
         var cartService = new CartService(storage);
-        var entree = new OrderEntreeItem
-        {
-            Entree = new EntreeDto { Id = 1, EntreeName = "Turkey Sandwich", EntreePrice = 6.50m }
-        };
+        var entree = new EntreeDto { Id = 1, EntreeName = "Turkey Sandwich", EntreePrice = 6.50m };
 
         // Act
         await cartService.AddEntree("test-order", entree);
@@ -117,10 +114,7 @@ public class CartServiceTests
         var storage = new DictionaryStorageWrapper();
         var cartService = new CartService(storage);
         storage.SetValue("test-order", new BrowserOrder { IsCardOrder = true });
-        var side = new OrderSideItem
-        {
-            Side = new SideDto { Id = 1, SideName = "French Fries", SidePrice = 2.50m }
-        };
+        var side = new SideDto { Id = 1, SideName = "French Fries", SidePrice = 2.50m };
 
         // Act
         await cartService.AddSide("test-order", side);

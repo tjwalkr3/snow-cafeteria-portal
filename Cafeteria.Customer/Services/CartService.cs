@@ -36,17 +36,17 @@ public class CartService : ICartService
         await _protectedStorage.SetAsync(key, order);
     }
 
-    public async Task AddEntree(string key, OrderEntreeItem entree)
+    public async Task AddEntree(string key, EntreeDto entree)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
-        order.Entrees.Add(entree);
+        order.Entrees.Add(new OrderEntreeItem { Entree = entree });
         await _protectedStorage.SetAsync(key, order);
     }
 
-    public async Task AddSide(string key, OrderSideItem side)
+    public async Task AddSide(string key, SideDto side)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
-        order.Sides.Add(side);
+        order.Sides.Add(new OrderSideItem { Side = side });
         await _protectedStorage.SetAsync(key, order);
     }
 
@@ -61,28 +61,22 @@ public class CartService : ICartService
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
         var item = order.Entrees.FirstOrDefault(e => e.Entree.Id == entreeId);
-        if (item == null)
+        if (item != null)
         {
-            item = new OrderEntreeItem { Entree = new EntreeDto { Id = entreeId } };
-            order.Entrees.Add(item);
+            item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
+            await _protectedStorage.SetAsync(key, order);
         }
-
-        item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
-        await _protectedStorage.SetAsync(key, order);
     }
 
     public async Task AddSideOption(string key, int sideId, FoodOptionDto option, FoodOptionTypeDto optionType)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
         var item = order.Sides.FirstOrDefault(s => s.Side.Id == sideId);
-        if (item == null)
+        if (item != null)
         {
-            item = new OrderSideItem { Side = new SideDto { Id = sideId } };
-            order.Sides.Add(item);
+            item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
+            await _protectedStorage.SetAsync(key, order);
         }
-
-        item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
-        await _protectedStorage.SetAsync(key, order);
     }
 
 }
