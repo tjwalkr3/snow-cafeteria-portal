@@ -1,7 +1,7 @@
 using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
-namespace Cafeteria.Customer.Tests;
+namespace Cafeteria.Customer.Tests.ServiceTests;
 
 public class CartServiceTests
 {
