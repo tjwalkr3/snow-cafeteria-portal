@@ -29,6 +29,12 @@ public class CartServiceTests
             _storage[key] = value!;
             return ValueTask.CompletedTask;
         }
+
+        public ValueTask DeleteAsync(string key)
+        {
+            _storage.Remove(key);
+            return ValueTask.CompletedTask;
+        }
     }
 
     [Fact]
@@ -64,6 +70,22 @@ public class CartServiceTests
         var result = await cartService.GetOrder("non-existent-key");
 
         // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task ClearOrder_RemovesOrderFromStorage()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+        storage.SetValue("test-order", new BrowserOrder { IsCardOrder = true });
+
+        // Act
+        await cartService.ClearOrder("test-order");
+
+        // Assert
+        var result = await cartService.GetOrder("test-order");
         Assert.Null(result);
     }
 

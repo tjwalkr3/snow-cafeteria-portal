@@ -5,6 +5,7 @@ using Cafeteria.Shared.DTOs;
 public interface ICartService
 {
     Task<BrowserOrder?> GetOrder(string key);
+    Task ClearOrder(string key);
     Task SetLocation(string key, LocationDto location);
     Task SetIsCardOrder(string key, bool isCardOrder);
     Task AddEntree(string key, OrderEntreeItem entree);

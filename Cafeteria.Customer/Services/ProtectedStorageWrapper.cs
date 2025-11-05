@@ -21,4 +21,9 @@ public class ProtectedStorageWrapper : IProtectedStorageWrapper
     {
         return _protectedLocalStorage.SetAsync(key, value!);
     }
+
+    public ValueTask DeleteAsync(string key)
+    {
+        return _protectedLocalStorage.DeleteAsync(key);
+    }
 }

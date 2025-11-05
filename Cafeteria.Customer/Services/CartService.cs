@@ -17,6 +17,11 @@ public class CartService : ICartService
         return result.Success ? result.Value : null;
     }
 
+    public async Task ClearOrder(string key)
+    {
+        await _protectedStorage.DeleteAsync(key);
+    }
+
     public async Task SetLocation(string key, LocationDto location)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
