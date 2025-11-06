@@ -154,11 +154,11 @@ INSERT INTO cafeteria.location_business_hours (location_id, weekday_id, open_tim
     (2, 5, '10:00:00', '15:00:00');
 
 INSERT INTO cafeteria.station (location_id, station_name, station_description) VALUES
-    (1, 'Breakfast', 'Hot entrees and burgers'),
+    (1, 'Breakfast', 'Hot breakfast entrees and sides'),
     (1, 'Deli', 'Fresh made-to-order sandwiches'),
     (1, 'Grill', 'Hot entrees and burgers'),
-    (2, 'Wraps', 'Fresh salads and healthy options'),
-    (1, 'Pizza', 'Fresh salads and healthy options');
+    (1, 'Pizza', 'Fresh pizza with your choice of toppings'),
+    (2, 'Wraps', 'Fresh wraps and healthy options');
 
 INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price, image_url) VALUES
     (1, 'Turkey Sandwich', 'Turkey sandwich with lettuce on wheat bread', 6.50, 'https://picsum.photos/id/488/150/150'),
