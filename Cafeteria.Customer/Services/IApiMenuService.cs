@@ -10,11 +10,6 @@ public interface IApiMenuService
     Task<List<EntreeDto>> GetEntreesByStation(int stationId);
     Task<List<SideDto>> GetSidesByStation(int stationId);
     Task<List<DrinkDto>> GetDrinksByLocation(int locationId);
-    Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId);
     Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId);
     Task<List<FoodOptionDto>> GetOptionsBySide(int sideId);
-    Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId);
-    Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId);
-    Task<Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>> GetIngredientsOrganizedByType(List<IngredientTypeDtoOld> types);
-    Task<IngredientDtoOld> GetIngredientById(int ingredientId);
 }

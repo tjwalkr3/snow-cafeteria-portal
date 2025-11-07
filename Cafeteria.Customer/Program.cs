@@ -1,7 +1,6 @@
 using Cafeteria.Customer.Components;
 using Cafeteria.Customer.Components.Pages.LocationSelect;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
-using Cafeteria.Customer.Components.Pages.FoodItemBuilderModal;
 using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Components.Pages.Stations.BreakfastSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.DeliSwipe;
@@ -27,7 +26,6 @@ builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
-builder.Services.AddScoped<IFoodItemBuilderVM, FoodItemBuilderVM>();
 builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
 builder.Services.AddScoped<IBreakfastSwipeVM, BreakfastSwipeVM>();
 builder.Services.AddScoped<IDeliSwipeVM, DeliSwipeVM>();
