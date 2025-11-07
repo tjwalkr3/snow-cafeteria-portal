@@ -72,7 +72,7 @@ public class MenuService : IMenuService
             INNER JOIN cafeteria.station s ON d.station_id = s.id
             WHERE s.location_id = @locationId;";
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
-        return result.ToList();   
+        return result.ToList();
     }
     public async Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
     {
