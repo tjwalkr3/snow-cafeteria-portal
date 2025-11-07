@@ -167,17 +167,17 @@ public class ApiMenuServiceTests
     [InlineData(-1)]
     [InlineData(0)]
     [InlineData(1)]
-    public async Task GetFoodOptionsByEntree_ValidatesIdAndReturnsListWhenValid(int id)
+    public async Task GetOptionsByEntree_ValidatesIdAndReturnsListWhenValid(int id)
     {
         var mockHandler = CreateMockHttpHandler(new List<FoodOptionDto> { new FoodOptionDto { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
         if (id < 1)
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetFoodOptionsByEntree(id));
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetOptionsByEntree(id));
         else
         {
-            var result = await service.GetFoodOptionsByEntree(id);
+            var result = await service.GetOptionsByEntree(id);
             Assert.NotNull(result);
             Assert.Single(result);
         }
@@ -194,10 +194,10 @@ public class ApiMenuServiceTests
         var service = new ApiMenuService(httpClient);
 
         if (id < 1)
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetFoodOptionsBySide(id));
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetOptionsBySide(id));
         else
         {
-            var result = await service.GetFoodOptionsBySide(id);
+            var result = await service.GetOptionsBySide(id);
             Assert.NotNull(result);
             Assert.Single(result);
         }
