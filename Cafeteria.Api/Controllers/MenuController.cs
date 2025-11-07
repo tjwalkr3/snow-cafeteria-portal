@@ -34,10 +34,40 @@ public class MenuController : ControllerBase
         return await _menuService.GetFoodItemsByStation(stationId);
     }
 
+    [HttpGet("entrees/station/{stationId}")]
+    public async Task<List<EntreeDto>> GetEntreesByStation(int stationId)
+    {
+        return await _menuService.GetEntreesByStation(stationId);
+    }
+
+    [HttpGet("sides/station/{stationId}")]
+    public async Task<List<SideDto>> GetSidesByStation(int stationId)
+    {
+        return await _menuService.GetSidesByStation(stationId);
+    }
+
+    [HttpGet("drinks/location/{locationId}")]
+    public async Task<List<DrinkDto>> GetDrinksByLocation(int locationId)
+    {
+        return await _menuService.GetDrinksByLocation(locationId);
+    }
+
     [HttpGet("ingredient-types/food-item/{foodItemId}")]
     public async Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId)
     {
         return await _menuService.GetIngredientTypesByFoodItem(foodItemId);
+    }
+
+    [HttpGet("menu/options/entree/{entreeId}")]
+    public async Task<List<FoodOptionDto>> GetFoodOptionsByEntree(int entreeId)
+    {
+        return await _menuService.GetOptionsByEntree(entreeId);
+    }
+
+    [HttpGet("menu/options/side/{sideId}")]
+    public async Task<List<FoodOptionDto>> GetFoodOptionsBySide(int sideId)
+    {
+        return await _menuService.GetOptionsBySide(sideId);
     }
 
     [HttpGet("ingredients/type/{ingredientTypeId}")]
