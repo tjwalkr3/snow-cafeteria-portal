@@ -29,12 +29,15 @@ public partial class PlaceOrder : ComponentBase
             string userName = "test";
             if (await GetOrder(userName) == null)
             {
+                var location = new LocationDto { Id = 1, LocationName = "Badger Den", LocationDescription = "The main cafeteria in the student center." };
                 var entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 5.00m };
                 var side = new SideDto { Id = 1, SideName = "Fries", SidePrice = 3.00m };
                 var drink = new DrinkDto { Id = 1, DrinkName = "Coke", DrinkPrice = 2.00m };
                 var option = new FoodOptionDto { Id = 1, FoodOptionName = "Tomato" };
                 var optionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", FoodOptionPrice = 0.50m };
 
+                await Cart.SetIsCardOrder(userName, false);
+                await Cart.SetLocation(userName, location);
                 await Cart.AddEntree(userName, entree);
                 await Cart.AddEntreeOption(userName, entree.Id, option, optionType);
                 await Cart.AddSide(userName, side);

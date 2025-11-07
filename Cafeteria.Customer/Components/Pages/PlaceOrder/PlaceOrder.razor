@@ -33,7 +33,16 @@
     {
         <div class="row">
             <div class="col-12">
-                <h2>Review Your Order</h2>
+                <h2>
+                    @if (Order.Location != null)
+                    {
+                        <text>Your Order at the @Order.Location.LocationName</text>
+                    }
+                    else
+                    {
+                        <text>Review Your Order</text>
+                    }
+                </h2>
                 <p class="text-muted">Please review your selections before placing your order</p>
             </div>
         </div>
@@ -49,7 +58,10 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">@entreeItem.Entree.EntreeName</h5>
-                                <h6 class="text-success">$@entreeItem.Entree.EntreePrice.ToString("F2")</h6>
+                                @if (Order.IsCardOrder)
+                                {
+                                    <h6 class="text-success">$@entreeItem.Entree.EntreePrice.ToString("F2")</h6>
+                                }
                                 
                                 @if (entreeItem.SelectedOptions.Any())
                                 {
@@ -59,7 +71,7 @@
                                         {
                                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                                 @option.Option.FoodOptionName (@option.OptionType.FoodOptionTypeName)
-                                                @if (option.OptionType.FoodOptionPrice > 0)
+                                                @if (Order.IsCardOrder && option.OptionType.FoodOptionPrice > 0)
                                                 {
                                                     <span class="badge bg-secondary rounded-pill">+$@option.OptionType.FoodOptionPrice.ToString("F2")</span>
                                                 }
@@ -81,7 +93,10 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">@sideItem.Side.SideName</h5>
-                                <h6 class="text-success">$@sideItem.Side.SidePrice.ToString("F2")</h6>
+                                @if (Order.IsCardOrder)
+                                {
+                                    <h6 class="text-success">$@sideItem.Side.SidePrice.ToString("F2")</h6>
+                                }
                                 
                                 @if (sideItem.SelectedOptions.Any())
                                 {
@@ -91,7 +106,7 @@
                                         {
                                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                                 @option.Option.FoodOptionName (@option.OptionType.FoodOptionTypeName)
-                                                @if (option.OptionType.FoodOptionPrice > 0)
+                                                @if (Order.IsCardOrder && option.OptionType.FoodOptionPrice > 0)
                                                 {
                                                     <span class="badge bg-secondary rounded-pill">+$@option.OptionType.FoodOptionPrice.ToString("F2")</span>
                                                 }
@@ -113,7 +128,10 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">@drink.DrinkName</h5>
-                                <h6 class="text-success">$@drink.DrinkPrice.ToString("F2")</h6>
+                                @if (Order.IsCardOrder)
+                                {
+                                    <h6 class="text-success">$@drink.DrinkPrice.ToString("F2")</h6>
+                                }
                             </div>
                         </div>
                     }
