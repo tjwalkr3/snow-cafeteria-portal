@@ -42,13 +42,13 @@ public partial class PlaceOrder : ComponentBase
 
             // Get the cart from local storage and calculate the cost
             Order = await GetOrder(userName);
-            
+
             if (Order == null || (Order.Entrees.Count == 0 && Order.Sides.Count == 0 && Order.Drinks.Count == 0))
             {
                 await SetSampleData(userName);
                 Order = await GetOrder(userName);
             }
-            
+
             if (Order != null) Price = PlaceOrderVM.CalculateTotalPrice(Order);
 
             _isLoading = false;
@@ -77,10 +77,7 @@ public partial class PlaceOrder : ComponentBase
                     await Cart.SetLocation(userName, locationDto);
                 }
             }
-            catch
-            {
-                // ignore failures here; the page will continue and show missing data if needed
-            }
+            catch { /* Ignore failures for now */ }
         }
     }
 
@@ -89,7 +86,7 @@ public partial class PlaceOrder : ComponentBase
         return await Cart.GetOrder(userName);
     }
 
-    private async Task SetSampleData(string userName) 
+    private async Task SetSampleData(string userName)
     {
         var location = new LocationDto { Id = 1, LocationName = "Badger Den", LocationDescription = "The main cafeteria in the student center." };
         var entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 5.00m };
