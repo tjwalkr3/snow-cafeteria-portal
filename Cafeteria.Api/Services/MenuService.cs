@@ -74,8 +74,8 @@ public class MenuService : IMenuService
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
         return result.ToList();
     }
-    
-        public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
+
+    public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
     {
         string sql = @"
             SELECT fo.id, fo.food_option_name, fo.in_stock, fo.image_url
