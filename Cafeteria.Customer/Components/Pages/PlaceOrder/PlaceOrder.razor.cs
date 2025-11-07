@@ -15,9 +15,6 @@ public partial class PlaceOrder : ComponentBase
     [Inject]
     private ICartService Cart { get; set; } = default!;
 
-    [Inject]
-    private IApiMenuService MenuService { get; set; } = default!;
-
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
 
@@ -29,6 +26,15 @@ public partial class PlaceOrder : ComponentBase
     private decimal Price { get; set; } = 0.0m;
 
     private bool _isLoading = true;
+
+    public bool IsInitialized { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        PlaceOrderVM.ValidateParameters(Location, Payment);
+        await PlaceOrderVM.InitializeLocations();
+        IsInitialized = true;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -68,16 +74,11 @@ public partial class PlaceOrder : ComponentBase
     {
         if (Location != 0)
         {
-            try
+            var locationDto = PlaceOrderVM.GetLocationById(Location);
+            if (locationDto != null)
             {
-                var locations = await MenuService.GetAllLocations();
-                var locationDto = locations.FirstOrDefault(l => l.Id == Location);
-                if (locationDto != null)
-                {
-                    await Cart.SetLocation(userName, locationDto);
-                }
+                await Cart.SetLocation(userName, locationDto);
             }
-            catch { /* Ignore failures for now */ }
         }
     }
 
