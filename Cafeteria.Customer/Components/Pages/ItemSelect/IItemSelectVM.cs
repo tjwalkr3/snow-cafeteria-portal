@@ -1,11 +1,16 @@
-﻿using Cafeteria.Shared.DTOsOld;
+﻿using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOsOld;
 
 namespace Cafeteria.Customer.Components.Pages.ItemSelect;
 
 public interface IItemSelectVM
 {
-    StationDtoOld? SelectedStation { get; }
+    StationDto? SelectedStation { get; }
+    LocationDto? SelectedLocation { get; }
     Task<List<FoodItemDtoOld>> GetFoodItemsAsync();
+    Task<List<EntreeDto>> GetEntreesAsync();
+    Task<List<SideDto>> GetSidesAsync();
+    Task<List<DrinkDto>> GetDrinksAsync();
     Task GetDataFromRouteParameters(string uri);
-    bool ErrorOccurredWhileParsingSelectedStation();
+    bool ErrorOccurredWhileParsingUrlParameters();
 }

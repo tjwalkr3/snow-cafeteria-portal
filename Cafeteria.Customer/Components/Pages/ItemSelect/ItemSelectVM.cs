@@ -1,4 +1,5 @@
 ﻿using Cafeteria.Customer.Services;
+using Cafeteria.Shared.DTOs;
 using Cafeteria.Shared.DTOsOld;
 using System.Text.Json;
 
@@ -8,20 +9,48 @@ public class ItemSelectVM : IItemSelectVM
 {
     private readonly IApiMenuService _menuService;
     private bool urlParsingFailed = false;
-    public StationDtoOld? SelectedStation { get; private set; }
+    public StationDto? SelectedStation { get; private set; }
+    public LocationDto? SelectedLocation { get; private set; }
 
     public ItemSelectVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }
 
-    public async Task<List<FoodItemDtoOld>> GetFoodItemsAsync()
-    {
-        if (SelectedStation != null && !ErrorOccurredWhileParsingSelectedStation())
+    public async Task<List<FoodItemDtoOld>> GetFoodItemsAsync() // This method to be deleted when UI is updated
+    { 
+        if (SelectedStation != null && !ErrorOccurredWhileParsingUrlParameters())
         {
             return await _menuService.GetFoodItemsByStation(SelectedStation.Id);
         }
         return new List<FoodItemDtoOld>(); // Return empty list when no station selected
+    }
+
+    public async Task<List<EntreeDto>> GetEntreesAsync()
+    {
+        if (SelectedStation != null && !ErrorOccurredWhileParsingUrlParameters())
+        {
+            return await _menuService.GetEntreesByStation(SelectedStation.Id);
+        }
+        return new List<EntreeDto>(); // Return empty list when no station selected
+    }
+
+    public async Task<List<SideDto>> GetSidesAsync()
+    {
+        if (SelectedStation != null && !ErrorOccurredWhileParsingUrlParameters())
+        {
+            return await _menuService.GetSidesByStation(SelectedStation.Id);
+        }
+        return new List<SideDto>(); // Return empty list when no station selected
+    }
+
+    public async Task<List<DrinkDto>> GetDrinksAsync()
+    {
+        if (SelectedStation != null && !ErrorOccurredWhileParsingUrlParameters())
+        {
+            return await _menuService.GetDrinksByLocation(SelectedLocation.Id);
+        }
+        return new List<DrinkDto>(); // Return empty list when no station selected
     }
 
     public async Task GetDataFromRouteParameters(string uri)
@@ -32,8 +61,10 @@ public class ItemSelectVM : IItemSelectVM
         var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
         try
         {
-            StationDtoOld station = JsonSerializer.Deserialize<StationDtoOld>(queryParams.Get("station") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize station from query parameter.");
+            StationDto station = JsonSerializer.Deserialize<StationDto>(queryParams.Get("station") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize station from query parameter.");
             SelectedStation = station;
+            LocationDto location = JsonSerializer.Deserialize<LocationDto>(queryParams.Get("location") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize location from query parameter.");
+            SelectedLocation = location;
         }
         catch
         {
@@ -41,7 +72,7 @@ public class ItemSelectVM : IItemSelectVM
         }
     }
 
-    public bool ErrorOccurredWhileParsingSelectedStation()
+    public bool ErrorOccurredWhileParsingUrlParameters()
     {
         return urlParsingFailed;
     }
