@@ -22,6 +22,36 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
         return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
     }
 
+    public async Task<List<EntreeDto>> GetEntreesByStation(int stationId)
+    {
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
+
+        var response = await client.GetAsync($"menu/entrees/station/{stationId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<EntreeDto>>() ?? new List<EntreeDto>();
+    }
+
+    public async Task<List<SideDto>> GetSidesByStation(int stationId)
+    {
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
+
+        var response = await client.GetAsync($"menu/sides/station/{stationId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<SideDto>>() ?? new List<SideDto>();
+    }
+
+    public async Task<List<DrinkDto>> GetDrinksByLocation(int locationId)
+    {
+        if (locationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(locationId));
+
+        var response = await client.GetAsync($"menu/drinks/location/{locationId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<DrinkDto>>() ?? new List<DrinkDto>();
+    }
+
     public async Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
     {
         if (stationId < 1)
@@ -40,6 +70,26 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
         var response = await client.GetAsync($"menu/ingredient-types/food-item/{foodItemId}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<IngredientTypeDtoOld>>() ?? new List<IngredientTypeDtoOld>();
+    }
+
+    public async Task<List<FoodOptionDto>> GetFoodOptionsByEntree(int entreeId)
+    {
+        if (entreeId < 1)
+            throw new ArgumentOutOfRangeException(nameof(entreeId));
+
+        var response = await client.GetAsync($"menu/food-options/entree/{entreeId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>() ?? new List<FoodOptionDto>();
+    }
+
+    public async Task<List<FoodOptionDto>> GetFoodOptionsBySide(int sideId)
+    {
+        if (sideId < 1)
+            throw new ArgumentOutOfRangeException(nameof(sideId));
+
+        var response = await client.GetAsync($"menu/food-options/side/{sideId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>() ?? new List<FoodOptionDto>();
     }
 
     public async Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId)
