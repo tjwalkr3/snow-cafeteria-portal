@@ -1,29 +1,43 @@
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.JSInterop;
+using System.Text.Json;
 
 namespace Cafeteria.Customer.Services;
 
 public class ProtectedStorageWrapper : IProtectedStorageWrapper
 {
-    private readonly ProtectedLocalStorage _protectedLocalStorage;
+    private readonly IJSRuntime _jsRuntime;
 
-    public ProtectedStorageWrapper(ProtectedLocalStorage protectedLocalStorage)
+    public ProtectedStorageWrapper(IJSRuntime jsRuntime)
     {
-        _protectedLocalStorage = protectedLocalStorage;
+        _jsRuntime = jsRuntime;
     }
 
     public async ValueTask<StorageResult<T>> GetAsync<T>(string key)
     {
-        var result = await _protectedLocalStorage.GetAsync<T>(key);
-        return new StorageResult<T>(result.Success, result.Value);
+        try
+        {
+            var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
+            if (string.IsNullOrEmpty(json))
+            {
+                return new StorageResult<T>(false, default);
+            }
+            var value = JsonSerializer.Deserialize<T>(json);
+            return new StorageResult<T>(true, value);
+        }
+        catch
+        {
+            return new StorageResult<T>(false, default);
+        }
     }
 
-    public ValueTask SetAsync<T>(string key, T value)
+    public async ValueTask SetAsync<T>(string key, T value)
     {
-        return _protectedLocalStorage.SetAsync(key, value!);
+        var json = JsonSerializer.Serialize(value);
+        await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
     }
 
-    public ValueTask DeleteAsync(string key)
+    public async ValueTask DeleteAsync(string key)
     {
-        return _protectedLocalStorage.DeleteAsync(key);
+        await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
     }
 }
