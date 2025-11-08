@@ -12,7 +12,7 @@ var postgres = builder.AddContainer("postgres", "postgres", "17-trixie")
     .WithEnvironment("POSTGRES_DB", postgresDb)
     .WithBindMount("../init.sql", "/docker-entrypoint-initdb.d/init.sql")
     .WithEndpoint(port: 5432, targetPort: 5432, name: "postgres")
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Session);
 
 // Build the connection string using localhost since API runs on host in Aspire
 // In Kubernetes, the appsettings.json value will be used instead
