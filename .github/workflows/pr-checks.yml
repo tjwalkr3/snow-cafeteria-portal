@@ -43,6 +43,19 @@ jobs:
       run: |
         source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         nix-shell -p dotnet-sdk_9 --run "
-          dotnet test
+          dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj
         "
-        echo "going to deploy!!!"
+
+  run_integration_tests:
+    runs-on: self-hosted
+    needs: run_unit_tests
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Run the integration tests.
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
+        "
