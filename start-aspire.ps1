@@ -38,4 +38,4 @@ Write-Host ""
 Write-Host "Starting Aspire AppHost..." -ForegroundColor Cyan
 
 # Start the Aspire AppHost
-dotnet run --project Cafeteria.AppHost/Cafeteria.AppHost.csproj
+dotnet watch --project Cafeteria.AppHost/Cafeteria.AppHost.csproj
