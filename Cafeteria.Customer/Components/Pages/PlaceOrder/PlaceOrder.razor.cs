@@ -94,7 +94,7 @@ public partial class PlaceOrder : ComponentBase
 
         if (!string.IsNullOrEmpty(Payment))
             queryParameters.Add("payment", Payment);
-        
+
         if (Location != 0)
             queryParameters.Add("location", Location.ToString());
 
