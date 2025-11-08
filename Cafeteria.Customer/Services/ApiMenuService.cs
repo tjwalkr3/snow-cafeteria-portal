@@ -22,59 +22,53 @@ public class ApiMenuService(HttpClient client) : IApiMenuService
         return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
     }
 
-    public async Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
+    public async Task<List<EntreeDto>> GetEntreesByStation(int stationId)
     {
         if (stationId < 1)
             throw new ArgumentOutOfRangeException(nameof(stationId));
 
-        var response = await client.GetAsync($"menu/food-items/station/{stationId}");
+        var response = await client.GetAsync($"menu/entrees/station/{stationId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<FoodItemDtoOld>>() ?? new List<FoodItemDtoOld>();
+        return await response.Content.ReadFromJsonAsync<List<EntreeDto>>() ?? new List<EntreeDto>();
     }
 
-    public async Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId)
+    public async Task<List<SideDto>> GetSidesByStation(int stationId)
     {
-        if (foodItemId < 1)
-            throw new ArgumentOutOfRangeException(nameof(foodItemId));
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
 
-        var response = await client.GetAsync($"menu/ingredient-types/food-item/{foodItemId}");
+        var response = await client.GetAsync($"menu/sides/station/{stationId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<IngredientTypeDtoOld>>() ?? new List<IngredientTypeDtoOld>();
+        return await response.Content.ReadFromJsonAsync<List<SideDto>>() ?? new List<SideDto>();
     }
 
-    public async Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId)
+    public async Task<List<DrinkDto>> GetDrinksByLocation(int locationId)
     {
-        if (ingredientTypeId < 1)
-            throw new ArgumentOutOfRangeException(nameof(ingredientTypeId));
+        if (locationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(locationId));
 
-        var response = await client.GetAsync($"menu/ingredients/type/{ingredientTypeId}");
+        var response = await client.GetAsync($"menu/drinks/location/{locationId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<IngredientDtoOld>>() ?? new List<IngredientDtoOld>();
+        return await response.Content.ReadFromJsonAsync<List<DrinkDto>>() ?? new List<DrinkDto>();
     }
 
-    public async Task<IngredientDtoOld> GetIngredientById(int ingredientId)
+    public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
     {
-        if (ingredientId < 1)
-            throw new ArgumentOutOfRangeException(nameof(ingredientId));
+        if (entreeId < 1)
+            throw new ArgumentOutOfRangeException(nameof(entreeId));
 
-        var response = await client.GetAsync($"menu/ingredients/{ingredientId}");
+        var response = await client.GetAsync($"menu/options/entree/{entreeId}");
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<IngredientDtoOld>() ?? new IngredientDtoOld();
+        return await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>() ?? new List<FoodOptionDto>();
     }
 
-    public async Task<Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>> GetIngredientsOrganizedByType(List<IngredientTypeDtoOld> types)
+    public async Task<List<FoodOptionDto>> GetOptionsBySide(int sideId)
     {
-        var result = new Dictionary<IngredientTypeDtoOld, List<IngredientDtoOld>>();
+        if (sideId < 1)
+            throw new ArgumentOutOfRangeException(nameof(sideId));
 
-        if (types == null || types.Count == 0)
-            return result;
-
-        foreach (var type in types)
-        {
-            var ingredients = await GetIngredientsByType(type.Id);
-            result[type] = ingredients;
-        }
-
-        return result;
+        var response = await client.GetAsync($"menu/options/side/{sideId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>() ?? new List<FoodOptionDto>();
     }
 }
