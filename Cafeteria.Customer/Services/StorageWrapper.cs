@@ -3,11 +3,11 @@ using System.Text.Json;
 
 namespace Cafeteria.Customer.Services;
 
-public class ProtectedStorageWrapper : IProtectedStorageWrapper
+public class StorageWrapper : IStorageWrapper
 {
     private readonly IJSRuntime _jsRuntime;
 
-    public ProtectedStorageWrapper(IJSRuntime jsRuntime)
+    public StorageWrapper(IJSRuntime jsRuntime)
     {
         _jsRuntime = jsRuntime;
     }

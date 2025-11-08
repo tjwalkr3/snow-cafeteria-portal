@@ -1,6 +1,6 @@
 namespace Cafeteria.Customer.Services;
 
-public interface IProtectedStorageWrapper
+public interface IStorageWrapper
 {
     ValueTask<StorageResult<T>> GetAsync<T>(string key);
     ValueTask SetAsync<T>(string key, T value);

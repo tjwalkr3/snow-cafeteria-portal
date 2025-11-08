@@ -20,9 +20,6 @@ builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:8080/api");
 });
 
-// Dummy Data Service
-// builder.Services.AddScoped<IApiMenuService, DummyMenuService>();
-
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
@@ -33,7 +30,7 @@ builder.Services.AddScoped<IGrillSwipeVM, GrillSwipeVM>();
 builder.Services.AddScoped<IPizzaSwipeVM, PizzaSwipeVM>();
 
 // Register cart service and storage wrapper
-builder.Services.AddScoped<IProtectedStorageWrapper, ProtectedStorageWrapper>();
+builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();
 builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();

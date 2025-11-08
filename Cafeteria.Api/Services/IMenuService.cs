@@ -1,4 +1,3 @@
-using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Api.Services;

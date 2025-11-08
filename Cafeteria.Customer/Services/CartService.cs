@@ -4,9 +4,9 @@ using Cafeteria.Shared.DTOs;
 
 public class CartService : ICartService
 {
-    private readonly IProtectedStorageWrapper _protectedStorage;
+    private readonly IStorageWrapper _protectedStorage;
 
-    public CartService(IProtectedStorageWrapper protectedStorage)
+    public CartService(IStorageWrapper protectedStorage)
     {
         _protectedStorage = protectedStorage;
     }

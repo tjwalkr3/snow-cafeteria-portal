@@ -1,7 +1,5 @@
-using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Services;
-using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 

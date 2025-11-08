@@ -6,7 +6,7 @@ namespace Cafeteria.Customer.Tests.ServiceTests;
 public class CartServiceTests
 {
     // Dictionary-based test implementation
-    private class DictionaryStorageWrapper : IProtectedStorageWrapper
+    private class DictionaryStorageWrapper : IStorageWrapper
     {
         private readonly Dictionary<string, object> _storage = new();
 
