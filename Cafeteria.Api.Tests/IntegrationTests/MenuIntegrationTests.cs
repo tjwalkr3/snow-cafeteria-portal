@@ -7,6 +7,7 @@ using Dapper;
 using Npgsql;
 using Testcontainers.PostgreSql;
 using static Cafeteria.Api.Tests.IntegrationTests.DBSql;
+using static Cafeteria.Api.Tests.IntegrationTests.SampleMenuData;
 
 namespace Cafeteria.Api.Tests.IntegrationTests;
 
@@ -64,29 +65,26 @@ public class MenuIntegrationTests : IAsyncLifetime
         await _postgresContainer.DisposeAsync();
     }
 
+    private static void AssertPropertiesEqual<T>(T expected, T actual, params string[] propertiesToSkip)
+    {
+        var properties = typeof(T).GetProperties();
+        foreach (var property in properties)
+        {
+            if (propertiesToSkip.Contains(property.Name))
+                continue;
+
+            var expectedValue = property.GetValue(expected);
+            var actualValue = property.GetValue(actual);
+            Assert.Equal(expectedValue, actualValue);
+        }
+    }
+
     [Fact]
     public async Task GetAllLocations_ReturnsLocationData()
     {
         // Arrange
-        var insertSql = @"
-            INSERT INTO cafeteria.cafeteria_location (location_name, location_description, image_url)
-            VALUES (@LocationName, @LocationDescription, @ImageUrl)";
-        List<LocationDto> locationsBefore = [
-            new() {
-                Id = 1,
-                LocationName = "Badger Den",
-                LocationDescription = "Located on the main floor of the Greenwood Student Center",
-                ImageUrl = "https://picsum.photos/id/292/300/200"
-            },
-            new() {
-                Id = 2,
-                LocationName = "Busters Bistro",
-                LocationDescription = "Located on the main floor of the Karen H Huntsman Library",
-                ImageUrl = "https://picsum.photos/id/326/300/200"
-            }
-        ];
-        _connection.Execute(insertSql, locationsBefore[0]);
-        _connection.Execute(insertSql, locationsBefore[1]);
+        _connection.Execute(InsertLocationSql, Locations[0]);
+        _connection.Execute(InsertLocationSql, Locations[1]);
 
         // Act
         var response = await _client.GetAsync("/api/menu/locations");
@@ -96,55 +94,17 @@ public class MenuIntegrationTests : IAsyncLifetime
         // Assert
         Assert.NotNull(locationsAfter);
         Assert.Equal(2, locationsAfter.Count);
-
-        Assert.Equal(locationsBefore[0].Id, locationsAfter[0].Id);
-        Assert.Equal(locationsBefore[0].LocationName, locationsAfter[0].LocationName);
-        Assert.Equal(locationsBefore[0].LocationDescription, locationsAfter[0].LocationDescription);
-        Assert.Equal(locationsBefore[0].ImageUrl, locationsAfter[0].ImageUrl);
-
-        Assert.Equal(locationsBefore[1].Id, locationsAfter[1].Id);
-        Assert.Equal(locationsBefore[1].LocationName, locationsAfter[1].LocationName);
-        Assert.Equal(locationsBefore[1].LocationDescription, locationsAfter[1].LocationDescription);
-        Assert.Equal(locationsBefore[1].ImageUrl, locationsAfter[1].ImageUrl);
+        AssertPropertiesEqual(Locations[0], locationsAfter[0]);
+        AssertPropertiesEqual(Locations[1], locationsAfter[1]);
     }
 
     [Fact]
     public async Task GetStationsByLocation_ReturnsStationData()
     {
         // Arrange
-        var insertLocationSql = @"
-            INSERT INTO cafeteria.cafeteria_location (location_name, location_description, image_url)
-            VALUES (@LocationName, @LocationDescription, @ImageUrl)";
-
-        var locationDto = new LocationDto
-        {
-            Id = 1,
-            LocationName = "Badger Den",
-            LocationDescription = "Located on the main floor of the Greenwood Student Center",
-            ImageUrl = "https://picsum.photos/id/292/300/200"
-        };
-        _connection.Execute(insertLocationSql, locationDto);
-
-        var insertStationSql = @"
-            INSERT INTO cafeteria.station (location_id, station_name, station_description)
-            VALUES (@LocationId, @StationName, @StationDescription)";
-
-        List<StationDto> stationsBefore = [
-            new() {
-                Id = 1,
-                LocationId = 1,
-                StationName = "Sandwich Station",
-                StationDescription = "Fresh made-to-order sandwiches"
-            },
-            new() {
-                Id = 2,
-                LocationId = 1,
-                StationName = "Salad Bar",
-                StationDescription = "Fresh salads and healthy options"
-            }
-        ];
-        _connection.Execute(insertStationSql, stationsBefore[0]);
-        _connection.Execute(insertStationSql, stationsBefore[1]);
+        _connection.Execute(InsertLocationSql, Locations[0]);
+        _connection.Execute(InsertStationSql, Stations[0]);
+        _connection.Execute(InsertStationSql, Stations[1]);
 
         // Act
         var response = await _client.GetAsync("/api/menu/stations/location/1");
@@ -154,15 +114,120 @@ public class MenuIntegrationTests : IAsyncLifetime
         // Assert
         Assert.NotNull(stationsAfter);
         Assert.Equal(2, stationsAfter.Count);
+        AssertPropertiesEqual(Stations[0], stationsAfter[0]);
+        AssertPropertiesEqual(Stations[1], stationsAfter[1]);
+    }
 
-        Assert.Equal(stationsBefore[0].Id, stationsAfter[0].Id);
-        Assert.Equal(stationsBefore[0].LocationId, stationsAfter[0].LocationId);
-        Assert.Equal(stationsBefore[0].StationName, stationsAfter[0].StationName);
-        Assert.Equal(stationsBefore[0].StationDescription, stationsAfter[0].StationDescription);
+    [Fact]
+    public async Task GetEntreesByStation_ReturnsEntreeData()
+    {
+        // Arrange
+        _connection.Execute(InsertLocationSql, Locations[0]);
+        _connection.Execute(InsertStationSql, Stations[0]);
+        _connection.Execute(InsertEntreeSql, Entrees[0]);
+        _connection.Execute(InsertEntreeSql, Entrees[1]);
 
-        Assert.Equal(stationsBefore[1].Id, stationsAfter[1].Id);
-        Assert.Equal(stationsBefore[1].LocationId, stationsAfter[1].LocationId);
-        Assert.Equal(stationsBefore[1].StationName, stationsAfter[1].StationName);
-        Assert.Equal(stationsBefore[1].StationDescription, stationsAfter[1].StationDescription);
+        // Act
+        var response = await _client.GetAsync("/api/menu/entrees/station/1");
+        response.EnsureSuccessStatusCode();
+        var entreesAfter = await response.Content.ReadFromJsonAsync<List<EntreeDto>>();
+
+        // Assert
+        Assert.NotNull(entreesAfter);
+        Assert.Equal(2, entreesAfter.Count);
+        AssertPropertiesEqual(Entrees[0], entreesAfter[0], "Id");
+        AssertPropertiesEqual(Entrees[1], entreesAfter[1], "Id");
+    }
+
+    [Fact]
+    public async Task GetSidesByStation_ReturnsSideData()
+    {
+        // Arrange
+        _connection.Execute(InsertLocationSql, Locations[0]);
+        _connection.Execute(InsertStationSql, Stations[0]);
+        _connection.Execute(InsertSideSql, Sides[0]);
+        _connection.Execute(InsertSideSql, Sides[1]);
+
+        // Act
+        var response = await _client.GetAsync("/api/menu/sides/station/1");
+        response.EnsureSuccessStatusCode();
+        var sidesAfter = await response.Content.ReadFromJsonAsync<List<SideDto>>();
+
+        // Assert
+        Assert.NotNull(sidesAfter);
+        Assert.Equal(2, sidesAfter.Count);
+        AssertPropertiesEqual(Sides[0], sidesAfter[0], "Id");
+        AssertPropertiesEqual(Sides[1], sidesAfter[1], "Id");
+    }
+
+    [Fact]
+    public async Task GetDrinksByLocation_ReturnsDrinkData()
+    {
+        // Arrange
+        _connection.Execute(InsertLocationSql, Locations[0]);
+        _connection.Execute(InsertStationSql, Stations[0]);
+        _connection.Execute(InsertDrinkSql, Drinks[0]);
+        _connection.Execute(InsertDrinkSql, Drinks[1]);
+
+        // Act
+        var response = await _client.GetAsync("/api/menu/drinks/location/1");
+        response.EnsureSuccessStatusCode();
+        var drinksAfter = await response.Content.ReadFromJsonAsync<List<DrinkDto>>();
+
+        // Assert
+        Assert.NotNull(drinksAfter);
+        Assert.Equal(2, drinksAfter.Count);
+        AssertPropertiesEqual(Drinks[0], drinksAfter[0], "Id");
+        AssertPropertiesEqual(Drinks[1], drinksAfter[1], "Id");
+    }
+
+    [Fact]
+    public async Task GetFoodOptionsByEntree_ReturnsFoodOptionData()
+    {
+        // Arrange
+        _connection.Execute(InsertLocationSql, Locations[0]);
+        _connection.Execute(InsertStationSql, Stations[0]);
+        _connection.Execute(InsertEntreeSql, Entrees[0]);
+        _connection.Execute(InsertFoodOptionSql, FoodOptions[0]);
+        _connection.Execute(InsertFoodOptionSql, FoodOptions[1]);
+        _connection.Execute(InsertFoodOptionTypeSql, new { FoodOptionTypeName = "Toppings", NumIncluded = 2, MaxAmount = 5, FoodOptionPrice = 0.00m, EntreeId = 1, SideId = (int?)null });
+        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 1, FoodOptionTypeId = 1 });
+        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 2, FoodOptionTypeId = 1 });
+
+        // Act
+        var response = await _client.GetAsync("/api/menu/menu/options/entree/1");
+        response.EnsureSuccessStatusCode();
+        var optionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>();
+
+        // Assert
+        Assert.NotNull(optionsAfter);
+        Assert.Equal(2, optionsAfter.Count);
+        AssertPropertiesEqual(FoodOptions[0], optionsAfter[0], "Id");
+        AssertPropertiesEqual(FoodOptions[1], optionsAfter[1], "Id");
+    }
+
+    [Fact]
+    public async Task GetFoodOptionsBySide_ReturnsFoodOptionData()
+    {
+        // Arrange
+        _connection.Execute(InsertLocationSql, Locations[0]);
+        _connection.Execute(InsertStationSql, Stations[0]);
+        _connection.Execute(InsertSideSql, Sides[0]);
+        _connection.Execute(InsertFoodOptionSql, FoodOptions[0]);
+        _connection.Execute(InsertFoodOptionSql, FoodOptions[1]);
+        _connection.Execute(InsertFoodOptionTypeSql, new { FoodOptionTypeName = "Condiments", NumIncluded = 2, MaxAmount = 5, FoodOptionPrice = 0.00m, EntreeId = (int?)null, SideId = 1 });
+        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 1, FoodOptionTypeId = 1 });
+        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 2, FoodOptionTypeId = 1 });
+
+        // Act
+        var response = await _client.GetAsync("/api/menu/menu/options/side/1");
+        response.EnsureSuccessStatusCode();
+        var optionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>();
+
+        // Assert
+        Assert.NotNull(optionsAfter);
+        Assert.Equal(2, optionsAfter.Count);
+        AssertPropertiesEqual(FoodOptions[0], optionsAfter[0], "Id");
+        AssertPropertiesEqual(FoodOptions[1], optionsAfter[1], "Id");
     }
 }

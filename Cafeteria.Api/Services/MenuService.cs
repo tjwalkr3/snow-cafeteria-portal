@@ -47,9 +47,15 @@ public class MenuService : IMenuService
     public async Task<List<EntreeDto>> GetEntreesByStation(int stationId)
     {
         const string sql = @"
-        SELECT id, station_id, entree_name, entree_description, entree_price, image_url
-            FROM cafeteria.entree
-            WHERE station_id = @stationId;";
+        SELECT 
+            id AS Id, 
+            station_id AS StationId, 
+            entree_name AS EntreeName, 
+            entree_description AS EntreeDescription, 
+            entree_price AS EntreePrice, 
+            image_url AS ImageUrl
+        FROM cafeteria.entree
+        WHERE station_id = @stationId;";
         var result = await _dbConnection.QueryAsync<EntreeDto>(sql, new { stationId });
         return result.ToList();
     }
@@ -57,9 +63,15 @@ public class MenuService : IMenuService
     public async Task<List<SideDto>> GetSidesByStation(int stationId)
     {
         const string sql = @"
-        SELECT id, station_id, side_name, side_description, side_price, image_url
-            FROM cafeteria.side
-            WHERE station_id = @stationId;";
+        SELECT 
+            id AS Id, 
+            station_id AS StationId, 
+            side_name AS SideName, 
+            side_description AS SideDescription, 
+            side_price AS SidePrice, 
+            image_url AS ImageUrl
+        FROM cafeteria.side
+        WHERE station_id = @stationId;";
         var result = await _dbConnection.QueryAsync<SideDto>(sql, new { stationId });
         return result.ToList();
     }
@@ -67,7 +79,13 @@ public class MenuService : IMenuService
     public async Task<List<DrinkDto>> GetDrinksByLocation(int locationId)
     {
         const string sql = @"
-            SELECT d.id, d.station_id, d.drink_name, d.drink_description, d.drink_price, d.image_url
+            SELECT
+                d.id AS Id, 
+                d.station_id AS StationId, 
+                d.drink_name AS DrinkName, 
+                d.drink_description AS DrinkDescription, 
+                d.drink_price AS DrinkPrice, 
+                d.image_url AS ImageUrl
             FROM cafeteria.drink d
             INNER JOIN cafeteria.station s ON d.station_id = s.id
             WHERE s.location_id = @locationId;";
@@ -78,24 +96,32 @@ public class MenuService : IMenuService
     public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
     {
         string sql = @"
-            SELECT fo.id, fo.food_option_name, fo.in_stock, fo.image_url
+            SELECT 
+                fo.id AS Id,
+                fo.food_option_name AS FoodOptionName, 
+                fo.in_stock AS InStock, 
+                fo.image_url AS ImageUrl
             FROM cafeteria.food_option fo
             INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
             INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
             WHERE fot.entree_id = @entreeId;";
-        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { entree_id = entreeId });
+        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { entreeId });
         return result.ToList();
     }
 
     public async Task<List<FoodOptionDto>> GetOptionsBySide(int sideId)
     {
         string sql = @"
-        SELECT fo.id, fo.food_option_name, fo.in_stock, fo.image_url
-            FROM cafeteria.food_option fo
-            INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
-            INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
-            WHERE fot.side_id = @sideId;";
-        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { side_id = sideId });
+        SELECT 
+            fo.id AS Id, 
+            fo.food_option_name AS FoodOptionName, 
+            fo.in_stock AS InStock, 
+            fo.image_url AS ImageUrl
+        FROM cafeteria.food_option fo
+        INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
+        INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
+        WHERE fot.side_id = @sideId;";
+        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { sideId });
         return result.ToList();
     }
 }
