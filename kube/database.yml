@@ -40,11 +40,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ham-exam-db-svc
-  namespace: ham-exam
+  name: cafeteria-db-svc
+  namespace: cafeteria
 spec:
   selector:
-    app: ham-exam-db
+    app: cafeteria-db
   ports:
     - protocol: TCP
       port: 5432

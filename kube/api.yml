@@ -18,10 +18,8 @@ spec:
       - name: cafeteria-api-container
         image: tjwalkr3/cafeteria-api:$CONTAINER_VERSION
         env:
-        - name: PORT
-          value: "4444"
-        - name: DATABASE_URL
-          value: "postgres://cafeteria_user:cafeteria_password@ham-exam-db-svc:5432/cafeteriadb"
+        - name: ConnectionStrings__cafeteria
+          value: "Host=cafeteria-db-svc;Port=5432;Database=cafeteriadb;Username=cafeteria_user;Password=cafeteria_password"
         ports:
         - containerPort: 8080
 
