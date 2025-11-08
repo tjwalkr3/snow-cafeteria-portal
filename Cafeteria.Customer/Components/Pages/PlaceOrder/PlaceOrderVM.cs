@@ -1,75 +1,72 @@
-using Cafeteria.Shared.DTOsOld;
+using Cafeteria.Shared.DTOs;
 using Cafeteria.Customer.Services;
-using System.Text.Json;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
 public class PlaceOrderVM : IPlaceOrderVM
 {
     private readonly IApiMenuService _menuService;
-    private bool urlParsingFailed = false;
-    public FoodItemDtoOld? SelectedFoodItem { get; private set; }
-    public List<IngredientDtoOld> SelectedIngredients { get; private set; } = new();
+    private bool locationParameterInvalid = false;
+    private bool paymentParameterMissing = false;
+    private bool locationFetchFailed = false;
+    private List<LocationDto> _locations = new();
 
     public PlaceOrderVM(IApiMenuService menuService)
     {
         _menuService = menuService;
     }
 
-    public List<FoodItemDtoOld> GetOrderItems()
+    public decimal CalculateTotalPrice(BrowserOrder order)
     {
-        if (SelectedFoodItem != null && !ErrorOccurredWhileParsingSelectedFoodItem())
+        if (order == null)
+            return 0m;
+
+        decimal total = 0m;
+
+        foreach (var entreeItem in order.Entrees)
         {
-            return new List<FoodItemDtoOld> { SelectedFoodItem };
+            total += entreeItem.Entree.EntreePrice;
+            total += entreeItem.SelectedOptions.Sum(opt => opt.OptionType.FoodOptionPrice);
         }
-        return new List<FoodItemDtoOld>(); // Return empty list when no food item selected
+
+        foreach (var sideItem in order.Sides)
+        {
+            total += sideItem.Side.SidePrice;
+            total += sideItem.SelectedOptions.Sum(opt => opt.OptionType.FoodOptionPrice);
+        }
+
+        total += order.Drinks.Sum(drink => drink.DrinkPrice);
+
+        return total;
     }
 
-    public async Task GetDataFromRouteParameters(string uri)
+    public void ValidateParameters(int location, string? payment)
     {
-        await Task.Delay(0); // Simulate async work
+        locationParameterInvalid = location <= 0;
+        paymentParameterMissing = string.IsNullOrEmpty(payment)
+            && payment != "card"
+            && payment != "swipe";
+    }
 
-        if (!uri.Contains('?'))
-        {
-            // No query parameters, set error state
-            urlParsingFailed = true;
-            return;
-        }
-
-        string queryString = uri.Substring(uri.IndexOf('?') + 1);
-        var queryParams = System.Web.HttpUtility.ParseQueryString(queryString);
-
+    public async Task InitializeLocations()
+    {
         try
         {
-            // Parse food item (required)
-            FoodItemDtoOld foodItem = JsonSerializer.Deserialize<FoodItemDtoOld>(queryParams.Get("food-item") ?? string.Empty) ?? throw new ArgumentException("Failed to deserialize food item from query parameter.");
-            SelectedFoodItem = foodItem;
-
-            // Parse ingredients (optional)
-            SelectedIngredients.Clear();
-            foreach (string? key in queryParams.AllKeys.Where(k => !string.IsNullOrEmpty(k) && k != "food-item"))
-            {
-                try
-                {
-                    IngredientDtoOld ingredient = JsonSerializer.Deserialize<IngredientDtoOld>(queryParams.Get(key) ?? string.Empty) ?? throw new ArgumentException($"Failed to deserialize ingredient from query parameter: {key}");
-                    SelectedIngredients.Add(ingredient);
-                }
-                catch
-                {
-                    // Ignore individual ingredient parsing failures since ingredients are optional
-                    continue;
-                }
-            }
+            _locations = await _menuService.GetAllLocations();
         }
         catch
         {
-            urlParsingFailed = true;
-            SelectedIngredients.Clear();
+            locationFetchFailed = true;
         }
     }
 
-    public bool ErrorOccurredWhileParsingSelectedFoodItem()
+    public LocationDto? GetLocationById(int locationId)
     {
-        return urlParsingFailed;
+        return _locations.FirstOrDefault(l => l.Id == locationId);
+    }
+
+    public bool ErrorOccurred()
+    {
+        return locationParameterInvalid || paymentParameterMissing || locationFetchFailed;
     }
 }

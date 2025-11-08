@@ -1,5 +1,5 @@
 ﻿@page "/location-select"
-@using Cafeteria.Shared.DTOsOld
+@rendermode InteractiveServer
 @using System.Text.Json
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Text.Json.Nodes
@@ -25,11 +25,12 @@
     // Main content:
     else if (LocationSelectVM.Locations != null)
     {
-        <div class="mb-4">
-            <a href="/" class="back-button text-decoration-none d-inline-flex align-items-center">
-                <i class="bi bi-arrow-left-circle-fill me-2 fs-5"></i>
-                <span class="fw-medium">Back to Payment Method</span>
-            </a>
+        <div class="row mb-3">
+            <div class="col-12">
+                <a href="/" class="btn btn-link text-decoration-none ps-0">
+                    ❮ Back to Payment Method
+                </a>
+            </div>
         </div>
 
         <div class="text-center mb-5">
