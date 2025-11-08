@@ -42,6 +42,7 @@ public partial class LocationSelect : ComponentBase
         if (firstRender)
         {
             await CartService.ClearOrder("test");
+            StateHasChanged();
         }
     }
 }

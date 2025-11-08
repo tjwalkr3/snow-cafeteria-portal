@@ -21,14 +21,14 @@
     {
         Navigation.NavigateTo("/error", false);
     }
-    else if (Order == null)
+    else if (Order == null || (!Order.Entrees.Any() && !Order.Sides.Any() && !Order.Drinks.Any()))
     {
         <div class="row">
             <div class="col-12 text-center">
                 <div class="alert alert-danger">
                     <h4>Error loading order</h4>
-                    <p>No current order has been found. Please build an order first.</p>
-                    <a href="/" class="btn btn-primary">Start an Order</a>
+                    <p>Your order is empty. Please build an order first.</p>
+                    <a href="@GetStationSelectUrl()" class="btn btn-primary">Start an Order</a>
                 </div>
             </div>
         </div>
@@ -140,14 +140,6 @@
                         </div>
                     }
                 }
-
-                @if (!Order.Entrees.Any() && !Order.Sides.Any() && !Order.Drinks.Any())
-                {
-                    <div class="alert alert-info">
-                        <p>Your order is empty. Please add some items to continue.</p>
-                        <a href="/" class="btn btn-primary">Browse Menu</a>
-                    </div>
-                }
             </div>
             
             <div class="col-md-4">
@@ -215,7 +207,7 @@
                         </div>
                         
                         <button class="btn btn-success btn-lg w-100 mb-2">Place Order</button>
-                        <a href="/" class="btn btn-outline-secondary w-100">Continue Shopping</a>
+                        <a href="@GetStationSelectUrl()" class="btn btn-outline-secondary w-100">Continue Shopping</a>
                     </div>
                 </div>
             </div>

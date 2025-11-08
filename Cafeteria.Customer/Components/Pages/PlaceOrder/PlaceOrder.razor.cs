@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.WebUtilities;
 using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
@@ -85,6 +86,19 @@ public partial class PlaceOrder : ComponentBase
     private async Task<BrowserOrder?> GetOrder(string userName)
     {
         return await Cart.GetOrder(userName);
+    }
+
+    public string GetStationSelectUrl()
+    {
+        Dictionary<string, string?> queryParameters = new() { };
+
+        if (!string.IsNullOrEmpty(Payment))
+            queryParameters.Add("payment", Payment);
+        
+        if (Location != 0)
+            queryParameters.Add("location", Location.ToString());
+
+        return QueryHelpers.AddQueryString("/station-select", queryParameters);
     }
 
     private async Task SetSampleData(string userName)

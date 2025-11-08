@@ -22,6 +22,7 @@ public partial class Error : ComponentBase
         if (firstRender)
         {
             await CartService.ClearOrder("test");
+            StateHasChanged();
         }
     }
 }
