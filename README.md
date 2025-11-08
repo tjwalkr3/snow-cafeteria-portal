@@ -14,7 +14,13 @@
 
 
 ## Running with Aspire
-### Option 1: Using dotnet run (Recommended)
+
+### Linux
 ```bash
 ./start-aspire.sh
+```
+
+### Windows
+```bash
+./start-aspire.ps1
 ```
