@@ -47,17 +47,17 @@ public class ApiMenuServiceTests
     [InlineData(-1)]
     [InlineData(0)]
     [InlineData(1)]
-    public async Task GetFoodItemsByStation_ValidatesIdAndReturnsListWhenValid(int id)
+    public async Task GetEntreesByStation_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new List<FoodItemDtoOld> { new FoodItemDtoOld { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<EntreeDto> { new EntreeDto { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
         if (id < 1)
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetFoodItemsByStation(id));
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetEntreesByStation(id));
         else
         {
-            var result = await service.GetFoodItemsByStation(id);
+            var result = await service.GetEntreesByStation(id);
             Assert.NotNull(result);
             Assert.Single(result);
         }
@@ -67,17 +67,17 @@ public class ApiMenuServiceTests
     [InlineData(-1)]
     [InlineData(0)]
     [InlineData(1)]
-    public async Task GetIngredientTypesByFoodItem_ValidatesIdAndReturnsListWhenValid(int id)
+    public async Task GetSidesByStation_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new List<IngredientTypeDtoOld> { new IngredientTypeDtoOld { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<SideDto> { new SideDto { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
         if (id < 1)
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetIngredientTypesByFoodItem(id));
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetSidesByStation(id));
         else
         {
-            var result = await service.GetIngredientTypesByFoodItem(id);
+            var result = await service.GetSidesByStation(id);
             Assert.NotNull(result);
             Assert.Single(result);
         }
@@ -87,17 +87,57 @@ public class ApiMenuServiceTests
     [InlineData(-1)]
     [InlineData(0)]
     [InlineData(1)]
-    public async Task GetIngredientsByType_ValidatesIdAndReturnsListWhenValid(int id)
+    public async Task GetDrinksByLocation_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockHandler = CreateMockHttpHandler(new List<IngredientDtoOld> { new IngredientDtoOld { Id = 1 } });
+        var mockHandler = CreateMockHttpHandler(new List<DrinkDto> { new DrinkDto { Id = 1 } });
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
 
         if (id < 1)
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetIngredientsByType(id));
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetDrinksByLocation(id));
         else
         {
-            var result = await service.GetIngredientsByType(id);
+            var result = await service.GetDrinksByLocation(id);
+            Assert.NotNull(result);
+            Assert.Single(result);
+        }
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(1)]
+    public async Task GetOptionsByEntree_ValidatesIdAndReturnsListWhenValid(int id)
+    {
+        var mockHandler = CreateMockHttpHandler(new List<FoodOptionDto> { new FoodOptionDto { Id = 1 } });
+        var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
+        var service = new ApiMenuService(httpClient);
+
+        if (id < 1)
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetOptionsByEntree(id));
+        else
+        {
+            var result = await service.GetOptionsByEntree(id);
+            Assert.NotNull(result);
+            Assert.Single(result);
+        }
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(1)]
+    public async Task GetFoodOptionsBySide_ValidatesIdAndReturnsListWhenValid(int id)
+    {
+        var mockHandler = CreateMockHttpHandler(new List<FoodOptionDto> { new FoodOptionDto { Id = 1 } });
+        var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
+        var service = new ApiMenuService(httpClient);
+
+        if (id < 1)
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetOptionsBySide(id));
+        else
+        {
+            var result = await service.GetOptionsBySide(id);
             Assert.NotNull(result);
             Assert.Single(result);
         }
@@ -117,43 +157,4 @@ public class ApiMenuServiceTests
         Assert.Single(result);
     }
 
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    [InlineData(1)]
-    public async Task GetIngredientById_ReturnsAnIngredient(int id)
-    {
-        var mockHandler = CreateMockHttpHandler(new IngredientDtoOld { Id = 1 });
-        var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
-        var service = new ApiMenuService(httpClient);
-
-        if (id < 1)
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await service.GetIngredientById(id));
-        else
-        {
-            var result = await service.GetIngredientById(id);
-            Assert.NotNull(result);
-        }
-    }
-
-    public static IEnumerable<object[]> GetIngredientsOrganizedByTypeTestData =>
-        [
-            [null!, 0],
-            [new List<IngredientTypeDtoOld>(), 0],
-            [new List<IngredientTypeDtoOld> { new() { Id = 1 } }, 1]
-        ];
-
-    [Theory]
-    [MemberData(nameof(GetIngredientsOrganizedByTypeTestData))]
-    public async Task GetIngredientsOrganizedByType_ReturnsDictionaryBasedOnInput(List<IngredientTypeDtoOld> types, int expectedCount)
-    {
-        var mockHandler = CreateMockHttpHandler(new List<IngredientDtoOld> { new IngredientDtoOld { Id = 1 } });
-        var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
-        var service = new ApiMenuService(httpClient);
-
-        var result = await service.GetIngredientsOrganizedByType(types);
-
-        Assert.NotNull(result);
-        Assert.Equal(expectedCount, result.Count);
-    }
 }

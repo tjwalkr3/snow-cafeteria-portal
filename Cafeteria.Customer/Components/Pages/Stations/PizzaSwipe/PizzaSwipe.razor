@@ -1,0 +1,139 @@
+@page "/pizza"
+@rendermode InteractiveServer
+@using Cafeteria.Shared.DTOs
+
+<PageTitle>Pizza Station</PageTitle>
+
+<div class="pizza-container px-3 py-4">
+    <div class="mb-3">
+        <a href="@CreateBackUrl()" class="btn btn-link text-decoration-none ps-0">
+            <i class="bi bi-arrow-left"></i> Back to Station Selection
+        </a>
+    </div>
+    <div class="mb-4">
+        <h1 class="fw-light mb-1" style="font-size: 2rem;">
+            <i class="bi bi-pizza me-2 text-danger"></i>Pizza Station
+        </h1>
+    </div>
+
+    <div class="modern-tabs">
+        <button class="modern-tab @(VM.ActiveTab == "toppings" ? "active" : "")" type="button"
+            @onclick="@(() => SetActiveTab("toppings"))">
+            Pizza
+        </button>
+        <button class="modern-tab @(VM.ActiveTab == "drinks" ? "active" : "")" type="button"
+            @onclick="@(() => SetActiveTab("drinks"))">
+            Drinks
+        </button>
+    </div>
+
+    <div class="content-area">
+        @if (VM.ActiveTab == "toppings")
+        {
+            <div class="info-banner warning">
+                <div>
+                    <strong>Please choose your 2 Toppings - NO SUBSTITUTIONS!!</strong>
+                </div>
+            </div>
+
+            <div class="info-banner">
+                <div>Choice of 2 Toppings (Additional toppings $0.50 each)</div>
+            </div>
+
+            <div class="mb-4">
+                <label class="d-block mb-2 text-uppercase"
+                    style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
+                    Choose Your Toppings (2 minimum)
+                </label>
+                <div class="option-group">
+                    @foreach (var topping in VM.AvailableToppings)
+                    {
+                        <button type="button" class="option-btn @(VM.SelectedToppings.Contains(topping) ? "selected" : "")"
+                            @onclick="() => ToggleTopping(topping)">
+                            @topping
+                            @if (VM.SelectedToppings.Contains(topping))
+                            {
+                                <i class="bi bi-check-circle-fill ms-1"></i>
+                            }
+                        </button>
+                    }
+                </div>
+                @if (VM.SelectedToppings.Count > 2)
+                {
+                    <div class="info-banner warning mt-3">
+                        <div>
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Additional charge: $@((VM.SelectedToppings.Count - 2) * 0.50m) for @(VM.SelectedToppings.Count - 2)
+                            extra topping(s)
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else if (VM.ActiveTab == "drinks")
+        {
+            <div class="info-banner info">
+                <div>
+                    <i class="bi bi-info-circle me-2"></i>Select 1 drink included with your meal swipe
+                </div>
+            </div>
+
+            @if (VM.Drinks.Any())
+            {
+                @foreach (var drink in VM.Drinks)
+                {
+                    <div class="meal-card @(VM.SelectedDrink?.Id == drink.Id ? "selected" : "")"
+                        @onclick="() => SelectDrink(drink)">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1 fw-600">@drink.DrinkName</h5>
+                                @if (!string.IsNullOrEmpty(drink.DrinkDescription))
+                                {
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
+                                }
+                            </div>
+                            <div>
+                                @if (VM.SelectedDrink?.Id == drink.Id)
+                                {
+                                    <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </div>
+
+    <div class="footer-bar">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span style="color: #6c757d; font-size: 0.95rem;">
+                    @if (!VM.IsValidSelection())
+                    {
+                        <span>Complete all required fields</span>
+                    }
+                    else
+                    {
+                        <span>Personal Pizza with @VM.SelectedToppings.Count topping(s)</span>
+                    }
+                </span>
+            </div>
+            <button type="button" class="add-btn" disabled="@(!VM.IsValidSelection())" @onclick="AddToOrder">
+                Add to Order
+            </button>
+        </div>
+    </div>
+
+    @if (VM.OrderConfirmation != null)
+    {
+        <div class="success-alert">
+            <i class="bi bi-check-circle-fill fs-3"></i>
+            <div class="flex-grow-1">
+                <h6 class="fw-600 mb-1">Order Added!</h6>
+                <p class="mb-0" style="font-size: 0.9rem;">@VM.OrderConfirmation</p>
+            </div>
+            <button type="button" class="btn-close btn-close-white" @onclick="ClearOrderConfirmation"></button>
+        </div>
+    }
+</div>

@@ -14,7 +14,6 @@ services:
 
   api:
     image: mcr.microsoft.com/dotnet/sdk:9.0
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /app
     command: dotnet watch run --project Cafeteria.Api/Cafeteria.Api.csproj --no-launch-profile
     environment:
@@ -25,7 +24,7 @@ services:
       - DOTNET_CLI_HOME=/tmp/dotnet
     volumes:
       - ./:/app
-      - ~/.nuget/packages:/.nuget/packages
+      - nuget-packages:/root/.nuget/packages
     ports:
       - "8080:8080"
     depends_on:
@@ -41,7 +40,6 @@ services:
 
   customer:
     image: mcr.microsoft.com/dotnet/sdk:9.0
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /app
     command: sh -c "sleep 15 && dotnet watch run --project Cafeteria.Customer/Cafeteria.Customer.csproj --no-launch-profile"
     environment:
@@ -52,7 +50,7 @@ services:
       - DOTNET_CLI_HOME=/tmp/dotnet
     volumes:
       - ./:/app
-      - ~/.nuget/packages:/.nuget/packages
+      - nuget-packages:/root/.nuget/packages
     ports:
       - "8081:8080"
     depends_on:
@@ -62,7 +60,6 @@ services:
 
   management:
     image: mcr.microsoft.com/dotnet/sdk:9.0
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /app
     command: sh -c "sleep 30 && dotnet watch run --project Cafeteria.Management/Cafeteria.Management.csproj --no-launch-profile"
     environment:
@@ -73,7 +70,7 @@ services:
       - DOTNET_CLI_HOME=/tmp/dotnet
     volumes:
       - ./:/app
-      - ~/.nuget/packages:/.nuget/packages
+      - nuget-packages:/root/.nuget/packages
     ports:
       - "8082:8080"
     depends_on:
@@ -84,3 +81,6 @@ services:
 networks:
   cafeteria-network:
     driver: bridge
+
+volumes:
+  nuget-packages:
