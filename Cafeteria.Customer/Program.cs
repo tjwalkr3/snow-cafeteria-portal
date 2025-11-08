@@ -21,8 +21,9 @@ builder.Services.AddRazorComponents()
 // Api Data Service with service discovery
 builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
 {
-    // This will be configured via service discovery from Aspire
-    client.BaseAddress = new Uri("http://api/api/");
+    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
 
 // Register view models
