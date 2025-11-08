@@ -140,25 +140,26 @@ public static class SampleMenuData
         }
     ];
 
-    public static object FoodOptionTypeForEntree => new
-    {
-        FoodOptionTypeName = "Toppings",
-        NumIncluded = 2,
-        MaxAmount = 5,
-        FoodOptionPrice = 0.00m,
-        EntreeId = 1,
-        SideId = (int?)null
-    };
-
-    public static object FoodOptionTypeForSide => new
-    {
-        FoodOptionTypeName = "Condiments",
-        NumIncluded = 2,
-        MaxAmount = 5,
-        FoodOptionPrice = 0.00m,
-        EntreeId = (int?)null,
-        SideId = 1
-    };
+    public static List<FoodOptionTypeDto> FoodOptionTypes => [
+        new() {
+            Id = 1,
+            FoodOptionTypeName = "Toppings",
+            NumIncluded = 2,
+            MaxAmount = 5,
+            FoodOptionPrice = 0.00m,
+            EntreeId = 1,
+            SideId = null
+        },
+        new() {
+            Id = 1,
+            FoodOptionTypeName = "Condiments",
+            NumIncluded = 2,
+            MaxAmount = 5,
+            FoodOptionPrice = 0.00m,
+            EntreeId = null,
+            SideId = 1
+        }
+    ];
 
     public static List<object> OptionOptionTypes => [
         new { FoodOptionId = 1, FoodOptionTypeId = 1 },

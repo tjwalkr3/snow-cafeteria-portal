@@ -190,7 +190,7 @@ public class MenuIntegrationTests : IAsyncLifetime
         _connection.Execute(InsertEntreeSql, Entrees[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[1]);
-        _connection.Execute(InsertFoodOptionTypeSql, FoodOptionTypeForEntree);
+        _connection.Execute(InsertFoodOptionTypeSql, FoodOptionTypes[0]);
         _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[0]);
         _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[1]);
 
@@ -215,7 +215,7 @@ public class MenuIntegrationTests : IAsyncLifetime
         _connection.Execute(InsertSideSql, Sides[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[1]);
-        _connection.Execute(InsertFoodOptionTypeSql, FoodOptionTypeForSide);
+        _connection.Execute(InsertFoodOptionTypeSql, FoodOptionTypes[1]);
         _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[0]);
         _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[1]);
 
