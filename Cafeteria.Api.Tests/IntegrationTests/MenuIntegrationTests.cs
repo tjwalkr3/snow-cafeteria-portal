@@ -190,9 +190,9 @@ public class MenuIntegrationTests : IAsyncLifetime
         _connection.Execute(InsertEntreeSql, Entrees[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[1]);
-        _connection.Execute(InsertFoodOptionTypeSql, new { FoodOptionTypeName = "Toppings", NumIncluded = 2, MaxAmount = 5, FoodOptionPrice = 0.00m, EntreeId = 1, SideId = (int?)null });
-        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 1, FoodOptionTypeId = 1 });
-        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 2, FoodOptionTypeId = 1 });
+        _connection.Execute(InsertFoodOptionTypeSql, FoodOptionTypeForEntree);
+        _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[0]);
+        _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[1]);
 
         // Act
         var response = await _client.GetAsync("/api/menu/menu/options/entree/1");
@@ -215,9 +215,9 @@ public class MenuIntegrationTests : IAsyncLifetime
         _connection.Execute(InsertSideSql, Sides[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[0]);
         _connection.Execute(InsertFoodOptionSql, FoodOptions[1]);
-        _connection.Execute(InsertFoodOptionTypeSql, new { FoodOptionTypeName = "Condiments", NumIncluded = 2, MaxAmount = 5, FoodOptionPrice = 0.00m, EntreeId = (int?)null, SideId = 1 });
-        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 1, FoodOptionTypeId = 1 });
-        _connection.Execute(InsertOptionOptionTypeSql, new { FoodOptionId = 2, FoodOptionTypeId = 1 });
+        _connection.Execute(InsertFoodOptionTypeSql, FoodOptionTypeForSide);
+        _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[0]);
+        _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[1]);
 
         // Act
         var response = await _client.GetAsync("/api/menu/menu/options/side/1");

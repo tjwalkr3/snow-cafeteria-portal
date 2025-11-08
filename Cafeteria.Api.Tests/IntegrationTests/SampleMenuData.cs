@@ -139,5 +139,30 @@ public static class SampleMenuData
             ImageUrl = "https://picsum.photos/id/8/300/200"
         }
     ];
+
+    public static object FoodOptionTypeForEntree => new
+    {
+        FoodOptionTypeName = "Toppings",
+        NumIncluded = 2,
+        MaxAmount = 5,
+        FoodOptionPrice = 0.00m,
+        EntreeId = 1,
+        SideId = (int?)null
+    };
+
+    public static object FoodOptionTypeForSide => new
+    {
+        FoodOptionTypeName = "Condiments",
+        NumIncluded = 2,
+        MaxAmount = 5,
+        FoodOptionPrice = 0.00m,
+        EntreeId = (int?)null,
+        SideId = 1
+    };
+
+    public static List<object> OptionOptionTypes => [
+        new { FoodOptionId = 1, FoodOptionTypeId = 1 },
+        new { FoodOptionId = 2, FoodOptionTypeId = 1 }
+    ];
 }
 
