@@ -1,6 +1,5 @@
+using Cafeteria.Customer.Services;
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Shared.DTOsOld;
-using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
@@ -12,6 +11,9 @@ public partial class LocationSelect : ComponentBase
 
     [Inject]
     private ILocationSelectVM LocationSelectVM { get; set; } = default!;
+
+    [Inject]
+    private ICartService CartService { get; set; } = default!;
 
     [SupplyParameterFromQuery(Name = "payment")]
     public string? Payment { get; set; }
@@ -33,5 +35,14 @@ public partial class LocationSelect : ComponentBase
         LocationSelectVM.ValidatePaymentParameter(Payment);
         await LocationSelectVM.InitializeLocationsAsync();
         IsInitialized = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CartService.ClearOrder("test");
+            StateHasChanged();
+        }
     }
 }

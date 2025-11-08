@@ -1,12 +1,12 @@
 using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
-namespace Cafeteria.Customer.Tests;
+namespace Cafeteria.Customer.Tests.ServiceTests;
 
 public class CartServiceTests
 {
     // Dictionary-based test implementation
-    private class DictionaryStorageWrapper : IProtectedStorageWrapper
+    private class DictionaryStorageWrapper : IStorageWrapper
     {
         private readonly Dictionary<string, object> _storage = new();
 
@@ -27,6 +27,12 @@ public class CartServiceTests
         public ValueTask SetAsync<T>(string key, T value)
         {
             _storage[key] = value!;
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DeleteAsync(string key)
+        {
+            _storage.Remove(key);
             return ValueTask.CompletedTask;
         }
     }
@@ -68,15 +74,28 @@ public class CartServiceTests
     }
 
     [Fact]
+    public async Task ClearOrder_RemovesOrderFromStorage()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+        storage.SetValue("test-order", new BrowserOrder { IsCardOrder = true });
+
+        // Act
+        await cartService.ClearOrder("test-order");
+
+        // Assert
+        var result = await cartService.GetOrder("test-order");
+        Assert.Null(result);
+    }
+
+    [Fact]
     public async Task AddEntree_AddsEntreeToNewOrder()
     {
         // Arrange
         var storage = new DictionaryStorageWrapper();
         var cartService = new CartService(storage);
-        var entree = new OrderEntreeItem
-        {
-            Entree = new EntreeDto { Id = 1, EntreeName = "Turkey Sandwich", EntreePrice = 6.50m }
-        };
+        var entree = new EntreeDto { Id = 1, EntreeName = "Turkey Sandwich", EntreePrice = 6.50m };
 
         // Act
         await cartService.AddEntree("test-order", entree);
@@ -95,10 +114,7 @@ public class CartServiceTests
         var storage = new DictionaryStorageWrapper();
         var cartService = new CartService(storage);
         storage.SetValue("test-order", new BrowserOrder { IsCardOrder = true });
-        var side = new OrderSideItem
-        {
-            Side = new SideDto { Id = 1, SideName = "French Fries", SidePrice = 2.50m }
-        };
+        var side = new SideDto { Id = 1, SideName = "French Fries", SidePrice = 2.50m };
 
         // Act
         await cartService.AddSide("test-order", side);
@@ -186,5 +202,39 @@ public class CartServiceTests
         Assert.Single(order.Sides[0].SelectedOptions);
         Assert.Equal("Ketchup", order.Sides[0].SelectedOptions[0].Option.FoodOptionName);
         Assert.Equal("Condiment", order.Sides[0].SelectedOptions[0].OptionType.FoodOptionTypeName);
+    }
+
+    [Fact]
+    public async Task SetLocation_SetsLocationOnOrder()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+        var location = new LocationDto { Id = 1, LocationName = "Badger Den", LocationDescription = "Main cafeteria" };
+
+        // Act
+        await cartService.SetLocation("test-order", location);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.NotNull(order.Location);
+        Assert.Equal("Badger Den", order.Location.LocationName);
+    }
+
+    [Fact]
+    public async Task SetIsCardOrder_SetsCardOrderFlag()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+
+        // Act
+        await cartService.SetIsCardOrder("test-order", true);
+
+        // Assert
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.True(order.IsCardOrder);
     }
 }

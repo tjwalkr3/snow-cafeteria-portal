@@ -1,5 +1,4 @@
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Shared.DTOs;
 using Moq;
 using Moq.Protected;
@@ -146,7 +145,7 @@ public class ApiMenuServiceTests
     [Fact]
     public async Task GetAllLocations_ReturnsListOfLocations()
     {
-        var expectedLocations = new List<LocationDtoOld> { new LocationDtoOld { Id = 1 } };
+        var expectedLocations = new List<LocationDto> { new LocationDto { Id = 1 } };
         var mockHandler = CreateMockHttpHandler(expectedLocations);
         var httpClient = new HttpClient(mockHandler.Object) { BaseAddress = new Uri("http://test/api") };
         var service = new ApiMenuService(httpClient);
