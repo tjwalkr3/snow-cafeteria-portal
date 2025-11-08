@@ -17,6 +17,9 @@ spec:
       containers:
       - name: cafeteria-customer-container
         image: tjwalkr3/cafeteria-customer:$CONTAINER_VERSION
+        env:
+        - name: ApiBaseUrl
+          value: "http://cafeteria-api-svc:8080/api/"
         ports:
         - containerPort: 8080
 
