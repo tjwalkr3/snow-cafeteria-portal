@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cafeteria.Shared\Cafeteria.Shared.csproj" />
+    <ProjectReference Include="..\Cafeteria.ServiceDefaults\Cafeteria.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

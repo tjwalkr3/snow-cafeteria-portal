@@ -13,4 +13,8 @@
 | **Cafeteria.Management.Tests** | Test Project | Unit tests for the management portal |
 
 
-# Test
+## Running with Aspire
+### Option 1: Using dotnet run (Recommended)
+```bash
+./start-aspire.sh
+```

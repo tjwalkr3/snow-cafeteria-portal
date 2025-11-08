@@ -7,17 +7,22 @@ using Cafeteria.Customer.Components.Pages.Stations.DeliSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.GrillSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.PizzaSwipe;
 using Cafeteria.Customer.Services;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add service defaults & Aspire components.
+builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Api Data Service
+// Api Data Service with service discovery
 builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "http://localhost:8080/api");
+    // This will be configured via service discovery from Aspire
+    client.BaseAddress = new Uri("http://api/api/");
 });
 
 // Register view models
@@ -49,6 +54,7 @@ if (!app.Environment.IsProduction())
     app.UseHttpsRedirection();
 }
 
+app.MapDefaultEndpoints();
 
 app.UseAntiforgery();
 
