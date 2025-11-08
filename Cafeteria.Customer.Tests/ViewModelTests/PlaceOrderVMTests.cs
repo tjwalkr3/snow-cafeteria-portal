@@ -7,11 +7,18 @@ namespace Cafeteria.Customer.Tests.ViewModelTests;
 
 public class PlaceOrderVMTests
 {
+    private readonly Mock<IApiMenuService> _mockMenuService;
+
+    public PlaceOrderVMTests()
+    {
+        _mockMenuService = new Mock<IApiMenuService>();
+    }
+
     [Fact]
     public void CalculateTotalPrice_ReturnsZero_WhenOrderIsNull()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
 
         // Act
         var result = vm.CalculateTotalPrice(null!);
@@ -24,7 +31,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_ReturnsZero_WhenOrderIsEmpty()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
 
         // Act
@@ -38,7 +45,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_CalculatesEntreePrice_Correctly()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
         order.Entrees.Add(new OrderEntreeItem
         {
@@ -56,7 +63,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_CalculatesSidePrice_Correctly()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
         order.Sides.Add(new OrderSideItem
         {
@@ -74,7 +81,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_CalculatesDrinkPrice_Correctly()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
         order.Drinks.Add(new DrinkDto { Id = 1, DrinkName = "Soda", DrinkPrice = 2.00m });
 
@@ -89,7 +96,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_IncludesEntreeOptions_InTotal()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
         order.Entrees.Add(new OrderEntreeItem
         {
@@ -120,7 +127,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_IncludesSideOptions_InTotal()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
         order.Sides.Add(new OrderSideItem
         {
@@ -146,7 +153,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_CalculatesCompleteOrder_Correctly()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
 
         // Add entrees with options
@@ -191,7 +198,7 @@ public class PlaceOrderVMTests
     public void CalculateTotalPrice_HandlesMultipleItems_Correctly()
     {
         // Arrange
-        var vm = new PlaceOrderVM();
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
         var order = new BrowserOrder();
 
         order.Entrees.Add(new OrderEntreeItem
