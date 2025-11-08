@@ -57,6 +57,19 @@ public partial class StationSelect : ComponentBase
         };
     }
 
+    private string GetStationIcon(string stationName)
+    {
+        // Map station names to their corresponding Bootstrap Icons
+        return stationName.ToLower() switch
+        {
+            "breakfast" or "breakfast station" => "bi-egg-fried",
+            "deli" or "deli station" or "sandwich station" => "bi-cup-straw",
+            "pizza" or "pizza station" => "bi-basket-fill",
+            "grill" or "grill station" => "bi-fire",
+            _ => "bi-shop" // Default fallback
+        };
+    }
+
     public string CreateBackUrl()
     {
         Dictionary<string, string?> queryParameters = new() { };

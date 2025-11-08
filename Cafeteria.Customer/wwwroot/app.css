@@ -45,33 +45,33 @@ html, body {
     transform: translateY(0);
 }
 
-.payment-title {
+.payment-title,
+.location-title,
+.station-title,
+.station-page-title {
     color: #1e366c;
 }
 
-.payment-subtitle {
+.payment-subtitle,
+.location-subtitle,
+.station-subtitle {
     color: #6b7280;
 }
 
-.payment-card {
-    display: block;
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 2.5rem 2rem;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.hover-card {
     transition: all 0.3s ease;
-    cursor: pointer;
-    border: 2px solid transparent;
-    text-decoration: none;
-    color: inherit;
+    border: 2px solid transparent !important;
+    border-radius: 12px !important;
 }
 
-.payment-card:hover {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.hover-card:hover {
     transform: translateY(-4px);
-    border-color: #1e366c;
-    text-decoration: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    border-color: #1e366c !important;
+}
+
+.card-link {
+    color: inherit;
 }
 
 .icon-circle {
@@ -86,13 +86,27 @@ html, body {
     color: #ffffff;
 }
 
-.payment-card-title {
+.payment-card-title,
+.location-card-title,
+.station-card-title {
     color: #1e366c;
 }
 
-.payment-card-description {
+.payment-card-description,
+.location-card-description,
+.station-card-description {
     color: #6b7280;
     line-height: 1.6;
+}
+
+.back-button {
+    color: #1e366c;
+    transition: all 0.2s ease;
+}
+
+.back-button:hover {
+    color: #2d4a8f;
+    transform: translateX(-2px);
 }
 
 .blazor-error-boundary {
