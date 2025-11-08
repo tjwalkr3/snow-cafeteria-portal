@@ -35,7 +35,7 @@ if (Test-Path $aspireDir) {
 
 Write-Host "All Aspire processes stopped." -ForegroundColor Green
 Write-Host ""
-Write-Host "Starting Aspire AppHost..." -ForegroundColor Cyan
+Write-Host "Starting Aspire AppHost with watch mode..." -ForegroundColor Cyan
 
 # Start the Aspire AppHost
 dotnet watch --project Cafeteria.AppHost/Cafeteria.AppHost.csproj

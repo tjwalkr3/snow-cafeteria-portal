@@ -18,6 +18,7 @@ sleep 2
 rm -rf ~/.aspire/dcpctrl 2>/dev/null
 
 echo "All Aspire processes stopped."
+echo ""
 echo "Starting Aspire AppHost with watch mode..."
 
 dotnet watch --project Cafeteria.AppHost/Cafeteria.AppHost.csproj
