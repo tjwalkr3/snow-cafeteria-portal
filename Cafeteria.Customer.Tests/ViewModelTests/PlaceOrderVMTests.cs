@@ -228,4 +228,126 @@ public class PlaceOrderVMTests
         // Assert
         Assert.Equal(24.99m, result); // 8.99 + 6.50 + 3.50 + 4.00 + 2.00 + 0.00
     }
+
+    [Fact]
+    public void ValidateParameters_SetsLocationParameterInvalid_WhenLocationIsZero()
+    {
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+
+        vm.ValidateParameters(0, "card");
+
+        Assert.True(vm.ErrorOccurred());
+    }
+
+    [Fact]
+    public void ValidateParameters_SetsLocationParameterInvalid_WhenLocationIsNegative()
+    {
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+
+        vm.ValidateParameters(-1, "card");
+
+        Assert.True(vm.ErrorOccurred());
+    }
+
+    [Fact]
+    public void ValidateParameters_SetsPaymentParameterMissing_WhenPaymentIsNull()
+    {
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+
+        vm.ValidateParameters(1, null);
+
+        Assert.True(vm.ErrorOccurred());
+    }
+
+    [Fact]
+    public void ValidateParameters_SetsPaymentParameterMissing_WhenPaymentIsEmpty()
+    {
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+
+        vm.ValidateParameters(1, string.Empty);
+
+        Assert.True(vm.ErrorOccurred());
+    }
+
+    [Fact]
+    public void ValidateParameters_DoesNotSetErrors_WhenParametersAreValid()
+    {
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+
+        vm.ValidateParameters(1, "card");
+
+        Assert.False(vm.ErrorOccurred());
+    }
+
+    [Fact]
+    public async Task ErrorOccurred_ReturnsTrue_WhenInitializeLocationsFails()
+    {
+        _mockMenuService.Setup(m => m.GetAllLocations())
+            .ThrowsAsync(new Exception("API Error"));
+
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+
+        await vm.InitializeLocations();
+
+        Assert.True(vm.ErrorOccurred());
+    }
+
+    [Fact]
+    public async Task InitializeLocations_SetsLocations_WhenApiCallSucceeds()
+    {
+        var expectedLocations = new List<LocationDto>
+        {
+            new LocationDto { Id = 1, LocationName = "Location 1" },
+            new LocationDto { Id = 2, LocationName = "Location 2" }
+        };
+
+        _mockMenuService.Setup(m => m.GetAllLocations())
+            .ReturnsAsync(expectedLocations);
+
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+
+        await vm.InitializeLocations();
+
+        Assert.False(vm.ErrorOccurred());
+    }
+
+    [Fact]
+    public async Task GetLocationById_ReturnsLocation_WhenLocationExists()
+    {
+        var expectedLocations = new List<LocationDto>
+        {
+            new LocationDto { Id = 1, LocationName = "Location 1" },
+            new LocationDto { Id = 2, LocationName = "Location 2" }
+        };
+
+        _mockMenuService.Setup(m => m.GetAllLocations())
+            .ReturnsAsync(expectedLocations);
+
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+        await vm.InitializeLocations();
+
+        var result = vm.GetLocationById(1);
+
+        Assert.NotNull(result);
+        Assert.Equal("Location 1", result.LocationName);
+    }
+
+    [Fact]
+    public async Task GetLocationById_ReturnsNull_WhenLocationDoesNotExist()
+    {
+        var expectedLocations = new List<LocationDto>
+        {
+            new LocationDto { Id = 1, LocationName = "Location 1" }
+        };
+
+        _mockMenuService.Setup(m => m.GetAllLocations())
+            .ReturnsAsync(expectedLocations);
+
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+        await vm.InitializeLocations();
+
+        var result = vm.GetLocationById(99);
+
+        Assert.Null(result);
+    }
 }
