@@ -3,9 +3,6 @@
 
 echo "Stopping Aspire and cleaning up..."
 
-# Kill all dotnet processes
-killall -9 dotnet 2>/dev/null
-
 # Kill DCP processes specifically
 pkill -9 -f "dcp" 2>/dev/null
 pkill -9 -f "Aspire" 2>/dev/null

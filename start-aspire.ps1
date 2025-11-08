@@ -3,10 +3,6 @@
 
 Write-Host "Stopping Aspire and cleaning up..." -ForegroundColor Cyan
 
-# Kill all dotnet processes
-Write-Host "Stopping dotnet processes..." -ForegroundColor Yellow
-Get-Process -Name "dotnet" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-
 # Kill DCP processes specifically
 Write-Host "Stopping DCP and Aspire processes..." -ForegroundColor Yellow
 Get-Process -Name "*dcp*" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
