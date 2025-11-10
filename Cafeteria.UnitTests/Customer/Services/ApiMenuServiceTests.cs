@@ -1,3 +1,4 @@
+using Cafeteria.Customer;
 using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 using Moq;
@@ -5,7 +6,7 @@ using Moq.Protected;
 using System.Net;
 using System.Text.Json;
 
-namespace Cafeteria.Customer.Tests.ServiceTests;
+namespace Cafeteria.UnitTests.Customer.Services;
 
 public class ApiMenuServiceTests
 {

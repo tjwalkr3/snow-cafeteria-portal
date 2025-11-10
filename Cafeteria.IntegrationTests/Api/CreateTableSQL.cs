@@ -1,4 +1,4 @@
-namespace Cafeteria.Api.Tests.IntegrationTests;
+namespace Cafeteria.IntegrationTests.Api;
 
 public static class DBSql
 {

@@ -6,10 +6,10 @@ using Cafeteria.Shared.DTOs;
 using Dapper;
 using Npgsql;
 using Testcontainers.PostgreSql;
-using static Cafeteria.Api.Tests.IntegrationTests.DBSql;
-using static Cafeteria.Api.Tests.IntegrationTests.SampleMenuData;
+using static Cafeteria.IntegrationTests.Api.DBSql;
+using static Cafeteria.IntegrationTests.Api.SampleMenuData;
 
-namespace Cafeteria.Api.Tests.IntegrationTests;
+namespace Cafeteria.IntegrationTests.Api;
 
 public class MenuIntegrationTests : IAsyncLifetime
 {

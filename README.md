@@ -13,4 +13,14 @@
 | **Cafeteria.Management.Tests** | Test Project | Unit tests for the management portal |
 
 
-# Test
+## Running with Aspire
+
+### Linux
+```bash
+./start-aspire.sh
+```
+
+### Windows
+```bash
+./start-aspire.ps1
+```

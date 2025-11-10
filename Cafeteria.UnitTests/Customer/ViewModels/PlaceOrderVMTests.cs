@@ -1,9 +1,10 @@
+using Cafeteria.Customer;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 using Moq;
 
-namespace Cafeteria.Customer.Tests.ViewModelTests;
+namespace Cafeteria.UnitTests.Customer.ViewModels;
 
 public class PlaceOrderVMTests
 {

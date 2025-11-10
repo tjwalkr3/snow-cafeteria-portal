@@ -1,4 +1,4 @@
-﻿namespace Cafeteria.Management.Tests;
+﻿namespace Cafeteria.UnitTests.Management;
 
 public class UnitTest1
 {

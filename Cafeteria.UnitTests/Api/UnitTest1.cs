@@ -1,4 +1,4 @@
-﻿namespace Cafeteria.Api.Tests.UnitTests;
+﻿namespace Cafeteria.UnitTests.Api;
 
 public class UnitTest1
 {
