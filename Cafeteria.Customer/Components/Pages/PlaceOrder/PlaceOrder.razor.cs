@@ -116,10 +116,10 @@ public partial class PlaceOrder : ComponentBase
         // TODO: Implement order submission logic
         // For now, show a simple alert or navigate to a confirmation page
         Console.WriteLine("Order placed!");
-        
+
         // Clear the cart after placing order
         await Cart.ClearOrder("order");
-        
+
         // Navigate to a success page or back to home
         Navigation.NavigateTo("/", true);
     }
