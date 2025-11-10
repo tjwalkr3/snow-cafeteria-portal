@@ -16,12 +16,10 @@
             </div>
         </div>
     }
-    // Error state:
     else if (IsInitialized == true && LocationSelectVM.ErrorOccurred())
     {
         Navigation.NavigateTo("/error", false);
     }
-    // Main content:
     else if (LocationSelectVM.Locations != null)
     {
         <div class="row">
@@ -59,3 +57,10 @@
         </div>
     }
 </div>
+
+<style>
+    .location-title:focus-visible {
+        outline: none !important;
+        border: none !important;
+    }
+</style>

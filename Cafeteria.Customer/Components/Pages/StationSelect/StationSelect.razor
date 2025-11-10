@@ -12,12 +12,10 @@
             </div>
         </div>
     }
-    // Error state:
     else if (IsInitialized == true && StationSelectVM.ErrorOccurredWhileParsingSelectedLocation())
     {
         Navigation.NavigateTo("/error", false);
     }
-    // Main content:
     else if (StationSelectVM.Stations != null)
     {
         <div class="row">
@@ -55,3 +53,10 @@
         </div>
     }
 </div>
+
+<style>
+    .station-title:focus-visible {
+        outline: none !important;
+        border: none !important;
+    }
+</style>
