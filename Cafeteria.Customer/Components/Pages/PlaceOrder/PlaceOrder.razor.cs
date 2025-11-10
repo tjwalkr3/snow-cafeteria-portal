@@ -27,6 +27,8 @@ public partial class PlaceOrder : ComponentBase
     private decimal Price { get; set; } = 0.0m;
 
     private bool _isLoading = true;
+    private bool _showToast = false;
+    private string _toastMessage = "";
 
     public bool IsInitialized { get; set; } = false;
 
@@ -113,14 +115,22 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task HandlePlaceOrder()
     {
-        // TODO: Implement order submission logic
-        // For now, show a simple alert or navigate to a confirmation page
-        Console.WriteLine("Order placed!");
+        _toastMessage = Order?.IsCardOrder == true
+            ? $"Your order of ${Price:F2} has been placed successfully!"
+            : "Your order has been placed successfully!";
+        _showToast = true;
+        StateHasChanged();
 
-        // Clear the cart after placing order
+        await Task.Delay(3000);
+
         await Cart.ClearOrder("order");
 
-        // Navigate to a success page or back to home
         Navigation.NavigateTo("/", true);
+    }
+
+    private void OnToastHidden()
+    {
+        _showToast = false;
+        StateHasChanged();
     }
 }
