@@ -4,9 +4,19 @@
 
 <PageTitle>Grill Station</PageTitle>
 
-<div class="grill-container px-3 py-4">
+@if (_isLoading)
+{
+    <div class="container px-3 py-4">
+        <div class="text-center">
+            <p>Loading...</p>
+        </div>
+    </div>
+}
+else
+{
+<div class="container px-3 py-4">
     <div class="mb-3">
-        <a href="@CreateBackUrl()" class="btn btn-link text-decoration-none ps-0">
+        <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
             ❮ Back to Station Selection
         </a>
     </div>
@@ -140,16 +150,5 @@
             </button>
         </div>
     </div>
-
-    @if (VM.OrderConfirmation != null)
-    {
-        <div class="success-alert">
-            <i class="bi bi-check-circle-fill fs-3"></i>
-            <div class="flex-grow-1">
-                <h6 class="fw-600 mb-1">Order Added!</h6>
-                <p class="mb-0" style="font-size: 0.9rem;">@VM.OrderConfirmation</p>
-            </div>
-            <button type="button" class="btn-close btn-close-white" @onclick="ClearOrderConfirmation"></button>
-        </div>
-    }
 </div>
+}

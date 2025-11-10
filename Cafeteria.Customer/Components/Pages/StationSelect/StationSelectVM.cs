@@ -21,9 +21,7 @@ public class StationSelectVM : IStationSelectVM
     public void ValidateParameters(int location, string? payment)
     {
         locationParameterInvalid = location <= 0;
-        paymentParameterMissing = string.IsNullOrEmpty(payment)
-            && payment != "card"
-            && payment != "swipe";
+        paymentParameterMissing = string.IsNullOrEmpty(payment) || (payment != "card" && payment != "swipe");
     }
 
     public async Task InitializeStations(int locationId)

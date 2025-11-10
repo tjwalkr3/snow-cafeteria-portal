@@ -79,4 +79,82 @@ public class CartService : ICartService
         }
     }
 
+    public async Task RemoveEntree(string key, int entreeId)
+    {
+        var order = await GetOrder(key);
+        if (order != null)
+        {
+            var item = order.Entrees.FirstOrDefault(e => e.Entree.Id == entreeId);
+            if (item != null)
+            {
+                order.Entrees.Remove(item);
+                await _protectedStorage.SetAsync(key, order);
+            }
+        }
+    }
+
+    public async Task RemoveSide(string key, int sideId)
+    {
+        var order = await GetOrder(key);
+        if (order != null)
+        {
+            var item = order.Sides.FirstOrDefault(s => s.Side.Id == sideId);
+            if (item != null)
+            {
+                order.Sides.Remove(item);
+                await _protectedStorage.SetAsync(key, order);
+            }
+        }
+    }
+
+    public async Task RemoveDrink(string key, int drinkId)
+    {
+        var order = await GetOrder(key);
+        if (order != null)
+        {
+            var drink = order.Drinks.FirstOrDefault(d => d.Id == drinkId);
+            if (drink != null)
+            {
+                order.Drinks.Remove(drink);
+                await _protectedStorage.SetAsync(key, order);
+            }
+        }
+    }
+
+    public async Task RemoveEntreeOption(string key, int entreeId, int optionId)
+    {
+        var order = await GetOrder(key);
+        if (order != null)
+        {
+            var item = order.Entrees.FirstOrDefault(e => e.Entree.Id == entreeId);
+            if (item != null)
+            {
+                var option = item.SelectedOptions.FirstOrDefault(o => o.Option.Id == optionId);
+                if (option != null)
+                {
+                    item.SelectedOptions.Remove(option);
+                    await _protectedStorage.SetAsync(key, order);
+                }
+            }
+        }
+    }
+
+    public async Task RemoveSideOption(string key, int sideId, int optionId)
+    {
+        var order = await GetOrder(key);
+        if (order != null)
+        {
+            var item = order.Sides.FirstOrDefault(s => s.Side.Id == sideId);
+            if (item != null)
+            {
+                var option = item.SelectedOptions.FirstOrDefault(o => o.Option.Id == optionId);
+                if (option != null)
+                {
+                    item.SelectedOptions.Remove(option);
+                    await _protectedStorage.SetAsync(key, order);
+                }
+            }
+        }
+    }
+
 }

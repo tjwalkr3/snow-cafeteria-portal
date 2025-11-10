@@ -2,9 +2,8 @@
 
 <PageTitle>Select Station</PageTitle>
 
-<div class="container py-5">
+<div class="container py-4">
     @if (StationSelectVM.Stations == null && IsInitialized == false)
-    // Loading state:
     {
         <div class="text-center">
             <div class="alert alert-warning">
@@ -21,9 +20,9 @@
     // Main content:
     else if (StationSelectVM.Stations != null)
     {
-        <div class="row mb-3">
+        <div class="row">
             <div class="col-12">
-                <a href="@CreateBackUrl()" class="btn btn-link text-decoration-none ps-0">
+                <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
                     ❮ Back to Location
                 </a>
             </div>

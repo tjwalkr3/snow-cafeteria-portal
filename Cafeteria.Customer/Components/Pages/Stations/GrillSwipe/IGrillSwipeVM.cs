@@ -12,8 +12,11 @@ public interface IGrillSwipeVM
     EntreeDto? SelectedEntree { get; }
     SideDto? SelectedSide { get; }
     DrinkDto? SelectedDrink { get; }
-    string? OrderConfirmation { get; }
 
+    int StationId { get; set; }
+    int LocationId { get; set; }
+
+    Task LoadDataAsync(int stationId, int locationId);
     void SetActiveTab(string tab);
     void SelectEntree(EntreeDto entree);
     void SelectSide(SideDto side);
@@ -21,6 +24,5 @@ public interface IGrillSwipeVM
 
     int GetSelectionCount();
     bool IsValidSelection();
-    void AddToOrder();
-    void ClearOrderConfirmation();
+    Task<bool> AddToOrderAsync();
 }

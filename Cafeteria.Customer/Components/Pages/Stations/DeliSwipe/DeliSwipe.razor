@@ -4,9 +4,19 @@
 
 <PageTitle>Deli Station</PageTitle>
 
-<div class="deli-container px-3 py-4">
+@if (_isLoading)
+{
+    <div class="container px-3 py-4">
+        <div class="text-center">
+            <p>Loading...</p>
+        </div>
+    </div>
+}
+else
+{
+<div class="container px-3 py-4">
     <div class="mb-3">
-        <a href="@CreateBackUrl()" class="btn btn-link text-decoration-none ps-0">
+        <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
             ❮ Back to Station Selection
         </a>
     </div>
@@ -44,7 +54,6 @@
                 <div>~Comes with a Fountain Drink and 1 side~</div>
             </div>
 
-            @* Bread Selection *@
             <div class="mb-4">
                 <label class="d-block mb-2 text-uppercase"
                     style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Choose Your
@@ -60,7 +69,6 @@
                 </div>
             </div>
 
-            @* Meat Selection *@
             <div class="mb-4">
                 <label class="d-block mb-2 text-uppercase"
                     style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
@@ -78,7 +86,6 @@
                 </div>
             </div>
 
-            @* Cheese Selection *@
             <div class="mb-4">
                 <label class="d-block mb-2 text-uppercase"
                     style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Choose Your Cheese
@@ -94,7 +101,6 @@
                 </div>
             </div>
 
-            @* Toppings Selection *@
             <div class="mb-4">
                 <label class="d-block mb-2 text-uppercase"
                     style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
@@ -126,7 +132,6 @@
                 }
             </div>
 
-            @* Dressing Selection *@
             <div class="mb-4">
                 <label class="d-block mb-2 text-uppercase"
                     style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Choose Your
@@ -211,16 +216,5 @@
             </button>
         </div>
     </div>
-
-    @if (VM.OrderConfirmation != null)
-    {
-        <div class="success-alert">
-            <i class="bi bi-check-circle-fill fs-3"></i>
-            <div class="flex-grow-1">
-                <h6 class="fw-600 mb-1">Order Added!</h6>
-                <p class="mb-0" style="font-size: 0.9rem;">@VM.OrderConfirmation</p>
-            </div>
-            <button type="button" class="btn-close btn-close-white" @onclick="ClearOrderConfirmation"></button>
-        </div>
-    }
 </div>
+}

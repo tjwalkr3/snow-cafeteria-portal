@@ -32,8 +32,17 @@ public class StorageWrapper : IStorageWrapper
 
     public async ValueTask SetAsync<T>(string key, T value)
     {
-        var json = JsonSerializer.Serialize(value);
-        await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
+        try
+        {
+            var json = JsonSerializer.Serialize(value);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error setting storage key '{key}': {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            throw;
+        }
     }
 
     public async ValueTask DeleteAsync(string key)

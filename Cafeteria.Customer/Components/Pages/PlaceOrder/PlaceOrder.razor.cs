@@ -32,7 +32,6 @@ public partial class PlaceOrder : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        PlaceOrderVM.ValidateParameters(Location, Payment);
         await PlaceOrderVM.InitializeLocations();
         IsInitialized = true;
     }
@@ -41,25 +40,23 @@ public partial class PlaceOrder : ComponentBase
     {
         if (firstRender)
         {
-            string userName = "test";
-
-            // If payment and location are provided in the URL, persist them to the cart (localStorage)
-            await SavePaymentMethod(userName);
-            await SaveLocation(userName);
-
-            // Get the cart from local storage and calculate the cost
-            Order = await GetOrder(userName);
-
-            if (Order == null || (Order.Entrees.Count == 0 && Order.Sides.Count == 0 && Order.Drinks.Count == 0))
+            await InvokeAsync(async () =>
             {
-                await SetSampleData(userName);
+                string userName = "order";
+
+                await SavePaymentMethod(userName);
+                await SaveLocation(userName);
+
                 Order = await GetOrder(userName);
-            }
 
-            if (Order != null) Price = PlaceOrderVM.CalculateTotalPrice(Order);
+                if (Order != null)
+                {
+                    Price = PlaceOrderVM.CalculateTotalPrice(Order);
+                }
 
-            _isLoading = false;
-            StateHasChanged();
+                _isLoading = false;
+                StateHasChanged();
+            });
         }
     }
 
@@ -92,29 +89,38 @@ public partial class PlaceOrder : ComponentBase
     {
         Dictionary<string, string?> queryParameters = new() { };
 
-        if (!string.IsNullOrEmpty(Payment))
-            queryParameters.Add("payment", Payment);
+        if (Order != null)
+        {
+            string payment = Order.IsCardOrder ? "card" : "swipe";
+            queryParameters.Add("payment", payment);
 
-        if (Location != 0)
-            queryParameters.Add("location", Location.ToString());
+            if (Order.Location != null)
+            {
+                queryParameters.Add("location", Order.Location.Id.ToString());
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(Payment))
+                queryParameters.Add("payment", Payment);
+
+            if (Location != 0)
+                queryParameters.Add("location", Location.ToString());
+        }
 
         return QueryHelpers.AddQueryString("/station-select", queryParameters);
     }
 
-    private async Task SetSampleData(string userName)
+    private async Task HandlePlaceOrder()
     {
-        var location = new LocationDto { Id = 1, LocationName = "Badger Den", LocationDescription = "The main cafeteria in the student center." };
-        var entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 5.00m };
-        var side = new SideDto { Id = 1, SideName = "Fries", SidePrice = 3.00m };
-        var drink = new DrinkDto { Id = 1, DrinkName = "Coke", DrinkPrice = 2.00m };
-        var option = new FoodOptionDto { Id = 1, FoodOptionName = "Tomato" };
-        var optionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", FoodOptionPrice = 0.50m };
-
-        await Cart.SetIsCardOrder(userName, false);
-        await Cart.SetLocation(userName, location);
-        await Cart.AddEntree(userName, entree);
-        await Cart.AddEntreeOption(userName, entree.Id, option, optionType);
-        await Cart.AddSide(userName, side);
-        await Cart.AddDrink(userName, drink);
+        // TODO: Implement order submission logic
+        // For now, show a simple alert or navigate to a confirmation page
+        Console.WriteLine("Order placed!");
+        
+        // Clear the cart after placing order
+        await Cart.ClearOrder("order");
+        
+        // Navigate to a success page or back to home
+        Navigation.NavigateTo("/", true);
     }
 }

@@ -4,13 +4,14 @@ namespace Cafeteria.Customer.Components.Pages.Stations.DeliSwipe;
 
 public interface IDeliSwipeVM
 {
+    List<EntreeDto> Entrees { get; }
     List<SideDto> Sides { get; }
     List<DrinkDto> Drinks { get; }
+    List<FoodOptionDto> AllEntreeOptions { get; }
 
     string ActiveTab { get; }
     SideDto? SelectedSide { get; }
     DrinkDto? SelectedDrink { get; }
-    string? OrderConfirmation { get; }
 
     string? SelectedBread { get; }
     string? SelectedMeat { get; }
@@ -24,6 +25,10 @@ public interface IDeliSwipeVM
     List<string> ToppingOptions { get; }
     List<string> DressingOptions { get; }
 
+    int StationId { get; set; }
+    int LocationId { get; set; }
+
+    Task LoadDataAsync(int stationId, int locationId);
     void SetActiveTab(string tab);
     void SelectSide(SideDto side);
     void SelectDrink(DrinkDto drink);
@@ -36,6 +41,5 @@ public interface IDeliSwipeVM
     int GetSelectionCount();
     string GetSelectionSummary();
     bool IsValidSelection();
-    void AddToOrder();
-    void ClearOrderConfirmation();
+    Task<bool> AddToOrderAsync();
 }

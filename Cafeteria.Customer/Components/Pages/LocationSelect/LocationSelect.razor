@@ -6,9 +6,8 @@
 
 <PageTitle>Select Location</PageTitle>
 
-<div class="container py-5">
+<div class="container py-4">
     @if (LocationSelectVM.Locations == null && IsInitialized == false)
-    // Loading state:
     {
         <div class="text-center">
             <div class="alert alert-warning">
@@ -25,9 +24,9 @@
     // Main content:
     else if (LocationSelectVM.Locations != null)
     {
-        <div class="row mb-3">
+        <div class="row">
             <div class="col-12">
-                <a href="/" class="btn btn-link text-decoration-none ps-0">
+                <a href="/" class="btn text-decoration-none ps-0">
                     ❮ Back to Payment Method
                 </a>
             </div>
