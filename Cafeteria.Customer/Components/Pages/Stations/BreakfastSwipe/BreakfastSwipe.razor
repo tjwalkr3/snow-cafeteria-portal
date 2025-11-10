@@ -267,17 +267,6 @@ else
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <span style="color: #6c757d; font-size: 0.95rem;">@VM.GetSelectionCount() items selected</span>
-                @if (VM.SelectedEntree != null && VM.RequiresMeatSelection(VM.SelectedEntree.Id))
-                {
-                    @if (!string.IsNullOrEmpty(VM.SelectedMeatOption))
-                    {
-                        <span class="selection-badge">@VM.SelectedMeatOption</span>
-                    }
-                }
-                @if (VM.SelectedEntree?.Id == 1 && !string.IsNullOrEmpty(VM.SelectedBreadOption))
-                {
-                    <span class="selection-badge">@VM.SelectedBreadOption</span>
-                }
             </div>
             <button type="button"
                     class="add-btn"
