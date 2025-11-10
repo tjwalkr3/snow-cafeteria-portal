@@ -2,58 +2,61 @@
 
 <PageTitle>Select Station</PageTitle>
 
-<div class="container">
-    @if (StationSelectVM.Stations == null && IsInitialized == false) 
-    // Loading state:
+<div class="container py-4">
+    @if (StationSelectVM.Stations == null && IsInitialized == false)
     {
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="alert alert-warning">
-                    <h4>Loading stations...</h4>
-                    <p>Please wait while we load the available stations.</p>
-                </div>
+        <div class="text-center">
+            <div class="alert alert-warning">
+                <h4 class="fs-4 fw-bold mb-2">Loading stations...</h4>
+                <p class="mb-0">Please wait while available stations are loading.</p>
             </div>
         </div>
     }
-    // Error state:
     else if (IsInitialized == true && StationSelectVM.ErrorOccurredWhileParsingSelectedLocation())
     {
         Navigation.NavigateTo("/error", false);
     }
-    // Main content:
     else if (StationSelectVM.Stations != null)
     {
-        <div class="row mb-3">
+        <div class="row">
             <div class="col-12">
-                <a href="@CreateBackUrl()" class="btn btn-link text-decoration-none ps-0">
+                <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
                     ❮ Back to Location
                 </a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <h2>Select Your Station</h2>
-                <p class="text-muted">Please choose your preferred dining station to continue</p>
-            </div>
+
+        <div class="text-center mb-5">
+            <h1 class="station-title mb-3 fs-1 fw-bold">Select Your Station</h1>
+            <p class="station-subtitle fs-5 text-muted mb-0">Please choose your preferred dining station to continue</p>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
             @foreach (var station in StationSelectVM.Stations)
             {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column text-center">
-                        <h5 class="card-title">@station.StationName</h5>
-                        <p class="card-text text-muted">@station.StationDescription</p>
-                        <div class="mt-auto">
-                            <a href="@(CreateUrl(station.Id))" class="btn btn-primary btn-lg w-100">
-                                Select @station.StationName
-                            </a>
+                <div class="col">
+                    <a href="@(CreateUrl(station.Id))" class="card-link text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 hover-card">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-4">
+                                    <div class="icon-circle">
+                                        <i class="bi @GetStationIcon(station.StationName) fs-2"></i>
+                                    </div>
+                                </div>
+                                <h3 class="card-title station-card-title mb-3 fs-4 fw-bold">@station.StationName</h3>
+                                <p class="card-text station-card-description mb-0 fs-6 text-muted">@station.StationDescription</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-            </div>
             }
         </div>
     }
 </div>
+
+<style>
+    .station-title:focus-visible {
+        outline: none !important;
+        border: none !important;
+    }
+</style>

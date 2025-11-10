@@ -8,6 +8,9 @@ public partial class BreakfastSwipe : ComponentBase
     [Inject]
     private IBreakfastSwipeVM VM { get; set; } = default!;
 
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
 
@@ -16,6 +19,18 @@ public partial class BreakfastSwipe : ComponentBase
 
     [SupplyParameterFromQuery(Name = "station")]
     public int Station { get; set; }
+
+    private bool _isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await VM.LoadDataAsync(Station, Location);
+            _isLoading = false;
+            StateHasChanged();
+        }
+    }
 
     public string CreateBackUrl()
     {
@@ -34,10 +49,13 @@ public partial class BreakfastSwipe : ComponentBase
         StateHasChanged();
     }
 
-    private void SelectEntree(Cafeteria.Shared.DTOs.EntreeDto entree)
+    private async Task SelectEntree(Cafeteria.Shared.DTOs.EntreeDto entree)
     {
-        VM.SelectEntree(entree);
-        StateHasChanged();
+        await InvokeAsync(async () =>
+        {
+            await VM.SelectEntree(entree);
+            StateHasChanged();
+        });
     }
 
     private void SelectSide(Cafeteria.Shared.DTOs.SideDto side)
@@ -64,15 +82,12 @@ public partial class BreakfastSwipe : ComponentBase
         StateHasChanged();
     }
 
-    private void AddToOrder()
+    private async Task AddToOrder()
     {
-        VM.AddToOrder();
-        StateHasChanged();
-    }
-
-    private void ClearOrderConfirmation()
-    {
-        VM.ClearOrderConfirmation();
-        StateHasChanged();
+        var success = await VM.AddToOrderAsync();
+        if (success)
+        {
+            NavigationManager.NavigateTo("/place-order");
+        }
     }
 }

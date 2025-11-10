@@ -6,15 +6,19 @@ public interface IPizzaSwipeVM
 {
     List<EntreeDto> Entrees { get; }
     List<DrinkDto> Drinks { get; }
+    List<FoodOptionDto> AllEntreeOptions { get; }
 
     string ActiveTab { get; }
     EntreeDto? SelectedEntree { get; }
     DrinkDto? SelectedDrink { get; }
     List<string> SelectedToppings { get; }
-    string? OrderConfirmation { get; }
 
     List<string> AvailableToppings { get; }
 
+    int StationId { get; set; }
+    int LocationId { get; set; }
+
+    Task LoadDataAsync(int stationId, int locationId);
     void SetActiveTab(string tab);
     void SelectEntree(EntreeDto entree);
     void SelectDrink(DrinkDto drink);
@@ -22,6 +26,5 @@ public interface IPizzaSwipeVM
 
     int GetSelectionCount();
     bool IsValidSelection();
-    void AddToOrder();
-    void ClearOrderConfirmation();
+    Task<bool> AddToOrderAsync();
 }

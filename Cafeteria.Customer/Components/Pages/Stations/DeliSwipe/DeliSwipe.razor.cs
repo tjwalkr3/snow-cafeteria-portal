@@ -8,6 +8,9 @@ public partial class DeliSwipe : ComponentBase
     [Inject]
     private IDeliSwipeVM VM { get; set; } = default!;
 
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
 
@@ -16,6 +19,18 @@ public partial class DeliSwipe : ComponentBase
 
     [SupplyParameterFromQuery(Name = "station")]
     public int Station { get; set; }
+
+    private bool _isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await VM.LoadDataAsync(Station, Location);
+            _isLoading = false;
+            StateHasChanged();
+        }
+    }
 
     public string CreateBackUrl()
     {
@@ -76,15 +91,12 @@ public partial class DeliSwipe : ComponentBase
         StateHasChanged();
     }
 
-    private void AddToOrder()
+    private async Task AddToOrder()
     {
-        VM.AddToOrder();
-        StateHasChanged();
-    }
-
-    private void ClearOrderConfirmation()
-    {
-        VM.ClearOrderConfirmation();
-        StateHasChanged();
+        var success = await VM.AddToOrderAsync();
+        if (success)
+        {
+            NavigationManager.NavigateTo("/place-order");
+        }
     }
 }

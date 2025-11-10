@@ -30,6 +30,22 @@ public partial class LocationSelect : ComponentBase
         return QueryHelpers.AddQueryString("/station-select", queryParameters);
     }
 
+    private string GetLocationIcon(string locationName)
+    {
+        var lowerName = locationName.ToLower();
+
+        if (lowerName.Contains("den") || lowerName.Contains("badger"))
+            return "bi-house-door-fill";
+        else if (lowerName.Contains("bistro") || lowerName.Contains("busters"))
+            return "bi-building-fill";
+        else if (lowerName.Contains("library"))
+            return "bi-book-fill";
+        else if (lowerName.Contains("student") || lowerName.Contains("union"))
+            return "bi-people-fill";
+        else
+            return "bi-geo-alt-fill";
+    }
+
     protected override async Task OnInitializedAsync()
     {
         LocationSelectVM.ValidatePaymentParameter(Payment);
@@ -41,8 +57,11 @@ public partial class LocationSelect : ComponentBase
     {
         if (firstRender)
         {
-            await CartService.ClearOrder("test");
-            StateHasChanged();
+            await InvokeAsync(async () =>
+            {
+                await CartService.ClearOrder("order");
+                StateHasChanged();
+            });
         }
     }
 }

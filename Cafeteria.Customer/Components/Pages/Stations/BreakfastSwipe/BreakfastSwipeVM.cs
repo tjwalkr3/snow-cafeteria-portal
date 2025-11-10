@@ -1,68 +1,57 @@
+using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.BreakfastSwipe;
 
 public class BreakfastSwipeVM : IBreakfastSwipeVM
 {
-    public List<EntreeDto> Entrees { get; private set; } = new List<EntreeDto>
-    {
-        new EntreeDto { Id = 1, StationId = 1, EntreeName = "Breakfast Sandwich", EntreeDescription = "Bread: English Muffin or Biscuit. ONE CHOICE of Meat: Sausage, Bacon, or Ham", EntreePrice = 4.99m },
-        new EntreeDto { Id = 2, StationId = 1, EntreeName = "Breakfast Burrito", EntreeDescription = "Eggs, potatoes, cheese and choice of ONE MEAT: Bacon, Ham, or Sausage", EntreePrice = 5.29m },
-        new EntreeDto { Id = 3, StationId = 1, EntreeName = "1 Pancake and Potatoes", EntreePrice = 4.49m },
-        new EntreeDto { Id = 4, StationId = 1, EntreeName = "1 Pancake and Choice of ONE Meat", EntreeDescription = "Sausage, Bacon, or Ham", EntreePrice = 4.99m },
-        new EntreeDto { Id = 5, StationId = 1, EntreeName = "French Toast and Potatoes", EntreePrice = 4.79m },
-        new EntreeDto { Id = 6, StationId = 1, EntreeName = "1 Biscuit and Gravy with Potatoes", EntreePrice = 4.49m },
-        new EntreeDto { Id = 7, StationId = 1, EntreeName = "Breakfast Plate", EntreeDescription = "Scrambled eggs, potatoes, one slice of toast and ONE choice of meat: Sausage, Bacon, or Ham", EntreePrice = 5.49m }
-    };
+    private readonly IApiMenuService _menuService;
+    private readonly ICartService _cartService;
+    private const string CART_KEY = "order";
 
-    public List<SideDto> Sides { get; private set; } = new List<SideDto>
+    public BreakfastSwipeVM(IApiMenuService menuService, ICartService cartService)
     {
-        new SideDto { Id = 1, StationId = 1, SideName = "Toast", SidePrice = 1.49m },
-        new SideDto { Id = 2, StationId = 1, SideName = "Bacon", SidePrice = 2.29m },
-        new SideDto { Id = 3, StationId = 1, SideName = "Sausage Link", SidePrice = 2.29m },
-        new SideDto { Id = 4, StationId = 1, SideName = "Tater Tots", SidePrice = 2.79m },
-        new SideDto { Id = 5, StationId = 1, SideName = "Potatoes", SidePrice = 1.99m }
-    };
+        _menuService = menuService;
+        _cartService = cartService;
+    }
 
-    public List<DrinkDto> Drinks { get; private set; } = new List<DrinkDto>
-    {
-        new DrinkDto { Id = 1, StationId = 1, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 2, StationId = 1, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 3, StationId = 1, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 4, StationId = 1, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 5, StationId = 1, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
-    };
+    public List<EntreeDto> Entrees { get; private set; } = new();
+    public List<SideDto> Sides { get; private set; } = new();
+    public List<DrinkDto> Drinks { get; private set; } = new();
+    public List<FoodOptionDto> CurrentEntreeOptions { get; private set; } = new();
 
     public string ActiveTab { get; private set; } = "entrees";
     public EntreeDto? SelectedEntree { get; private set; }
     public SideDto? SelectedSide { get; private set; }
     public DrinkDto? SelectedDrink { get; private set; }
-    public string? OrderConfirmation { get; private set; }
 
     public string? SelectedMeatOption { get; private set; }
     public string? SelectedBreadOption { get; private set; }
+
+    public int StationId { get; set; }
+    public int LocationId { get; set; }
+
+    public async Task LoadDataAsync(int stationId, int locationId)
+    {
+        StationId = stationId;
+        LocationId = locationId;
+
+        Entrees = await _menuService.GetEntreesByStation(stationId);
+        Sides = await _menuService.GetSidesByStation(stationId);
+        Drinks = await _menuService.GetDrinksByLocation(locationId);
+    }
 
     public void SetActiveTab(string tab)
     {
         ActiveTab = tab;
     }
 
-    public void SelectEntree(EntreeDto entree)
+    public async Task SelectEntree(EntreeDto entree)
     {
         SelectedEntree = entree;
-
         SelectedMeatOption = null;
         SelectedBreadOption = null;
-
-        if (RequiresBreadSelection(entree.Id))
-        {
-            SelectedBreadOption = "English Muffin";
-        }
-
-        if (RequiresMeatSelection(entree.Id))
-        {
-            SelectedMeatOption = "Sausage";
-        }
+        CurrentEntreeOptions = await _menuService.GetOptionsByEntree(entree.Id);
     }
 
     public void SelectSide(SideDto side)
@@ -118,35 +107,47 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
         return true;
     }
 
-    public void AddToOrder()
+    public async Task<bool> AddToOrderAsync()
     {
-        if (IsValidSelection() && SelectedEntree != null && SelectedSide != null && SelectedDrink != null)
+        if (!IsValidSelection() || SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
+            return false;
+
+        await _cartService.AddEntree(CART_KEY, SelectedEntree);
+
+        if (!string.IsNullOrEmpty(SelectedBreadOption))
         {
-            var meal = new MealDto
+            var breadOption = CurrentEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedBreadOption);
+            if (breadOption != null)
             {
-                EntreeId = SelectedEntree.Id,
-                SideId = SelectedSide.Id,
-                DrinkId = SelectedDrink.Id
-            };
-
-            var customizations = new List<string>();
-            if (!string.IsNullOrEmpty(SelectedBreadOption))
-                customizations.Add(SelectedBreadOption);
-            if (!string.IsNullOrEmpty(SelectedMeatOption))
-                customizations.Add(SelectedMeatOption);
-
-            var customizationText = customizations.Any() ? $" ({string.Join(", ", customizations)})" : "";
-            OrderConfirmation = $"Meal Plan/Swipe: {SelectedEntree.EntreeName}{customizationText} with {SelectedSide.SideName}";
-
-            Console.WriteLine($"Breakfast Order: EntreeId={meal.EntreeId}, SideId={meal.SideId}, DrinkId={meal.DrinkId}, Meat={SelectedMeatOption}, Bread={SelectedBreadOption}");
-
-            ClearSelections();
+                var optionType = new FoodOptionTypeDto
+                {
+                    FoodOptionTypeName = "Bread Choice",
+                    EntreeId = SelectedEntree.Id
+                };
+                await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, breadOption, optionType);
+            }
         }
-    }
 
-    public void ClearOrderConfirmation()
-    {
-        OrderConfirmation = null;
+        if (!string.IsNullOrEmpty(SelectedMeatOption))
+        {
+            var meatOption = CurrentEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedMeatOption);
+            if (meatOption != null)
+            {
+                var optionType = new FoodOptionTypeDto
+                {
+                    FoodOptionTypeName = "Meat Choice",
+                    EntreeId = SelectedEntree.Id
+                };
+                await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, meatOption, optionType);
+            }
+        }
+
+        await _cartService.AddSide(CART_KEY, SelectedSide);
+
+        await _cartService.AddDrink(CART_KEY, SelectedDrink);
+
+        ClearSelections();
+        return true;
     }
 
     private void ClearSelections()
@@ -156,6 +157,7 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
         SelectedDrink = null;
         SelectedMeatOption = null;
         SelectedBreadOption = null;
+        CurrentEntreeOptions.Clear();
         ActiveTab = "entrees";
     }
 }

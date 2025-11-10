@@ -2,3 +2,22 @@
 README.md
 .dockerignore
 .gitignore
+
+# Build artifacts - prevent permission conflicts
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+
+# Node modules
+**/node_modules/
+
+# Git files
+**/.git/
+
+# Docker files
+**/Dockerfile*
+**/docker-compose*.yml
+
+# Environment files
+**/.env
