@@ -142,18 +142,18 @@ jobs:
           cat "$FILE" | envsubst | kubectl apply -f -
         done
 
-  # notify_discord:
-  #   runs-on: self-hosted
-  #   needs: [
-  #     format_verification, check_for_warnings, run_unit_tests, run_integration_tests, build_and_push_api_to_dockerhub, build_and_push_customer_to_dockerhub, build_and_push_management_to_dockerhub, deploy_to_kubernetes]
-  #   if: always()
-  #   steps:
-  #   - name: Send Discord notification
-  #     uses: sarisia/actions-status-discord@v1
-  #     with:
-  #       webhook: ${{ secrets.DEPLOY_MAIN_DISCORD }}
-  #       title: "Snow Cafeteria Portal - Merged Into Main, Deploying"
-  #       description: "Deployment workflow completed"
-  #       url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-  #       status: ${{ job.status }}
-  #       color: 0xf73232
+  notify_discord:
+    runs-on: self-hosted
+    needs: [
+      format_verification, check_for_warnings, run_unit_tests, run_integration_tests, build_and_push_api_to_dockerhub, build_and_push_customer_to_dockerhub, build_and_push_management_to_dockerhub, deploy_to_kubernetes]
+    if: always()
+    steps:
+    - name: Send Discord notification
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DEPLOY_MAIN_DISCORD }}
+        title: "Snow Cafeteria Portal - Merged Into Main, Deploying"
+        description: "Deployment workflow completed"
+        url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        status: ${{ job.status }}
+        color: 0xf73232
