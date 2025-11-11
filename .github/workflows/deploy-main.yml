@@ -3,7 +3,7 @@ name: Deploy Main - Lint, Test, Warnings Check, Build Containers, Deploy, Discor
 on:
   push:
     branches:
-      - dotnet-aspire
+      - main
   workflow_dispatch:
 
 jobs:

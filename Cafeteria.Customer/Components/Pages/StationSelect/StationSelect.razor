@@ -5,11 +5,8 @@
 <div class="container py-4">
     @if (StationSelectVM.Stations == null && IsInitialized == false)
     {
-        <div class="text-center">
-            <div class="alert alert-warning">
-                <h4 class="fs-4 fw-bold mb-2">Loading stations...</h4>
-                <p class="mb-0">Please wait while available stations are loading.</p>
-            </div>
+        <div class="text-center py-5">
+            <Spinner Message="Loading stations..." />
         </div>
     }
     else if (IsInitialized == true && StationSelectVM.ErrorOccurredWhileParsingSelectedLocation())
@@ -44,7 +41,8 @@
                                     </div>
                                 </div>
                                 <h3 class="card-title station-card-title mb-3 fs-4 fw-bold">@station.StationName</h3>
-                                <p class="card-text station-card-description mb-0 fs-6 text-muted">@station.StationDescription</p>
+                                <p class="card-text station-card-description mb-0 fs-6 text-muted">@station.StationDescription
+                                </p>
                             </div>
                         </div>
                     </a>

@@ -9,11 +9,8 @@
 <div class="container py-4">
     @if (LocationSelectVM.Locations == null && IsInitialized == false)
     {
-        <div class="text-center">
-            <div class="alert alert-warning">
-                <h4 class="fs-4 fw-bold mb-2">Loading locations...</h4>
-                <p class="mb-0">Please wait available locations are loading.</p>
-            </div>
+        <div class="text-center py-5">
+            <Spinner Message="Loading locations..." />
         </div>
     }
     else if (IsInitialized == true && LocationSelectVM.ErrorOccurred())
@@ -48,7 +45,8 @@
                                     </div>
                                 </div>
                                 <h3 class="card-title location-card-title mb-3 fs-4 fw-bold">@location.LocationName</h3>
-                                <p class="card-text location-card-description mb-0 fs-6 text-muted">@location.LocationDescription</p>
+                                <p class="card-text location-card-description mb-0 fs-6 text-muted">
+                                    @location.LocationDescription</p>
                             </div>
                         </div>
                     </a>

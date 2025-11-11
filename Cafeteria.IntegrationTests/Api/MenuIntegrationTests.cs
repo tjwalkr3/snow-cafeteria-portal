@@ -195,7 +195,7 @@ public class MenuIntegrationTests : IAsyncLifetime
         _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[1]);
 
         // Act
-        var response = await _client.GetAsync("/api/menu/menu/options/entree/1");
+        var response = await _client.GetAsync("/api/menu/options/entree/1");
         response.EnsureSuccessStatusCode();
         var optionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>();
 
@@ -220,7 +220,7 @@ public class MenuIntegrationTests : IAsyncLifetime
         _connection.Execute(InsertOptionOptionTypeSql, OptionOptionTypes[1]);
 
         // Act
-        var response = await _client.GetAsync("/api/menu/menu/options/side/1");
+        var response = await _client.GetAsync("/api/menu/options/side/1");
         response.EnsureSuccessStatusCode();
         var optionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>();
 
