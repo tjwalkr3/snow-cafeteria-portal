@@ -45,13 +45,13 @@ public class MenuController : ControllerBase
         return await _menuService.GetDrinksByLocation(locationId);
     }
 
-    [HttpGet("menu/options/entree/{entreeId}")]
+    [HttpGet("options/entree/{entreeId}")]
     public async Task<List<FoodOptionDto>> GetFoodOptionsByEntree(int entreeId)
     {
         return await _menuService.GetOptionsByEntree(entreeId);
     }
 
-    [HttpGet("menu/options/side/{sideId}")]
+    [HttpGet("options/side/{sideId}")]
     public async Task<List<FoodOptionDto>> GetFoodOptionsBySide(int sideId)
     {
         return await _menuService.GetOptionsBySide(sideId);

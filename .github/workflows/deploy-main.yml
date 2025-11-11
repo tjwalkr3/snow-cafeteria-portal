@@ -1,4 +1,4 @@
-name: Deploy Main - Lint, Test, Warnings Check, Teams Notification
+name: Deploy Main - Lint, Test, Warnings Check, Build Containers, Deploy, Discord Notification
 
 on:
   push:
@@ -43,21 +43,117 @@ jobs:
       run: |
         source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         nix-shell -p dotnet-sdk_9 --run "
-          dotnet test
+          dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj
         "
-        echo "going to deploy!!!"
 
-  notify_discord:
+  run_integration_tests:
     runs-on: self-hosted
-    needs: [format_verification, check_for_warnings, run_unit_tests]
-    if: always()
     steps:
-    - name: Send Discord notification
-      uses: sarisia/actions-status-discord@v1
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Run the integration tests.
+      run: |
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        nix-shell -p dotnet-sdk_9 --run "
+          dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
+        "
+
+  build_and_push_api_to_dockerhub:
+    needs: [format_verification, check_for_warnings, run_unit_tests, run_integration_tests]
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
       with:
-        webhook: ${{ secrets.DEPLOY_MAIN_DISCORD }}
-        title: "Snow Cafeteria Portal - Merged Into Main, Deploying"
-        description: "Deployment workflow completed"
-        url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        status: ${{ job.status }}
-        color: 0xf73232
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push API to DockerHub
+      run: |
+        docker build \
+          -f ./Cafeteria.Api/Dockerfile \
+          -t ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-api:${{ github.run_number }}.${{ github.run_attempt }} \
+          .
+
+        docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-api:${{ github.run_number }}.${{ github.run_attempt }}
+
+  build_and_push_customer_to_dockerhub:
+    needs: [format_verification, check_for_warnings, run_unit_tests, run_integration_tests]
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Customer to DockerHub
+      run: |
+        docker build \
+          -f ./Cafeteria.Customer/Dockerfile \
+          -t ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-customer:${{ github.run_number }}.${{ github.run_attempt }} \
+          .
+
+        docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-customer:${{ github.run_number }}.${{ github.run_attempt }}
+
+  build_and_push_management_to_dockerhub:
+    needs: [format_verification, check_for_warnings, run_unit_tests, run_integration_tests]
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Management to DockerHub
+      run: |
+        docker build \
+          -f ./Cafeteria.Management/Dockerfile \
+          -t ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-management:${{ github.run_number }}.${{ github.run_attempt }} \
+          .
+
+        docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-management:${{ github.run_number }}.${{ github.run_attempt }}
+
+  deploy_to_kubernetes:
+    needs: [build_and_push_api_to_dockerhub, build_and_push_customer_to_dockerhub, build_and_push_management_to_dockerhub]
+    runs-on: self-hosted
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f kube/namespace.yml
+        export CONTAINER_VERSION=${{ github.run_number }}.${{ github.run_attempt }}
+  
+        for FILE in "kube"/*
+        do
+          cat "$FILE" | envsubst | kubectl apply -f -
+        done
+
+  # notify_discord:
+  #   runs-on: self-hosted
+  #   needs: [
+  #     format_verification, check_for_warnings, run_unit_tests, run_integration_tests, build_and_push_api_to_dockerhub, build_and_push_customer_to_dockerhub, build_and_push_management_to_dockerhub, deploy_to_kubernetes]
+  #   if: always()
+  #   steps:
+  #   - name: Send Discord notification
+  #     uses: sarisia/actions-status-discord@v1
+  #     with:
+  #       webhook: ${{ secrets.DEPLOY_MAIN_DISCORD }}
+  #       title: "Snow Cafeteria Portal - Merged Into Main, Deploying"
+  #       description: "Deployment workflow completed"
+  #       url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  #       status: ${{ job.status }}
+  #       color: 0xf73232

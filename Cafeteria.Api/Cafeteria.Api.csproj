@@ -11,10 +11,12 @@
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
+    <PackageReference Include="Aspire.Npgsql" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Cafeteria.Shared\Cafeteria.Shared.csproj" />
+    <ProjectReference Include="..\Cafeteria.ServiceDefaults\Cafeteria.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

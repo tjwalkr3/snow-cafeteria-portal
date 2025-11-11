@@ -21,8 +21,11 @@ public partial class Error : ComponentBase
     {
         if (firstRender)
         {
-            await CartService.ClearOrder("test");
-            StateHasChanged();
+            await InvokeAsync(async () =>
+            {
+                await CartService.ClearOrder("order");
+                StateHasChanged();
+            });
         }
     }
 }

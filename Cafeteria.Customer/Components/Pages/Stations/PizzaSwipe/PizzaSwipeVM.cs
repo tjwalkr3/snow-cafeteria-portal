@@ -1,44 +1,63 @@
+using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.PizzaSwipe;
 
 public class PizzaSwipeVM : IPizzaSwipeVM
 {
-    public List<EntreeDto> Entrees { get; private set; } = new List<EntreeDto>
-    {
-        new EntreeDto { Id = 1, StationId = 2, EntreeName = "Personal Pizza", EntreeDescription = "Choose 2 toppings included", EntreePrice = 5.69m }
-    };
+    private readonly IApiMenuService _menuService;
+    private readonly ICartService _cartService;
+    private const string CART_KEY = "order";
 
-    public List<DrinkDto> Drinks { get; private set; } = new List<DrinkDto>
+    public PizzaSwipeVM(IApiMenuService menuService, ICartService cartService)
     {
-        new DrinkDto { Id = 1, StationId = 2, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 2, StationId = 2, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 3, StationId = 2, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 4, StationId = 2, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 5, StationId = 2, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
-    };
+        _menuService = menuService;
+        _cartService = cartService;
+    }
+
+    public List<EntreeDto> Entrees { get; private set; } = new();
+    public List<DrinkDto> Drinks { get; private set; } = new();
+    public List<FoodOptionDto> AllEntreeOptions { get; private set; } = new();
 
     public string ActiveTab { get; private set; } = "toppings";
     public EntreeDto? SelectedEntree { get; private set; }
     public DrinkDto? SelectedDrink { get; private set; }
     public List<string> SelectedToppings { get; private set; } = new();
-    public string? OrderConfirmation { get; private set; }
 
-    public List<string> AvailableToppings { get; private set; } = new List<string>
+    public List<string> AvailableToppings { get; private set; } = new();
+
+    public int StationId { get; set; }
+    public int LocationId { get; set; }
+
+    public async Task LoadDataAsync(int stationId, int locationId)
     {
-        "Extra Cheese",
-        "Pepperoni",
-        "Sausage",
-        "Bacon",
-        "Chicken",
-        "Ham",
-        "Olives",
-        "Mushrooms",
-        "Onions",
-        "Pineapple",
-        "Bell Peppers",
-        "Banana Peppers"
-    };
+        StationId = stationId;
+        LocationId = locationId;
+
+        Entrees = await _menuService.GetEntreesByStation(stationId);
+        Drinks = await _menuService.GetDrinksByLocation(locationId);
+
+        var pizzaEntree = Entrees.FirstOrDefault();
+        if (pizzaEntree != null)
+        {
+            AllEntreeOptions = await _menuService.GetOptionsByEntree(pizzaEntree.Id);
+            AvailableToppings = AllEntreeOptions.Select(o => o.FoodOptionName).ToList();
+
+            if (!AvailableToppings.Any())
+            {
+                AvailableToppings = new List<string>
+                {
+                    "Extra Cheese", "Pepperoni", "Sausage", "Bacon", "Chicken", "Ham",
+                    "Olives", "Mushrooms", "Onions", "Pineapple", "Bell Peppers", "Banana Peppers"
+                };
+            }
+        }
+
+        if (Entrees.Any())
+        {
+            SelectedEntree = Entrees.First();
+        }
+    }
 
     public void SetActiveTab(string tab)
     {
@@ -80,42 +99,50 @@ public class PizzaSwipeVM : IPizzaSwipeVM
         return SelectedToppings.Count >= 2 && SelectedDrink != null;
     }
 
-    public void AddToOrder()
+    public async Task<bool> AddToOrderAsync()
     {
-        if (IsValidSelection() && SelectedDrink != null)
+        if (!IsValidSelection() || SelectedDrink == null)
+            return false;
+
+        if (SelectedEntree == null && Entrees.Any())
         {
-            // Auto-select the personal pizza entree if not already selected
-            if (SelectedEntree == null && Entrees.Any())
-            {
-                SelectedEntree = Entrees.First();
-            }
-
-            var meal = new MealDto
-            {
-                EntreeId = SelectedEntree?.Id ?? 1,
-                SideId = 0,  // No side for pizza
-                DrinkId = SelectedDrink.Id
-            };
-
-            var toppingsText = string.Join(", ", SelectedToppings);
-            OrderConfirmation = $"Personal Pizza with {toppingsText} and {SelectedDrink.DrinkName}";
-
-            Console.WriteLine($"Pizza Order: EntreeId={meal.EntreeId}, DrinkId={meal.DrinkId}, Toppings={toppingsText}");
-
-            ClearSelections();
+            SelectedEntree = Entrees.First();
         }
-    }
 
-    public void ClearOrderConfirmation()
-    {
-        OrderConfirmation = null;
+        if (SelectedEntree == null)
+            return false;
+
+        await _cartService.AddEntree(CART_KEY, SelectedEntree);
+
+        foreach (var topping in SelectedToppings)
+        {
+            var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
+            if (toppingOption != null)
+            {
+                var optionType = new FoodOptionTypeDto
+                {
+                    FoodOptionTypeName = "Pizza Toppings",
+                    EntreeId = SelectedEntree.Id
+                };
+                await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, toppingOption, optionType);
+            }
+        }
+
+        await _cartService.AddDrink(CART_KEY, SelectedDrink);
+
+        ClearSelections();
+        return true;
     }
 
     private void ClearSelections()
     {
-        SelectedEntree = null;
         SelectedDrink = null;
         SelectedToppings.Clear();
         ActiveTab = "toppings";
+
+        if (Entrees.Any())
+        {
+            SelectedEntree = Entrees.First();
+        }
     }
 }

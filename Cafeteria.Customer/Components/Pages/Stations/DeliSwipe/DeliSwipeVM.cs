@@ -1,34 +1,28 @@
+using Cafeteria.Customer.Services;
 using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.DeliSwipe;
 
 public class DeliSwipeVM : IDeliSwipeVM
 {
-    public List<SideDto> Sides { get; private set; } = new List<SideDto>
-    {
-        new SideDto { Id = 1, StationId = 3, SideName = "Bacon", SidePrice = 2.49m },
-        new SideDto { Id = 2, StationId = 3, SideName = "Cheese", SidePrice = 1.99m },
-        new SideDto { Id = 3, StationId = 3, SideName = "Additional Meats", SidePrice = 2.99m },
-        new SideDto { Id = 4, StationId = 3, SideName = "Rice", SidePrice = 1.99m },
-        new SideDto { Id = 5, StationId = 3, SideName = "Vegetables", SidePrice = 2.49m },
-        new SideDto { Id = 6, StationId = 3, SideName = "Fruit Cup", SidePrice = 2.29m },
-        new SideDto { Id = 7, StationId = 3, SideName = "Chips", SidePrice = 1.79m },
-        new SideDto { Id = 8, StationId = 3, SideName = "Side Salad", SidePrice = 2.79m }
-    };
+    private readonly IApiMenuService _menuService;
+    private readonly ICartService _cartService;
+    private const string CART_KEY = "order";
 
-    public List<DrinkDto> Drinks { get; private set; } = new List<DrinkDto>
+    public DeliSwipeVM(IApiMenuService menuService, ICartService cartService)
     {
-        new DrinkDto { Id = 1, StationId = 3, DrinkName = "Fountain Drinks", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 2, StationId = 3, DrinkName = "Slushies", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 3, StationId = 3, DrinkName = "Tea/Coffee Machines", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 4, StationId = 3, DrinkName = "Tea/Coffee Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m },
-        new DrinkDto { Id = 5, StationId = 3, DrinkName = "Drink Fridge", DrinkDescription = "Included with your meal", DrinkPrice = 0.00m }
-    };
+        _menuService = menuService;
+        _cartService = cartService;
+    }
+
+    public List<EntreeDto> Entrees { get; private set; } = new();
+    public List<SideDto> Sides { get; private set; } = new();
+    public List<DrinkDto> Drinks { get; private set; } = new();
+    public List<FoodOptionDto> AllEntreeOptions { get; private set; } = new();
 
     public string ActiveTab { get; private set; } = "sandwich";
     public SideDto? SelectedSide { get; private set; }
     public DrinkDto? SelectedDrink { get; private set; }
-    public string? OrderConfirmation { get; private set; }
 
     public string? SelectedBread { get; private set; }
     public string? SelectedMeat { get; private set; }
@@ -36,32 +30,84 @@ public class DeliSwipeVM : IDeliSwipeVM
     public List<string> SelectedToppings { get; private set; } = new();
     public string? SelectedDressing { get; private set; }
 
-    public List<string> BreadOptions { get; private set; } = new()
-    {
-        "Pretzel Bun", "Marble Rye", "Sourdough", "Pita Bread", "Wheat", "White Bread"
-    };
+    public List<string> BreadOptions { get; private set; } = new();
+    public List<string> MeatOptions { get; private set; } = new();
+    public List<string> CheeseOptions { get; private set; } = new();
+    public List<string> ToppingOptions { get; private set; } = new();
+    public List<string> DressingOptions { get; private set; } = new();
 
-    public List<string> MeatOptions { get; private set; } = new()
-    {
-        "Ham", "Turkey", "Bacon", "Grilled Chicken", "Tuna Salad"
-    };
+    public int StationId { get; set; }
+    public int LocationId { get; set; }
 
-    public List<string> CheeseOptions { get; private set; } = new()
+    public async Task LoadDataAsync(int stationId, int locationId)
     {
-        "American", "Provolone", "Cheddar", "Pepper Jack", "Swiss", "Mozzarella"
-    };
+        StationId = stationId;
+        LocationId = locationId;
 
-    public List<string> ToppingOptions { get; private set; } = new()
-    {
-        "Spinach", "Romaine", "Green Leaf Lettuce", "Olives", "Cucumber",
-        "Tomato", "Sprouts", "Bell Pepper", "Onions", "Pickles", "Banana Peppers"
-    };
+        Entrees = await _menuService.GetEntreesByStation(stationId);
+        Sides = await _menuService.GetSidesByStation(stationId);
+        Drinks = await _menuService.GetDrinksByLocation(locationId);
 
-    public List<string> DressingOptions { get; private set; } = new()
-    {
-        "Oil", "Vinegar", "Ranch", "1000 Island", "Italian", "Caesar",
-        "Raspberry Vinaigrette", "Honey Mustard", "Mayonnaise", "Mustard"
-    };
+        var customSandwichEntree = Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
+        if (customSandwichEntree != null)
+        {
+            AllEntreeOptions = await _menuService.GetOptionsByEntree(customSandwichEntree.Id);
+
+            BreadOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Bread") ||
+                                                       o.FoodOptionName.Contains("Bun") ||
+                                                       o.FoodOptionName.Contains("Rye") ||
+                                                       o.FoodOptionName.Contains("Sourdough") ||
+                                                       o.FoodOptionName.Contains("Wheat") ||
+                                                       o.FoodOptionName.Contains("Pita"))
+                                          .Select(o => o.FoodOptionName).ToList();
+
+            MeatOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Ham") ||
+                                                     o.FoodOptionName.Contains("Turkey") ||
+                                                     o.FoodOptionName.Contains("Bacon") ||
+                                                     o.FoodOptionName.Contains("Chicken") ||
+                                                     o.FoodOptionName.Contains("Tuna"))
+                                         .Select(o => o.FoodOptionName).ToList();
+
+            CheeseOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Cheese") ||
+                                                       o.FoodOptionName.Contains("American") ||
+                                                       o.FoodOptionName.Contains("Provolone") ||
+                                                       o.FoodOptionName.Contains("Cheddar") ||
+                                                       o.FoodOptionName.Contains("Swiss") ||
+                                                       o.FoodOptionName.Contains("Mozzarella"))
+                                           .Select(o => o.FoodOptionName).ToList();
+
+            ToppingOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Lettuce") ||
+                                                        o.FoodOptionName.Contains("Spinach") ||
+                                                        o.FoodOptionName.Contains("Olive") ||
+                                                        o.FoodOptionName.Contains("Cucumber") ||
+                                                        o.FoodOptionName.Contains("Tomato") ||
+                                                        o.FoodOptionName.Contains("Sprout") ||
+                                                        o.FoodOptionName.Contains("Pepper") ||
+                                                        o.FoodOptionName.Contains("Onion") ||
+                                                        o.FoodOptionName.Contains("Pickle"))
+                                            .Select(o => o.FoodOptionName).ToList();
+
+            DressingOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Oil") ||
+                                                         o.FoodOptionName.Contains("Vinegar") ||
+                                                         o.FoodOptionName.Contains("Ranch") ||
+                                                         o.FoodOptionName.Contains("Island") ||
+                                                         o.FoodOptionName.Contains("Italian") ||
+                                                         o.FoodOptionName.Contains("Caesar") ||
+                                                         o.FoodOptionName.Contains("Vinaigrette") ||
+                                                         o.FoodOptionName.Contains("Mustard") ||
+                                                         o.FoodOptionName.Contains("Mayo"))
+                                             .Select(o => o.FoodOptionName).ToList();
+
+            if (!BreadOptions.Any())
+            {
+                BreadOptions = new() { "Pretzel Bun", "Marble Rye", "Sourdough", "Pita Bread", "Wheat", "White Bread" };
+                MeatOptions = new() { "Ham", "Turkey", "Bacon", "Grilled Chicken", "Tuna Salad" };
+                CheeseOptions = new() { "American", "Provolone", "Cheddar", "Pepper Jack", "Swiss", "Mozzarella" };
+                ToppingOptions = new() { "Spinach", "Romaine", "Green Leaf Lettuce", "Olives", "Cucumber", "Tomato", "Sprouts", "Bell Pepper", "Onions", "Pickles", "Banana Peppers" };
+                DressingOptions = new() { "Oil", "Vinegar", "Ranch", "1000 Island", "Italian", "Caesar", "Raspberry Vinaigrette", "Honey Mustard", "Mayonnaise", "Mustard" };
+            }
+        }
+    }
 
     public void SetActiveTab(string tab)
     {
@@ -143,29 +189,81 @@ public class DeliSwipeVM : IDeliSwipeVM
             && SelectedDrink != null;
     }
 
-    public void AddToOrder()
+    public async Task<bool> AddToOrderAsync()
     {
-        if (IsValidSelection() && SelectedSide != null && SelectedDrink != null)
+        if (!IsValidSelection() || SelectedSide == null || SelectedDrink == null)
+            return false;
+
+        var customSandwichEntree = Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
+        if (customSandwichEntree == null)
         {
-            var meal = new MealDto
+            customSandwichEntree = new EntreeDto
             {
-                EntreeId = 0,
-                SideId = SelectedSide.Id,
-                DrinkId = SelectedDrink.Id
+                Id = 0,
+                StationId = StationId,
+                EntreeName = "Custom Deli Sandwich",
+                EntreePrice = 6.99m
             };
-
-            var toppingsText = string.Join(", ", SelectedToppings);
-            OrderConfirmation = $"Custom Deli Sandwich: {SelectedBread} with {SelectedMeat}, {SelectedCheese}, {toppingsText}, and {SelectedDressing}. Side: {SelectedSide.SideName}";
-
-            Console.WriteLine($"Deli Order: Bread={SelectedBread}, Meat={SelectedMeat}, Cheese={SelectedCheese}, Toppings={toppingsText}, Dressing={SelectedDressing}, SideId={meal.SideId}, DrinkId={meal.DrinkId}");
-
-            ClearSelections();
         }
-    }
 
-    public void ClearOrderConfirmation()
-    {
-        OrderConfirmation = null;
+        await _cartService.AddEntree(CART_KEY, customSandwichEntree);
+
+        if (!string.IsNullOrEmpty(SelectedBread))
+        {
+            var breadOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedBread);
+            if (breadOption != null)
+            {
+                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Bread Choice", EntreeId = customSandwichEntree.Id };
+                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, breadOption, optionType);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(SelectedMeat))
+        {
+            var meatOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedMeat);
+            if (meatOption != null)
+            {
+                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Meat Choice", EntreeId = customSandwichEntree.Id };
+                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, meatOption, optionType);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(SelectedCheese))
+        {
+            var cheeseOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedCheese);
+            if (cheeseOption != null)
+            {
+                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Cheese Choice", EntreeId = customSandwichEntree.Id };
+                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, cheeseOption, optionType);
+            }
+        }
+
+        foreach (var topping in SelectedToppings)
+        {
+            var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
+            if (toppingOption != null)
+            {
+                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Toppings", EntreeId = customSandwichEntree.Id };
+                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, toppingOption, optionType);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(SelectedDressing))
+        {
+            var dressingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedDressing);
+            if (dressingOption != null)
+            {
+                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Dressing Choice", EntreeId = customSandwichEntree.Id };
+                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, dressingOption, optionType);
+            }
+        }
+
+        await _cartService.AddSide(CART_KEY, SelectedSide);
+
+        await _cartService.AddDrink(CART_KEY, SelectedDrink);
+
+        ClearSelections();
+        return true;
     }
 
     private void ClearSelections()

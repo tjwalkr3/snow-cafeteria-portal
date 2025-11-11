@@ -32,7 +32,6 @@ public partial class LocationSelect : ComponentBase
 
     private string GetLocationIcon(string locationName)
     {
-        // Map location names to their corresponding Bootstrap Icons
         var lowerName = locationName.ToLower();
 
         if (lowerName.Contains("den") || lowerName.Contains("badger"))
@@ -44,7 +43,7 @@ public partial class LocationSelect : ComponentBase
         else if (lowerName.Contains("student") || lowerName.Contains("union"))
             return "bi-people-fill";
         else
-            return "bi-geo-alt-fill"; // Default location pin icon
+            return "bi-geo-alt-fill";
     }
 
     protected override async Task OnInitializedAsync()
@@ -58,8 +57,11 @@ public partial class LocationSelect : ComponentBase
     {
         if (firstRender)
         {
-            await CartService.ClearOrder("test");
-            StateHasChanged();
+            await InvokeAsync(async () =>
+            {
+                await CartService.ClearOrder("order");
+                StateHasChanged();
+            });
         }
     }
 }
