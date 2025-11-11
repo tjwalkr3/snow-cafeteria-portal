@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.WebUtilities;
+using Cafeteria.Customer.Services;
+using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
@@ -10,16 +13,124 @@ public partial class PlaceOrder : ComponentBase
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
+    [Inject]
+    private ICartService Cart { get; set; } = default!;
+
+    [SupplyParameterFromQuery(Name = "location")]
+    public int Location { get; set; }
+
+    [SupplyParameterFromQuery(Name = "payment")]
+    public string? Payment { get; set; }
+
+    private BrowserOrder? Order { get; set; } = null;
+
+    private decimal Price { get; set; } = 0.0m;
+
+    private bool _isLoading = true;
+    private bool _showToast = false;
+    private string _toastMessage = "";
+
+    public bool IsInitialized { get; set; } = false;
+
     protected override async Task OnInitializedAsync()
     {
-        await PlaceOrderVM.GetDataFromRouteParameters(this.Navigation.Uri);
+        await PlaceOrderVM.InitializeLocations();
+        IsInitialized = true;
     }
 
-    private decimal GetTotalPrice()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (PlaceOrderVM.SelectedFoodItem == null)
-            return 0m;
+        if (firstRender)
+        {
+            await InvokeAsync(async () =>
+            {
+                string userName = "order";
 
-        return PlaceOrderVM.SelectedFoodItem.ItemPrice + PlaceOrderVM.SelectedIngredients.Sum(i => i.IngredientPrice ?? 0);
+                await SavePaymentMethod(userName);
+                await SaveLocation(userName);
+
+                Order = await GetOrder(userName);
+
+                if (Order != null)
+                {
+                    Price = PlaceOrderVM.CalculateTotalPrice(Order);
+                }
+
+                _isLoading = false;
+                StateHasChanged();
+            });
+        }
+    }
+
+    private async Task SavePaymentMethod(string userName)
+    {
+        if (!string.IsNullOrEmpty(Payment))
+        {
+            await Cart.SetIsCardOrder(userName, Payment == "card");
+        }
+    }
+
+    private async Task SaveLocation(string userName)
+    {
+        if (Location != 0)
+        {
+            var locationDto = PlaceOrderVM.GetLocationById(Location);
+            if (locationDto != null)
+            {
+                await Cart.SetLocation(userName, locationDto);
+            }
+        }
+    }
+
+    private async Task<BrowserOrder?> GetOrder(string userName)
+    {
+        return await Cart.GetOrder(userName);
+    }
+
+    public string GetStationSelectUrl()
+    {
+        Dictionary<string, string?> queryParameters = new() { };
+
+        if (Order != null)
+        {
+            string payment = Order.IsCardOrder ? "card" : "swipe";
+            queryParameters.Add("payment", payment);
+
+            if (Order.Location != null)
+            {
+                queryParameters.Add("location", Order.Location.Id.ToString());
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(Payment))
+                queryParameters.Add("payment", Payment);
+
+            if (Location != 0)
+                queryParameters.Add("location", Location.ToString());
+        }
+
+        return QueryHelpers.AddQueryString("/station-select", queryParameters);
+    }
+
+    private async Task HandlePlaceOrder()
+    {
+        _toastMessage = Order?.IsCardOrder == true
+            ? $"Your order of ${Price:F2} has been placed successfully!"
+            : "Your order has been placed successfully!";
+        _showToast = true;
+        StateHasChanged();
+
+        await Task.Delay(3000);
+
+        await Cart.ClearOrder("order");
+
+        Navigation.NavigateTo("/", true);
+    }
+
+    private void OnToastHidden()
+    {
+        _showToast = false;
+        StateHasChanged();
     }
 }

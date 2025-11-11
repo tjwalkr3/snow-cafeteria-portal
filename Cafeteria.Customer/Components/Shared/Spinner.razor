@@ -1,0 +1,36 @@
+<div class="spinner-container @ContainerClass">
+    <div class="spinner @SpinnerClass" style="@SpinnerStyle">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Message))
+    {
+        <p class="spinner-message @MessageClass">@Message</p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? Message { get; set; }
+
+    [Parameter]
+    public string Size { get; set; } = "medium";
+
+    [Parameter]
+    public string? ContainerClass { get; set; }
+
+    [Parameter]
+    public string? SpinnerClass { get; set; }
+
+    [Parameter]
+    public string? MessageClass { get; set; }
+
+    private string SpinnerStyle => Size switch
+    {
+        "small" => "width: 40px; height: 40px;",
+        "large" => "width: 120px; height: 120px;",
+        _ => "width: 80px; height: 80px;"
+    };
+}

@@ -1,0 +1,97 @@
+@if (IsVisible)
+{
+    <div class="toast-container position-fixed top-10 start-50 translate-middle" style="z-index: 9999;">
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <strong class="me-auto">@Title</strong>
+                <button type="button" class="btn-close btn-close-white" @onclick="Hide" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                @Message
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "Success";
+
+    [Parameter]
+    public string Message { get; set; } = "";
+
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback OnHidden { get; set; }
+
+    [Parameter]
+    public int DurationMs { get; set; } = 3000;
+
+    private System.Threading.Timer? _timer;
+
+    protected override void OnParametersSet()
+    {
+        if (IsVisible)
+        {
+            StartTimer();
+        }
+    }
+
+    private void StartTimer()
+    {
+        _timer?.Dispose();
+        _timer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+    {
+            await Hide();
+        });
+        }, null, DurationMs, System.Threading.Timeout.Infinite);
+    }
+
+    private async Task Hide()
+    {
+        IsVisible = false;
+        _timer?.Dispose();
+        await OnHidden.InvokeAsync();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}
+
+<style>
+    .toast {
+        min-width: 350px;
+        max-width: 500px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .toast-header {
+        border-bottom: none;
+    }
+
+    .toast-body {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

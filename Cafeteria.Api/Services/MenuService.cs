@@ -1,8 +1,6 @@
 using System.Data;
 using Dapper;
-using Cafeteria.Shared.DTOsOld;
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Api.Services;
 
 namespace Cafeteria.Api.Services;
 
@@ -44,65 +42,84 @@ public class MenuService : IMenuService
         return result.ToList();
     }
 
-    public async Task<List<FoodItemDtoOld>> GetFoodItemsByStation(int stationId)
+    public async Task<List<EntreeDto>> GetEntreesByStation(int stationId)
     {
         const string sql = @"
-            SELECT 
-                id,
-                station_id AS StationId,
-                item_description AS ItemDescription,
-                image_url AS ImageUrl,
-                item_price AS ItemPrice
-            FROM cafeteria.food_item
-            WHERE station_id = @station_id";
-
-        var result = await _dbConnection.QueryAsync<FoodItemDtoOld>(sql, new { station_id = stationId });
+        SELECT 
+            id AS Id, 
+            station_id AS StationId, 
+            entree_name AS EntreeName, 
+            entree_description AS EntreeDescription, 
+            entree_price AS EntreePrice, 
+            image_url AS ImageUrl
+        FROM cafeteria.entree
+        WHERE station_id = @stationId;";
+        var result = await _dbConnection.QueryAsync<EntreeDto>(sql, new { stationId });
         return result.ToList();
     }
 
-    public async Task<List<IngredientTypeDtoOld>> GetIngredientTypesByFoodItem(int foodItemId)
+    public async Task<List<SideDto>> GetSidesByStation(int stationId)
     {
         const string sql = @"
-            SELECT 
-                it.id, 
-                it.type_name AS TypeName, 
-                it.quantity
-            FROM cafeteria.ingredient_type it
-            JOIN cafeteria.food_item_ingredient_type fiit ON it.id = fiit.ingredient_type_id
-            WHERE fiit.food_item_id = @food_item_id";
-
-        var result = await _dbConnection.QueryAsync<IngredientTypeDtoOld>(sql, new { food_item_id = foodItemId });
+        SELECT 
+            id AS Id, 
+            station_id AS StationId, 
+            side_name AS SideName, 
+            side_description AS SideDescription, 
+            side_price AS SidePrice, 
+            image_url AS ImageUrl
+        FROM cafeteria.side
+        WHERE station_id = @stationId;";
+        var result = await _dbConnection.QueryAsync<SideDto>(sql, new { stationId });
         return result.ToList();
     }
 
-    public async Task<List<IngredientDtoOld>> GetIngredientsByType(int ingredientTypeId)
+    public async Task<List<DrinkDto>> GetDrinksByLocation(int locationId)
     {
         const string sql = @"
-            SELECT 
-                i.id, 
-                i.ingredient_name AS IngredientName, 
-                i.image_url AS ImageUrl, 
-                i.ingredient_price AS IngredientPrice
-            FROM cafeteria.ingredient i
-            JOIN cafeteria.ingredient_ingredient_type iit ON i.id = iit.ingredient_id
-            WHERE iit.ingredient_type_id = @ingredient_type_id";
-
-        var result = await _dbConnection.QueryAsync<IngredientDtoOld>(sql, new { ingredient_type_id = ingredientTypeId });
+            SELECT
+                d.id AS Id, 
+                d.station_id AS StationId, 
+                d.drink_name AS DrinkName, 
+                d.drink_description AS DrinkDescription, 
+                d.drink_price AS DrinkPrice, 
+                d.image_url AS ImageUrl
+            FROM cafeteria.drink d
+            INNER JOIN cafeteria.station s ON d.station_id = s.id
+            WHERE s.location_id = @locationId;";
+        var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
         return result.ToList();
     }
 
-    public async Task<IngredientDtoOld> GetIngredientById(int ingredientId)
+    public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
     {
-        const string sql = @"
+        string sql = @"
             SELECT 
-                id, 
-                ingredient_name AS IngredientName, 
-                image_url AS ImageUrl, 
-                ingredient_price AS IngredientPrice
-            FROM cafeteria.ingredient
-            WHERE id = @ingredient_id";
+                fo.id AS Id,
+                fo.food_option_name AS FoodOptionName, 
+                fo.in_stock AS InStock, 
+                fo.image_url AS ImageUrl
+            FROM cafeteria.food_option fo
+            INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
+            INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
+            WHERE fot.entree_id = @entreeId;";
+        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { entreeId });
+        return result.ToList();
+    }
 
-        var result = await _dbConnection.QuerySingleOrDefaultAsync<IngredientDtoOld>(sql, new { ingredient_id = ingredientId });
-        return result ?? throw new InvalidOperationException($"Ingredient with ID {ingredientId} not found.");
+    public async Task<List<FoodOptionDto>> GetOptionsBySide(int sideId)
+    {
+        string sql = @"
+        SELECT 
+            fo.id AS Id, 
+            fo.food_option_name AS FoodOptionName, 
+            fo.in_stock AS InStock, 
+            fo.image_url AS ImageUrl
+        FROM cafeteria.food_option fo
+        INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
+        INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
+        WHERE fot.side_id = @sideId;";
+        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { sideId });
+        return result.ToList();
     }
 }

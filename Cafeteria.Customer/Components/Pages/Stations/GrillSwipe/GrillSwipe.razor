@@ -1,0 +1,154 @@
+@page "/grill"
+@rendermode InteractiveServer
+@using Cafeteria.Shared.DTOs
+
+<PageTitle>Grill Station</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="container px-3 py-4">
+        <div class="text-center py-5">
+            <Spinner Message="Loading menu..." />
+        </div>
+    </div>
+}
+else
+{
+    <div class="container px-3 py-4">
+        <div class="mb-3">
+            <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
+                ❮ Back to Station Selection
+            </a>
+        </div>
+        <div class="mb-4">
+            <h1 class="station-page-title mb-1 fs-1 fw-bold d-flex align-items-center">
+                <i class="bi bi-fire me-3"></i>Grill Station
+            </h1>
+        </div>
+
+        <div class="modern-tabs">
+            <button class="modern-tab @(VM.ActiveTab == "entrees" ? "active" : "")" type="button"
+                @onclick="@(() => SetActiveTab("entrees"))">
+                Entrees
+            </button>
+            <button class="modern-tab @(VM.ActiveTab == "sides" ? "active" : "")" type="button"
+                @onclick="@(() => SetActiveTab("sides"))">
+                Sides
+            </button>
+            <button class="modern-tab @(VM.ActiveTab == "drinks" ? "active" : "")" type="button"
+                @onclick="@(() => SetActiveTab("drinks"))">
+                Drinks
+            </button>
+        </div>
+
+        <div class="content-area">
+            @if (VM.ActiveTab == "entrees")
+            {
+                <div class="info-banner">
+                    <div>Select 1 entrée with your meal swipe</div>
+                </div>
+
+                @foreach (var entree in VM.Entrees)
+                {
+                    <div class="meal-card @(VM.SelectedEntree?.Id == entree.Id ? "selected" : "")"
+                        @onclick="() => SelectEntree(entree)">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
+                                @if (!string.IsNullOrEmpty(entree.EntreeDescription))
+                                {
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
+                                }
+                            </div>
+                            <div class="ms-3">
+                                <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (VM.ActiveTab == "sides")
+            {
+                <div class="info-banner">
+                    <div>Select 1 side with your meal swipe</div>
+                </div>
+
+                @foreach (var side in VM.Sides)
+                {
+                    <div class="meal-card @(VM.SelectedSide?.Id == side.Id ? "selected" : "")" @onclick="() => SelectSide(side)">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1 fw-600">@side.SideName</h5>
+                                @if (!string.IsNullOrEmpty(side.SideDescription))
+                                {
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
+                                }
+                            </div>
+                            <div>
+                                <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (VM.ActiveTab == "drinks")
+            {
+                <div class="info-banner info">
+                    <div>
+                        <i class="bi bi-info-circle me-2"></i>Select 1 drink included with your meal swipe
+                    </div>
+                </div>
+
+                @if (VM.Drinks.Any())
+                {
+                    @foreach (var drink in VM.Drinks)
+                    {
+                        <div class="meal-card @(VM.SelectedDrink?.Id == drink.Id ? "selected" : "")"
+                            @onclick="() => SelectDrink(drink)">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1 fw-600">@drink.DrinkName</h5>
+                                    @if (!string.IsNullOrEmpty(drink.DrinkDescription))
+                                    {
+                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
+                                    }
+                                </div>
+                                <div>
+                                    @if (VM.SelectedDrink?.Id == drink.Id)
+                                    {
+                                        <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="meal-card selected">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1 fw-600">Fountain Drink</h5>
+                                <p class="text-muted mb-0" style="font-size: 0.9rem;">Included with your meal</p>
+                            </div>
+                            <div>
+                                <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="footer-bar">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span style="color: #6c757d; font-size: 0.95rem;">@VM.GetSelectionCount() items selected</span>
+                </div>
+                <button type="button" class="add-btn" disabled="@(!VM.IsValidSelection())" @onclick="AddToOrder">
+                    Add to Order
+                </button>
+            </div>
+        </div>
+    </div>
+}
