@@ -236,6 +236,13 @@ VALUES
         'Small pizza with two toppings',
         5.69,
         'https://picsum.photos/id/365/150/150'
+    ),
+    (
+        2,
+        'Deli Sandwich',
+        'A sandwich with your choice of meat, cheese, toppings, and dressing',
+        6.79,
+        'https://picsum.photos/id/431/150/150'
     );
 
 INSERT INTO
@@ -253,6 +260,13 @@ VALUES
         'Crispy golden hashbrowns',
         1.49,
         'https://picsum.photos/id/550/150/150'
+    ),
+    (
+        2,
+        'Chips',
+        'Your choice of crispy chips from the selection on the shelf',
+        0.89,
+        'https://picsum.photos/id/1010/150/150'
     ),
     (
         3,
@@ -399,6 +413,56 @@ VALUES
         'Breakfast Ham',
         true,
         'https://picsum.photos/id/490/150/150'
+    ),
+    (
+        'White Bread',
+        true,
+        'https://picsum.photos/id/490/150/150'
+    ),
+    (
+        'Wheat',
+        true,
+        'https://picsum.photos/id/490/150/150'
+    ),
+    (
+        'Marble Rye',
+        true,
+        'https://picsum.photos/id/490/150/150'
+    ),
+    (
+        'Sourdough',
+        true,
+        'https://picsum.photos/id/490/150/150'
+    ),
+    (
+        'American',
+        true,
+        'https://picsum.photos/id/491/150/150'
+    ),
+    (
+        'Cheddar',
+        true,
+        'https://picsum.photos/id/492/150/150'
+    ),
+    (
+        'Provolone',
+        true,
+        'https://picsum.photos/id/493/150/150'
+    ),
+    (
+        'Pepper Jack',
+        true,
+        'https://picsum.photos/id/494/150/150'
+    ),
+    (
+        'Swiss',
+        true,
+        'https://picsum.photos/id/495/150/150'
+    ),
+    (
+        'Mozzarella',
+        true,
+        'https://picsum.photos/id/496/150/150'
     );
 
 INSERT INTO
@@ -414,27 +478,40 @@ VALUES
     -- Breakfast Plate options (entree_id 3)
     ('Plate Base', 1, 1, 0.00, 3, NULL),
     ('Meat Choice', 1, 1, 0.00, 3, NULL),
-    -- Two Toppings Pizza (entree_id 4)
-    ('Toppings', 2, 12, 0.89, 4, NULL);
+    -- Two Toppings Pizza (entree_id 7)
+    ('Toppings', 2, 12, 0.89, 7, NULL),
+    -- Deli sandwich (entree_id 8)
+    ('Bread', 1, 1, 0.00, 8, NULL),
+    ('Cheese', 1, 1, 0.00, 8, NULL);
 
 INSERT INTO
     cafeteria.option_option_type (food_option_id, food_option_type_id)
 VALUES
-    (13, 1), -- Scrambled Eggs
-    (14, 1), -- Potatoes
-    (15, 1), -- One Slice of Toast
-    (16, 2), -- Breakfast Bacon
-    (17, 2), -- Breakfast Sausage
-    (18, 2), -- Breakfast Ham
-    (1, 3),
-    (2, 3),
-    (3, 3),
-    (4, 3),
-    (5, 3),
-    (6, 3),
-    (7, 3),
-    (8, 3),
-    (9, 3),
-    (10, 3),
-    (11, 3),
-    (12, 3);
+    (13, 1), -- Scrambled Eggs -> Plate Base
+    (14, 1), -- Potatoes -> Plate Base
+    (15, 1), -- One Slice of Toast -> Plate Base
+    (16, 2), -- Breakfast Bacon -> Meat Choice
+    (17, 2), -- Breakfast Sausage -> Meat Choice
+    (18, 2), -- Breakfast Ham -> Meat Choice
+    (1, 3), -- Extra Cheese -> Toppings
+    (2, 3), -- Pepperoni -> Toppings
+    (3, 3), -- Sausage -> Toppings
+    (4, 3), -- Bacon -> Toppings
+    (5, 3), -- Chicken -> Toppings
+    (6, 3), -- Ham -> Toppings
+    (7, 3), -- Olives -> Toppings
+    (8, 3), -- Mushrooms -> Toppings
+    (9, 3), -- Onions -> Toppings
+    (10, 3), -- Pineapple -> Toppings
+    (11, 3), -- Bell Peppers -> Toppings
+    (12, 3), -- Banana Peppers -> Toppings
+    (19, 4), -- White Bread -> Bread
+    (20, 4), -- Wheat -> Bread
+    (21, 4), -- Marble Rye -> Bread
+    (22, 4), -- Sourdough -> Bread
+    (23, 5), -- American -> Cheese
+    (24, 5), -- Cheddar -> Cheese
+    (25, 5), -- Provolone -> Cheese
+    (26, 5), -- Pepper Jack -> Cheese
+    (27, 5), -- Swiss -> Cheese
+    (28, 5); -- Mozzarella -> Cheese
