@@ -11,4 +11,6 @@ public interface IMenuService
     Task<List<DrinkDto>> GetDrinksByLocation(int locationId);
     Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId);
     Task<List<FoodOptionDto>> GetOptionsBySide(int sideId);
+    Task<List<FoodOptionTypeDto>> GetOptionTypesByEntree(int entreeId);
+    Task<List<FoodOptionTypeWithOptionsDto>> GetOptionTypesWithOptionsByEntree(int entreeId);
 }

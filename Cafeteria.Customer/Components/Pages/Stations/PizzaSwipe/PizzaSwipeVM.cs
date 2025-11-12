@@ -16,11 +16,13 @@ public class PizzaSwipeVM : IPizzaSwipeVM
     }
 
     public List<EntreeDto> Entrees { get; private set; } = new();
+    public List<SideDto> Sides { get; private set; } = new();
     public List<DrinkDto> Drinks { get; private set; } = new();
     public List<FoodOptionDto> AllEntreeOptions { get; private set; } = new();
 
     public string ActiveTab { get; private set; } = "toppings";
     public EntreeDto? SelectedEntree { get; private set; }
+    public SideDto? SelectedSide { get; private set; }
     public DrinkDto? SelectedDrink { get; private set; }
     public List<string> SelectedToppings { get; private set; } = new();
 
@@ -35,6 +37,7 @@ public class PizzaSwipeVM : IPizzaSwipeVM
         LocationId = locationId;
 
         Entrees = await _menuService.GetEntreesByStation(stationId);
+        Sides = await _menuService.GetSidesByStation(stationId);
         Drinks = await _menuService.GetDrinksByLocation(locationId);
 
         var pizzaEntree = Entrees.FirstOrDefault();
@@ -69,6 +72,11 @@ public class PizzaSwipeVM : IPizzaSwipeVM
         SelectedEntree = entree;
     }
 
+    public void SelectSide(SideDto side)
+    {
+        SelectedSide = side;
+    }
+
     public void SelectDrink(DrinkDto drink)
     {
         SelectedDrink = drink;
@@ -96,12 +104,12 @@ public class PizzaSwipeVM : IPizzaSwipeVM
 
     public bool IsValidSelection()
     {
-        return SelectedToppings.Count >= 2 && SelectedDrink != null;
+        return SelectedToppings.Count >= 2 && SelectedSide != null && SelectedDrink != null;
     }
 
     public async Task<bool> AddToOrderAsync()
     {
-        if (!IsValidSelection() || SelectedDrink == null)
+        if (!IsValidSelection() || SelectedDrink == null || SelectedSide == null)
             return false;
 
         if (SelectedEntree == null && Entrees.Any())
@@ -129,6 +137,7 @@ public class PizzaSwipeVM : IPizzaSwipeVM
         }
 
         await _cartService.AddDrink(CART_KEY, SelectedDrink);
+        await _cartService.AddSide(CART_KEY, SelectedSide);
 
         ClearSelections();
         return true;
@@ -136,6 +145,7 @@ public class PizzaSwipeVM : IPizzaSwipeVM
 
     private void ClearSelections()
     {
+        SelectedSide = null;
         SelectedDrink = null;
         SelectedToppings.Clear();
         ActiveTab = "toppings";

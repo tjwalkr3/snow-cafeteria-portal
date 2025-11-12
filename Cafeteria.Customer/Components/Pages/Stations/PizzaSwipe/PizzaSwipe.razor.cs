@@ -55,6 +55,12 @@ public partial class PizzaSwipe : ComponentBase
         StateHasChanged();
     }
 
+    private void SelectSide(Cafeteria.Shared.DTOs.SideDto side)
+    {
+        VM.SelectSide(side);
+        StateHasChanged();
+    }
+
     private void SelectDrink(Cafeteria.Shared.DTOs.DrinkDto drink)
     {
         VM.SelectDrink(drink);

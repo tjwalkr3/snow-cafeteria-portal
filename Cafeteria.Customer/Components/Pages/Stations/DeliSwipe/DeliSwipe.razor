@@ -54,98 +54,70 @@ else
                     <div>~Comes with a Fountain Drink and 1 side~</div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="d-block mb-2 text-uppercase"
-                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Choose Your
-                        Bread</label>
-                    <div class="option-group">
-                        @foreach (var bread in VM.BreadOptions)
-                        {
-                            <button type="button" class="option-btn @(VM.SelectedBread == bread ? "selected" : "")"
-                                @onclick="() => SetBread(bread)">
-                                @bread
-                            </button>
-                        }
-                    </div>
-                </div>
+                @* Dynamic rendering of option types *@
+                @foreach (var optionTypeWithOptions in VM.OptionTypes)
+                {
+                    var optionType = optionTypeWithOptions.OptionType;
+                    var isMultiSelect = optionType.MaxAmount > 1 || optionType.FoodOptionTypeName == "Toppings";
+                    var selectedCount = VM.GetSelectedOptionsForType(optionType.Id).Count;
+                    var extraCharge = selectedCount > optionType.NumIncluded ? 
+                        (selectedCount - optionType.NumIncluded) * optionType.FoodOptionPrice : 0;
 
-                <div class="mb-4">
-                    <label class="d-block mb-2 text-uppercase"
-                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
-                        Choose Your Meat (1)
-                        <small class="text-muted ms-2" style="font-size: 0.7rem;">Additional Meats $0.75</small>
-                    </label>
-                    <div class="option-group">
-                        @foreach (var meat in VM.MeatOptions)
-                        {
-                            <button type="button" class="option-btn @(VM.SelectedMeat == meat ? "selected" : "")"
-                                @onclick="() => SetMeat(meat)">
-                                @meat
-                            </button>
-                        }
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="d-block mb-2 text-uppercase"
-                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Choose Your Cheese
-                        (1)</label>
-                    <div class="option-group">
-                        @foreach (var cheese in VM.CheeseOptions)
-                        {
-                            <button type="button" class="option-btn @(VM.SelectedCheese == cheese ? "selected" : "")"
-                                @onclick="() => SetCheese(cheese)">
-                                @cheese
-                            </button>
-                        }
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="d-block mb-2 text-uppercase"
-                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
-                        Choose Your Toppings (3)
-                        <small class="text-muted ms-2" style="font-size: 0.7rem;">Additional toppings $0.50</small>
-                    </label>
-                    <div class="option-group">
-                        @foreach (var topping in VM.ToppingOptions)
-                        {
-                            <button type="button" class="option-btn @(VM.SelectedToppings.Contains(topping) ? "selected" : "")"
-                                @onclick="() => ToggleTopping(topping)">
-                                @topping
-                                @if (VM.SelectedToppings.Contains(topping))
+                    <div class="mb-4">
+                        <label class="d-block mb-2 text-uppercase"
+                            style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
+                            Choose Your @optionType.FoodOptionTypeName (@optionType.NumIncluded)
+                            @if (optionType.FoodOptionPrice > 0 && optionType.MaxAmount > optionType.NumIncluded)
+                            {
+                                <small class="text-muted ms-2" style="font-size: 0.7rem;">
+                                    Additional @optionType.FoodOptionTypeName.ToLower() $@optionType.FoodOptionPrice.ToString("F2")
+                                </small>
+                            }
+                        </label>
+                        <div class="option-group">
+                            @foreach (var option in optionTypeWithOptions.Options)
+                            {
+                                var isSelected = VM.IsOptionSelected(optionType.Id, option.FoodOptionName);
+                                
+                                @if (isMultiSelect)
                                 {
-                                    <i class="bi bi-check-circle-fill ms-1"></i>
+                                    <button type="button" 
+                                        class="option-btn @(isSelected ? "selected" : "")"
+                                        @onclick="() => ToggleOptionForType(optionType.Id, option.FoodOptionName)">
+                                        @option.FoodOptionName
+                                        @if (isSelected)
+                                        {
+                                            <i class="bi bi-check-circle-fill ms-1"></i>
+                                        }
+                                    </button>
                                 }
-                            </button>
-                        }
-                    </div>
-                    @if (VM.SelectedToppings.Count > 3)
-                    {
-                        <div class="info-banner warning mt-3">
-                            <div>
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                Additional charge: $@((VM.SelectedToppings.Count - 3) * 0.50m) for @(VM.SelectedToppings.Count - 3)
-                                extra topping(s)
-                            </div>
+                                else
+                                {
+                                    <button type="button" 
+                                        class="option-btn @(isSelected ? "selected" : "")"
+                                        @onclick="() => SetOptionForType(optionType.Id, option.FoodOptionName)">
+                                        @option.FoodOptionName
+                                        @if (isSelected)
+                                        {
+                                            <i class="bi bi-check-circle-fill ms-2"></i>
+                                        }
+                                    </button>
+                                }
+                            }
                         </div>
-                    }
-                </div>
 
-                <div class="mb-4">
-                    <label class="d-block mb-2 text-uppercase"
-                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Choose Your
-                        Dressing (1)</label>
-                    <div class="option-group">
-                        @foreach (var dressing in VM.DressingOptions)
+                        @if (extraCharge > 0)
                         {
-                            <button type="button" class="option-btn @(VM.SelectedDressing == dressing ? "selected" : "")"
-                                @onclick="() => SetDressing(dressing)">
-                                @dressing
-                            </button>
+                            <div class="info-banner warning mt-3">
+                                <div>
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Additional charge: $@extraCharge.ToString("F2") for @(selectedCount - optionType.NumIncluded)
+                                    extra @optionType.FoodOptionTypeName.ToLower()
+                                </div>
+                            </div>
                         }
                     </div>
-                </div>
+                }
             }
             else if (VM.ActiveTab == "sides")
             {
@@ -164,8 +136,12 @@ else
                                     <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
                                 }
                             </div>
-                            <div>
+                            <div class="d-flex align-items-center gap-3">
                                 <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
+                                @if (VM.SelectedSide?.Id == side.Id)
+                                {
+                                    <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
+                                }
                             </div>
                         </div>
                     </div>
@@ -193,7 +169,8 @@ else
                                         <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
                                     }
                                 </div>
-                                <div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
                                     @if (VM.SelectedDrink?.Id == drink.Id)
                                     {
                                         <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>

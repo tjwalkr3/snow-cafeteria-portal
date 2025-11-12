@@ -8,10 +8,13 @@ public interface IDeliSwipeVM
     List<SideDto> Sides { get; }
     List<DrinkDto> Drinks { get; }
     List<FoodOptionDto> AllEntreeOptions { get; }
+    List<FoodOptionTypeWithOptionsDto> OptionTypes { get; }
 
     string ActiveTab { get; }
     SideDto? SelectedSide { get; }
     DrinkDto? SelectedDrink { get; }
+
+    Dictionary<int, List<string>> SelectedOptionsByType { get; }
 
     string? SelectedBread { get; }
     string? SelectedMeat { get; }
@@ -37,6 +40,11 @@ public interface IDeliSwipeVM
     void SetMeat(string meat);
     void SetCheese(string cheese);
     void SetDressing(string dressing);
+
+    void ToggleOptionForType(int optionTypeId, string optionName);
+    void SetOptionForType(int optionTypeId, string optionName);
+    List<string> GetSelectedOptionsForType(int optionTypeId);
+    bool IsOptionSelected(int optionTypeId, string optionName);
 
     int GetSelectionCount();
     string GetSelectionSummary();
