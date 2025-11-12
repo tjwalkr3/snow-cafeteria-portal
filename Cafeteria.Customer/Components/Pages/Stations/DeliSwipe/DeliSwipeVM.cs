@@ -76,7 +76,7 @@ public class DeliSwipeVM : IDeliSwipeVM
                                                        o.FoodOptionName.Contains("Mozzarella"))
                                            .Select(o => o.FoodOptionName).ToList();
 
-            ToppingOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Lettuce") ||
+            ToppingOptions = AllEntreeOptions.Where(o => (o.FoodOptionName.Contains("Lettuce") ||
                                                         o.FoodOptionName.Contains("Spinach") ||
                                                         o.FoodOptionName.Contains("Olive") ||
                                                         o.FoodOptionName.Contains("Cucumber") ||
@@ -84,7 +84,8 @@ public class DeliSwipeVM : IDeliSwipeVM
                                                         o.FoodOptionName.Contains("Sprout") ||
                                                         o.FoodOptionName.Contains("Pepper") ||
                                                         o.FoodOptionName.Contains("Onion") ||
-                                                        o.FoodOptionName.Contains("Pickle"))
+                                                        o.FoodOptionName.Contains("Pickle")) &&
+                                                        !o.FoodOptionName.Contains("Pepper Jack"))
                                             .Select(o => o.FoodOptionName).ToList();
 
             DressingOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Oil") ||
