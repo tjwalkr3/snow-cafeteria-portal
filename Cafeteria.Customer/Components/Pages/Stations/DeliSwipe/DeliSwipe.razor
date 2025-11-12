@@ -64,6 +64,10 @@ else
                             <button type="button" class="option-btn @(VM.SelectedBread == bread ? "selected" : "")"
                                 @onclick="() => SetBread(bread)">
                                 @bread
+                                @if (VM.SelectedBread == bread)
+                                {
+                                    <i class="bi bi-check-circle-fill ms-2"></i>
+                                }
                             </button>
                         }
                     </div>
@@ -81,6 +85,10 @@ else
                             <button type="button" class="option-btn @(VM.SelectedMeat == meat ? "selected" : "")"
                                 @onclick="() => SetMeat(meat)">
                                 @meat
+                                @if (VM.SelectedMeat == meat)
+                                {
+                                    <i class="bi bi-check-circle-fill ms-2"></i>
+                                }
                             </button>
                         }
                     </div>
@@ -96,6 +104,10 @@ else
                             <button type="button" class="option-btn @(VM.SelectedCheese == cheese ? "selected" : "")"
                                 @onclick="() => SetCheese(cheese)">
                                 @cheese
+                                @if (VM.SelectedCheese == cheese)
+                                {
+                                    <i class="bi bi-check-circle-fill ms-2"></i>
+                                }
                             </button>
                         }
                     </div>
@@ -142,6 +154,10 @@ else
                             <button type="button" class="option-btn @(VM.SelectedDressing == dressing ? "selected" : "")"
                                 @onclick="() => SetDressing(dressing)">
                                 @dressing
+                                @if (VM.SelectedDressing == dressing)
+                                {
+                                    <i class="bi bi-check-circle-fill ms-2"></i>
+                                }
                             </button>
                         }
                     </div>
@@ -164,8 +180,12 @@ else
                                     <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
                                 }
                             </div>
-                            <div>
+                            <div class="d-flex align-items-center gap-3">
                                 <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
+                                @if (VM.SelectedSide?.Id == side.Id)
+                                {
+                                    <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
+                                }
                             </div>
                         </div>
                     </div>
