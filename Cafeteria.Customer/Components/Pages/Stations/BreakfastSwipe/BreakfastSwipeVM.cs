@@ -76,12 +76,12 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
 
     public bool RequiresMeatSelection(int entreeId)
     {
-        return entreeId == 1 || entreeId == 2 || entreeId == 4 || entreeId == 7;
+        return entreeId == 3;
     }
 
     public bool RequiresBreadSelection(int entreeId)
     {
-        return entreeId == 1;
+        return false;
     }
 
     public int GetSelectionCount()

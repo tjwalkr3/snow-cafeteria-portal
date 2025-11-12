@@ -266,6 +266,90 @@ VALUES
     );
 
 INSERT INTO
+    cafeteria.food_option (food_option_name, in_stock, image_url)
+VALUES
+    (
+        'Extra Cheese',
+        true,
+        'https://picsum.photos/id/312/150/150'
+    ),
+    (
+        'Pepperoni',
+        true,
+        'https://picsum.photos/id/326/150/150'
+    ),
+    (
+        'Sausage',
+        true,
+        'https://picsum.photos/id/340/150/150'
+    ),
+    (
+        'Bacon',
+        true,
+        'https://picsum.photos/id/352/150/150'
+    ),
+    (
+        'Chicken',
+        true,
+        'https://picsum.photos/id/361/150/150'
+    ),
+    (
+        'Ham',
+        true,
+        'https://picsum.photos/id/372/150/150'
+    ),
+    (
+        'Olives',
+        true,
+        'https://picsum.photos/id/384/150/150'
+    ),
+    (
+        'Mushrooms',
+        true,
+        'https://picsum.photos/id/395/150/150'
+    ),
+    (
+        'Onions',
+        true,
+        'https://picsum.photos/id/408/150/150'
+    ),
+    (
+        'Pineapple',
+        true,
+        'https://picsum.photos/id/419/150/150'
+    ),
+    (
+        'Bell Peppers',
+        true,
+        'https://picsum.photos/id/428/150/150'
+    ),
+    (
+        'Banana Peppers',
+        true,
+        'https://picsum.photos/id/437/150/150'
+    ),
+    (
+        'Breakfast Plate Base',
+        true,
+        'https://picsum.photos/id/445/150/150'
+    ),
+    (
+        'Breakfast Bacon',
+        true,
+        'https://picsum.photos/id/478/150/150'
+    ),
+    (
+        'Breakfast Sausage',
+        true,
+        'https://picsum.photos/id/489/150/150'
+    ),
+    (
+        'Breakfast Ham',
+        true,
+        'https://picsum.photos/id/490/150/150'
+    );
+
+INSERT INTO
     cafeteria.food_option_type (
         food_option_type_name,
         num_included,
@@ -276,47 +360,30 @@ INSERT INTO
     )
 VALUES
     -- Breakfast Plate options (entree_id 3)
-    ('Eggs', 1, 1, 0.00, 3, NULL),
-    ('Potatoes', 1, 1, 0.00, 3, NULL),
-    ('Bread', 1, 1, 0.00, 3, NULL),
-    ('Breakfast Meat', 1, 1, 0.00, 3, NULL),
+    ('Plate Base', 1, 1, 0.00, 3, NULL),
+    ('Meat Choice', 1, 1, 0.00, 3, NULL),
     -- Two Toppings Pizza (entree_id 4)
-    ('Toppings', 2, 2, 0.00, 4, NULL),
-    ('Extra Toppings', 0, 10, 0.89, 4, NULL);
+    ('Toppings', 2, 12, 0.89, 4, NULL);
 
 INSERT INTO
     cafeteria.option_option_type (food_option_id, food_option_type_id)
 VALUES
-    -- Link breakfast items to Breakfast Plate options
+    -- Link Breakfast Plate Base to Plate Base option type (option_type_id 1)
     (13, 1),
+    -- Link breakfast meats to Breakfast Plate Meat Choice (option_type_id 2)
     (14, 2),
-    (15, 3),
-    (16, 4),
-    (17, 4),
-    (18, 4),
-    -- Link pizza toppings to Two Toppings Pizza (option_type_id 5)
-    (1, 5),
-    (2, 5),
-    (3, 5),
-    (4, 5),
-    (5, 5),
-    (6, 5),
-    (7, 5),
-    (8, 5),
-    (9, 5),
-    (10, 5),
-    (11, 5),
-    (12, 5),
-    -- Link pizza toppings to Extra Toppings for Two Toppings Pizza (option_type_id 6)
-    (1, 6),
-    (2, 6),
-    (3, 6),
-    (4, 6),
-    (5, 6),
-    (6, 6),
-    (7, 6),
-    (8, 6),
-    (9, 6),
-    (10, 6),
-    (11, 6),
-    (12, 6);
+    (15, 2),
+    (16, 2),
+    -- Link pizza toppings to Two Toppings Pizza (option_type_id 3)
+    (1, 3),
+    (2, 3),
+    (3, 3),
+    (4, 3),
+    (5, 3),
+    (6, 3),
+    (7, 3),
+    (8, 3),
+    (9, 3),
+    (10, 3),
+    (11, 3),
+    (12, 3);

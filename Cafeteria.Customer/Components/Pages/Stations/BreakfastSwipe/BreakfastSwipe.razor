@@ -71,8 +71,8 @@ else
                         @if (VM.SelectedEntree?.Id == entree.Id)
                         {
                             <div class="mt-3 pt-3" style="border-top: 2px solid #e9ecef;">
-                                @* Only Breakfast Plate (ID 3) has options *@
-                                @if (entree.Id == 3)
+                                @* Show meat options for all breakfast items that require meat *@
+                                @if (VM.RequiresMeatSelection(entree.Id))
                                 {
                                     <div>
                                         <label class="d-block mb-2 text-uppercase"
