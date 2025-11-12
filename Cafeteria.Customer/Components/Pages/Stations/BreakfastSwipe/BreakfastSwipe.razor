@@ -71,93 +71,8 @@ else
                         @if (VM.SelectedEntree?.Id == entree.Id)
                         {
                             <div class="mt-3 pt-3" style="border-top: 2px solid #e9ecef;">
-                                @if (entree.Id == 1)
-                                {
-                                    <div class="mb-3">
-                                        <label class="d-block mb-2 text-uppercase"
-                                            style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Bread
-                                            Choice</label>
-                                        <div class="option-group">
-                                            <button type="button"
-                                                class="option-btn @(VM.SelectedBreadOption == "English Muffin" ? "selected" : "")"
-                                                @onclick="@(() => SetBreadOption("English Muffin"))" @onclick:stopPropagation="true">
-                                                English Muffin
-                                            </button>
-                                            <button type="button"
-                                                class="option-btn @(VM.SelectedBreadOption == "Biscuit" ? "selected" : "")"
-                                                @onclick="@(() => SetBreadOption("Biscuit"))" @onclick:stopPropagation="true">
-                                                Biscuit
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="d-block mb-2 text-uppercase"
-                                            style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Meat
-                                            Choice</label>
-                                        <div class="option-group">
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Sausage" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Sausage"))" @onclick:stopPropagation="true">
-                                                Sausage
-                                            </button>
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Bacon" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Bacon"))" @onclick:stopPropagation="true">
-                                                Bacon
-                                            </button>
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Ham" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Ham"))" @onclick:stopPropagation="true">
-                                                Ham
-                                            </button>
-                                        </div>
-                                    </div>
-                                }
-
-                                @if (entree.Id == 2)
-                                {
-                                    <div>
-                                        <label class="d-block mb-2 text-uppercase"
-                                            style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Meat
-                                            Choice</label>
-                                        <div class="option-group">
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Bacon" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Bacon"))" @onclick:stopPropagation="true">
-                                                Bacon
-                                            </button>
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Ham" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Ham"))" @onclick:stopPropagation="true">
-                                                Ham
-                                            </button>
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Sausage" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Sausage"))" @onclick:stopPropagation="true">
-                                                Sausage
-                                            </button>
-                                        </div>
-                                    </div>
-                                }
-
-                                @if (entree.Id == 4)
-                                {
-                                    <div>
-                                        <label class="d-block mb-2 text-uppercase"
-                                            style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">Meat
-                                            Choice</label>
-                                        <div class="option-group">
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Sausage" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Sausage"))" @onclick:stopPropagation="true">
-                                                Sausage
-                                            </button>
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Bacon" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Bacon"))" @onclick:stopPropagation="true">
-                                                Bacon
-                                            </button>
-                                            <button type="button" class="option-btn @(VM.SelectedMeatOption == "Ham" ? "selected" : "")"
-                                                @onclick="@(() => SetMeatOption("Ham"))" @onclick:stopPropagation="true">
-                                                Ham
-                                            </button>
-                                        </div>
-                                    </div>
-                                }
-
-                                @if (entree.Id == 7)
+                                @* Only Breakfast Plate (ID 3) has options *@
+                                @if (entree.Id == 3)
                                 {
                                     <div>
                                         <label class="d-block mb-2 text-uppercase"
@@ -230,7 +145,8 @@ else
                                         <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
                                     }
                                 </div>
-                                <div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
                                     @if (VM.SelectedDrink?.Id == drink.Id)
                                     {
                                         <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>

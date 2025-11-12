@@ -113,7 +113,8 @@ else
                                         <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
                                     }
                                 </div>
-                                <div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
                                     @if (VM.SelectedDrink?.Id == drink.Id)
                                     {
                                         <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
