@@ -210,6 +210,27 @@ VALUES
         'https://picsum.photos/id/431/150/150'
     ),
     (
+        3,
+        'Chicken Quesadilla',
+        'Grilled chicken and cheese in a warm tortilla',
+        5.29,
+        'https://picsum.photos/id/431/150/150'
+    ),
+    (
+        3,
+        'Steak Quesadilla',
+        'Grilled steak and cheese in a warm tortilla',
+        5.49,
+        'https://picsum.photos/id/431/150/150'
+    ),
+    (
+        3,
+        'Cheese Quesadilla',
+        'Grilled cheese in a warm tortilla',
+        3.99,
+        'https://picsum.photos/id/431/150/150'
+    ),
+    (
         4,
         'Two Toppings Pizza',
         'Small pizza with two toppings',
