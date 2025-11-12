@@ -19,10 +19,13 @@ public class DeliSwipeVM : IDeliSwipeVM
     public List<SideDto> Sides { get; private set; } = new();
     public List<DrinkDto> Drinks { get; private set; } = new();
     public List<FoodOptionDto> AllEntreeOptions { get; private set; } = new();
+    public List<FoodOptionTypeWithOptionsDto> OptionTypes { get; private set; } = new();
 
     public string ActiveTab { get; private set; } = "sandwich";
     public SideDto? SelectedSide { get; private set; }
     public DrinkDto? SelectedDrink { get; private set; }
+
+    public Dictionary<int, List<string>> SelectedOptionsByType { get; private set; } = new();
 
     public string? SelectedBread { get; private set; }
     public string? SelectedMeat { get; private set; }
@@ -52,62 +55,34 @@ public class DeliSwipeVM : IDeliSwipeVM
         if (customSandwichEntree != null)
         {
             AllEntreeOptions = await _menuService.GetOptionsByEntree(customSandwichEntree.Id);
+            OptionTypes = await _menuService.GetOptionTypesWithOptionsByEntree(customSandwichEntree.Id);
 
-            BreadOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Bread") ||
-                                                       o.FoodOptionName.Contains("Bun") ||
-                                                       o.FoodOptionName.Contains("Rye") ||
-                                                       o.FoodOptionName.Contains("Sourdough") ||
-                                                       o.FoodOptionName.Contains("Wheat") ||
-                                                       o.FoodOptionName.Contains("Pita"))
-                                          .Select(o => o.FoodOptionName).ToList();
-
-            MeatOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Ham") ||
-                                                     o.FoodOptionName.Contains("Turkey") ||
-                                                     o.FoodOptionName.Contains("Bacon") ||
-                                                     o.FoodOptionName.Contains("Chicken") ||
-                                                     o.FoodOptionName.Contains("Tuna"))
-                                         .Select(o => o.FoodOptionName).ToList();
-
-            CheeseOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Cheese") ||
-                                                       o.FoodOptionName.Contains("American") ||
-                                                       o.FoodOptionName.Contains("Provolone") ||
-                                                       o.FoodOptionName.Contains("Cheddar") ||
-                                                       o.FoodOptionName.Contains("Swiss") ||
-                                                       o.FoodOptionName.Contains("Mozzarella"))
-                                           .Select(o => o.FoodOptionName).ToList();
-
-            ToppingOptions = AllEntreeOptions.Where(o => (o.FoodOptionName.Contains("Lettuce") ||
-                                                        o.FoodOptionName.Contains("Spinach") ||
-                                                        o.FoodOptionName.Contains("Olive") ||
-                                                        o.FoodOptionName.Contains("Cucumber") ||
-                                                        o.FoodOptionName.Contains("Tomato") ||
-                                                        o.FoodOptionName.Contains("Sprout") ||
-                                                        o.FoodOptionName.Contains("Pepper") ||
-                                                        o.FoodOptionName.Contains("Onion") ||
-                                                        o.FoodOptionName.Contains("Pickle")) &&
-                                                        !o.FoodOptionName.Contains("Pepper Jack"))
-                                            .Select(o => o.FoodOptionName).ToList();
-
-            DressingOptions = AllEntreeOptions.Where(o => o.FoodOptionName.Contains("Oil") ||
-                                                         o.FoodOptionName.Contains("Vinegar") ||
-                                                         o.FoodOptionName.Contains("Ranch") ||
-                                                         o.FoodOptionName.Contains("Island") ||
-                                                         o.FoodOptionName.Contains("Italian") ||
-                                                         o.FoodOptionName.Contains("Caesar") ||
-                                                         o.FoodOptionName.Contains("Vinaigrette") ||
-                                                         o.FoodOptionName.Contains("Mustard") ||
-                                                         o.FoodOptionName.Contains("Mayo"))
-                                             .Select(o => o.FoodOptionName).ToList();
-
-            if (!BreadOptions.Any())
-            {
-                BreadOptions = new() { "Pretzel Bun", "Marble Rye", "Sourdough", "Pita Bread", "Wheat", "White Bread" };
-                MeatOptions = new() { "Ham", "Turkey", "Bacon", "Grilled Chicken", "Tuna Salad" };
-                CheeseOptions = new() { "American", "Provolone", "Cheddar", "Pepper Jack", "Swiss", "Mozzarella" };
-                ToppingOptions = new() { "Spinach", "Romaine", "Green Leaf Lettuce", "Olives", "Cucumber", "Tomato", "Sprouts", "Bell Pepper", "Onions", "Pickles", "Banana Peppers" };
-                DressingOptions = new() { "Oil", "Vinegar", "Ranch", "1000 Island", "Italian", "Caesar", "Raspberry Vinaigrette", "Honey Mustard", "Mayonnaise", "Mustard" };
-            }
+            // Populate legacy option lists for backward compatibility
+            PopulateLegacyOptions();
         }
+    }
+
+    private void PopulateLegacyOptions()
+    {
+        var breadType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Bread");
+        if (breadType != null)
+            BreadOptions = breadType.Options.Select(o => o.FoodOptionName).ToList();
+
+        var meatType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Meat");
+        if (meatType != null)
+            MeatOptions = meatType.Options.Select(o => o.FoodOptionName).ToList();
+
+        var cheeseType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Cheese");
+        if (cheeseType != null)
+            CheeseOptions = cheeseType.Options.Select(o => o.FoodOptionName).ToList();
+
+        var toppingsType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Toppings");
+        if (toppingsType != null)
+            ToppingOptions = toppingsType.Options.Select(o => o.FoodOptionName).ToList();
+
+        var dressingType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Dressing");
+        if (dressingType != null)
+            DressingOptions = dressingType.Options.Select(o => o.FoodOptionName).ToList();
     }
 
     public void SetActiveTab(string tab)
@@ -135,26 +110,105 @@ public class DeliSwipeVM : IDeliSwipeVM
         {
             SelectedToppings.Add(topping);
         }
+
+        var toppingsType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Toppings");
+        if (toppingsType != null)
+        {
+            SelectedOptionsByType[toppingsType.OptionType.Id] = new List<string>(SelectedToppings);
+        }
+    }
+
+    public void ToggleOptionForType(int optionTypeId, string optionName)
+    {
+        if (!SelectedOptionsByType.ContainsKey(optionTypeId))
+        {
+            SelectedOptionsByType[optionTypeId] = new List<string>();
+        }
+
+        var selectedOptions = SelectedOptionsByType[optionTypeId];
+        if (selectedOptions.Contains(optionName))
+        {
+            selectedOptions.Remove(optionName);
+        }
+        else
+        {
+            selectedOptions.Add(optionName);
+        }
+    }
+
+    public void SetOptionForType(int optionTypeId, string optionName)
+    {
+        SelectedOptionsByType[optionTypeId] = new List<string> { optionName };
+
+        var optionType = OptionTypes.FirstOrDefault(ot => ot.OptionType.Id == optionTypeId);
+        if (optionType != null)
+        {
+            switch (optionType.OptionType.FoodOptionTypeName)
+            {
+                case "Bread":
+                    SelectedBread = optionName;
+                    break;
+                case "Meat":
+                    SelectedMeat = optionName;
+                    break;
+                case "Cheese":
+                    SelectedCheese = optionName;
+                    break;
+                case "Dressing":
+                    SelectedDressing = optionName;
+                    break;
+            }
+        }
+    }
+
+    public List<string> GetSelectedOptionsForType(int optionTypeId)
+    {
+        return SelectedOptionsByType.TryGetValue(optionTypeId, out var value) ? value : new List<string>();
+    }
+
+    public bool IsOptionSelected(int optionTypeId, string optionName)
+    {
+        return GetSelectedOptionsForType(optionTypeId).Contains(optionName);
     }
 
     public void SetBread(string bread)
     {
         SelectedBread = bread;
+        var breadType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Bread");
+        if (breadType != null)
+        {
+            SetOptionForType(breadType.OptionType.Id, bread);
+        }
     }
 
     public void SetMeat(string meat)
     {
         SelectedMeat = meat;
+        var meatType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Meat");
+        if (meatType != null)
+        {
+            SetOptionForType(meatType.OptionType.Id, meat);
+        }
     }
 
     public void SetCheese(string cheese)
     {
         SelectedCheese = cheese;
+        var cheeseType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Cheese");
+        if (cheeseType != null)
+        {
+            SetOptionForType(cheeseType.OptionType.Id, cheese);
+        }
     }
 
     public void SetDressing(string dressing)
     {
         SelectedDressing = dressing;
+        var dressingType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Dressing");
+        if (dressingType != null)
+        {
+            SetOptionForType(dressingType.OptionType.Id, dressing);
+        }
     }
 
     public int GetSelectionCount()
@@ -181,13 +235,28 @@ public class DeliSwipeVM : IDeliSwipeVM
 
     public bool IsValidSelection()
     {
+        if (SelectedSide == null || SelectedDrink == null)
+            return false;
+
+        if (OptionTypes.Any())
+        {
+            foreach (var optionType in OptionTypes)
+            {
+                var selectedOptions = GetSelectedOptionsForType(optionType.OptionType.Id);
+
+                if (selectedOptions.Count < optionType.OptionType.NumIncluded)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         return SelectedBread != null
             && SelectedMeat != null
             && SelectedCheese != null
             && SelectedToppings.Any()
-            && SelectedDressing != null
-            && SelectedSide != null
-            && SelectedDrink != null;
+            && SelectedDressing != null;
     }
 
     public async Task<bool> AddToOrderAsync()
@@ -209,53 +278,17 @@ public class DeliSwipeVM : IDeliSwipeVM
 
         await _cartService.AddEntree(CART_KEY, customSandwichEntree);
 
-        if (!string.IsNullOrEmpty(SelectedBread))
+        foreach (var optionType in OptionTypes)
         {
-            var breadOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedBread);
-            if (breadOption != null)
-            {
-                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Bread Choice", EntreeId = customSandwichEntree.Id };
-                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, breadOption, optionType);
-            }
-        }
+            var selectedOptions = GetSelectedOptionsForType(optionType.OptionType.Id);
 
-        if (!string.IsNullOrEmpty(SelectedMeat))
-        {
-            var meatOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedMeat);
-            if (meatOption != null)
+            foreach (var selectedOptionName in selectedOptions)
             {
-                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Meat Choice", EntreeId = customSandwichEntree.Id };
-                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, meatOption, optionType);
-            }
-        }
-
-        if (!string.IsNullOrEmpty(SelectedCheese))
-        {
-            var cheeseOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedCheese);
-            if (cheeseOption != null)
-            {
-                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Cheese Choice", EntreeId = customSandwichEntree.Id };
-                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, cheeseOption, optionType);
-            }
-        }
-
-        foreach (var topping in SelectedToppings)
-        {
-            var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
-            if (toppingOption != null)
-            {
-                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Toppings", EntreeId = customSandwichEntree.Id };
-                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, toppingOption, optionType);
-            }
-        }
-
-        if (!string.IsNullOrEmpty(SelectedDressing))
-        {
-            var dressingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedDressing);
-            if (dressingOption != null)
-            {
-                var optionType = new FoodOptionTypeDto { FoodOptionTypeName = "Dressing Choice", EntreeId = customSandwichEntree.Id };
-                await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, dressingOption, optionType);
+                var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
+                if (option != null)
+                {
+                    await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, option, optionType.OptionType);
+                }
             }
         }
 
@@ -276,6 +309,7 @@ public class DeliSwipeVM : IDeliSwipeVM
         SelectedDressing = null;
         SelectedSide = null;
         SelectedDrink = null;
+        SelectedOptionsByType.Clear();
         ActiveTab = "sandwich";
     }
 }

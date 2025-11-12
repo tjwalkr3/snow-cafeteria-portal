@@ -463,6 +463,94 @@ VALUES
         'Mozzarella',
         true,
         'https://picsum.photos/id/496/150/150'
+    ),
+    -- Deli Meats
+    (
+        'Turkey',
+        true,
+        'https://picsum.photos/id/497/150/150'
+    ),
+    (
+        'Roast Beef',
+        true,
+        'https://picsum.photos/id/498/150/150'
+    ),
+    (
+        'Tuna Salad',
+        true,
+        'https://picsum.photos/id/499/150/150'
+    ),
+    (
+        'Grilled Chicken',
+        true,
+        'https://picsum.photos/id/500/150/150'
+    ),
+    -- Deli Toppings
+    (
+        'Lettuce',
+        true,
+        'https://picsum.photos/id/501/150/150'
+    ),
+    (
+        'Tomato',
+        true,
+        'https://picsum.photos/id/502/150/150'
+    ),
+    (
+        'Pickles',
+        true,
+        'https://picsum.photos/id/503/150/150'
+    ),
+    (
+        'Red Onion',
+        true,
+        'https://picsum.photos/id/504/150/150'
+    ),
+    (
+        'Cucumber',
+        true,
+        'https://picsum.photos/id/505/150/150'
+    ),
+    (
+        'Spinach',
+        true,
+        'https://picsum.photos/id/506/150/150'
+    ),
+    (
+        'Green Peppers',
+        true,
+        'https://picsum.photos/id/507/150/150'
+    ),
+    -- Deli Dressings
+    (
+        'Mayo',
+        true,
+        'https://picsum.photos/id/508/150/150'
+    ),
+    (
+        'Mustard',
+        true,
+        'https://picsum.photos/id/509/150/150'
+    ),
+    (
+        'Ranch',
+        true,
+        'https://picsum.photos/id/510/150/150'
+    ),
+    (
+        'Italian Dressing',
+        true,
+        'https://picsum.photos/id/511/150/150'
+    ),
+    (
+        'Honey Mustard',
+        true,
+        'https://picsum.photos/id/512/150/150'
+    ),
+    (
+        'Oil and Vinegar',
+        true,
+        'https://picsum.photos/id/513/150/150'
     );
 
 INSERT INTO
@@ -482,7 +570,10 @@ VALUES
     ('Toppings', 2, 12, 0.89, 7, NULL),
     -- Deli sandwich (entree_id 8)
     ('Bread', 1, 1, 0.00, 8, NULL),
-    ('Cheese', 1, 1, 0.00, 8, NULL);
+    ('Meat', 1, 1, 0.75, 8, NULL),
+    ('Cheese', 1, 1, 0.00, 8, NULL),
+    ('Toppings', 3, 10, 0.50, 8, NULL),
+    ('Dressing', 1, 1, 0.00, 8, NULL);
 
 INSERT INTO
     cafeteria.option_option_type (food_option_id, food_option_type_id)
@@ -509,9 +600,30 @@ VALUES
     (20, 4), -- Wheat -> Bread
     (21, 4), -- Marble Rye -> Bread
     (22, 4), -- Sourdough -> Bread
-    (23, 5), -- American -> Cheese
-    (24, 5), -- Cheddar -> Cheese
-    (25, 5), -- Provolone -> Cheese
-    (26, 5), -- Pepper Jack -> Cheese
-    (27, 5), -- Swiss -> Cheese
-    (28, 5); -- Mozzarella -> Cheese
+    (29, 5), -- Turkey -> Meat
+    (30, 5), -- Roast Beef -> Meat
+    (6, 5), -- Ham -> Meat (reusing from pizza toppings)
+    (4, 5), -- Bacon -> Meat (reusing from pizza toppings)
+    (31, 5), -- Tuna Salad -> Meat
+    (32, 5), -- Grilled Chicken -> Meat
+    (23, 6), -- American -> Cheese
+    (24, 6), -- Cheddar -> Cheese
+    (25, 6), -- Provolone -> Cheese
+    (26, 6), -- Pepper Jack -> Cheese
+    (27, 6), -- Swiss -> Cheese
+    (28, 6), -- Mozzarella -> Cheese
+    (33, 7), -- Lettuce -> Toppings
+    (34, 7), -- Tomato -> Toppings
+    (35, 7), -- Pickles -> Toppings
+    (36, 7), -- Red Onion -> Toppings
+    (37, 7), -- Cucumber -> Toppings
+    (38, 7), -- Spinach -> Toppings
+    (39, 7), -- Green Peppers -> Toppings
+    (40, 8), -- Mayo -> Dressing
+    (41, 8), -- Mustard -> Dressing
+    (42, 8), -- Ranch -> Dressing
+    (43, 8), -- Italian Dressing -> Dressing
+    (44, 8), -- Honey Mustard -> Dressing
+    (45, 8);
+
+-- Oil and Vinegar -> Dressing
