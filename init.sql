@@ -255,6 +255,27 @@ VALUES
         'https://picsum.photos/id/550/150/150'
     ),
     (
+        3,
+        'Rice',
+        'Steamed white rice',
+        1.79,
+        'https://picsum.photos/id/550/150/150'
+    ),
+    (
+        3,
+        'Vegetables',
+        'Steamed mixed vegetables',
+        1.79,
+        'https://picsum.photos/id/550/150/150'
+    ),
+    (
+        3,
+        'Waffle Fries',
+        'Crispy golden waffle fries',
+        2.29,
+        'https://picsum.photos/id/550/150/150'
+    ),
+    (
         4,
         'Chips',
         'Crispy chips',
