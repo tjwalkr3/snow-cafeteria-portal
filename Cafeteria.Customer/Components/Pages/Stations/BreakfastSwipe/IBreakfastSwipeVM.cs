@@ -8,14 +8,14 @@ public interface IBreakfastSwipeVM
     List<SideDto> Sides { get; }
     List<DrinkDto> Drinks { get; }
     List<FoodOptionDto> CurrentEntreeOptions { get; }
+    List<FoodOptionTypeWithOptionsDto> CurrentOptionTypes { get; }
 
     string ActiveTab { get; }
     EntreeDto? SelectedEntree { get; }
     SideDto? SelectedSide { get; }
     DrinkDto? SelectedDrink { get; }
 
-    string? SelectedMeatOption { get; }
-    string? SelectedBreadOption { get; }
+    Dictionary<int, string> SelectedOptionsByType { get; }
 
     int StationId { get; set; }
     int LocationId { get; set; }
@@ -25,11 +25,8 @@ public interface IBreakfastSwipeVM
     Task SelectEntree(EntreeDto entree);
     void SelectSide(SideDto side);
     void SelectDrink(DrinkDto drink);
-    void SetMeatOption(string meat);
-    void SetBreadOption(string bread);
-
-    bool RequiresMeatSelection(int entreeId);
-    bool RequiresBreadSelection(int entreeId);
+    void SetOptionForType(int optionTypeId, string optionName);
+    string? GetSelectedOption(int optionTypeId);
     int GetSelectionCount();
     bool IsValidSelection();
     Task<bool> AddToOrderAsync();

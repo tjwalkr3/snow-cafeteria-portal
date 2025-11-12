@@ -91,6 +91,18 @@ public partial class DeliSwipe : ComponentBase
         StateHasChanged();
     }
 
+    private void ToggleOptionForType(int optionTypeId, string optionName)
+    {
+        VM.ToggleOptionForType(optionTypeId, optionName);
+        StateHasChanged();
+    }
+
+    private void SetOptionForType(int optionTypeId, string optionName)
+    {
+        VM.SetOptionForType(optionTypeId, optionName);
+        StateHasChanged();
+    }
+
     private async Task AddToOrder()
     {
         var success = await VM.AddToOrderAsync();

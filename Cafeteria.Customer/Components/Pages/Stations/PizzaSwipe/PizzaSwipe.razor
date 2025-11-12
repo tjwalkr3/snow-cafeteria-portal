@@ -31,6 +31,10 @@ else
                 @onclick="@(() => SetActiveTab("toppings"))">
                 Pizza
             </button>
+            <button class="modern-tab @(VM.ActiveTab == "sides" ? "active" : "")" type="button"
+                @onclick="@(() => SetActiveTab("sides"))">
+                Sides
+            </button>
             <button class="modern-tab @(VM.ActiveTab == "drinks" ? "active" : "")" type="button"
                 @onclick="@(() => SetActiveTab("drinks"))">
                 Drinks
@@ -48,6 +52,35 @@ else
 
                 <div class="info-banner">
                     <div>Choice of 2 Toppings (Additional toppings $0.50 each)</div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="d-block mb-2 text-uppercase"
+                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
+                        Choose Your Pizza
+                    </label>
+                    @foreach (var entree in VM.Entrees)
+                    {
+                        <div class="meal-card @(VM.SelectedEntree?.Id == entree.Id ? "selected" : "")"
+                            @onclick="() => SelectEntree(entree)">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
+                                    @if (!string.IsNullOrEmpty(entree.EntreeDescription))
+                                    {
+                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
+                                    }
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
+                                    @if (VM.SelectedEntree?.Id == entree.Id)
+                                    {
+                                        <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
 
                 <div class="mb-4">
@@ -80,6 +113,34 @@ else
                     }
                 </div>
             }
+            else if (VM.ActiveTab == "sides")
+            {
+                <div class="info-banner">
+                    <div>Select 1 side with your meal swipe</div>
+                </div>
+
+                @foreach (var side in VM.Sides)
+                {
+                    <div class="meal-card @(VM.SelectedSide?.Id == side.Id ? "selected" : "")" @onclick="() => SelectSide(side)">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1 fw-600">@side.SideName</h5>
+                                @if (!string.IsNullOrEmpty(side.SideDescription))
+                                {
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
+                                }
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
+                                @if (VM.SelectedSide?.Id == side.Id)
+                                {
+                                    <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
             else if (VM.ActiveTab == "drinks")
             {
                 <div class="info-banner info">
@@ -102,7 +163,8 @@ else
                                         <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
                                     }
                                 </div>
-                                <div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
                                     @if (VM.SelectedDrink?.Id == drink.Id)
                                     {
                                         <i class="bi bi-check-circle-fill fs-4" style="color: #212529;"></i>
