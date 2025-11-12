@@ -329,9 +329,19 @@ VALUES
         'https://picsum.photos/id/437/150/150'
     ),
     (
-        'Breakfast Plate Base',
+        'Scrambled Eggs',
         true,
         'https://picsum.photos/id/445/150/150'
+    ),
+    (
+        'Potatoes',
+        true,
+        'https://picsum.photos/id/446/150/150'
+    ),
+    (
+        'One Slice of Toast',
+        true,
+        'https://picsum.photos/id/447/150/150'
     ),
     (
         'Breakfast Bacon',
@@ -368,13 +378,12 @@ VALUES
 INSERT INTO
     cafeteria.option_option_type (food_option_id, food_option_type_id)
 VALUES
-    -- Link Breakfast Plate Base to Plate Base option type (option_type_id 1)
-    (13, 1),
-    -- Link breakfast meats to Breakfast Plate Meat Choice (option_type_id 2)
-    (14, 2),
-    (15, 2),
-    (16, 2),
-    -- Link pizza toppings to Two Toppings Pizza (option_type_id 3)
+    (13, 1), -- Scrambled Eggs
+    (14, 1), -- Potatoes
+    (15, 1), -- One Slice of Toast
+    (16, 2), -- Breakfast Bacon
+    (17, 2), -- Breakfast Sausage
+    (18, 2), -- Breakfast Ham
     (1, 3),
     (2, 3),
     (3, 3),

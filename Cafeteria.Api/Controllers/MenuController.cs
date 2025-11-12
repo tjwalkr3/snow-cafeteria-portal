@@ -56,4 +56,16 @@ public class MenuController : ControllerBase
     {
         return await _menuService.GetOptionsBySide(sideId);
     }
+
+    [HttpGet("option-types/entree/{entreeId}")]
+    public async Task<List<FoodOptionTypeDto>> GetOptionTypesByEntree(int entreeId)
+    {
+        return await _menuService.GetOptionTypesByEntree(entreeId);
+    }
+
+    [HttpGet("option-types-with-options/entree/{entreeId}")]
+    public async Task<List<FoodOptionTypeWithOptionsDto>> GetOptionTypesWithOptionsByEntree(int entreeId)
+    {
+        return await _menuService.GetOptionTypesWithOptionsByEntree(entreeId);
+    }
 }

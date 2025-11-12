@@ -19,14 +19,14 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
     public List<SideDto> Sides { get; private set; } = new();
     public List<DrinkDto> Drinks { get; private set; } = new();
     public List<FoodOptionDto> CurrentEntreeOptions { get; private set; } = new();
+    public List<FoodOptionTypeWithOptionsDto> CurrentOptionTypes { get; private set; } = new();
 
     public string ActiveTab { get; private set; } = "entrees";
     public EntreeDto? SelectedEntree { get; private set; }
     public SideDto? SelectedSide { get; private set; }
     public DrinkDto? SelectedDrink { get; private set; }
 
-    public string? SelectedMeatOption { get; private set; }
-    public string? SelectedBreadOption { get; private set; }
+    public Dictionary<int, string> SelectedOptionsByType { get; private set; } = new();
 
     public int StationId { get; set; }
     public int LocationId { get; set; }
@@ -49,9 +49,9 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
     public async Task SelectEntree(EntreeDto entree)
     {
         SelectedEntree = entree;
-        SelectedMeatOption = null;
-        SelectedBreadOption = null;
+        SelectedOptionsByType.Clear();
         CurrentEntreeOptions = await _menuService.GetOptionsByEntree(entree.Id);
+        CurrentOptionTypes = await _menuService.GetOptionTypesWithOptionsByEntree(entree.Id);
     }
 
     public void SelectSide(SideDto side)
@@ -64,24 +64,14 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
         SelectedDrink = drink;
     }
 
-    public void SetMeatOption(string meat)
+    public void SetOptionForType(int optionTypeId, string optionName)
     {
-        SelectedMeatOption = meat;
+        SelectedOptionsByType[optionTypeId] = optionName;
     }
 
-    public void SetBreadOption(string bread)
+    public string? GetSelectedOption(int optionTypeId)
     {
-        SelectedBreadOption = bread;
-    }
-
-    public bool RequiresMeatSelection(int entreeId)
-    {
-        return entreeId == 3;
-    }
-
-    public bool RequiresBreadSelection(int entreeId)
-    {
-        return false;
+        return SelectedOptionsByType.TryGetValue(optionTypeId, out var value) ? value : null;
     }
 
     public int GetSelectionCount()
@@ -98,11 +88,14 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
         if (SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
             return false;
 
-        if (RequiresMeatSelection(SelectedEntree.Id) && string.IsNullOrEmpty(SelectedMeatOption))
-            return false;
-
-        if (RequiresBreadSelection(SelectedEntree.Id) && string.IsNullOrEmpty(SelectedBreadOption))
-            return false;
+        foreach (var optionType in CurrentOptionTypes)
+        {
+            if (!SelectedOptionsByType.ContainsKey(optionType.OptionType.Id) ||
+                string.IsNullOrEmpty(SelectedOptionsByType[optionType.OptionType.Id]))
+            {
+                return false;
+            }
+        }
 
         return true;
     }
@@ -114,31 +107,15 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
 
         await _cartService.AddEntree(CART_KEY, SelectedEntree);
 
-        if (!string.IsNullOrEmpty(SelectedBreadOption))
+        foreach (var optionType in CurrentOptionTypes)
         {
-            var breadOption = CurrentEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedBreadOption);
-            if (breadOption != null)
+            if (SelectedOptionsByType.TryGetValue(optionType.OptionType.Id, out var selectedOptionName))
             {
-                var optionType = new FoodOptionTypeDto
+                var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
+                if (option != null)
                 {
-                    FoodOptionTypeName = "Bread Choice",
-                    EntreeId = SelectedEntree.Id
-                };
-                await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, breadOption, optionType);
-            }
-        }
-
-        if (!string.IsNullOrEmpty(SelectedMeatOption))
-        {
-            var meatOption = CurrentEntreeOptions.FirstOrDefault(o => o.FoodOptionName == SelectedMeatOption);
-            if (meatOption != null)
-            {
-                var optionType = new FoodOptionTypeDto
-                {
-                    FoodOptionTypeName = "Meat Choice",
-                    EntreeId = SelectedEntree.Id
-                };
-                await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, meatOption, optionType);
+                    await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, option, optionType.OptionType);
+                }
             }
         }
 
@@ -155,9 +132,9 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
         SelectedEntree = null;
         SelectedSide = null;
         SelectedDrink = null;
-        SelectedMeatOption = null;
-        SelectedBreadOption = null;
+        SelectedOptionsByType.Clear();
         CurrentEntreeOptions.Clear();
+        CurrentOptionTypes.Clear();
         ActiveTab = "entrees";
     }
 }

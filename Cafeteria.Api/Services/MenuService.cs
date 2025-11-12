@@ -122,4 +122,50 @@ public class MenuService : IMenuService
         var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { sideId });
         return result.ToList();
     }
+
+    public async Task<List<FoodOptionTypeDto>> GetOptionTypesByEntree(int entreeId)
+    {
+        string sql = @"
+        SELECT 
+            id AS Id,
+            food_option_type_name AS FoodOptionTypeName,
+            num_included AS NumIncluded,
+            max_amount AS MaxAmount,
+            food_option_price AS FoodOptionPrice,
+            entree_id AS EntreeId,
+            side_id AS SideId
+        FROM cafeteria.food_option_type
+        WHERE entree_id = @entreeId;";
+        var result = await _dbConnection.QueryAsync<FoodOptionTypeDto>(sql, new { entreeId });
+        return result.ToList();
+    }
+
+    public async Task<List<FoodOptionTypeWithOptionsDto>> GetOptionTypesWithOptionsByEntree(int entreeId)
+    {
+        var optionTypes = await GetOptionTypesByEntree(entreeId);
+        var result = new List<FoodOptionTypeWithOptionsDto>();
+
+        foreach (var optionType in optionTypes)
+        {
+            string sql = @"
+            SELECT 
+                fo.id AS Id,
+                fo.food_option_name AS FoodOptionName, 
+                fo.in_stock AS InStock, 
+                fo.image_url AS ImageUrl
+            FROM cafeteria.food_option fo
+            INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
+            WHERE oot.food_option_type_id = @optionTypeId;";
+
+            var options = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { optionTypeId = optionType.Id });
+
+            result.Add(new FoodOptionTypeWithOptionsDto
+            {
+                OptionType = optionType,
+                Options = options.ToList()
+            });
+        }
+
+        return result;
+    }
 }

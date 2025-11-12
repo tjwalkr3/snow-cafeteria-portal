@@ -70,15 +70,9 @@ public partial class BreakfastSwipe : ComponentBase
         StateHasChanged();
     }
 
-    private void SetMeatOption(string meat)
+    private void SetOptionForType(int optionTypeId, string optionName)
     {
-        VM.SetMeatOption(meat);
-        StateHasChanged();
-    }
-
-    private void SetBreadOption(string bread)
-    {
-        VM.SetBreadOption(bread);
+        VM.SetOptionForType(optionTypeId, optionName);
         StateHasChanged();
     }
 
