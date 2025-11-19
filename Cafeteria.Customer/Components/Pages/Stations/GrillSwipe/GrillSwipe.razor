@@ -44,10 +44,6 @@ else
         <div class="content-area">
             @if (VM.ActiveTab == "entrees")
             {
-                <div class="info-banner">
-                    <div>Select 1 entrée with your meal swipe</div>
-                </div>
-
                 @foreach (var entree in VM.Entrees)
                 {
                     <div class="meal-card @(VM.SelectedEntree?.Id == entree.Id ? "selected" : "")"
@@ -73,10 +69,6 @@ else
             }
             else if (VM.ActiveTab == "sides")
             {
-                <div class="info-banner">
-                    <div>Select 1 side with your meal swipe</div>
-                </div>
-
                 @foreach (var side in VM.Sides)
                 {
                     <div class="meal-card @(VM.SelectedSide?.Id == side.Id ? "selected" : "")" @onclick="() => SelectSide(side)">
@@ -101,12 +93,6 @@ else
             }
             else if (VM.ActiveTab == "drinks")
             {
-                <div class="info-banner info">
-                    <div>
-                        <i class="bi bi-info-circle me-2"></i>Select 1 drink included with your meal swipe
-                    </div>
-                </div>
-
                 @if (VM.Drinks.Any())
                 {
                     @foreach (var drink in VM.Drinks)
