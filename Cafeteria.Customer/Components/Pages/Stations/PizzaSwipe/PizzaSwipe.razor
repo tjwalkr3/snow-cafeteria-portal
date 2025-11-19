@@ -44,16 +44,6 @@ else
         <div class="content-area">
             @if (VM.ActiveTab == "toppings")
             {
-                <div class="info-banner warning">
-                    <div>
-                        <strong>Please choose your 2 Toppings - NO SUBSTITUTIONS!!</strong>
-                    </div>
-                </div>
-
-                <div class="info-banner">
-                    <div>Choice of 2 Toppings (Additional toppings $0.50 each)</div>
-                </div>
-
                 <div class="mb-4">
                     <label class="d-block mb-2 text-uppercase"
                         style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
@@ -115,10 +105,6 @@ else
             }
             else if (VM.ActiveTab == "sides")
             {
-                <div class="info-banner">
-                    <div>Select 1 side with your meal swipe</div>
-                </div>
-
                 @foreach (var side in VM.Sides)
                 {
                     <div class="meal-card @(VM.SelectedSide?.Id == side.Id ? "selected" : "")" @onclick="() => SelectSide(side)">
@@ -143,12 +129,6 @@ else
             }
             else if (VM.ActiveTab == "drinks")
             {
-                <div class="info-banner info">
-                    <div>
-                        <i class="bi bi-info-circle me-2"></i>Select 1 drink included with your meal swipe
-                    </div>
-                </div>
-
                 @if (VM.Drinks.Any())
                 {
                     @foreach (var drink in VM.Drinks)

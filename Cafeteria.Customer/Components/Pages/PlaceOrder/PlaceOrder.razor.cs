@@ -91,23 +91,36 @@ public partial class PlaceOrder : ComponentBase
     {
         Dictionary<string, string?> queryParameters = new() { };
 
+        // Determine payment method
+        string? payment = null;
         if (Order != null)
         {
-            string payment = Order.IsCardOrder ? "card" : "swipe";
-            queryParameters.Add("payment", payment);
-
-            if (Order.Location != null)
-            {
-                queryParameters.Add("location", Order.Location.Id.ToString());
-            }
+            payment = Order.IsCardOrder ? "card" : "swipe";
         }
-        else
+        else if (!string.IsNullOrEmpty(Payment))
         {
-            if (!string.IsNullOrEmpty(Payment))
-                queryParameters.Add("payment", Payment);
+            payment = Payment;
+        }
 
-            if (Location != 0)
-                queryParameters.Add("location", Location.ToString());
+        if (!string.IsNullOrEmpty(payment))
+        {
+            queryParameters.Add("payment", payment);
+        }
+
+        // Determine location
+        int? locationId = null;
+        if (Order?.Location != null)
+        {
+            locationId = Order.Location.Id;
+        }
+        else if (Location != 0)
+        {
+            locationId = Location;
+        }
+
+        if (locationId.HasValue && locationId.Value > 0)
+        {
+            queryParameters.Add("location", locationId.Value.ToString());
         }
 
         return QueryHelpers.AddQueryString("/station-select", queryParameters);
@@ -132,5 +145,21 @@ public partial class PlaceOrder : ComponentBase
     {
         _showToast = false;
         StateHasChanged();
+    }
+
+    private int GetTotalItemCount()
+    {
+        if (Order == null) return 0;
+        return Order.Entrees.Count + Order.Sides.Count + Order.Drinks.Count;
+    }
+
+    private decimal GetItemPrice(OrderEntreeItem item)
+    {
+        return item.Entree.EntreePrice + item.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice);
+    }
+
+    private decimal GetItemPrice(OrderSideItem item)
+    {
+        return item.Side.SidePrice + item.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice);
     }
 }
