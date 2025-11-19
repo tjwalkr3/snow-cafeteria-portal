@@ -1,0 +1,184 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cafeteria-keycloak-realm
+  namespace: cafeteria
+data:
+  AppRealm.json: |
+    {
+      "realm": "AppRealm",
+      "enabled": true,
+      "sslRequired": "external",
+      "registrationAllowed": false,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "resetPasswordAllowed": true,
+      "userManagedAccessAllowed": false,
+      "clients": [
+        {
+          "clientId": "cafeteria",
+          "name": "cafeteria",
+          "enabled": true,
+          "protocol": "openid-connect",
+          "publicClient": true,
+          "directAccessGrantsEnabled": true,
+          "serviceAccountsEnabled": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "frontchannelLogout": false,
+          "fullScopeAllowed": true,
+          "redirectUris": [
+            "https://food.dragonbytes.org/*"
+          ],
+          "webOrigins": [
+            "https://food.dragonbytes.org"
+          ],
+          "attributes": {
+            "post.logout.redirect.uris": "https://food.dragonbytes.org/*"
+          }
+        }
+      ],
+      "users": [
+        {
+          "username": "test-user",
+          "enabled": true,
+          "emailVerified": true,
+          "email": "test-user@example.com",
+          "firstName": "Test",
+          "lastName": "User",
+          "credentials": [
+            {
+              "type": "password",
+              "value": "test123",
+              "temporary": false
+            }
+          ],
+          "requiredActions": [],
+          "realmRoles": [
+            "default-roles-apprealm"
+          ]
+        }
+      ],
+      "roles": {
+        "realm": [
+          {
+            "name": "default-roles-apprealm",
+            "description": "Default roles for AppRealm",
+            "composite": true,
+            "composites": {
+              "realm": [
+                "offline_access",
+                "uma_authorization"
+              ]
+            },
+            "clientRole": false,
+            "containerId": "AppRealm"
+          },
+          {
+            "name": "uma_authorization"
+          },
+          {
+            "name": "offline_access"
+          }
+        ]
+      }
+    }
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cafeteria-keycloak-dep
+  namespace: cafeteria
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cafeteria-keycloak
+  template:
+    metadata:
+      labels:
+        app: cafeteria-keycloak
+    spec:
+      containers:
+      - name: cafeteria-keycloak-container
+        image: keycloak/keycloak:26.4
+        args:
+          - "start-dev"
+          - "--import-realm"
+        env:
+        - name: KC_BOOTSTRAP_ADMIN_USERNAME
+          value: "admin"
+        - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+          value: "password123"
+        - name: KC_HOSTNAME
+          value: "food.dragonbytes.org"
+        - name: KC_HOSTNAME_URL
+          value: "https://food.dragonbytes.org/auth"
+        - name: KC_HOSTNAME_ADMIN_URL
+          value: "https://food.dragonbytes.org/auth"
+        - name: KC_HOSTNAME_STRICT
+          value: "true"
+        - name: KC_HOSTNAME_STRICT_HTTPS
+          value: "true"
+        - name: KC_PROXY
+          value: "edge"
+        - name: KC_PROXY_HEADERS
+          value: "xforwarded"
+        - name: KC_HTTP_ENABLED
+          value: "true"
+        - name: KC_HTTP_RELATIVE_PATH
+          value: "/auth"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: realm-config
+          mountPath: /opt/keycloak/data/import
+          readOnly: true
+      volumes:
+      - name: realm-config
+        configMap:
+          name: cafeteria-keycloak-realm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cafeteria-keycloak-svc
+  namespace: cafeteria
+spec:
+  selector:
+    app: cafeteria-keycloak
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cafeteria-keycloak-ingress
+  namespace: cafeteria
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - food.dragonbytes.org
+      secretName: cafeteria-tls
+  rules:
+    - host: food.dragonbytes.org
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: cafeteria-keycloak-svc
+                port:
+                  number: 8080
