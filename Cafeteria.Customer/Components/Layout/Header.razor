@@ -3,7 +3,16 @@
         <div class="d-flex align-items-center">
             <a href="/" class="brand-text fs-2 fw-semibold text-decoration-none">Snow Cafeteria</a>
         </div>
-        <nav class="d-flex align-items-center">
+        <nav class="d-flex align-items-center gap-3">
+            <button class="btn btn-link text-white position-relative p-1 text-decoration-none" @onclick="NavigateToCart">
+                <span class="bi bi-cart3 fs-5"></span>
+                @if (cartItemCount > 0)
+                {
+                    <span class="position-absolute translate-middle badge rounded-pill bg-danger" style="top: 5px; left: 85%;">
+                        @cartItemCount
+                    </span>
+                }
+            </button>
             <button class="sign-in-btn px-4 py-2 small fw-medium" @onclick="HandleSignIn">
                 <span>Sign In</span>
             </button>
@@ -11,9 +20,53 @@
     </div>
 </header>
 
+@using Cafeteria.Customer.Services
+@using Microsoft.AspNetCore.Components.Routing
+@implements IDisposable
+@rendermode InteractiveServer
+@inject ICartService CartService
+@inject NavigationManager NavigationManager
+
 @code {
+    private int cartItemCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCartCount();
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        await LoadCartCount();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadCartCount()
+    {
+        var order = await CartService.GetOrder("order");
+        if (order != null)
+        {
+            cartItemCount = order.Entrees.Count + order.Sides.Count + order.Drinks.Count;
+        }
+        else
+        {
+            cartItemCount = 0;
+        }
+    }
+
     private void HandleSignIn()
     {
         // TODO: Implement sign-in logic
+    }
+
+    private void NavigateToCart()
+    {
+        NavigationManager.NavigateTo("/place-order");
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }

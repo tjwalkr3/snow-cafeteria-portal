@@ -108,7 +108,16 @@ public partial class DeliSwipe : ComponentBase
         var success = await VM.AddToOrderAsync();
         if (success)
         {
-            NavigationManager.NavigateTo("/place-order");
+            Dictionary<string, string?> queryParameters = new() { };
+
+            if (!string.IsNullOrEmpty(Payment))
+                queryParameters.Add("payment", Payment);
+
+            if (Location > 0)
+                queryParameters.Add("location", Location.ToString());
+
+            string url = QueryHelpers.AddQueryString("/place-order", queryParameters);
+            NavigationManager.NavigateTo(url);
         }
     }
 }
