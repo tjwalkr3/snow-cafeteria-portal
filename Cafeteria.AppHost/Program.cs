@@ -25,7 +25,8 @@ builder.AddContainer(keycloakHost, "keycloak/keycloak", "26.0")
     .WithEnvironment("KC_HOSTNAME_STRICT", "false")
     .WithEnvironment("KC_HOSTNAME_STRICT_HTTPS", "false")
     .WithHttpEndpoint(port: keycloakPort, targetPort: keycloakPort, name: "http")
-    .WithArgs("start-dev", "--import-realm");
+    .WithArgs("start-dev", "--import-realm")
+    .WithLifetime(ContainerLifetime.Session);
 
 var connectionString = $"Host=localhost;Port={postgresPort};Database={postgresDb};Username={postgresUser};Password={postgresPassword}";
 var keycloakAuthority = $"http://localhost:{keycloakPort}/realms/{keycloakRealm}";
