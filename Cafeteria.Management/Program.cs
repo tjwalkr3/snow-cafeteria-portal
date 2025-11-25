@@ -1,5 +1,6 @@
 using Cafeteria.Management.Components;
 using Microsoft.Extensions.Hosting;
+using Cafeteria.Management.Components.Pages.LocationAndStation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
+builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 
 var app = builder.Build();
 
