@@ -1,4 +1,5 @@
 using Cafeteria.Management.Components;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +14,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddAuthorization();
 
@@ -29,6 +32,9 @@ builder.Services.AddAuthentication(options =>
         options.Authority = oidcConfig["Authority"];
         options.ClientId = oidcConfig["ClientId"];
         options.ClientSecret = oidcConfig["ClientSecret"];
+
+        // Take this out in prod
+        options.RequireHttpsMetadata = false;
 
         options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.ResponseType = OpenIdConnectResponseType.Code;
@@ -63,5 +69,19 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapGet("/login", async (HttpContext httpContext, string returnUrl = "/") =>
+{
+    await httpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties
+    {
+        RedirectUri = returnUrl
+    });
+});
+
+app.MapGet("/logout", async (HttpContext httpContext) =>
+{
+    await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+});
 
 app.Run();
