@@ -1,5 +1,5 @@
 using Cafeteria.Management.Components;
-using Cafeteria.Management.Components.entree;
+using Cafeteria.Management.Components.Pages.Entree;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);

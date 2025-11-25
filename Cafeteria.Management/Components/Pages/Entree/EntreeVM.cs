@@ -1,4 +1,4 @@
-namespace Cafeteria.Management.Components.entree;
+namespace Cafeteria.Management.Components.Pages.Entree;
 
 public class EntreeVM
 {
