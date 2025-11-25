@@ -1,4 +1,5 @@
 using Cafeteria.Management.Components;
+using Cafeteria.Management.Components.Pages.Entree;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,9 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Register ViewModels
+builder.Services.AddScoped<EntreeVM>();
 
 var app = builder.Build();
 
