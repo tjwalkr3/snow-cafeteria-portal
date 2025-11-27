@@ -44,8 +44,9 @@ builder.AddProject<Projects.Cafeteria_Customer>("customer")
 
 builder.AddProject<Projects.Cafeteria_Management>("management")
     .WithReference(api)
-    .WithEnvironment("Keycloak__Authority", keycloakAuthority)
-    .WithEnvironment("Keycloak__ClientId", "ham-exam")
+    .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
+    .WithEnvironment("OpenIDConnectSettings__ClientId", "cafeteria")
+    .WithEnvironment("OpenIDConnectSettings__ClientSecret", string.Empty)
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();
