@@ -1,8 +1,13 @@
-﻿<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@using Cafeteria.Management.Components.Layout.SigninButton
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 <input type="checkbox" title="Expand sidebar" class="sidebar-expander" id="sidebarExpander" />
 
 <div class="nav-scrollable">
     <nav class="nav flex-column">
+        <div class="nav-item">
+            <SigninButton />
+        </div>
         <div class="nav-item">
             <NavLink class="nav-link" href="entree" title="Entree">
                 <span class="bi bi-egg-fried" aria-hidden="true"></span>
