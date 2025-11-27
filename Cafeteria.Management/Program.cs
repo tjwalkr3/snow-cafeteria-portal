@@ -1,4 +1,5 @@
 using Cafeteria.Management.Components;
+using Cafeteria.Management.Components.Pages.Entree;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -14,10 +15,12 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Register ViewModels
+builder.Services.AddScoped<EntreeVM>();
+
+// Add authentication services
 builder.Services.AddCascadingAuthenticationState();
-
 builder.Services.AddAuthorization();
-
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
