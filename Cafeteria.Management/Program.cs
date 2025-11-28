@@ -1,4 +1,5 @@
 using Cafeteria.Management.Components;
+using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
 using Cafeteria.Management.Components.Pages.Side;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +19,7 @@ builder.Services.AddRazorComponents()
 
 // Register ViewModels
 builder.Services.AddScoped<EntreeVM>();
+builder.Services.AddScoped<IDrinkVM, DrinkVM>();
 builder.Services.AddScoped<ISideVM, SideVM>();
 
 // Add authentication services
