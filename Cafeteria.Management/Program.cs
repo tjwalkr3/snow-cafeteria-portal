@@ -18,7 +18,7 @@ builder.Services.AddRazorComponents()
 
 // Register ViewModels
 builder.Services.AddScoped<EntreeVM>();
-builder.Services.AddScoped<SideVM>();
+builder.Services.AddScoped<ISideVM, SideVM>();
 
 // Add authentication services
 builder.Services.AddCascadingAuthenticationState();
