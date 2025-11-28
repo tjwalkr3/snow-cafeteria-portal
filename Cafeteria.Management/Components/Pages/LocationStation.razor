@@ -1,8 +1,38 @@
 @page "/location-station"
 @rendermode InteractiveServer
+@using Cafeteria.Management.Services
+@inject HttpClientAuth HttpClientAuth
 
 <PageTitle>Location & Station</PageTitle>
 
 <h1>Location & Station</h1>
 
 <p>Manage locations and stations here.</p>
+
+<button @onclick="CallAuthenticatedEndpoint">Call Authenticated Endpoint</button>
+<p>@_authResult</p>
+
+@code {
+    private string _authResult = "";
+
+    private async Task CallAuthenticatedEndpoint()
+    {
+        try
+        {
+            var result = await HttpClientAuth.GetAsync<AuthResponse>("api/Location/authenticated");
+            if (result != null)
+            {
+                _authResult = $"Authenticated as: {result.Username}";
+            }
+        }
+        catch (Exception ex)
+        {
+            _authResult = $"Error: {ex.Message}";
+        }
+    }
+
+    private class AuthResponse
+    {
+        public string Username { get; set; } = "";
+    }
+}

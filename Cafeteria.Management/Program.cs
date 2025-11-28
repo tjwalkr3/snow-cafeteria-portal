@@ -1,5 +1,6 @@
 using Cafeteria.Management.Components;
 using Cafeteria.Management.Components.Pages.Entree;
+using Cafeteria.Management.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -14,6 +15,10 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<HttpClientAuth>(client => 
+    client.BaseAddress = new Uri("http://api"));
 
 // Register ViewModels
 builder.Services.AddScoped<EntreeVM>();

@@ -17,10 +17,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
   jwtOptions.Audience = "https://{--your-audience--}";
 });
 ```
+6. Minimally, add a button (and an associated @code section) to the LocationStation.razor page that calls the new authenticated endpoint using the wrapper function and displays it in a paragraph right below the button. This does not need to be pretty, it just needs to demonstrate that the authentication works. For this step, only modify the LocationStation.razor file. 
 
 **Rules:**
 * Do not write unnecessary markdown documentation or unnecessary comments. 
 * Don't do more than I tell you to. 
 * Make sure tests that you write are actually testing behavior of the code, and not aimlessly testing a mock. 
 * Write your tests before you write your implementations, as this is good practice (TDD). 
-* If you need any more information about implementing backend-auth, you may get it [here](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-9.0)
+* If you need any more information about implementing authentication in an ASP.NET Core API, you may get it [here](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-9.0)
