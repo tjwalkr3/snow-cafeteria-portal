@@ -11,6 +11,6 @@ public class LocationController : ControllerBase
     [Authorize]
     public IActionResult GetAuthenticatedLocation()
     {
-        return Ok(new { username = "Test User" });
+        return Ok(new { username = User.Identity?.Name ?? User.FindFirst("preferred_username")?.Value });
     }
 }
