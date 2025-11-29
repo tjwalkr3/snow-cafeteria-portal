@@ -1,5 +1,8 @@
 using Cafeteria.Management.Components;
+using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
+using Cafeteria.Management.Components.Pages.LocationAndStation;
+using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Management.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -21,7 +24,10 @@ builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
     client.BaseAddress = new Uri("http://api"));
 
 // Register ViewModels
+builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 builder.Services.AddScoped<EntreeVM>();
+builder.Services.AddScoped<IDrinkVM, DrinkVM>();
+builder.Services.AddScoped<ISideVM, SideVM>();
 
 // Add authentication services
 builder.Services.AddCascadingAuthenticationState();
