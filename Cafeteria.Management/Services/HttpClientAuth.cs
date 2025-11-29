@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace Cafeteria.Management.Services;
 
-public class HttpClientAuth
+public class HttpClientAuth : IHttpClientAuth
 {
     private readonly HttpClient _httpClient;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -50,7 +50,7 @@ public class HttpClientAuth
         await AddAuthenticationHeaderAsync();
         return await _httpClient.DeleteAsync(requestUri);
     }
-    
+
     public async Task<HttpResponseMessage> PatchAsync<T>(string requestUri, T content)
     {
         await AddAuthenticationHeaderAsync();

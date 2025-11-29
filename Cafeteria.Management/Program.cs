@@ -17,7 +17,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient<HttpClientAuth>(client => 
+builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client => 
     client.BaseAddress = new Uri("http://api"));
 
 // Register ViewModels
