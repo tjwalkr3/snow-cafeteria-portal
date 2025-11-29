@@ -30,7 +30,7 @@ public partial class SigninButton : ComponentBase
 
     private void SignIn()
     {
-        NavigationManager.NavigateTo("login?returnUrl=/", forceLoad: true);
+        NavigationManager.NavigateTo($"login?returnUrl={Uri.EscapeDataString(NavigationManager.BaseUri)}", forceLoad: true);
     }
 
     private void SignOut()
