@@ -20,6 +20,10 @@ spec:
         env:
         - name: ApiBaseUrl
           value: "http://cafeteria-api-svc:8080/api/"
+        - name: Keycloak__Authority
+          value: "https://food.dragonbytes.org/auth/realms/AppRealm"
+        - name: Keycloak__ClientId
+          value: "ham-exam"
         ports:
         - containerPort: 8080
 

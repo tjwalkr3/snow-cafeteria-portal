@@ -20,6 +20,10 @@ spec:
         env:
         - name: ConnectionStrings__cafeteria
           value: "Host=cafeteria-db-svc;Port=5432;Database=cafeteriadb;Username=cafeteria_user;Password=cafeteria_password"
+        - name: Keycloak__Authority
+          value: "https://food.dragonbytes.org/auth/realms/AppRealm"
+        - name: Keycloak__Audience
+          value: "cafeteria"
         ports:
         - containerPort: 8080
 
