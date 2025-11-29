@@ -3,6 +3,7 @@ using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
+using Cafeteria.Management.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -18,6 +19,9 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
+    client.BaseAddress = new Uri("http://api"));
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();

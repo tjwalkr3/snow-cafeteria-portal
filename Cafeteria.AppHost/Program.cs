@@ -33,7 +33,8 @@ var keycloakAuthority = $"http://localhost:{keycloakPort}/realms/{keycloakRealm}
 
 var api = builder.AddProject<Projects.Cafeteria_Api>("api")
     .WithEnvironment("ConnectionStrings__cafeteria", connectionString)
-    .WithEnvironment("Keycloak__Authority", keycloakAuthority);
+    .WithEnvironment("Keycloak__Authority", keycloakAuthority)
+    .WithEnvironment("Keycloak__Audience", "cafeteria");
 
 builder.AddProject<Projects.Cafeteria_Customer>("customer")
     .WithReference(api)
