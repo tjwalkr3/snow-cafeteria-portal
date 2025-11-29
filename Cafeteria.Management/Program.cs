@@ -3,6 +3,7 @@ using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
+using Cafeteria.Management.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -11,13 +12,24 @@ using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add service defaults & Aspire components.
 builder.AddServiceDefaults();
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHttpClient<IFoodOptionService, FoodOptionService>(client =>
+{
+    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IFoodTypeService, FoodTypeService>(client =>
+{
+    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
