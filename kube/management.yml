@@ -24,8 +24,6 @@ spec:
           value: "cafeteria"
         - name: OpenIDConnectSettings__ClientSecret
           value: ""
-        - name: BasePath
-          value: "/admin/"
         ports:
         - containerPort: 8080
 
