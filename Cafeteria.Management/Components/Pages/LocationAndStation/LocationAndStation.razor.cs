@@ -16,7 +16,7 @@ public partial class LocationAndStation : ComponentBase
     // This is a proof-of-concept. Delete it when you begin implementation. */
     [Inject]
     private IHttpClientAuth HttpClientAuth { get; set; } = default!;
-    
+
     private string _authResult = "";
 
     private async Task CallAuthenticatedEndpoint()

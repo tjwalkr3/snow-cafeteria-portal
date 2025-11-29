@@ -118,7 +118,7 @@ public class HttpClientAuthTests
         await _httpClientAuth.DeleteAsync<object>("test-url");
         VerifyHandler(HttpMethod.Delete);
     }
-    
+
     [Fact]
     public async Task PatchAsync_AddsAuthenticationHeader()
     {
