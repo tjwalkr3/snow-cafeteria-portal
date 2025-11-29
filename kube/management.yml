@@ -17,6 +17,13 @@ spec:
       containers:
       - name: cafeteria-management-container
         image: tjwalkr3/cafeteria-management:$CONTAINER_VERSION
+        env:
+        - name: OpenIDConnectSettings__Authority
+          value: "https://food.dragonbytes.org/auth/realms/AppRealm"
+        - name: OpenIDConnectSettings__ClientId
+          value: "cafeteria"
+        - name: OpenIDConnectSettings__ClientSecret
+          value: ""
         ports:
         - containerPort: 8080
 
@@ -60,6 +67,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: cafeteria-api-svc
+                name: cafeteria-management-svc
                 port:
                   number: 8080

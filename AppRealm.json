@@ -34,7 +34,20 @@
       ],
       "attributes": {
         "post.logout.redirect.uris": "http://localhost:5087/*##https://localhost:7285/*##http://localhost:5248/*##https://localhost:7207/*"
-      }
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "cafeteria",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
     }
   ],
   "users": [

@@ -1,6 +1,8 @@
 using System.Data;
 using Npgsql;
 using Cafeteria.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +12,19 @@ builder.AddServiceDefaults();
 // Add PostgreSQL connection
 builder.AddNpgsqlDataSource("cafeteria");
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = builder.Configuration["Keycloak:Authority"];
+        options.Audience = builder.Configuration["Keycloak:Audience"];
+        options.RequireHttpsMetadata = false;
+    });
+
 builder.Services.AddControllers();
 builder.Services.AddScoped<IDbConnection>(provider => provider.GetRequiredService<NpgsqlDataSource>().CreateConnection());
 builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
+builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -25,7 +37,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapDefaultEndpoints();
 
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

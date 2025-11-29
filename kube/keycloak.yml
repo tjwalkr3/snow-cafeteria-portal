@@ -35,7 +35,20 @@ data:
           ],
           "attributes": {
             "post.logout.redirect.uris": "https://food.dragonbytes.org/*"
-          }
+          },
+          "protocolMappers": [
+            {
+              "name": "audience-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-audience-mapper",
+              "consentRequired": false,
+              "config": {
+                "included.client.audience": "cafeteria",
+                "id.token.claim": "false",
+                "access.token.claim": "true"
+              }
+            }
+          ]
         }
       ],
       "users": [
