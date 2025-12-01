@@ -105,14 +105,14 @@ public class StationService : IStationService
             WHERE station_id = @station_id
             ORDER BY weekday_id, open_time;";
 
-        var hours = await _dbConnection.QueryAsync(sql, new { station_id = stationId });
+        var hours = await _dbConnection.QueryAsync<StationBusinessHoursDbModel>(sql, new { station_id = stationId });
         return hours.Select(h => new StationBusinessHoursDto
         {
-            Id = (int)h.Id,
-            StationId = (int)h.StationId,
-            WeekdayId = (int)h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)h.CloseTime)
+            Id = h.Id,
+            StationId = h.StationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
         }).ToList();
     }
 
@@ -128,21 +128,30 @@ public class StationService : IStationService
             FROM cafeteria.station_business_hours
             WHERE id = @id;";
 
-        var hours = await _dbConnection.QuerySingleOrDefaultAsync(sql, new { id = stationHrsId });
+        var h = await _dbConnection.QuerySingleOrDefaultAsync<StationBusinessHoursDbModel>(sql, new { id = stationHrsId });
 
-        if (hours is null)
+        if (h is null)
         {
             return null;
         }
 
         return new StationBusinessHoursDto
         {
-            Id = (int)hours.Id,
-            StationId = (int)hours.StationId,
-            WeekdayId = (int)hours.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)hours.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)hours.CloseTime)
+            Id = h.Id,
+            StationId = h.StationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
         };
+    }
+
+    private class StationBusinessHoursDbModel
+    {
+        public int Id { get; set; }
+        public int StationId { get; set; }
+        public int WeekdayId { get; set; }
+        public TimeSpan OpenTime { get; set; }
+        public TimeSpan CloseTime { get; set; }
     }
 
     public async Task AddStationHours(int stationId, DateTime startTime, DateTime endTime, WeekDay weekday)

@@ -103,14 +103,14 @@ public class LocationService : ILocationService
             WHERE location_id = @location_id
             ORDER BY weekday_id, open_time;";
 
-        var hours = await _dbConnection.QueryAsync(sql, new { location_id = locationId });
+        var hours = await _dbConnection.QueryAsync<LocationBusinessHoursDbModel>(sql, new { location_id = locationId });
         return hours.Select(h => new LocationBusinessHoursDto
         {
-            Id = (int)h.Id,
-            LocationId = (int)h.LocationId,
-            WeekdayId = (int)h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)h.CloseTime)
+            Id = h.Id,
+            LocationId = h.LocationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
         }).ToList();
     }
 
@@ -126,7 +126,7 @@ public class LocationService : ILocationService
             FROM cafeteria.location_business_hours
             WHERE id = @id;";
 
-        var h = await _dbConnection.QuerySingleOrDefaultAsync(sql, new { id = locationHrsId });
+        var h = await _dbConnection.QuerySingleOrDefaultAsync<LocationBusinessHoursDbModel>(sql, new { id = locationHrsId });
 
         if (h is null)
         {
@@ -135,12 +135,21 @@ public class LocationService : ILocationService
 
         return new LocationBusinessHoursDto
         {
-            Id = (int)h.Id,
-            LocationId = (int)h.LocationId,
-            WeekdayId = (int)h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)h.CloseTime)
+            Id = h.Id,
+            LocationId = h.LocationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
         };
+    }
+
+    private class LocationBusinessHoursDbModel
+    {
+        public int Id { get; set; }
+        public int LocationId { get; set; }
+        public int WeekdayId { get; set; }
+        public TimeSpan OpenTime { get; set; }
+        public TimeSpan CloseTime { get; set; }
     }
 
     public async Task AddLocationHours(int locationId, DateTime startTime, DateTime endTime, WeekDay weekday)
