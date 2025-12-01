@@ -14,3 +14,159 @@ GET http://localhost:8080/api/menu/stations/location/2
 GET http://localhost:8080/api/menu/locations
 
 ###
+
+### Location Controller
+
+# Get all cafeteria locations
+GET http://localhost:8080/api/location
+
+###
+
+# Get a single location by ID
+GET http://localhost:8080/api/location/1
+
+###
+
+# Create a new location
+POST http://localhost:8080/api/location
+Content-Type: application/json
+
+{
+	"name": "New Campus Cafe",
+	"description": "Pop-up cafe near the Noyes building"
+}
+
+###
+
+# Update an existing location
+PUT http://localhost:8080/api/location/1
+Content-Type: application/json
+
+{
+	"name": "Badger Den",
+	"description": "Updated description for Badger Den"
+}
+
+###
+
+# Delete a location by ID
+DELETE http://localhost:8080/api/location/3
+
+###
+
+# Get all business hours for a location
+GET http://localhost:8080/api/location/1/hours
+
+###
+
+# Get specific business hours by ID
+GET http://localhost:8080/api/location/hours/1
+
+###
+
+# Add business hours for a location
+POST http://localhost:8080/api/location/1/hours
+Content-Type: application/json
+
+{
+	"startTime": "2025-01-01T07:30:00",
+	"endTime": "2025-01-01T15:30:00",
+	"weekdayId": 1
+}
+
+###
+
+# Update business hours for a location
+PUT http://localhost:8080/api/location/hours/1
+Content-Type: application/json
+
+{
+	"startTime": "2025-01-01T08:00:00",
+	"endTime": "2025-01-01T16:00:00",
+	"weekdayId": 2
+}
+
+###
+
+# Delete business hours for a location
+DELETE http://localhost:8080/api/location/hours/5
+
+###
+
+### Station Controller
+
+# Get all stations for a location
+GET http://localhost:8080/api/station/location/1
+
+###
+
+# Get a station by ID
+GET http://localhost:8080/api/station/2
+
+###
+
+# Create a station for a location
+POST http://localhost:8080/api/station/location/1
+Content-Type: application/json
+
+{
+	"name": "Salad Bar",
+	"description": "Fresh greens and toppings"
+}
+
+###
+
+# Update a station by ID
+PUT http://localhost:8080/api/station/2
+Content-Type: application/json
+
+{
+	"name": "Deli",
+	"description": "Updated deli station description"
+}
+
+###
+
+# Delete a station by ID
+DELETE http://localhost:8080/api/station/5
+
+###
+
+# Get all business hours for a station
+GET http://localhost:8080/api/station/2/hours
+
+###
+
+# Get specific business hours for a station by ID
+GET http://localhost:8080/api/station/hours/2
+
+###
+
+# Add business hours for a station
+POST http://localhost:8080/api/station/2/hours
+Content-Type: application/json
+
+{
+	"startTime": "2025-01-01T09:00:00",
+	"endTime": "2025-01-01T17:00:00",
+	"weekdayId": 3
+}
+
+###
+
+# Update business hours for a station
+PUT http://localhost:8080/api/station/hours/2
+Content-Type: application/json
+
+{
+	"startTime": "2025-01-01T10:00:00",
+	"endTime": "2025-01-01T18:00:00",
+	"weekdayId": 4
+}
+
+###
+
+# Delete business hours for a station
+DELETE http://localhost:8080/api/station/hours/4
+
+###
