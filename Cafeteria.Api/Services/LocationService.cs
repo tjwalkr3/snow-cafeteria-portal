@@ -21,7 +21,7 @@ public class LocationService : ILocationService
         throw new NotImplementedException();
     }
 
-    public Task<LocationDto?> GetLocationByID(int locationId)
+    public Task<LocationDto> GetLocationByID(int locationId)
     {
         throw new NotImplementedException();
     }
@@ -46,7 +46,7 @@ public class LocationService : ILocationService
         throw new NotImplementedException();
     }
 
-    public Task<LocationBusinessHoursDto?> GetLocationBusinessHoursById(int locationHrsId)
+    public Task<LocationBusinessHoursDto> GetLocationBusinessHoursById(int locationHrsId)
     {
         throw new NotImplementedException();
     }
