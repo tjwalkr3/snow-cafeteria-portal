@@ -1,34 +1,34 @@
 ### Get stations by location ID
 
 # Get stations for Badger Den (location_id = 1)
-GET http://localhost:8080/api/menu/stations/location/1
+GET http://localhost:5132/api/menu/stations/location/1
 
 ###
 
 # Get stations for Busters Bistro (location_id = 2)
-GET http://localhost:8080/api/menu/stations/location/2
+GET http://localhost:5132/api/menu/stations/location/2
 
 ###
 
 # Get the list of all locations
-GET http://localhost:8080/api/menu/locations
+GET http://localhost:5132/api/menu/locations
 
 ###
 
 ### Location Controller
 
 # Get all cafeteria locations
-GET http://localhost:8080/api/location
+GET http://localhost:5132/api/location
 
 ###
 
 # Get a single location by ID
-GET http://localhost:8080/api/location/1
+GET http://localhost:5132/api/location/1
 
 ###
 
 # Create a new location
-POST http://localhost:8080/api/location
+POST http://localhost:5132/api/location
 Content-Type: application/json
 
 {
@@ -39,7 +39,7 @@ Content-Type: application/json
 ###
 
 # Update an existing location
-PUT http://localhost:8080/api/location/1
+PUT http://localhost:5132/api/location/1
 Content-Type: application/json
 
 {
@@ -50,22 +50,22 @@ Content-Type: application/json
 ###
 
 # Delete a location by ID
-DELETE http://localhost:8080/api/location/3
+DELETE http://localhost:5132/api/location/3
 
 ###
 
 # Get all business hours for a location
-GET http://localhost:8080/api/location/1/hours
+GET http://localhost:5132/api/location/1/hours
 
 ###
 
 # Get specific business hours by ID
-GET http://localhost:8080/api/location/hours/1
+GET http://localhost:5132/api/location/hours/1
 
 ###
 
 # Add business hours for a location
-POST http://localhost:8080/api/location/1/hours
+POST http://localhost:5132/api/location/1/hours
 Content-Type: application/json
 
 {
@@ -77,7 +77,7 @@ Content-Type: application/json
 ###
 
 # Update business hours for a location
-PUT http://localhost:8080/api/location/hours/1
+PUT http://localhost:5132/api/location/hours/1
 Content-Type: application/json
 
 {
@@ -89,24 +89,24 @@ Content-Type: application/json
 ###
 
 # Delete business hours for a location
-DELETE http://localhost:8080/api/location/hours/5
+DELETE http://localhost:5132/api/location/hours/5
 
 ###
 
 ### Station Controller
 
 # Get all stations for a location
-GET http://localhost:8080/api/station/location/1
+GET http://localhost:5132/api/station/station/1
 
 ###
 
 # Get a station by ID
-GET http://localhost:8080/api/station/2
+GET http://localhost:5132/api/station/2
 
 ###
 
 # Create a station for a location
-POST http://localhost:8080/api/station/location/1
+POST http://localhost:5132/api/station/station/1
 Content-Type: application/json
 
 {
@@ -117,7 +117,7 @@ Content-Type: application/json
 ###
 
 # Update a station by ID
-PUT http://localhost:8080/api/station/2
+PUT http://localhost:5132/api/station/2
 Content-Type: application/json
 
 {
@@ -127,23 +127,24 @@ Content-Type: application/json
 
 ###
 
-# Delete a station by ID
-DELETE http://localhost:8080/api/station/5
+# Delete a station by ID 
+# NOTE: This will fail if there are dependent menu items
+DELETE http://localhost:5132/api/station/5
 
 ###
 
 # Get all business hours for a station
-GET http://localhost:8080/api/station/2/hours
+GET http://localhost:5132/api/station/2/hours
 
 ###
 
 # Get specific business hours for a station by ID
-GET http://localhost:8080/api/station/hours/2
+GET http://localhost:5132/api/station/hours/2
 
 ###
 
 # Add business hours for a station
-POST http://localhost:8080/api/station/2/hours
+POST http://localhost:5132/api/station/2/hours
 Content-Type: application/json
 
 {
@@ -155,7 +156,7 @@ Content-Type: application/json
 ###
 
 # Update business hours for a station
-PUT http://localhost:8080/api/station/hours/2
+PUT http://localhost:5132/api/station/hours/2
 Content-Type: application/json
 
 {
@@ -167,6 +168,6 @@ Content-Type: application/json
 ###
 
 # Delete business hours for a station
-DELETE http://localhost:8080/api/station/hours/4
+DELETE http://localhost:5132/api/station/hours/4
 
 ###
