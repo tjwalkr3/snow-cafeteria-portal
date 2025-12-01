@@ -58,6 +58,24 @@ public class EntreeService : IEntreeService
         return result.ToList();
     }
 
+    public async Task<List<EntreeDto>> GetEntreesByStationID(int stationId)
+    {
+        const string sql = @"
+            SELECT 
+                id AS Id, 
+                station_id AS StationId, 
+                entree_name AS EntreeName, 
+                entree_description AS EntreeDescription, 
+                entree_price AS EntreePrice, 
+                image_url AS ImageUrl
+            FROM cafeteria.entree
+            WHERE station_id = @stationId
+            ORDER BY entree_name;";
+
+        var result = await _dbConnection.QueryAsync<EntreeDto>(sql, new { stationId });
+        return result.ToList();
+    }
+
     public async Task<EntreeDto?> UpdateEntreeByID(int id, EntreeDto entreeDto)
     {
         const string sql = @"

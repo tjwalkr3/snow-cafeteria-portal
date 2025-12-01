@@ -7,6 +7,7 @@ public interface IDrinkService
     Task<DrinkDto> CreateDrink(DrinkDto drinkDto);
     Task<DrinkDto?> GetDrinkByID(int id);
     Task<List<DrinkDto>> GetAllDrinks();
+    Task<List<DrinkDto>> GetDrinksByStationID(int stationId);
     Task<DrinkDto?> UpdateDrinkByID(int id, DrinkDto drinkDto);
     Task<bool> DeleteDrinkByID(int id);
 }

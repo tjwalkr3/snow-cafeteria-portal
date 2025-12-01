@@ -58,6 +58,24 @@ public class SideService : ISideService
         return result.ToList();
     }
 
+    public async Task<List<SideDto>> GetSidesByStationID(int stationId)
+    {
+        const string sql = @"
+            SELECT 
+                id AS Id, 
+                station_id AS StationId, 
+                side_name AS SideName, 
+                side_description AS SideDescription, 
+                side_price AS SidePrice, 
+                image_url AS ImageUrl
+            FROM cafeteria.side
+            WHERE station_id = @stationId
+            ORDER BY side_name;";
+
+        var result = await _dbConnection.QueryAsync<SideDto>(sql, new { stationId });
+        return result.ToList();
+    }
+
     public async Task<SideDto?> UpdateSideByID(int id, SideDto sideDto)
     {
         const string sql = @"

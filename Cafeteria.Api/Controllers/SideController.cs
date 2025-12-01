@@ -38,6 +38,13 @@ public class SideController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("station/{stationId}")]
+    public async Task<ActionResult<List<SideDto>>> GetSidesByStationID(int stationId)
+    {
+        var result = await _sideService.GetSidesByStationID(stationId);
+        return Ok(result);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<SideDto>> UpdateSideByID(int id, [FromBody] SideDto sideDto)
     {

@@ -58,6 +58,24 @@ public class DrinkService : IDrinkService
         return result.ToList();
     }
 
+    public async Task<List<DrinkDto>> GetDrinksByStationID(int stationId)
+    {
+        const string sql = @"
+            SELECT 
+                id AS Id, 
+                station_id AS StationId, 
+                drink_name AS DrinkName, 
+                drink_description AS DrinkDescription, 
+                drink_price AS DrinkPrice, 
+                image_url AS ImageUrl
+            FROM cafeteria.drink
+            WHERE station_id = @stationId
+            ORDER BY drink_name;";
+
+        var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { stationId });
+        return result.ToList();
+    }
+
     public async Task<DrinkDto?> UpdateDrinkByID(int id, DrinkDto drinkDto)
     {
         const string sql = @"

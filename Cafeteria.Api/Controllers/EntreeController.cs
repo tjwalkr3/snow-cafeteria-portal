@@ -38,6 +38,13 @@ public class EntreeController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("station/{stationId}")]
+    public async Task<ActionResult<List<EntreeDto>>> GetEntreesByStationID(int stationId)
+    {
+        var result = await _entreeService.GetEntreesByStationID(stationId);
+        return Ok(result);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<EntreeDto>> UpdateEntreeByID(int id, [FromBody] EntreeDto entreeDto)
     {
