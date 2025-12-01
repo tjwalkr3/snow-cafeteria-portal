@@ -6,7 +6,7 @@ using Cafeteria.Shared.Enums;
 namespace Cafeteria.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/station")]
 public class StationController : ControllerBase
 {
     private readonly IStationService _stationService;
@@ -16,7 +16,7 @@ public class StationController : ControllerBase
         _stationService = stationService;
     }
 
-    [HttpGet("location/{locationId:int}")]
+    [HttpGet("station/{locationId:int}")]
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         return await _stationService.GetStationsByLocation(locationId);
@@ -35,7 +35,7 @@ public class StationController : ControllerBase
         return Ok(station);
     }
 
-    [HttpPost("location/{locationId:int}")]
+    [HttpPost("station/{locationId:int}")]
     public async Task<IActionResult> CreateStationForLocation(int locationId, [FromBody] StationUpsertRequest request)
     {
         await _stationService.CreateStationForLocation(locationId, request.Name, request.Description);

@@ -7,7 +7,7 @@ using Cafeteria.Shared.Enums;
 namespace Cafeteria.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/location")]
 public class LocationController : ControllerBase
 {
     private readonly ILocationService _locationService;
