@@ -128,8 +128,7 @@ Content-Type: application/json
 ###
 
 # Delete a station by ID 
-# NOTE: This will fail if there are dependent menu items
-DELETE http://localhost:5132/api/station/5
+DELETE http://localhost:5132/api/station/6
 
 ###
 
