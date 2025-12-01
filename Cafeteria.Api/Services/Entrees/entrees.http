@@ -1,6 +1,6 @@
 ### Entree API Tests
 
-@baseUrl = http://localhost:5000/api/entree
+@baseUrl = http://localhost:5132/api/entree
 
 ### Create a new entree
 POST {{baseUrl}}

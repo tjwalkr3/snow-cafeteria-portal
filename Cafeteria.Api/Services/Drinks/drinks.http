@@ -1,6 +1,6 @@
 ### Drink API Tests
 
-@baseUrl = http://localhost:5000/api/drink
+@baseUrl = http://localhost:5132/api/drink
 
 ### Create a new drink
 POST {{baseUrl}}

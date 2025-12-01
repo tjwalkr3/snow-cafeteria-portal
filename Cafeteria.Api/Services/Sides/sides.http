@@ -1,6 +1,6 @@
 ### Side API Tests
 
-@baseUrl = http://localhost:5000/api/side
+@baseUrl = http://localhost:5132/api/side
 
 ### Create a new side
 POST {{baseUrl}}
