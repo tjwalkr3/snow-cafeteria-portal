@@ -10,4 +10,11 @@ public class LocationService(HttpClient client) : ILocationService
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<LocationDto>>() ?? [];
     }
+
+    public async Task<List<LocationBusinessHoursDto>> GetLocationBusinessHours(int locationId)
+    {
+        var response = await client.GetAsync($"location/{locationId}/hours");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<LocationBusinessHoursDto>>() ?? [];
+    }
 }

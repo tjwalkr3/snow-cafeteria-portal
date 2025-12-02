@@ -10,4 +10,11 @@ public class StationService(HttpClient client) : IStationService
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
     }
+
+    public async Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId)
+    {
+        var response = await client.GetAsync($"station/{stationId}/hours");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<StationBusinessHoursDto>>() ?? [];
+    }
 }
