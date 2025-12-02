@@ -15,17 +15,24 @@ public partial class LocationCollapsible : ComponentBase
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    public List<StationDto> Stations { get; set; } = [];
+    [Parameter]
+    public bool IsExpanded { get; set; }
 
-    private bool IsCollapsed { get; set; } = true;
+    [Parameter]
+    public EventCallback OnToggle { get; set; }
+
+    public List<StationDto> Stations { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {
         Stations = await StationService.GetStationsByLocation(Location.Id);
     }
 
-    private void Toggle()
+    private async Task Toggle()
     {
-        IsCollapsed = !IsCollapsed;
+        if (OnToggle.HasDelegate)
+        {
+            await OnToggle.InvokeAsync();
+        }
     }
 }

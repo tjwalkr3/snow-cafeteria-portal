@@ -7,6 +7,20 @@ public partial class LocationAndStation : ComponentBase
     [Inject]
     public ILocationAndStationVM ViewModel { get; set; } = null!;
 
+    private int? ExpandedLocationId { get; set; }
+
+    private void ToggleLocation(int locationId)
+    {
+        if (ExpandedLocationId == locationId)
+        {
+            ExpandedLocationId = null;
+        }
+        else
+        {
+            ExpandedLocationId = locationId;
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await ViewModel.LoadStationsAsync();

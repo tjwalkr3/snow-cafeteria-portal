@@ -2,10 +2,10 @@
     <div class="card-header" @onclick="Toggle" style="cursor: pointer;">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">@Location.LocationName</h5>
-            <span>@(IsCollapsed ? "▼" : "▲")</span>
+            <span>@(IsExpanded ? "▲" : "▼")</span>
         </div>
     </div>
-    @if (!IsCollapsed)
+    @if (IsExpanded)
     {
         <div class="card-body">
             <p>@Location.LocationDescription</p>

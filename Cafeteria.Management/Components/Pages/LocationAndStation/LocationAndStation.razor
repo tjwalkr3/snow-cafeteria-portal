@@ -7,5 +7,7 @@
 
 @foreach (var location in ViewModel.Locations)
 {
-    <LocationCollapsible Location="location" />
+    <LocationCollapsible Location="location" 
+                         IsExpanded="@(ExpandedLocationId == location.Id)" 
+                         OnToggle="@(() => ToggleLocation(location.Id))" />
 }
