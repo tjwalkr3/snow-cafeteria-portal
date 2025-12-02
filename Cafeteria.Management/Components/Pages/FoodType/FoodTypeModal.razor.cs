@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
+using Cafeteria.Management.Services;
 
 namespace Cafeteria.Management.Components.Pages.FoodType;
 
@@ -7,6 +8,9 @@ public partial class FoodTypeModal : ComponentBase
 {
     [Inject]
     private IFoodTypeModalVM FoodTypeModalVM { get; set; } = default!;
+
+    [Inject]
+    private IFoodTypeService FoodTypeService { get; set; } = default!;
 
     [Parameter]
     public FoodOptionTypeDto FoodType { get; set; } = new();
@@ -20,6 +24,21 @@ public partial class FoodTypeModal : ComponentBase
     private bool IsEditMode => FoodType.Id > 0;
     private bool IsSaving { get; set; } = false;
     private string? ErrorMessage { get; set; }
+    private List<EntreeDto> Entrees { get; set; } = new();
+    private List<SideDto> Sides { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Entrees = await FoodTypeService.GetAllEntrees();
+            Sides = await FoodTypeService.GetAllSides();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error loading data: {ex.Message}";
+        }
+    }
 
     private async Task HandleSubmit()
     {

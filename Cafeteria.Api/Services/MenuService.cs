@@ -42,6 +42,22 @@ public class MenuService : IMenuService
         return result.ToList();
     }
 
+    public async Task<List<EntreeDto>> GetAllEntrees()
+    {
+        const string sql = @"
+        SELECT 
+            id AS Id, 
+            station_id AS StationId, 
+            entree_name AS EntreeName, 
+            entree_description AS EntreeDescription, 
+            entree_price AS EntreePrice, 
+            image_url AS ImageUrl
+        FROM cafeteria.entree
+        ORDER BY entree_name;";
+        var result = await _dbConnection.QueryAsync<EntreeDto>(sql);
+        return result.ToList();
+    }
+
     public async Task<List<EntreeDto>> GetEntreesByStation(int stationId)
     {
         const string sql = @"
@@ -55,6 +71,22 @@ public class MenuService : IMenuService
         FROM cafeteria.entree
         WHERE station_id = @stationId;";
         var result = await _dbConnection.QueryAsync<EntreeDto>(sql, new { stationId });
+        return result.ToList();
+    }
+
+    public async Task<List<SideDto>> GetAllSides()
+    {
+        const string sql = @"
+        SELECT 
+            id AS Id, 
+            station_id AS StationId, 
+            side_name AS SideName, 
+            side_description AS SideDescription, 
+            side_price AS SidePrice, 
+            image_url AS ImageUrl
+        FROM cafeteria.side
+        ORDER BY side_name;";
+        var result = await _dbConnection.QueryAsync<SideDto>(sql);
         return result.ToList();
     }
 

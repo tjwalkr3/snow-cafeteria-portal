@@ -9,4 +9,6 @@ public interface IFoodTypeService
     Task<List<FoodOptionTypeDto>> GetAllFoodTypes();
     Task<FoodOptionTypeDto?> UpdateFoodTypeById(int id, FoodOptionTypeDto foodTypeDto);
     Task<bool> DeleteFoodTypeById(int id);
+    Task<List<EntreeDto>> GetAllEntrees();
+    Task<List<SideDto>> GetAllSides();
 }

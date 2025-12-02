@@ -24,6 +24,7 @@ public partial class FoodOptionType : ComponentBase
     public bool IsInitialized { get; set; } = false;
 
     private bool ShowOptionModal { get; set; } = false;
+    private bool ShowAddToTypeModal { get; set; } = false;
     private bool ShowTypeModal { get; set; } = false;
     private bool ShowDeleteOptionModal { get; set; } = false;
     private bool ShowDeleteTypeModal { get; set; } = false;
@@ -177,6 +178,12 @@ public partial class FoodOptionType : ComponentBase
         ShowDeleteTypeModal = true;
     }
 
+    private void ShowAddOptionToTypeModal(int foodTypeId)
+    {
+        CurrentFoodTypeId = foodTypeId;
+        ShowAddToTypeModal = true;
+    }
+
     private void ShowCreateOptionModal(int foodTypeId)
     {
         CurrentFoodTypeId = foodTypeId;
@@ -301,6 +308,33 @@ public partial class FoodOptionType : ComponentBase
     {
         ShowTypeModal = false;
         SelectedFoodType = null;
+    }
+
+    private async Task HandleAddToTypeSave()
+    {
+        try
+        {
+            await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+
+            toastMessage = "Food option added to type successfully.";
+            toastType = ToastType.Success;
+            showToast = true;
+
+            ShowAddToTypeModal = false;
+            CurrentFoodTypeId = 0;
+            StateHasChanged();
+        }
+        catch
+        {
+            ShowAddToTypeModal = false;
+            CurrentFoodTypeId = 0;
+        }
+    }
+
+    private void HandleAddToTypeCancel()
+    {
+        ShowAddToTypeModal = false;
+        CurrentFoodTypeId = 0;
     }
 
     private async Task ConfirmDeleteOption()

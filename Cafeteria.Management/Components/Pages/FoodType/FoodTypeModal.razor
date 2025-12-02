@@ -31,13 +31,25 @@
                         <ValidationMessage For="@(() => FoodType.FoodOptionPrice)" />
                     </div>
                     <div class="mb-3">
-                        <label for="entreeId" class="form-label">Entree ID (Optional)</label>
-                        <InputNumber id="entreeId" class="form-control" @bind-Value="FoodType.EntreeId" />
+                        <label for="entreeId" class="form-label">Entree (Optional)</label>
+                        <InputSelect id="entreeId" class="form-select" @bind-Value="FoodType.EntreeId">
+                            <option value="">-- Select Entree --</option>
+                            @foreach (var entree in Entrees)
+                            {
+                                <option value="@entree.Id">@entree.EntreeName</option>
+                            }
+                        </InputSelect>
                         <ValidationMessage For="@(() => FoodType.EntreeId)" />
                     </div>
                     <div class="mb-3">
-                        <label for="sideId" class="form-label">Side ID (Optional)</label>
-                        <InputNumber id="sideId" class="form-control" @bind-Value="FoodType.SideId" />
+                        <label for="sideId" class="form-label">Side (Optional)</label>
+                        <InputSelect id="sideId" class="form-select" @bind-Value="FoodType.SideId">
+                            <option value="">-- Select Side --</option>
+                            @foreach (var side in Sides)
+                            {
+                                <option value="@side.Id">@side.SideName</option>
+                            }
+                        </InputSelect>
                         <ValidationMessage For="@(() => FoodType.SideId)" />
                     </div>
                     @if (!string.IsNullOrEmpty(ErrorMessage))

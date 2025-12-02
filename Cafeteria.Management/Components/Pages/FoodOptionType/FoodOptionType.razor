@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using Cafeteria.Management.Components.Shared
 @using Cafeteria.Management.Components.Pages.FoodType
+@using Cafeteria.Shared.DTOs
 
 <PageTitle>Food Options & Types Management</PageTitle>
 
@@ -90,7 +91,7 @@
                                                 <div class="mb-2">
                                                     <strong>Food Options:</strong>
                                                     <button class="btn btn-sm btn-link"
-                                                        @onclick="() => ShowCreateOptionModal(foodType.Id)">
+                                                        @onclick="() => ShowAddOptionToTypeModal(foodType.Id)">
                                                         [+ Add Food Option]
                                                     </button>
                                                 </div>
@@ -234,6 +235,13 @@
 {
     <FoodOptionModal FoodOption="SelectedFoodOption" FoodTypeId="CurrentFoodTypeId" OnSave="HandleOptionSave"
         OnCancel="HandleOptionCancel" />
+}
+
+@if (ShowAddToTypeModal)
+{
+    <AddFoodOptionToTypeModal FoodTypeId="CurrentFoodTypeId" AllOptions="FoodOptionVM.FoodOptions"
+        AlreadyAssignedOptions="GetOptionsForType(CurrentFoodTypeId)" OnSave="HandleAddToTypeSave"
+        OnCancel="HandleAddToTypeCancel" />
 }
 
 @if (ShowTypeModal)
