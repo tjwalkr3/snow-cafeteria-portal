@@ -26,6 +26,11 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IStationService, StationService>();
+builder.Services.AddScoped<IDrinkService, DrinkService>();
+builder.Services.AddScoped<IEntreeService, EntreeService>();
+builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
