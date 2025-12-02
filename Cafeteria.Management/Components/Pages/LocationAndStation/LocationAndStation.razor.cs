@@ -9,6 +9,7 @@ public partial class LocationAndStation : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        await ViewModel.LoadStationsAsync();
         await base.OnInitializedAsync();
     }
 }
