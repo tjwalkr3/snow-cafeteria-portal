@@ -1,0 +1,36 @@
+### Side API Tests
+
+@baseUrl = http://localhost:5132/api/side
+
+### Create a new side
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "stationId": 1,
+  "sideName": "Hash Browns",
+  "sideDescription": "Crispy hash browns",
+  "sidePrice": 2.99,
+  "imageUrl": "https://picsum.photos/id/550/150/150"
+}
+
+### Get all sides
+GET {{baseUrl}}
+
+### Get a specific side by ID
+GET {{baseUrl}}/1
+
+### Update a side
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "stationId": 1,
+  "sideName": "Hash Browns Supreme",
+  "sideDescription": "Crispy hash browns with cheese and bacon",
+  "sidePrice": 3.99,
+  "imageUrl": "https://picsum.photos/id/550/150/150"
+}
+
+### Delete a side
+DELETE {{baseUrl}}/1

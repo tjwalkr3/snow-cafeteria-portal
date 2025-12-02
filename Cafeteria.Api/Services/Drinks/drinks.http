@@ -1,0 +1,36 @@
+### Drink API Tests
+
+@baseUrl = http://localhost:5132/api/drink
+
+### Create a new drink
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "stationId": 1,
+  "drinkName": "Coca Cola",
+  "drinkDescription": "Classic Coca Cola",
+  "drinkPrice": 2.50,
+  "imageUrl": "https://picsum.photos/id/163/150/150"
+}
+
+### Get all drinks
+GET {{baseUrl}}
+
+### Get a specific drink by ID
+GET {{baseUrl}}/1
+
+### Update a drink
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "stationId": 1,
+  "drinkName": "Coca Cola Zero",
+  "drinkDescription": "Coca Cola Zero Sugar",
+  "drinkPrice": 2.75,
+  "imageUrl": "https://picsum.photos/id/163/150/150"
+}
+
+### Delete a drink
+DELETE {{baseUrl}}/1

@@ -1,0 +1,36 @@
+### Entree API Tests
+
+@baseUrl = http://localhost:5132/api/entree
+
+### Create a new entree
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "stationId": 1,
+  "entreeName": "Scrambled Eggs",
+  "entreeDescription": "Fresh scrambled eggs",
+  "entreePrice": 5.99,
+  "imageUrl": "https://picsum.photos/id/488/150/150"
+}
+
+### Get all entrees
+GET {{baseUrl}}
+
+### Get a specific entree by ID
+GET {{baseUrl}}/1
+
+### Update an entree
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "stationId": 1,
+  "entreeName": "Scrambled Eggs Supreme",
+  "entreeDescription": "Fresh scrambled eggs with cheese",
+  "entreePrice": 6.49,
+  "imageUrl": "https://picsum.photos/id/488/150/150"
+}
+
+### Delete an entree
+DELETE {{baseUrl}}/1
