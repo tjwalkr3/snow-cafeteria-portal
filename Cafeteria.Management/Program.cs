@@ -17,6 +17,10 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
+    client.BaseAddress = new Uri("http://api"));
+
 builder.Services.AddHttpClient<IFoodOptionService, FoodOptionService>(client =>
 {
     // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)

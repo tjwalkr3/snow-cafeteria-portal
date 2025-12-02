@@ -71,5 +71,4 @@ jobs:
         title: "Snow Cafeteria Portal - Merged Into Dev"
         description: "Development workflow completed"
         url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        status: ${{ job.status }}
-        color: 0xf73232
+        status: ${{ contains(needs.*.result, 'failure') && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}
