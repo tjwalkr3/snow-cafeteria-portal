@@ -2,57 +2,47 @@
 @using Microsoft.AspNetCore.Components.Forms
 @rendermode InteractiveServer
 
-<div class="modal fade @(_isVisible ? "show" : "")" style="@(_isVisible ? "display:block" : "display:none")" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    @if (GetState() == LocationModalState.Create)
-                    {
-                        <span>Create Location</span>
-                    }
-                    else
-                    {
-                        <span>Edit @SelectedLocation.LocationName</span>
-                    }
-                </h5>
-                <button type="button" class="close" @onclick="Close" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <EditForm Model="@SelectedLocation">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-
-                    <div class="form-group mb-3">
-                        <label for="locationName">Name</label>
-                        <InputText id="locationName" class="form-control" @bind-Value="SelectedLocation.LocationName" />
-                        <ValidationMessage For="@(() => SelectedLocation.LocationName)" />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="locationDescription">Description</label>
-                        <InputTextArea id="locationDescription" class="form-control" @bind-Value="SelectedLocation.LocationDescription" />
-                        <ValidationMessage For="@(() => SelectedLocation.LocationDescription)" />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="imageUrl">Image URL</label>
-                        <InputText id="imageUrl" class="form-control" @bind-Value="SelectedLocation.ImageUrl" />
-                        <ValidationMessage For="@(() => SelectedLocation.ImageUrl)" />
-                    </div>
-                </EditForm>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick="Close">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @if (_isVisible)
 {
-    <div class="modal-backdrop fade show"></div>
+    <div style="border: 1px solid black; background: white; padding: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+        <h3>
+            @if (GetState() == LocationModalState.Create)
+            {
+                <span>Create Location</span>
+            }
+            else
+            {
+                <span>Edit @SelectedLocation.LocationName</span>
+            }
+        </h3>
+        
+        <EditForm Model="@SelectedLocation">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div>
+                <label>Name</label>
+                <InputText @bind-Value="SelectedLocation.LocationName" />
+                <ValidationMessage For="@(() => SelectedLocation.LocationName)" />
+            </div>
+
+            <div>
+                <label>Description</label>
+                <InputTextArea @bind-Value="SelectedLocation.LocationDescription" />
+                <ValidationMessage For="@(() => SelectedLocation.LocationDescription)" />
+            </div>
+
+            <div>
+                <label>Image URL</label>
+                <InputText @bind-Value="SelectedLocation.ImageUrl" />
+                <ValidationMessage For="@(() => SelectedLocation.ImageUrl)" />
+            </div>
+
+            <div style="margin-top: 10px;">
+                <button type="button" @onclick="Close">Close</button>
+                <button type="submit">Save</button>
+            </div>
+        </EditForm>
+    </div>
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;" @onclick="Close"></div>
 }
