@@ -17,12 +17,17 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_FILE="${SCRIPT_DIR}/cafeteria-secret.yml"
 CERTBOT_IMAGE="certbot/certbot:latest"
-SECRET_NAME="cafeteria-tls"
 NAMESPACE="cafeteria"
 
 read -rp "Enter the domain to issue a certificate for: " DOMAIN
 if [[ -z "${DOMAIN}" ]]; then
   echo "Domain cannot be empty" >&2
+  exit 1
+fi
+
+read -rp "Enter the secret name: " SECRET_NAME
+if [[ -z "${SECRET_NAME}" ]]; then
+  echo "Secret name cannot be empty" >&2
   exit 1
 fi
 
