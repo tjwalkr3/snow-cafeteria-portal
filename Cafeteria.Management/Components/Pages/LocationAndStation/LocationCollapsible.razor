@@ -9,7 +9,25 @@
     {
         <div class="card-body">
             <p>@Location.LocationDescription</p>
-            @StationContainer
+            
+            <div class="station-container">
+                @if (Stations.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var station in Stations)
+                        {
+                            <li class="list-group-item">
+                                <h6>@station.StationName</h6>
+                                <small>@station.StationDescription</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No stations found for this location.</p>
+                }
+            </div>
         </div>
     }
 </div>
