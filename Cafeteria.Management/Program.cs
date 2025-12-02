@@ -1,6 +1,7 @@
 using Cafeteria.Management.Components;
 using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
+using Cafeteria.Management.Components.Pages.FoodOption;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Management.Services;
@@ -19,28 +20,18 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
-    client.BaseAddress = new Uri("http://api"));
+    client.BaseAddress = new Uri("http://api/api/"));
 
-builder.Services.AddHttpClient<IFoodOptionService, FoodOptionService>(client =>
-{
-    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
-
-builder.Services.AddHttpClient<IFoodTypeService, FoodTypeService>(client =>
-{
-    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
+builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
+builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 builder.Services.AddScoped<EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
 builder.Services.AddScoped<ISideVM, SideVM>();
-
+builder.Services.AddScoped<IFoodOptionVM, FoodOptionVM>();
+builder.Services.AddScoped<IFoodOptionModalVM, FoodOptionModalVM>();
 // Add authentication services
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorization();
