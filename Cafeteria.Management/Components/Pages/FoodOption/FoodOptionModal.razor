@@ -19,11 +19,6 @@
                         <InputCheckbox id="inStock" class="form-check-input" @bind-Value="FoodOption.InStock" />
                         <label for="inStock" class="form-check-label">In Stock</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="imageUrl" class="form-label">Image URL</label>
-                        <InputText id="imageUrl" class="form-control" @bind-Value="FoodOption.ImageUrl" />
-                        <ValidationMessage For="@(() => FoodOption.ImageUrl)" />
-                    </div>
                     @if (!string.IsNullOrEmpty(ErrorMessage))
                     {
                         <div class="alert alert-danger">@ErrorMessage</div>

@@ -12,6 +12,9 @@ public partial class FoodOptionModal : ComponentBase
     public FoodOptionDto FoodOption { get; set; } = new();
 
     [Parameter]
+    public int FoodTypeId { get; set; }
+
+    [Parameter]
     public EventCallback OnSave { get; set; }
 
     [Parameter]

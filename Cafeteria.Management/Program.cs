@@ -24,6 +24,7 @@ builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
     client.BaseAddress = new Uri("http://api/api/"));
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
+builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IFoodOptionVM, FoodOptionVM>();
 builder.Services.AddScoped<IFoodOptionModalVM, FoodOptionModalVM>();
 builder.Services.AddScoped<IFoodTypeVM, FoodTypeVM>();
 builder.Services.AddScoped<IFoodTypeModalVM, FoodTypeModalVM>();
+builder.Services.AddScoped<IOptionOptionTypeVM, OptionOptionTypeVM>();
 
 // Add authentication servicesodOptionModalVM, FoodOptionModalVM>();
 // Add authentication services

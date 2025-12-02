@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
 using static Cafeteria.Management.Components.Shared.Toast;
-using Cafeteria.Management.Components.Pages.FoodOption;
 using Cafeteria.Management.Components.Pages.FoodType;
+using Cafeteria.Management.Services;
+using Cafeteria.Management.Components.Pages.FoodOption;
 
 namespace Cafeteria.Management.Components.Pages.FoodOptionType;
 
@@ -14,134 +15,148 @@ public partial class FoodOptionType : ComponentBase
     [Inject]
     private IFoodTypeVM FoodTypeVM { get; set; } = default!;
 
-    private string ActiveTab { get; set; } = "options";
+    [Inject]
+    private IOptionOptionTypeVM OptionOptionTypeVM { get; set; } = default!;
 
-    // Food Options
-    public bool IsFoodOptionsInitialized { get; set; } = false;
-    private bool ShowFoodOptionModal { get; set; } = false;
+    [Inject]
+    private IOptionOptionTypeService OptionOptionTypeService { get; set; } = default!;
+
+    public bool IsInitialized { get; set; } = false;
+
+    private bool ShowOptionModal { get; set; } = false;
+    private bool ShowTypeModal { get; set; } = false;
+    private bool ShowDeleteOptionModal { get; set; } = false;
+    private bool ShowDeleteTypeModal { get; set; } = false;
+    private bool ShowRemoveFromTypeModal { get; set; } = false;
+
     private FoodOptionDto? SelectedFoodOption { get; set; }
-    private bool ShowDeleteFoodOptionModal { get; set; } = false;
-    private FoodOptionDto? FoodOptionToDelete { get; set; }
-
-    // Food Types
-    public bool IsFoodTypesInitialized { get; set; } = false;
-    private bool ShowFoodTypeModal { get; set; } = false;
     private FoodOptionTypeDto? SelectedFoodType { get; set; }
-    private bool ShowDeleteFoodTypeModal { get; set; } = false;
+    private FoodOptionDto? FoodOptionToDelete { get; set; }
     private FoodOptionTypeDto? FoodTypeToDelete { get; set; }
+    private int CurrentFoodTypeId { get; set; } = 0;
+    private int OptionToRemoveId { get; set; } = 0;
+    private int TypeToRemoveFromId { get; set; } = 0;
 
     private bool showToast = false;
     private string toastMessage = string.Empty;
     private ToastType toastType = ToastType.Success;
 
+    private string FilterText { get; set; } = string.Empty;
+    private string OptionFilterText { get; set; } = string.Empty;
+    private HashSet<int> expandedTypes = new HashSet<int>();
+    private HashSet<int> expandedOptions = new HashSet<int>();
+
+    private List<FoodOptionTypeDto> FilteredFoodTypes =>
+        string.IsNullOrWhiteSpace(FilterText)
+            ? FoodTypeVM.FoodTypes ?? new List<FoodOptionTypeDto>()
+            : FoodTypeVM.FoodTypes?.Where(ft =>
+                ft.FoodOptionTypeName.Contains(FilterText, StringComparison.OrdinalIgnoreCase))
+                .ToList() ?? new List<FoodOptionTypeDto>();
+
+    private List<FoodOptionDto> FilteredFoodOptions =>
+        string.IsNullOrWhiteSpace(OptionFilterText)
+            ? FoodOptionVM.FoodOptions ?? new List<FoodOptionDto>()
+            : FoodOptionVM.FoodOptions?.Where(fo =>
+                fo.FoodOptionName.Contains(OptionFilterText, StringComparison.OrdinalIgnoreCase))
+                .ToList() ?? new List<FoodOptionDto>();
+
+    private string DeleteOptionMessage =>
+        FoodOptionToDelete != null
+            ? $"Are you sure you want to delete '{FoodOptionToDelete.FoodOptionName}'? This action cannot be undone."
+            : string.Empty;
+
+    private string RemoveFromTypeMessage
+    {
+        get
+        {
+            if (OptionToRemoveId == 0 || TypeToRemoveFromId == 0)
+                return string.Empty;
+
+            var option = FoodOptionVM.FoodOptions?.FirstOrDefault(o => o.Id == OptionToRemoveId);
+            var type = FoodTypeVM.FoodTypes?.FirstOrDefault(t => t.Id == TypeToRemoveFromId);
+
+            if (option == null || type == null)
+                return string.Empty;
+
+            return $"Remove '{option.FoodOptionName}' from '{type.FoodOptionTypeName}'?";
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await FoodOptionVM.InitializeFoodOptionsAsync();
-        IsFoodOptionsInitialized = true;
+        await FoodTypeVM.InitializeFoodTypesAsync();
+        await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+        IsInitialized = true;
     }
 
-    private async Task SetActiveTab(string tab)
+    private void ToggleTypeExpansion(int typeId)
     {
-        ActiveTab = tab;
+        if (expandedTypes.Contains(typeId))
+            expandedTypes.Remove(typeId);
+        else
+            expandedTypes.Add(typeId);
+    }
 
-        if (tab == "types" && !IsFoodTypesInitialized)
+    private void ToggleOptionExpansion(int optionId)
+    {
+        if (expandedOptions.Contains(optionId))
+            expandedOptions.Remove(optionId);
+        else
+            expandedOptions.Add(optionId);
+    }
+
+    private string GetTypeIcon(FoodOptionTypeDto foodType)
+    {
+        return foodType.FoodOptionTypeName switch
         {
-            await FoodTypeVM.InitializeFoodTypesAsync();
-            IsFoodTypesInitialized = true;
-        }
-    }
-
-    #region Food Options Methods
-
-    private void ShowCreateFoodOptionModal()
-    {
-        SelectedFoodOption = new FoodOptionDto();
-        ShowFoodOptionModal = true;
-    }
-
-    private void ShowEditFoodOptionModal(FoodOptionDto foodOption)
-    {
-        SelectedFoodOption = new FoodOptionDto
-        {
-            Id = foodOption.Id,
-            FoodOptionName = foodOption.FoodOptionName,
-            InStock = foodOption.InStock,
-            ImageUrl = foodOption.ImageUrl
+            var name when name.Contains("Bread", StringComparison.OrdinalIgnoreCase) => "🍞",
+            var name when name.Contains("Meat", StringComparison.OrdinalIgnoreCase) => "🥩",
+            var name when name.Contains("Cheese", StringComparison.OrdinalIgnoreCase) => "🧀",
+            var name when name.Contains("Topping", StringComparison.OrdinalIgnoreCase) => "🥗",
+            var name when name.Contains("Dressing", StringComparison.OrdinalIgnoreCase) => "🥫",
+            var name when name.Contains("Plate", StringComparison.OrdinalIgnoreCase) => "🍽️",
+            _ => "📋"
         };
-        ShowFoodOptionModal = true;
     }
 
-    private async Task HandleFoodOptionSave()
+    private List<FoodOptionDto> GetOptionsForType(int foodTypeId)
     {
-        var isEdit = SelectedFoodOption?.Id > 0;
-        var foodOptionName = SelectedFoodOption?.FoodOptionName ?? "Food Option";
+        if (OptionOptionTypeVM.OptionOptionTypes == null || FoodOptionVM.FoodOptions == null)
+            return new List<FoodOptionDto>();
 
-        ShowFoodOptionModal = false;
-        SelectedFoodOption = null;
+        var optionIds = OptionOptionTypeVM.OptionOptionTypes
+            .Where(oot => oot.FoodOptionTypeId == foodTypeId)
+            .Select(oot => oot.FoodOptionId)
+            .ToList();
 
-        await FoodOptionVM.InitializeFoodOptionsAsync();
-
-        toastMessage = isEdit
-            ? $"'{foodOptionName}' has been updated successfully."
-            : $"'{foodOptionName}' has been created successfully.";
-        toastType = ToastType.Success;
-        showToast = true;
-
-        StateHasChanged();
+        return FoodOptionVM.FoodOptions
+            .Where(fo => optionIds.Contains(fo.Id))
+            .ToList();
     }
 
-    private void HandleFoodOptionCancel()
+    private List<FoodOptionTypeDto> GetTypesForOption(int optionId)
     {
-        ShowFoodOptionModal = false;
-        SelectedFoodOption = null;
+        if (OptionOptionTypeVM.OptionOptionTypes == null || FoodTypeVM.FoodTypes == null)
+            return new List<FoodOptionTypeDto>();
+
+        var typeIds = OptionOptionTypeVM.OptionOptionTypes
+            .Where(oot => oot.FoodOptionId == optionId)
+            .Select(oot => oot.FoodOptionTypeId)
+            .ToList();
+
+        return FoodTypeVM.FoodTypes
+            .Where(ft => typeIds.Contains(ft.Id))
+            .ToList();
     }
 
-    private void ShowDeleteFoodOptionConfirmation(FoodOptionDto foodOption)
-    {
-        FoodOptionToDelete = foodOption;
-        ShowDeleteFoodOptionModal = true;
-    }
-
-    private async Task ConfirmDeleteFoodOption()
-    {
-        ShowDeleteFoodOptionModal = false;
-
-        if (FoodOptionToDelete != null)
-        {
-            var foodOptionName = FoodOptionToDelete.FoodOptionName;
-
-            if (await FoodOptionVM.DeleteFoodOptionAsync(FoodOptionToDelete.Id))
-            {
-                await FoodOptionVM.InitializeFoodOptionsAsync();
-
-                toastMessage = $"'{foodOptionName}' has been deleted successfully.";
-                toastType = ToastType.Success;
-                showToast = true;
-
-                StateHasChanged();
-            }
-
-            FoodOptionToDelete = null;
-        }
-    }
-
-    private void CancelDeleteFoodOption()
-    {
-        ShowDeleteFoodOptionModal = false;
-        FoodOptionToDelete = null;
-    }
-
-    #endregion
-
-    #region Food Types Methods
-
-    private void ShowCreateFoodTypeModal()
+    private void ShowCreateTypeModal()
     {
         SelectedFoodType = new FoodOptionTypeDto();
-        ShowFoodTypeModal = true;
+        ShowTypeModal = true;
     }
 
-    private void ShowEditFoodTypeModal(FoodOptionTypeDto foodType)
+    private void ShowEditTypeModal(FoodOptionTypeDto foodType)
     {
         SelectedFoodType = new FoodOptionTypeDto
         {
@@ -153,67 +168,257 @@ public partial class FoodOptionType : ComponentBase
             EntreeId = foodType.EntreeId,
             SideId = foodType.SideId
         };
-        ShowFoodTypeModal = true;
+        ShowTypeModal = true;
     }
 
-    private async Task HandleFoodTypeSave()
-    {
-        ShowFoodTypeModal = false;
-        var isEdit = SelectedFoodType?.Id > 0;
-        var foodTypeName = SelectedFoodType?.FoodOptionTypeName ?? "Food Type";
-        SelectedFoodType = null;
-
-        await FoodTypeVM.InitializeFoodTypesAsync();
-
-        toastMessage = isEdit
-            ? $"'{foodTypeName}' has been updated successfully."
-            : $"'{foodTypeName}' has been created successfully.";
-        toastType = ToastType.Success;
-        showToast = true;
-
-        StateHasChanged();
-    }
-
-    private void HandleFoodTypeCancel()
-    {
-        ShowFoodTypeModal = false;
-        SelectedFoodType = null;
-    }
-
-    private void ShowDeleteFoodTypeConfirmation(FoodOptionTypeDto foodType)
+    private void ShowDeleteTypeConfirmation(FoodOptionTypeDto foodType)
     {
         FoodTypeToDelete = foodType;
-        ShowDeleteFoodTypeModal = true;
+        ShowDeleteTypeModal = true;
     }
 
-    private async Task ConfirmDeleteFoodType()
+    private void ShowCreateOptionModal(int foodTypeId)
     {
-        ShowDeleteFoodTypeModal = false;
+        CurrentFoodTypeId = foodTypeId;
+        SelectedFoodOption = new FoodOptionDto();
+        ShowOptionModal = true;
+    }
 
-        if (FoodTypeToDelete != null)
+    private void ShowEditOptionModal(FoodOptionDto foodOption, int foodTypeId)
+    {
+        CurrentFoodTypeId = foodTypeId;
+        SelectedFoodOption = new FoodOptionDto
         {
-            var foodTypeName = FoodTypeToDelete.FoodOptionTypeName;
+            Id = foodOption.Id,
+            FoodOptionName = foodOption.FoodOptionName,
+            InStock = foodOption.InStock,
+            ImageUrl = foodOption.ImageUrl
+        };
+        ShowOptionModal = true;
+    }
 
-            if (await FoodTypeVM.DeleteFoodTypeAsync(FoodTypeToDelete.Id))
+    private void ShowCreateStandaloneOptionModal()
+    {
+        CurrentFoodTypeId = 0;
+        SelectedFoodOption = new FoodOptionDto();
+        ShowOptionModal = true;
+    }
+
+    private void ShowEditStandaloneOptionModal(FoodOptionDto foodOption)
+    {
+        CurrentFoodTypeId = 0;
+        SelectedFoodOption = new FoodOptionDto
+        {
+            Id = foodOption.Id,
+            FoodOptionName = foodOption.FoodOptionName,
+            InStock = foodOption.InStock,
+            ImageUrl = foodOption.ImageUrl
+        };
+        ShowOptionModal = true;
+    }
+
+    private void ShowDeleteOptionConfirmation(FoodOptionDto foodOption)
+    {
+        FoodOptionToDelete = foodOption;
+        ShowDeleteOptionModal = true;
+    }
+
+    private void ShowRemoveOptionFromType(FoodOptionDto foodOption, int foodTypeId)
+    {
+        OptionToRemoveId = foodOption.Id;
+        TypeToRemoveFromId = foodTypeId;
+        ShowRemoveFromTypeModal = true;
+    }
+
+    private async Task HandleOptionSave()
+    {
+        try
+        {
+            var isEdit = SelectedFoodOption?.Id > 0;
+            var foodOptionName = SelectedFoodOption?.FoodOptionName ?? "Food Option";
+
+            if (!isEdit && CurrentFoodTypeId > 0 && SelectedFoodOption != null)
             {
-                await FoodTypeVM.InitializeFoodTypesAsync();
-
-                toastMessage = $"'{foodTypeName}' has been deleted successfully.";
-                toastType = ToastType.Success;
-                showToast = true;
-
-                StateHasChanged();
+                await FoodOptionVM.InitializeFoodOptionsAsync();
             }
 
-            FoodTypeToDelete = null;
+            await FoodOptionVM.InitializeFoodOptionsAsync();
+            await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+
+            toastMessage = isEdit
+                ? $"'{foodOptionName}' has been updated successfully."
+                : $"'{foodOptionName}' has been created successfully.";
+            toastType = ToastType.Success;
+            showToast = true;
+
+            ShowOptionModal = false;
+            SelectedFoodOption = null;
+            CurrentFoodTypeId = 0;
+            StateHasChanged();
+        }
+        catch
+        {
+            ShowOptionModal = false;
+            SelectedFoodOption = null;
+            CurrentFoodTypeId = 0;
         }
     }
 
-    private void CancelDeleteFoodType()
+    private void HandleOptionCancel()
     {
-        ShowDeleteFoodTypeModal = false;
+        ShowOptionModal = false;
+        SelectedFoodOption = null;
+        CurrentFoodTypeId = 0;
+    }
+
+    private async Task HandleTypeSave()
+    {
+        try
+        {
+            var isEdit = SelectedFoodType?.Id > 0;
+            var typeName = SelectedFoodType?.FoodOptionTypeName ?? "Food Type";
+
+            await FoodTypeVM.InitializeFoodTypesAsync();
+
+            toastMessage = isEdit
+                ? $"'{typeName}' has been updated successfully."
+                : $"'{typeName}' has been created successfully.";
+            toastType = ToastType.Success;
+            showToast = true;
+
+            ShowTypeModal = false;
+            SelectedFoodType = null;
+            StateHasChanged();
+        }
+        catch
+        {
+            ShowTypeModal = false;
+            SelectedFoodType = null;
+        }
+    }
+
+    private void HandleTypeCancel()
+    {
+        ShowTypeModal = false;
+        SelectedFoodType = null;
+    }
+
+    private async Task ConfirmDeleteOption()
+    {
+        ShowDeleteOptionModal = false;
+
+        if (FoodOptionToDelete != null)
+        {
+            try
+            {
+                var foodOptionName = FoodOptionToDelete.FoodOptionName;
+
+                if (await FoodOptionVM.DeleteFoodOptionAsync(FoodOptionToDelete.Id))
+                {
+                    await FoodOptionVM.InitializeFoodOptionsAsync();
+                    await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+
+                    toastMessage = $"'{foodOptionName}' has been deleted successfully.";
+                    toastType = ToastType.Success;
+                    showToast = true;
+
+                    StateHasChanged();
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                FoodOptionToDelete = null;
+            }
+        }
+    }
+
+    private void CancelDeleteOption()
+    {
+        ShowDeleteOptionModal = false;
+        FoodOptionToDelete = null;
+    }
+
+    private async Task ConfirmDeleteType()
+    {
+        ShowDeleteTypeModal = false;
+
+        if (FoodTypeToDelete != null)
+        {
+            try
+            {
+                var typeName = FoodTypeToDelete.FoodOptionTypeName;
+
+                if (await FoodTypeVM.DeleteFoodTypeAsync(FoodTypeToDelete.Id))
+                {
+                    await FoodTypeVM.InitializeFoodTypesAsync();
+                    await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+
+                    toastMessage = $"'{typeName}' has been deleted successfully.";
+                    toastType = ToastType.Success;
+                    showToast = true;
+
+                    StateHasChanged();
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                FoodTypeToDelete = null;
+            }
+        }
+    }
+
+    private void CancelDeleteType()
+    {
+        ShowDeleteTypeModal = false;
         FoodTypeToDelete = null;
     }
 
-    #endregion
+    private async Task ConfirmRemoveFromType()
+    {
+        ShowRemoveFromTypeModal = false;
+
+        if (OptionToRemoveId > 0 && TypeToRemoveFromId > 0)
+        {
+            try
+            {
+                var mapping = OptionOptionTypeVM.OptionOptionTypes?
+                    .FirstOrDefault(oot => oot.FoodOptionId == OptionToRemoveId &&
+                                          oot.FoodOptionTypeId == TypeToRemoveFromId);
+
+                if (mapping != null)
+                {
+                    await OptionOptionTypeVM.DeleteOptionOptionTypeAsync(mapping.Id);
+                    await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+
+                    toastMessage = "Food option removed from type successfully.";
+                    toastType = ToastType.Success;
+                    showToast = true;
+
+                    StateHasChanged();
+                }
+            }
+            catch
+            {
+                // Silently handle errors to prevent circuit crashes
+            }
+            finally
+            {
+                OptionToRemoveId = 0;
+                TypeToRemoveFromId = 0;
+            }
+        }
+    }
+
+    private void CancelRemoveFromType()
+    {
+        ShowRemoveFromTypeModal = false;
+        OptionToRemoveId = 0;
+        TypeToRemoveFromId = 0;
+    }
 }

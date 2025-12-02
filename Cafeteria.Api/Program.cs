@@ -25,6 +25,7 @@ builder.Services.AddScoped<IDbConnection>(provider => provider.GetRequiredServic
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
+builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

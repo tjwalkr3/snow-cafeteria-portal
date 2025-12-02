@@ -10,11 +10,16 @@ public class ManagerController : ControllerBase
 {
     private readonly IFoodOptionService _foodOptionService;
     private readonly IFoodTypeService _foodTypeService;
+    private readonly IOptionOptionTypeService _optionOptionTypeService;
 
-    public ManagerController(IFoodOptionService foodOptionService, IFoodTypeService foodTypeService)
+    public ManagerController(
+        IFoodOptionService foodOptionService,
+        IFoodTypeService foodTypeService,
+        IOptionOptionTypeService optionOptionTypeService)
     {
         _foodOptionService = foodOptionService;
         _foodTypeService = foodTypeService;
+        _optionOptionTypeService = optionOptionTypeService;
     }
 
     [HttpPost("food-options")]
@@ -75,5 +80,35 @@ public class ManagerController : ControllerBase
     public async Task<bool> DeleteFoodType(int id)
     {
         return await _foodTypeService.DeleteFoodType(id);
+    }
+
+    [HttpPost("option-option-types")]
+    public async Task<OptionOptionTypeDto> CreateOptionOptionType([FromBody] OptionOptionTypeDto optionOptionTypeDto)
+    {
+        return await _optionOptionTypeService.CreateOptionOptionType(optionOptionTypeDto);
+    }
+
+    [HttpGet("option-option-types/{id}")]
+    public async Task<OptionOptionTypeDto?> GetOptionOptionTypeByID(int id)
+    {
+        return await _optionOptionTypeService.GetOptionOptionTypeByID(id);
+    }
+
+    [HttpGet("option-option-types")]
+    public async Task<List<OptionOptionTypeDto>> GetAllOptionOptionTypes()
+    {
+        return await _optionOptionTypeService.GetAllOptionOptionTypes();
+    }
+
+    [HttpPut("option-option-types/{id}")]
+    public async Task<OptionOptionTypeDto?> UpdateOptionOptionType(int id, [FromBody] OptionOptionTypeDto optionOptionTypeDto)
+    {
+        return await _optionOptionTypeService.UpdateOptionOptionTypeById(id, optionOptionTypeDto);
+    }
+
+    [HttpDelete("option-option-types/{id}")]
+    public async Task<bool> DeleteOptionOptionType(int id)
+    {
+        return await _optionOptionTypeService.DeleteOptionOptionTypeById(id);
     }
 }
