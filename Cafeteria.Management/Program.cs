@@ -21,7 +21,10 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
-    client.BaseAddress = new Uri("http://api"));
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
