@@ -1,13 +1,19 @@
 @page "/location-station"
+@using Cafeteria.Management.Components.Pages.LocationAndStation.Location
 @rendermode InteractiveServer
 
 <h1>Locations and Stations</h1>
 
 <p>Manage locations/stations here.</p>
 
+<button class="btn btn-primary mb-3" @onclick="OpenCreateLocationModal">Create Location</button>
+
 @foreach (var location in ViewModel.Locations)
 {
-    <LocationCollapsible Location="location" 
-                         IsExpanded="@(ExpandedLocationId == location.Id)" 
-                         OnToggle="@(() => ToggleLocation(location.Id))" />
+    <LocationCollapsible 
+        Location="location" 
+        IsExpanded="@(ExpandedLocationId == location.Id)" 
+        OnToggle="@(() => ToggleLocation(location.Id))" />
+
+<CreateOrEditLocation @ref="_createOrEditLocationModal" SelectedLocation="_selectedLocation" />
 }

@@ -1,21 +1,58 @@
+@using Cafeteria.Shared.DTOs
+@using Microsoft.AspNetCore.Components.Forms
 @rendermode InteractiveServer
 
-<div class="modal fade" tabindex="-1" role="dialog">
+<div class="modal fade @(_isVisible ? "show" : "")" style="@(_isVisible ? "display:block" : "display:none")" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Create or Edit Location</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title">
+                    @if (GetState() == LocationModalState.Create)
+                    {
+                        <span>Create Location</span>
+                    }
+                    else
+                    {
+                        <span>Edit @SelectedLocation.LocationName</span>
+                    }
+                </h5>
+                <button type="button" class="close" @onclick="Close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Modal content for creating or editing locations.</p>
+                <EditForm Model="@SelectedLocation">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group mb-3">
+                        <label for="locationName">Name</label>
+                        <InputText id="locationName" class="form-control" @bind-Value="SelectedLocation.LocationName" />
+                        <ValidationMessage For="@(() => SelectedLocation.LocationName)" />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="locationDescription">Description</label>
+                        <InputTextArea id="locationDescription" class="form-control" @bind-Value="SelectedLocation.LocationDescription" />
+                        <ValidationMessage For="@(() => SelectedLocation.LocationDescription)" />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="imageUrl">Image URL</label>
+                        <InputText id="imageUrl" class="form-control" @bind-Value="SelectedLocation.ImageUrl" />
+                        <ValidationMessage For="@(() => SelectedLocation.ImageUrl)" />
+                    </div>
+                </EditForm>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" @onclick="Close">Close</button>
                 <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
 </div>
+
+@if (_isVisible)
+{
+    <div class="modal-backdrop fade show"></div>
+}
