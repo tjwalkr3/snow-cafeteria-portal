@@ -2,6 +2,7 @@ using Cafeteria.Management.Components;
 using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
 using Cafeteria.Management.Components.Pages.FoodOption;
+using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Management.Services;
@@ -21,9 +22,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
     client.BaseAddress = new Uri("http://api/api/"));
-
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
-builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
+builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
@@ -32,6 +32,10 @@ builder.Services.AddScoped<IDrinkVM, DrinkVM>();
 builder.Services.AddScoped<ISideVM, SideVM>();
 builder.Services.AddScoped<IFoodOptionVM, FoodOptionVM>();
 builder.Services.AddScoped<IFoodOptionModalVM, FoodOptionModalVM>();
+builder.Services.AddScoped<IFoodTypeVM, FoodTypeVM>();
+builder.Services.AddScoped<IFoodTypeModalVM, FoodTypeModalVM>();
+
+// Add authentication servicesodOptionModalVM, FoodOptionModalVM>();
 // Add authentication services
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorization();
