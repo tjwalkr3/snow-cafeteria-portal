@@ -1,6 +1,44 @@
 @page "/drinks"
 @rendermode InteractiveServer
 
+<PageTitle>Drinks</PageTitle>
+
 <h1>Drinks</h1>
 
-<p>Manage drinks here.</p>
+<button type="button" @onclick="HandleCreateClick">Add Drink</button>
+
+@if (ViewModel.Drinks.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Station ID</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var drink in ViewModel.Drinks)
+            {
+                <tr>
+                    <td>@drink.DrinkName</td>
+                    <td>@drink.StationId</td>
+                    <td>@drink.DrinkPrice</td>
+                    <td>@drink.DrinkDescription</td>
+                    <td>
+                        <button type="button" @onclick="() => HandleEditClick(drink.Id)">Edit</button>
+                        <button type="button" @onclick="() => HandleDeleteClick(drink.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No drinks found.</p>
+}
+
+<CreateOrEditDrink @ref="modalComponent"></CreateOrEditDrink>
