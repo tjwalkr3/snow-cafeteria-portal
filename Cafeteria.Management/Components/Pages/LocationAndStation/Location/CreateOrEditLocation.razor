@@ -1,48 +1,21 @@
-@using Cafeteria.Shared.DTOs
-@using Microsoft.AspNetCore.Components.Forms
 @rendermode InteractiveServer
 
-@if (_isVisible)
-{
-    <div style="border: 1px solid black; background: white; padding: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
-        <h3>
-            @if (GetState() == LocationModalState.Create)
-            {
-                <span>Create Location</span>
-            }
-            else
-            {
-                <span>Edit @SelectedLocation.LocationName</span>
-            }
-        </h3>
-        
-        <EditForm Model="@SelectedLocation">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div>
-                <label>Name</label>
-                <InputText @bind-Value="SelectedLocation.LocationName" />
-                <ValidationMessage For="@(() => SelectedLocation.LocationName)" />
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create or Edit Location</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-
-            <div>
-                <label>Description</label>
-                <InputTextArea @bind-Value="SelectedLocation.LocationDescription" />
-                <ValidationMessage For="@(() => SelectedLocation.LocationDescription)" />
+            <div class="modal-body">
+                <p>Modal content for creating or editing locations.</p>
             </div>
-
-            <div>
-                <label>Image URL</label>
-                <InputText @bind-Value="SelectedLocation.ImageUrl" />
-                <ValidationMessage For="@(() => SelectedLocation.ImageUrl)" />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
-
-            <div style="margin-top: 10px;">
-                <button type="button" @onclick="Close">Close</button>
-                <button type="submit">Save</button>
-            </div>
-        </EditForm>
+        </div>
     </div>
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;" @onclick="Close"></div>
-}
+</div>

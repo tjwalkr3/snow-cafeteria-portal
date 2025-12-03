@@ -6,8 +6,6 @@
 
 <p>Manage locations/stations here.</p>
 
-<button class="btn btn-primary mb-3" @onclick="OpenCreateLocationModal">Create Location</button>
-
 @foreach (var location in ViewModel.Locations)
 {
     <LocationCollapsible 
