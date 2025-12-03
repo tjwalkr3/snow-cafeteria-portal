@@ -54,6 +54,7 @@ builder.Services.AddHttpClient<IFoodTypeService, FoodTypeService>(client =>
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 builder.Services.AddScoped<EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
+builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<ISideVM, SideVM>();
 
 // Add authentication services
