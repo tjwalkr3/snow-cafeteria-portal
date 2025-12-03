@@ -57,7 +57,7 @@ public class SideServiceTests
         Assert.True(result);
         _mockHttpClient.Verify(x => x.DeleteAsync<object>($"api/Side/{sideId}"), Times.Once);
     }
-    
+
     [Fact]
     public async Task DeleteSide_ReturnsFalse_WhenFailed()
     {
