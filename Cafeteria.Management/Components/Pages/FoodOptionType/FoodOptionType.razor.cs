@@ -111,13 +111,13 @@ public partial class FoodOptionType : ComponentBase
     {
         return foodType.FoodOptionTypeName switch
         {
-            var name when name.Contains("Bread", StringComparison.OrdinalIgnoreCase) => "🍞",
-            var name when name.Contains("Meat", StringComparison.OrdinalIgnoreCase) => "🥩",
-            var name when name.Contains("Cheese", StringComparison.OrdinalIgnoreCase) => "🧀",
-            var name when name.Contains("Topping", StringComparison.OrdinalIgnoreCase) => "🥗",
-            var name when name.Contains("Dressing", StringComparison.OrdinalIgnoreCase) => "🥫",
-            var name when name.Contains("Plate", StringComparison.OrdinalIgnoreCase) => "🍽️",
-            _ => "📋"
+            var name when name.Contains("Bread", StringComparison.OrdinalIgnoreCase) => "bi bi-basket",
+            var name when name.Contains("Meat", StringComparison.OrdinalIgnoreCase) => "bi bi-egg-fried",
+            var name when name.Contains("Cheese", StringComparison.OrdinalIgnoreCase) => "bi bi-square",
+            var name when name.Contains("Topping", StringComparison.OrdinalIgnoreCase) => "bi bi-flower1",
+            var name when name.Contains("Dressing", StringComparison.OrdinalIgnoreCase) => "bi bi-droplet",
+            var name when name.Contains("Plate", StringComparison.OrdinalIgnoreCase) => "bi bi-circle",
+            _ => "bi bi-list-ul"
         };
     }
 

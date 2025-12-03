@@ -53,19 +53,19 @@
                                         <div class="d-flex justify-content-between align-items-center p-3 @(expandedTypes.Contains(foodType.Id) ? "bg-light" : "")"
                                             style="cursor: pointer;" @onclick="() => ToggleTypeExpansion(foodType.Id)">
                                             <div>
-                                                <span class="me-2">@(GetTypeIcon(foodType))</span>
+                                                <i class="@(GetTypeIcon(foodType)) me-2"></i>
                                                 <strong>@foodType.FoodOptionTypeName</strong>
                                                 <button class="btn btn-sm btn-link text-decoration-none"
                                                     @onclick:stopPropagation="true" @onclick="() => ShowEditTypeModal(foodType)">
-                                                    [Edit]
+                                                    <i class="bi bi-pencil"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-link text-danger text-decoration-none"
                                                     @onclick:stopPropagation="true"
                                                     @onclick="() => ShowDeleteTypeConfirmation(foodType)">
-                                                    [×]
+                                                    <i class="bi bi-x-lg"></i>
                                                 </button>
                                             </div>
-                                            <span>@(expandedTypes.Contains(foodType.Id) ? "▲" : "▼")</span>
+                                            <i class="bi @(expandedTypes.Contains(foodType.Id) ? "bi-chevron-up" : "bi-chevron-down")"></i>
                                         </div>
 
                                         @if (expandedTypes.Contains(foodType.Id))
@@ -75,13 +75,20 @@
                                                     <div class="d-flex gap-3 mb-2">
                                                         <div>
                                                             <strong>Selection:</strong>
-                                                            @(foodType.MaxAmount == 1 ? "● Single Choice" : "● Multiple")
+                                                            <i class="bi @(foodType.MaxAmount == 1 ? "bi-circle-fill" : "bi-circle-fill") me-1"></i>
+                                                            @(foodType.MaxAmount == 1 ? "Single Choice" : "Multiple")
                                                         </div>
                                                     </div>
                                                     <div class="d-flex gap-3">
                                                         <div>Min: [@foodType.NumIncluded]</div>
                                                         <div>Max: [@foodType.MaxAmount]</div>
-                                                        <div>Required: [@(foodType.NumIncluded > 0 ? "✓" : "")]</div>
+                                                        <div>
+                                                            Required: 
+                                                            @if (foodType.NumIncluded > 0)
+                                                            {
+                                                                <i class="bi bi-check-lg"></i>
+                                                            }
+                                                        </div>
                                                     </div>
                                                     <div class="mt-2">
                                                         <div>Price: $@foodType.FoodOptionPrice.ToString("F2")</div>
@@ -92,7 +99,7 @@
                                                     <strong>Food Options:</strong>
                                                     <button class="btn btn-sm btn-link"
                                                         @onclick="() => ShowAddOptionToTypeModal(foodType.Id)">
-                                                        [+ Add Food Option]
+                                                        <i class="bi bi-plus-circle"></i> Add Food Option
                                                     </button>
                                                 </div>
 
@@ -106,25 +113,27 @@
                                                         @foreach (var option in typeOptions)
                                                         {
                                                             <li class="mb-2">
-                                                                <span class="me-2">•</span>
+                                                                <i class="bi bi-dot me-1"></i>
                                                                 <strong>@option.FoodOptionName</strong>
                                                                 <span class="ms-2">
                                                                     @if (option.InStock)
                                                                     {
-                                                                        <span class="text-success">[✓] Available</span>
+                                                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                                                        <span class="text-success">Available</span>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <span class="text-danger">[✗] Unavailable</span>
+                                                                        <i class="bi bi-x-circle-fill text-danger"></i>
+                                                                        <span class="text-danger">Unavailable</span>
                                                                     }
                                                                 </span>
                                                                 <button class="btn btn-sm btn-link text-decoration-none"
                                                                     @onclick="() => ShowEditOptionModal(option, foodType.Id)">
-                                                                    [Edit]
+                                                                    <i class="bi bi-pencil"></i>
                                                                 </button>
                                                                 <button class="btn btn-sm btn-link text-danger text-decoration-none"
                                                                     @onclick="() => ShowRemoveOptionFromType(option, foodType.Id)">
-                                                                    [Remove]
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </li>
                                                         }
@@ -173,25 +182,25 @@
                                                 <span class="ms-2">
                                                     @if (option.InStock)
                                                     {
-                                                        <span class="badge bg-success">In Stock</span>
+                                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> In Stock</span>
                                                     }
                                                     else
                                                     {
-                                                        <span class="badge bg-danger">Out of Stock</span>
+                                                        <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Out of Stock</span>
                                                     }
                                                 </span>
                                                 <button class="btn btn-sm btn-link text-decoration-none"
                                                     @onclick:stopPropagation="true"
                                                     @onclick="() => ShowEditStandaloneOptionModal(option)">
-                                                    [Edit]
+                                                    <i class="bi bi-pencil"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-link text-danger text-decoration-none"
                                                     @onclick:stopPropagation="true"
                                                     @onclick="() => ShowDeleteOptionConfirmation(option)">
-                                                    [Delete]
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
-                                            <span>@(expandedOptions.Contains(option.Id) ? "▲" : "▼")</span>
+                                            <i class="bi @(expandedOptions.Contains(option.Id) ? "bi-chevron-up" : "bi-chevron-down")"></i>
                                         </div>
 
                                         @if (expandedOptions.Contains(option.Id))
