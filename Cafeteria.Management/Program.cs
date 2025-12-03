@@ -41,12 +41,17 @@ builder.Services.AddHttpClient<IDrinkService, DrinkService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 });
 
+builder.Services.AddHttpClient<IEntreeService, EntreeService>(client =>
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
-builder.Services.AddScoped<EntreeVM>();
+builder.Services.AddScoped<IEntreeVM, EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
-builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>();
 builder.Services.AddScoped<ISideVM, SideVM>();
 
 
