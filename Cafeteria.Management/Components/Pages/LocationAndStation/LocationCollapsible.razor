@@ -1,4 +1,5 @@
 @using Cafeteria.Shared.Enums
+@using System
 
 <div class="card mb-3">
     <div class="card-header" @onclick="Toggle" style="cursor: pointer;">
@@ -18,20 +19,30 @@
                 <table class="table table-sm table-bordered mt-2 mb-3" style="width: auto;">
                     <thead>
                         <tr>
-                            <th>Day</th>
-                            <th>Open</th>
-                            <th>Close</th>
+                            <th></th>
+                            @foreach (var day in Enum.GetValues<WeekDay>())
+                            {
+                                <th>@day</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var hours in LocationHours.OrderBy(h => h.WeekdayId))
-                        {
-                            <tr>
-                                <td>@((WeekDay)hours.WeekdayId)</td>
-                                <td>@hours.OpenTime</td>
-                                <td>@hours.CloseTime</td>
-                            </tr>
-                        }
+                        <tr>
+                            <th>Open</th>
+                            @foreach (var day in Enum.GetValues<WeekDay>())
+                            {
+                                var hours = LocationHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                <td>@(hours?.OpenTime.ToString() ?? "-")</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Close</th>
+                            @foreach (var day in Enum.GetValues<WeekDay>())
+                            {
+                                var hours = LocationHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                <td>@(hours?.CloseTime.ToString() ?? "-")</td>
+                            }
+                        </tr>
                     </tbody>
                 </table>
             }
@@ -53,20 +64,30 @@
                                         <table class="table table-sm table-bordered mt-1 mb-0" style="width: auto; font-size: 0.85em;">
                                             <thead>
                                                 <tr>
-                                                    <th>Day</th>
-                                                    <th>Open</th>
-                                                    <th>Close</th>
+                                                    <th></th>
+                                                    @foreach (var day in Enum.GetValues<WeekDay>())
+                                                    {
+                                                        <th>@day</th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var hours in sHours.OrderBy(h => h.WeekdayId))
-                                                {
-                                                    <tr>
-                                                        <td>@((WeekDay)hours.WeekdayId)</td>
-                                                        <td>@hours.OpenTime</td>
-                                                        <td>@hours.CloseTime</td>
-                                                    </tr>
-                                                }
+                                                <tr>
+                                                    <th>Open</th>
+                                                    @foreach (var day in Enum.GetValues<WeekDay>())
+                                                    {
+                                                        var hours = sHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                                        <td>@(hours?.OpenTime.ToString() ?? "-")</td>
+                                                    }
+                                                </tr>
+                                                <tr>
+                                                    <th>Close</th>
+                                                    @foreach (var day in Enum.GetValues<WeekDay>())
+                                                    {
+                                                        var hours = sHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                                        <td>@(hours?.CloseTime.ToString() ?? "-")</td>
+                                                    }
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
