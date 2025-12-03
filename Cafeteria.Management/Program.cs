@@ -19,7 +19,22 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
-    client.BaseAddress = new Uri("http://api"));
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IFoodOptionService, FoodOptionService>(client =>
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IFoodTypeService, FoodTypeService>(client =>
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
 
 builder.Services.AddHttpClient<IFoodOptionService, FoodOptionService>(client =>
 {
