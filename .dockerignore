@@ -2,6 +2,7 @@
 README.md
 .dockerignore
 .gitignore
+**/*-secret.yml
 
 # Build artifacts - prevent permission conflicts
 **/bin/

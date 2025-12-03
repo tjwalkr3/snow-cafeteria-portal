@@ -21,7 +21,7 @@ spec:
         - name: ApiBaseUrl
           value: "http://cafeteria-api-svc:8080/api/"
         - name: Keycloak__Authority
-          value: "https://food.dragonbytes.org/auth/realms/AppRealm"
+          value: "https://auth.dragonbytes.org/realms/AppRealm"
         - name: Keycloak__ClientId
           value: "ham-exam"
         ports:
@@ -55,10 +55,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - food.dragonbytes.org
-      secretName: cafeteria-tls
+        - customer.dragonbytes.org
+      secretName: customer-tls
   rules:
-    - host: food.dragonbytes.org
+    - host: customer.dragonbytes.org
       http:
         paths:
           - path: /
