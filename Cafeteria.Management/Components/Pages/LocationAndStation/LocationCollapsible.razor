@@ -46,7 +46,7 @@
                                 <h6>@station.StationName</h6>
                                 <small>@station.StationDescription</small>
 
-                                @if (StationHours.TryGetValue(station.Id, out var sHours) && sHours.Any())
+                                @if (StationHours.TryGetValue(station.Id, out var sHours) && sHours.Any() && AreHoursDifferent(LocationHours, sHours))
                                 {
                                     <div class="mt-2">
                                         <strong>Hours:</strong>

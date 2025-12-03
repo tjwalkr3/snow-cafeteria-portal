@@ -48,4 +48,27 @@ public partial class LocationCollapsible : ComponentBase
             await OnToggle.InvokeAsync();
         }
     }
+
+    private bool AreHoursDifferent(List<LocationBusinessHoursDto> locationHours, List<StationBusinessHoursDto> stationHours)
+    {
+        if (locationHours.Count != stationHours.Count)
+        {
+            return true;
+        }
+
+        var sortedLoc = locationHours.OrderBy(h => h.WeekdayId).ThenBy(h => h.OpenTime).ToList();
+        var sortedStation = stationHours.OrderBy(h => h.WeekdayId).ThenBy(h => h.OpenTime).ToList();
+
+        for (int i = 0; i < sortedLoc.Count; i++)
+        {
+            if (sortedLoc[i].WeekdayId != sortedStation[i].WeekdayId ||
+                sortedLoc[i].OpenTime != sortedStation[i].OpenTime ||
+                sortedLoc[i].CloseTime != sortedStation[i].CloseTime)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
