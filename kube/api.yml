@@ -21,7 +21,7 @@ spec:
         - name: ConnectionStrings__cafeteria
           value: "Host=cafeteria-db-svc;Port=5432;Database=cafeteriadb;Username=cafeteria_user;Password=cafeteria_password"
         - name: Keycloak__Authority
-          value: "https://food.dragonbytes.org/auth/realms/AppRealm"
+          value: "https://auth.dragonbytes.org/realms/AppRealm"
         - name: Keycloak__Audience
           value: "cafeteria"
         ports:
@@ -51,20 +51,18 @@ metadata:
   namespace: cafeteria
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - food.dragonbytes.org
-      secretName: cafeteria-tls
+        - api.dragonbytes.org
+      secretName: api-tls
   rules:
-    - host: food.dragonbytes.org
+    - host: api.dragonbytes.org
       http:
         paths:
-          - path: /api(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: cafeteria-api-svc

@@ -15,9 +15,7 @@ if ! command -v script >/dev/null 2>&1; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OUTPUT_FILE="${SCRIPT_DIR}/cafeteria-secret.yml"
 CERTBOT_IMAGE="certbot/certbot:latest"
-SECRET_NAME="cafeteria-tls"
 NAMESPACE="cafeteria"
 
 read -rp "Enter the domain to issue a certificate for: " DOMAIN
@@ -25,6 +23,14 @@ if [[ -z "${DOMAIN}" ]]; then
   echo "Domain cannot be empty" >&2
   exit 1
 fi
+
+read -rp "Enter the secret name: " SECRET_NAME
+if [[ -z "${SECRET_NAME}" ]]; then
+  echo "Secret name cannot be empty" >&2
+  exit 1
+fi
+
+OUTPUT_FILE="${SCRIPT_DIR}/${SECRET_NAME}.yml"
 
 echo "This will start a one-off certbot container."
 echo "When the DNS challenge appears, copy the TXT record and add it to your domain."
