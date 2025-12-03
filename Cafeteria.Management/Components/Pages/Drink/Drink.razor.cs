@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Cafeteria.Management.Components.Pages.Drink;
 
 namespace Cafeteria.Management.Components.Pages.Drink;
@@ -8,6 +9,9 @@ public partial class Drink : ComponentBase
     [Inject]
     public IDrinkVM ViewModel { get; set; } = default!;
 
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+
     private CreateOrEditDrink? modalComponent;
 
     protected override async Task OnInitializedAsync()
@@ -15,16 +19,25 @@ public partial class Drink : ComponentBase
         await ViewModel.LoadDrinks();
     }
 
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && modalComponent != null)
+        {
+            modalComponent.SetParentComponent(this);
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
     private async Task HandleCreateClick()
     {
         await ViewModel.ShowCreateModal();
-        StateHasChanged();
+        modalComponent?.Refresh();
     }
 
     private async Task HandleEditClick(int id)
     {
         await ViewModel.ShowEditModal(id);
-        StateHasChanged();
+        modalComponent?.Refresh();
     }
 
     private async Task HandleDeleteClick(int id)
@@ -32,13 +45,23 @@ public partial class Drink : ComponentBase
         if (await ConfirmDelete())
         {
             await ViewModel.DeleteDrink(id);
-            StateHasChanged();
+            await RefreshDrinks();
         }
     }
 
-    private Task<bool> ConfirmDelete()
+    private async Task RefreshDrinks()
     {
-        // In a minimal implementation, using JS confirm
-        return Task.FromResult(true); // In real app, use JS interop for confirmation
+        await ViewModel.LoadDrinks();
+        StateHasChanged();
+    }
+
+    public async Task RefreshDrinksAfterSave()
+    {
+        await RefreshDrinks();
+    }
+
+    private async Task<bool> ConfirmDelete()
+    {
+        return await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this drink?");
     }
 }

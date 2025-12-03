@@ -12,23 +12,23 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div>
+                    <div class="form-group">
                         <label>Drink Name:</label>
                         <input type="text" @bind="ViewModel.CurrentDrink.DrinkName" />
                     </div>
-                    <div>
+                    <div class="form-group">
                         <label>Station ID:</label>
-                        <input type="number" @bind="ViewModel.CurrentDrink.StationId" />
+                        <input type="number" min="1" @bind="ViewModel.CurrentDrink.StationId" />
                     </div>
-                    <div>
+                    <div class="form-group">
                         <label>Price:</label>
                         <input type="number" step="0.01" @bind="ViewModel.CurrentDrink.DrinkPrice" />
                     </div>
-                    <div>
+                    <div class="form-group">
                         <label>Description:</label>
                         <textarea @bind="ViewModel.CurrentDrink.DrinkDescription"></textarea>
                     </div>
-                    <div>
+                    <div class="form-group">
                         <label>Image URL:</label>
                         <input type="text" @bind="ViewModel.CurrentDrink.ImageUrl" />
                     </div>

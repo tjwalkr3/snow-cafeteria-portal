@@ -7,15 +7,41 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
 {
     private readonly IDrinkService _drinkService;
     private readonly IDrinkVM _parentVM;
+    private readonly HttpClient _httpClient;
 
     public DrinkDto CurrentDrink { get; set; } = new();
     public bool IsVisible { get; set; }
     public bool IsEditing { get; set; }
+    public List<StationDto> Stations { get; set; } = [];
+    public string? SelectedStationName { get; set; }
 
-    public CreateOrEditDrinkVM(IDrinkService drinkService, IDrinkVM parentVM)
+    public CreateOrEditDrinkVM(IDrinkService drinkService, IDrinkVM parentVM, HttpClient httpClient)
     {
         _drinkService = drinkService;
         _parentVM = parentVM;
+        _httpClient = httpClient;
+    }
+
+    public async Task LoadStations()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("station");
+            if (response.IsSuccessStatusCode)
+            {
+                Stations = await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading stations: {ex.Message}");
+        }
+    }
+
+    public void SetSelectedStation(int stationId)
+    {
+        CurrentDrink.StationId = stationId;
+        SelectedStationName = Stations.FirstOrDefault(s => s.Id == stationId)?.StationName ?? "Unknown";
     }
 
     public async Task SaveDrink()
