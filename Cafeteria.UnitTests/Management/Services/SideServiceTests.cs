@@ -27,7 +27,7 @@ public class SideServiceTests
             new SideDto { Id = 2, SideName = "Salad", SidePrice = 3.00m }
         };
 
-        _mockHttpClient.Setup(x => x.GetAsync<List<SideDto>>("api/Side"))
+        _mockHttpClient.Setup(x => x.GetAsync<List<SideDto>>("Side"))
             .ReturnsAsync(expectedSides);
 
         // Act
@@ -37,7 +37,7 @@ public class SideServiceTests
         Assert.NotNull(result);
         Assert.Equal(2, result.Count);
         Assert.Equal("Fries", result[0].SideName);
-        _mockHttpClient.Verify(x => x.GetAsync<List<SideDto>>("api/Side"), Times.Once);
+        _mockHttpClient.Verify(x => x.GetAsync<List<SideDto>>("Side"), Times.Once);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class SideServiceTests
         int sideId = 1;
         var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
 
-        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"api/Side/{sideId}"))
+        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"Side/{sideId}"))
             .ReturnsAsync(responseMessage);
 
         // Act
@@ -55,7 +55,7 @@ public class SideServiceTests
 
         // Assert
         Assert.True(result);
-        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"api/Side/{sideId}"), Times.Once);
+        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"Side/{sideId}"), Times.Once);
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class SideServiceTests
         int sideId = 1;
         var responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
 
-        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"api/Side/{sideId}"))
+        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"Side/{sideId}"))
             .ReturnsAsync(responseMessage);
 
         // Act
@@ -73,6 +73,6 @@ public class SideServiceTests
 
         // Assert
         Assert.False(result);
-        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"api/Side/{sideId}"), Times.Once);
+        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"Side/{sideId}"), Times.Once);
     }
 }
