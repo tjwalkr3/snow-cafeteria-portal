@@ -31,7 +31,7 @@ else
                     <td>@side.StationId</td>
                     <td>@side.SideName</td>
                     <td>@side.SideDescription</td>
-                    <td>@side.SidePrice.ToString("C")</td>
+                    <td>@("$" +side.SidePrice.ToString())</td>
                     <td>
                         <button class="btn btn-danger" @onclick="() => DeleteSide(side.Id)">Delete</button>
                     </td>
