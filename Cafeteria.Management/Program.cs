@@ -21,24 +21,15 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
-    client.BaseAddress = new Uri("http://api/api/"));
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
-
-builder.Services.AddHttpClient<ILocationService, LocationService>(client =>
-{
-    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
-
-builder.Services.AddHttpClient<IStationService, StationService>(client =>
-{
-    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IStationService, StationService>();
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
