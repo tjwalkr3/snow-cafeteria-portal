@@ -22,7 +22,14 @@ public class CreateOrEditEntreeVM : ICreateOrEditEntreeVM
     {
         try
         {
-            await _entreeService.CreateEntree(CurrentEntree);
+            if (IsEditing)
+            {
+                await _entreeService.UpdateEntreeById(CurrentEntree.Id, CurrentEntree);
+            }
+            else
+            {
+                await _entreeService.CreateEntree(CurrentEntree);
+            }
 
             IsVisible = false;
             await _parentVM.LoadEntrees();

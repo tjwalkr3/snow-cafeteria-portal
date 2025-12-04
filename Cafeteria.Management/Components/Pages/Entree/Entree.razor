@@ -28,6 +28,7 @@
                     <td>@entree.EntreePrice</td>
                     <td>@entree.EntreeDescription</td>
                     <td>
+                        <button type="button" @onclick="() => HandleEditClick(entree.Id)">Edit</button>
                         <button type="button" @onclick="() => HandleDeleteClick(entree.Id)">Delete</button>
                     </td>
                 </tr>

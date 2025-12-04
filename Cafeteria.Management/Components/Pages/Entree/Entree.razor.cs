@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Cafeteria.Management.Components.Pages.Entree;
 
 namespace Cafeteria.Management.Components.Pages.Entree;
@@ -7,6 +8,9 @@ public partial class Entree : ComponentBase
 {
     [Inject]
     public IEntreeVM ViewModel { get; set; } = default!;
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
 
     private CreateOrEditEntree? modalComponent;
 
@@ -30,10 +34,19 @@ public partial class Entree : ComponentBase
         modalComponent?.Refresh();
     }
 
+    private async Task HandleEditClick(int id)
+    {
+        await ViewModel.ShowEditModal(id);
+        modalComponent?.Refresh();
+    }
+
     private async Task HandleDeleteClick(int id)
     {
-        await ViewModel.DeleteEntree(id);
-        await RefreshEntrees();
+        if (await ConfirmDelete())
+        {
+            await ViewModel.DeleteEntree(id);
+            await RefreshEntrees();
+        }
     }
 
     private async Task RefreshEntrees()
@@ -45,5 +58,10 @@ public partial class Entree : ComponentBase
     public async Task RefreshEntreesAfterSave()
     {
         await RefreshEntrees();
+    }
+
+    private async Task<bool> ConfirmDelete()
+    {
+        return await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this entree?");
     }
 }

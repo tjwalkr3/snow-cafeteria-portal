@@ -57,6 +57,20 @@ public class EntreeVM : IEntreeVM
         return Task.CompletedTask;
     }
 
+    public async Task ShowEditModal(int id)
+    {
+        if (CreateOrEditVM != null)
+        {
+            var entree = await _entreeService.GetEntreeById(id);
+            if (entree != null)
+            {
+                CreateOrEditVM.CurrentEntree = entree;
+                CreateOrEditVM.IsEditing = true;
+                CreateOrEditVM.IsVisible = true;
+            }
+        }
+    }
+
     public void HideModal()
     {
         if (CreateOrEditVM != null)

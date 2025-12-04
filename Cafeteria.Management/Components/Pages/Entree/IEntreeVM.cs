@@ -8,5 +8,6 @@ public interface IEntreeVM
     Task LoadEntrees();
     Task DeleteEntree(int id);
     Task ShowCreateModal();
+    Task ShowEditModal(int id);
     void HideModal();
 }
