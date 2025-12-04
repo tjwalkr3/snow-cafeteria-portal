@@ -28,13 +28,15 @@ data:
           "frontchannelLogout": false,
           "fullScopeAllowed": true,
           "redirectUris": [
-            "https://food.dragonbytes.org/*"
+            "https://customer.dragonbytes.org/*",
+            "https://admin.dragonbytes.org/*"
           ],
           "webOrigins": [
-            "https://food.dragonbytes.org"
+            "https://customer.dragonbytes.org",
+            "https://admin.dragonbytes.org"
           ],
           "attributes": {
-            "post.logout.redirect.uris": "https://food.dragonbytes.org/*"
+            "post.logout.redirect.uris": "https://customer.dragonbytes.org/*##https://admin.dragonbytes.org/*"
           },
           "protocolMappers": [
             {
@@ -126,11 +128,11 @@ spec:
         - name: KC_BOOTSTRAP_ADMIN_PASSWORD
           value: "password123"
         - name: KC_HOSTNAME
-          value: "food.dragonbytes.org"
+          value: "auth.dragonbytes.org"
         - name: KC_HOSTNAME_URL
-          value: "https://food.dragonbytes.org/auth"
+          value: "https://auth.dragonbytes.org"
         - name: KC_HOSTNAME_ADMIN_URL
-          value: "https://food.dragonbytes.org/auth"
+          value: "https://auth.dragonbytes.org"
         - name: KC_HOSTNAME_STRICT
           value: "true"
         - name: KC_HOSTNAME_STRICT_HTTPS
@@ -142,7 +144,7 @@ spec:
         - name: KC_HTTP_ENABLED
           value: "true"
         - name: KC_HTTP_RELATIVE_PATH
-          value: "/auth"
+          value: "/"
         ports:
         - containerPort: 8080
         volumeMounts:
@@ -182,13 +184,13 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - food.dragonbytes.org
-      secretName: cafeteria-tls
+        - auth.dragonbytes.org
+      secretName: auth-tls
   rules:
-    - host: food.dragonbytes.org
+    - host: auth.dragonbytes.org
       http:
         paths:
-          - path: /auth
+          - path: /
             pathType: Prefix
             backend:
               service:
