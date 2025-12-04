@@ -50,6 +50,20 @@ builder.Services.AddHttpClient<IFoodTypeService, FoodTypeService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 });
 
+builder.Services.AddHttpClient<ILocationService, LocationService>(client =>
+{
+    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IStationService, StationService>(client =>
+{
+    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 builder.Services.AddScoped<EntreeVM>();

@@ -1,12 +1,15 @@
 @page "/location-station"
+@using Cafeteria.Management.Components.Pages.LocationAndStation.Location
 @rendermode InteractiveServer
 
 <h1>Locations and Stations</h1>
 
 <p>Manage locations/stations here.</p>
 
-<!--Start-->
-<!--This is a proof of concept. Delete it when you start implementing.-->
-<button @onclick="CallAuthenticatedEndpoint">Call Authenticated Endpoint</button>
-<p>@_authResult</p>
-<!--End-->
+@foreach (var location in ViewModel.Locations)
+{
+    <LocationCollapsible 
+        Location="location" 
+        IsExpanded="@(ExpandedLocationId == location.Id)" 
+        OnToggle="@(() => ToggleLocation(location.Id))" />
+}
