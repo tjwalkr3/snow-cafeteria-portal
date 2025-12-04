@@ -6,7 +6,7 @@ public class FoodOptionService(IHttpClientAuth client) : IFoodOptionService
 {
     public async Task<FoodOptionDto> CreateFoodOption(FoodOptionDto foodOptionDto)
     {
-        var response = await client.PostAsync("manager/food-options", foodOptionDto);
+        var response = await client.PostAsync("api/manager/food-options", foodOptionDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<FoodOptionDto>() ?? throw new InvalidOperationException("Failed to create food option");
     }
@@ -16,12 +16,12 @@ public class FoodOptionService(IHttpClientAuth client) : IFoodOptionService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        return await client.GetAsync<FoodOptionDto>($"manager/food-options/{id}");
+        return await client.GetAsync<FoodOptionDto>($"api/manager/food-options/{id}");
     }
 
     public async Task<List<FoodOptionDto>> GetAllFoodOptions()
     {
-        return await client.GetAsync<List<FoodOptionDto>>("manager/food-options") ?? [];
+        return await client.GetAsync<List<FoodOptionDto>>("api/manager/food-options") ?? [];
     }
 
     public async Task<FoodOptionDto?> UpdateFoodOptionById(int id, FoodOptionDto foodOptionDto)
@@ -29,7 +29,7 @@ public class FoodOptionService(IHttpClientAuth client) : IFoodOptionService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.PutAsync($"manager/food-options/{id}", foodOptionDto);
+        var response = await client.PutAsync($"api/manager/food-options/{id}", foodOptionDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<FoodOptionDto>();
     }
@@ -39,7 +39,7 @@ public class FoodOptionService(IHttpClientAuth client) : IFoodOptionService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.DeleteAsync<object>($"manager/food-options/{id}");
+        var response = await client.DeleteAsync<object>($"api/manager/food-options/{id}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<bool>();
     }
