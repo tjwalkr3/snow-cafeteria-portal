@@ -1,0 +1,40 @@
+@rendermode InteractiveServer
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Food Option to Type</h5>
+                <button type="button" class="btn-close" @onclick="Cancel" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="foodOptionSelect" class="form-label">Select Food Option</label>
+                    <select id="foodOptionSelect" class="form-select" @bind="SelectedFoodOptionId">
+                        <option value="0">-- Select Food Option --</option>
+                        @foreach (var option in AvailableOptions)
+                        {
+                            <option value="@option.Id">@option.FoodOptionName @(option.InStock ? "✓" : "(Out of Stock)")
+                            </option>
+                        }
+                    </select>
+                </div>
+                @if (!string.IsNullOrEmpty(ErrorMessage))
+                {
+                    <div class="alert alert-danger">@ErrorMessage</div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" @onclick="HandleAdd"
+                    disabled="@(IsSaving || SelectedFoodOptionId == 0)">
+                    @if (IsSaving)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    }
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

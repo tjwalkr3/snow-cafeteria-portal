@@ -43,4 +43,14 @@ public class FoodTypeService(IHttpClientAuth client) : IFoodTypeService
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<bool>();
     }
+
+    public async Task<List<EntreeDto>> GetAllEntrees()
+    {
+        return await client.GetAsync<List<EntreeDto>>("menu/entrees") ?? [];
+    }
+
+    public async Task<List<SideDto>> GetAllSides()
+    {
+        return await client.GetAsync<List<SideDto>>("menu/sides") ?? [];
+    }
 }
