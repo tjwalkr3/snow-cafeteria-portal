@@ -6,7 +6,7 @@ public class OptionOptionTypeService(IHttpClientAuth client) : IOptionOptionType
 {
     public async Task<List<OptionOptionTypeDto>> GetAllOptionOptionTypes()
     {
-        return await client.GetAsync<List<OptionOptionTypeDto>>("manager/option-option-types") ?? [];
+        return await client.GetAsync<List<OptionOptionTypeDto>>("api/manager/option-option-types") ?? [];
     }
 
     public async Task<OptionOptionTypeDto?> GetOptionOptionTypeById(int id)
@@ -14,7 +14,7 @@ public class OptionOptionTypeService(IHttpClientAuth client) : IOptionOptionType
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        return await client.GetAsync<OptionOptionTypeDto>($"manager/option-option-types/{id}");
+        return await client.GetAsync<OptionOptionTypeDto>($"api/manager/option-option-types/{id}");
     }
 
     public async Task<bool> DeleteOptionOptionTypeById(int id)
@@ -22,14 +22,14 @@ public class OptionOptionTypeService(IHttpClientAuth client) : IOptionOptionType
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.DeleteAsync<object>($"manager/option-option-types/{id}");
+        var response = await client.DeleteAsync<object>($"api/manager/option-option-types/{id}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<bool>();
     }
 
     public async Task<OptionOptionTypeDto> CreateOptionOptionType(OptionOptionTypeDto optionOptionTypeDto)
     {
-        var response = await client.PostAsync("manager/option-option-types", optionOptionTypeDto);
+        var response = await client.PostAsync("api/manager/option-option-types", optionOptionTypeDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<OptionOptionTypeDto>() ?? throw new InvalidOperationException("Failed to create option-option-type mapping");
     }
