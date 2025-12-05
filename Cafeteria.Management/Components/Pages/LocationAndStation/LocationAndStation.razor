@@ -6,7 +6,7 @@
 
 <p>Manage locations/stations here.</p>
 
-<button class="btn btn-primary mb-3" @onclick="OpenCreateLocationModal">Create Location</button>
+<button class="btn btn-primary mb-3" @onclick="ViewModel.OpenCreateLocationModal">Create Location</button>
 
 <CreateOrEditLocation />
 
@@ -14,8 +14,8 @@
 {
     <LocationCollapsible 
         Location="location" 
-        IsExpanded="@(ExpandedLocationId == location.Id)" 
-        OnToggle="@(() => ToggleLocation(location.Id))" 
-        OnEdit="@(() => EditLocation(location))" />
+        IsExpanded="@(ViewModel.ExpandedLocationId == location.Id)" 
+        OnToggle="@(() => ViewModel.ToggleLocation(location.Id))" 
+        OnEdit="@(() => ViewModel.EditLocation(location))" />
 
 }
