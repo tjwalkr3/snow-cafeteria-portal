@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
+using static Cafeteria.Management.Components.Shared.Toast;
 
 namespace Cafeteria.Management.Components.Pages.Drink;
 
@@ -12,6 +13,10 @@ public partial class Drink : ComponentBase
     private bool ShowDeleteModal { get; set; } = false;
     private int DrinkIdToDelete { get; set; }
     private string DeleteMessage { get; set; } = string.Empty;
+
+    private bool showToast = false;
+    private string toastMessage = string.Empty;
+    private ToastType toastType = ToastType.Success;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,14 +60,23 @@ public partial class Drink : ComponentBase
 
         if (DrinkIdToDelete > 0)
         {
+            var drink = ViewModel.Drinks.FirstOrDefault(d => d.Id == DrinkIdToDelete);
+            var drinkName = drink?.DrinkName ?? "Drink";
+
             try
             {
                 await ViewModel.DeleteDrink(DrinkIdToDelete);
                 await RefreshDrinks();
+
+                toastMessage = $"'{drinkName}' has been deleted successfully.";
+                toastType = ToastType.Success;
+                showToast = true;
             }
             catch
             {
-                // Silently handle errors to prevent circuit crashes
+                toastMessage = $"Failed to delete '{drinkName}'. Please try again.";
+                toastType = ToastType.Error;
+                showToast = true;
             }
             finally
             {
@@ -86,5 +100,25 @@ public partial class Drink : ComponentBase
     public async Task RefreshDrinksAfterSave()
     {
         await RefreshDrinks();
+    }
+
+    public void ShowSaveSuccessToast(string drinkName, bool isEdit)
+    {
+        toastMessage = isEdit
+            ? $"'{drinkName}' has been updated successfully."
+            : $"'{drinkName}' has been created successfully.";
+        toastType = ToastType.Success;
+        showToast = true;
+        StateHasChanged();
+    }
+
+    public void ShowSaveErrorToast(string drinkName, bool isEdit)
+    {
+        toastMessage = isEdit
+            ? $"Failed to update '{drinkName}'. Please try again."
+            : $"Failed to create '{drinkName}'. Please try again.";
+        toastType = ToastType.Error;
+        showToast = true;
+        StateHasChanged();
     }
 }

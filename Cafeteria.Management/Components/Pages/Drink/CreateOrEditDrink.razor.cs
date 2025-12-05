@@ -33,13 +33,21 @@ public partial class CreateOrEditDrink : ComponentBase
 
     private async Task HandleSave()
     {
-        if (ViewModel != null)
+        if (ViewModel != null && parentComponent != null)
         {
-            await ViewModel.SaveDrink();
-            StateHasChanged();
-            if (parentComponent != null)
+            var drinkName = ViewModel.CurrentDrink.DrinkName ?? "Drink";
+            var isEdit = ViewModel.IsEditing;
+            
+            try
             {
+                await ViewModel.SaveDrink();
+                StateHasChanged();
                 await parentComponent.RefreshDrinksAfterSave();
+                parentComponent.ShowSaveSuccessToast(drinkName, isEdit);
+            }
+            catch
+            {
+                parentComponent.ShowSaveErrorToast(drinkName, isEdit);
             }
         }
     }

@@ -44,6 +44,7 @@ else
 
 <CreateOrEditDrink @ref="modalComponent"></CreateOrEditDrink>
 
-<ConfirmationModal IsVisible="ShowDeleteModal" Title="Delete Drink"
-    Message="@DeleteMessage"
-    ConfirmText="Delete" OnConfirm="ConfirmDelete" OnCancel="CancelDelete" />
+<ConfirmationModal IsVisible="ShowDeleteModal" Title="Delete Drink" Message="@DeleteMessage" ConfirmText="Delete"
+    OnConfirm="ConfirmDelete" OnCancel="CancelDelete" />
+
+<Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />
