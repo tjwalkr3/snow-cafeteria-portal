@@ -2,13 +2,11 @@ using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Management.Services;
 
-public class DrinkService(HttpClient client) : IDrinkService
+public class DrinkService(IHttpClientAuth client) : IDrinkService
 {
     public async Task<List<DrinkDto>> GetAllDrinks()
     {
-        var response = await client.GetAsync("drink");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<DrinkDto>>() ?? [];
+        return await client.GetAsync<List<DrinkDto>>("api/drink") ?? [];
     }
 
     public async Task<DrinkDto?> GetDrinkById(int id)
@@ -16,14 +14,12 @@ public class DrinkService(HttpClient client) : IDrinkService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.GetAsync($"drink/{id}");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<DrinkDto>();
+        return await client.GetAsync<DrinkDto>($"api/drink/{id}");
     }
 
     public async Task<DrinkDto> CreateDrink(DrinkDto drinkDto)
     {
-        var response = await client.PostAsJsonAsync("drink", drinkDto);
+        var response = await client.PostAsync("api/drink", drinkDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<DrinkDto>() ?? throw new InvalidOperationException("Failed to create drink");
     }
@@ -33,7 +29,7 @@ public class DrinkService(HttpClient client) : IDrinkService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.PutAsJsonAsync($"drink/{id}", drinkDto);
+        var response = await client.PutAsync($"api/drink/{id}", drinkDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<DrinkDto>();
     }
@@ -43,8 +39,7 @@ public class DrinkService(HttpClient client) : IDrinkService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.DeleteAsync($"drink/{id}");
-        response.EnsureSuccessStatusCode();
-        return true;
+        var response = await client.DeleteAsync<object>($"api/drink/{id}");
+        return response.IsSuccessStatusCode;
     }
 }

@@ -30,17 +30,13 @@ builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IStationService, StationService>();
-
-builder.Services.AddHttpClient<IDrinkService, DrinkService>(client =>
-{
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
+builder.Services.AddScoped<IDrinkService, DrinkService>();
+builder.Services.AddScoped<IEntreeService, EntreeService>();
 
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
-builder.Services.AddScoped<EntreeVM>();
+builder.Services.AddScoped<IEntreeVM, EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
 builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>();
 builder.Services.AddScoped<ISideService, SideService>();

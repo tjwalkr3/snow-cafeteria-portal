@@ -13,13 +13,13 @@ public class SideService : ISideService
 
     public async Task<List<SideDto>> GetAllSides()
     {
-        var result = await _httpClient.GetAsync<List<SideDto>>("api/Side");
+        var result = await _httpClient.GetAsync<List<SideDto>>("api/side");
         return result ?? new List<SideDto>();
     }
 
     public async Task<bool> DeleteSide(int id)
     {
-        var response = await _httpClient.DeleteAsync<object>($"api/Side/{id}");
+        var response = await _httpClient.DeleteAsync<object>($"api/side/{id}");
         return response.IsSuccessStatusCode;
     }
 }
