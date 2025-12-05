@@ -6,5 +6,6 @@ public interface IStationService
 {
     Task<List<StationDto>> GetAllStations();
     Task<List<StationDto>> GetStationsByLocation(int locationId);
+    Task<StationDto?> GetStationById(int stationId);
     Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId);
 }
