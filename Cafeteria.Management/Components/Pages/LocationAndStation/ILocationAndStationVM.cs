@@ -6,6 +6,7 @@ public interface ILocationAndStationVM
 {
     List<LocationDto> Locations { get; }
     int? ExpandedLocationId { get; }
+    event Action? OnStateChanged;
     Task LoadStationsAsync();
     void OpenCreateLocationModal();
     void EditLocation(LocationDto location);

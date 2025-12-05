@@ -16,7 +16,7 @@
             }
         </h3>
         
-        <EditForm Model="@ViewModel.SelectedLocation">
+        <EditForm Model="@ViewModel.SelectedLocation" OnValidSubmit="ViewModel.SaveAsync">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
