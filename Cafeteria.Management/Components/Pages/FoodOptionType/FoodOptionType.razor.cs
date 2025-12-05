@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
-using static Cafeteria.Management.Components.Shared.Toast;
 using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Services;
 using Cafeteria.Management.Components.Pages.FoodOption;
+using static Cafeteria.Management.Components.Shared.Toast;
 
 namespace Cafeteria.Management.Components.Pages.FoodOptionType;
 
@@ -20,6 +20,9 @@ public partial class FoodOptionType : ComponentBase
 
     [Inject]
     private IOptionOptionTypeService OptionOptionTypeService { get; set; } = default!;
+
+    [Inject]
+    private IFoodTypeService FoodTypeService { get; set; } = default!;
 
     public bool IsInitialized { get; set; } = false;
 
@@ -46,6 +49,9 @@ public partial class FoodOptionType : ComponentBase
     private string OptionFilterText { get; set; } = string.Empty;
     private HashSet<int> expandedTypes = new HashSet<int>();
     private HashSet<int> expandedOptions = new HashSet<int>();
+
+    private List<EntreeDto> Entrees { get; set; } = new List<EntreeDto>();
+    private List<SideDto> Sides { get; set; } = new List<SideDto>();
 
     private List<FoodOptionTypeDto> FilteredFoodTypes =>
         string.IsNullOrWhiteSpace(FilterText)
@@ -88,6 +94,8 @@ public partial class FoodOptionType : ComponentBase
         await FoodOptionVM.InitializeFoodOptionsAsync();
         await FoodTypeVM.InitializeFoodTypesAsync();
         await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+        Entrees = await FoodTypeService.GetAllEntrees();
+        Sides = await FoodTypeService.GetAllSides();
         IsInitialized = true;
     }
 
@@ -119,6 +127,31 @@ public partial class FoodOptionType : ComponentBase
             var name when name.Contains("Plate", StringComparison.OrdinalIgnoreCase) => "bi bi-circle",
             _ => "bi bi-list-ul"
         };
+    }
+
+    private string GetFoodItemName(FoodOptionTypeDto foodType)
+    {
+        var names = new List<string>();
+
+        if (foodType.EntreeId.HasValue)
+        {
+            var entree = Entrees.FirstOrDefault(e => e.Id == foodType.EntreeId.Value);
+            if (entree != null)
+            {
+                names.Add($"Entree: {entree.EntreeName}");
+            }
+        }
+
+        if (foodType.SideId.HasValue)
+        {
+            var side = Sides.FirstOrDefault(s => s.Id == foodType.SideId.Value);
+            if (side != null)
+            {
+                names.Add($"Side: {side.SideName}");
+            }
+        }
+
+        return names.Any() ? string.Join(", ", names) : string.Empty;
     }
 
     private List<FoodOptionDto> GetOptionsForType(int foodTypeId)
