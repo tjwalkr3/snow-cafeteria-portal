@@ -37,7 +37,7 @@ public partial class CreateOrEditDrink : ComponentBase
         {
             var drinkName = ViewModel.CurrentDrink.DrinkName ?? "Drink";
             var isEdit = ViewModel.IsEditing;
-            
+
             try
             {
                 await ViewModel.SaveDrink();
