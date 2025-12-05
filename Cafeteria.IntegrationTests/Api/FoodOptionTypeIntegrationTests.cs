@@ -36,6 +36,7 @@ public class FoodOptionTypeIntegrationTests : IAsyncLifetime
         await _connection.OpenAsync();
         await _connection.ExecuteAsync(SqlData);
 
+        var connectionString = _postgresContainer.GetConnectionString();
         _factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
@@ -46,7 +47,12 @@ public class FoodOptionTypeIntegrationTests : IAsyncLifetime
                     {
                         services.Remove(descriptor);
                     }
-                    services.AddScoped<IDbConnection>(_ => _connection);
+                    services.AddScoped<IDbConnection>(_ =>
+                    {
+                        var conn = new NpgsqlConnection(connectionString);
+                        conn.Open();
+                        return conn;
+                    });
                 });
             });
 
@@ -163,6 +169,7 @@ public class FoodOptionTypeIntegrationTests : IAsyncLifetime
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
         var remaining = await _client.GetAsync("/api/manager/option-option-types");
+        remaining.EnsureSuccessStatusCode();
         var relations = await remaining.Content.ReadFromJsonAsync<List<OptionOptionTypeDto>>();
         Assert.NotNull(relations);
         Assert.Empty(relations);
