@@ -17,6 +17,30 @@ public class SideService : ISideService
         return result ?? new List<SideDto>();
     }
 
+    public async Task<SideDto?> CreateSide(SideDto side)
+    {
+        var response = await _httpClient.PostAsync("api/Side", side);
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<SideDto>();
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        throw new Exception(string.IsNullOrWhiteSpace(error) ? "Failed to create side." : error);
+    }
+
+    public async Task<SideDto?> UpdateSide(SideDto side)
+    {
+        var response = await _httpClient.PutAsync($"api/Side/{side.Id}", side);
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<SideDto>();
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        throw new Exception(string.IsNullOrWhiteSpace(error) ? "Failed to update side." : error);
+    }
+
     public async Task<bool> DeleteSide(int id)
     {
         var response = await _httpClient.DeleteAsync<object>($"api/Side/{id}");

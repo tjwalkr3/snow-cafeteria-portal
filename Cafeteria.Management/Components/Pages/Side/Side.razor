@@ -2,11 +2,23 @@
 @rendermode InteractiveServer
 @using Cafeteria.Shared.DTOs
 
-<PageTitle>Sides</PageTitle>
+<PageTitle>Sides Management Page</PageTitle>
 
-<h1>Sides</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Sides</h3>
+    <button class="btn btn-outline-secondary" @onclick="ShowCreateModal">Add Side</button>
+</div>
 
-<p>Manage sides here.</p>
+<div class="mb-3">
+    <div class="d-flex gap-2 mb-2">
+        <span>Filters: [Location ▼] [Station ▼] [Status ▼]</span>
+    </div>
+    <div>
+        Search: [🔍 Search by name...]
+    </div>
+</div>
+
+<hr />
 
 @if (ViewModel.Sides == null)
 {
@@ -14,29 +26,30 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Station ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var side in ViewModel.Sides)
-            {
-                <tr>
-                    <td>@side.StationId</td>
-                    <td>@side.SideName</td>
-                    <td>@side.SideDescription</td>
-                    <td>@("$" +side.SidePrice.ToString())</td>
-                    <td>
-                        <button class="btn btn-danger" @onclick="() => DeleteSide(side.Id)">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="list-group">
+        @foreach (var side in ViewModel.Sides)
+        {
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="fw-bold">@side.SideName</div>
+                        <div class="text-muted small">Station ID: @side.StationId</div>
+                        <div>Available [Toggle]</div>
+                    </div>
+                    <div class="text-end">
+                        <div>$@side.SidePrice.ToString("F2")</div>
+                        <div class="mt-2">
+                            <button class="btn btn-link btn-sm text-decoration-none" @onclick="() => ShowEditModal(side)">[Edit]</button>
+                            <button class="btn btn-link btn-sm text-danger text-decoration-none" @onclick="() => DeleteSide(side.Id)">[Delete]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (ShowModal)
+{
+    <CreateOrEditSide SideModel="@CurrentSide" IsEditMode="@IsEditMode" OnSave="@HandleSave" OnCancel="@CloseModal" />
 }

@@ -37,6 +37,7 @@ builder.Services.AddScoped<EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
 builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<ISideVM, SideVM>();
+builder.Services.AddScoped<ICreateOrEditSideVM, CreateOrEditSideVM>();
 builder.Services.AddScoped<IFoodOptionVM, FoodOptionVM>();
 builder.Services.AddScoped<IFoodOptionModalVM, FoodOptionModalVM>();
 builder.Services.AddScoped<IFoodTypeVM, FoodTypeVM>();
