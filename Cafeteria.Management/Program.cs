@@ -42,7 +42,7 @@ builder.Services.AddHttpClient<IDrinkService, DrinkService>(client =>
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 builder.Services.AddScoped<EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
-builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>()
+builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>();
 builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<ISideVM, SideVM>();
 builder.Services.AddScoped<IFoodOptionVM, FoodOptionVM>();

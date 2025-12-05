@@ -24,7 +24,7 @@ public partial class CreateOrEditDrink : ComponentBase
         {
             drinkVM.SetCreateOrEditVM(ViewModel);
         }
-        
+
         if (ViewModel is CreateOrEditDrinkVM vm)
         {
             await vm.LoadStations();
