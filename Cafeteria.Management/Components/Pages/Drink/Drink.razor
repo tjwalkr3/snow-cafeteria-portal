@@ -1,5 +1,6 @@
 @page "/drinks"
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
 <PageTitle>Drinks</PageTitle>
 
@@ -42,3 +43,7 @@ else
 }
 
 <CreateOrEditDrink @ref="modalComponent"></CreateOrEditDrink>
+
+<ConfirmationModal IsVisible="ShowDeleteModal" Title="Delete Drink"
+    Message="@DeleteMessage"
+    ConfirmText="Delete" OnConfirm="ConfirmDelete" OnCancel="CancelDelete" />

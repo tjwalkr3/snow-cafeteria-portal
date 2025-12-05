@@ -20,6 +20,6 @@ public class SideService : ISideService
     public async Task<bool> DeleteSide(int id)
     {
         var response = await _httpClient.DeleteAsync<object>($"api/side/{id}");
-        return response.IsSuccessStatusCode;
+        return response?.IsSuccessStatusCode ?? false;
     }
 }

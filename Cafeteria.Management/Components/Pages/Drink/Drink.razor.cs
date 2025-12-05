@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Cafeteria.Management.Components.Pages.Drink;
+using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Management.Components.Pages.Drink;
 
@@ -9,10 +8,10 @@ public partial class Drink : ComponentBase
     [Inject]
     public IDrinkVM ViewModel { get; set; } = default!;
 
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-
     private CreateOrEditDrink? modalComponent;
+    private bool ShowDeleteModal { get; set; } = false;
+    private int DrinkIdToDelete { get; set; }
+    private string DeleteMessage { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,13 +39,42 @@ public partial class Drink : ComponentBase
         modalComponent?.Refresh();
     }
 
-    private async Task HandleDeleteClick(int id)
+    private void HandleDeleteClick(int id)
     {
-        if (await ConfirmDelete())
+        var drink = ViewModel.Drinks.FirstOrDefault(d => d.Id == id);
+        var drinkName = drink?.DrinkName ?? "this drink";
+
+        DrinkIdToDelete = id;
+        DeleteMessage = $"Are you sure you want to delete '{drinkName}'? This action cannot be undone.";
+        ShowDeleteModal = true;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        ShowDeleteModal = false;
+
+        if (DrinkIdToDelete > 0)
         {
-            await ViewModel.DeleteDrink(id);
-            await RefreshDrinks();
+            try
+            {
+                await ViewModel.DeleteDrink(DrinkIdToDelete);
+                await RefreshDrinks();
+            }
+            catch
+            {
+                // Silently handle errors to prevent circuit crashes
+            }
+            finally
+            {
+                DrinkIdToDelete = 0;
+            }
         }
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        DrinkIdToDelete = 0;
     }
 
     private async Task RefreshDrinks()
@@ -58,10 +86,5 @@ public partial class Drink : ComponentBase
     public async Task RefreshDrinksAfterSave()
     {
         await RefreshDrinks();
-    }
-
-    private async Task<bool> ConfirmDelete()
-    {
-        return await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this drink?");
     }
 }
