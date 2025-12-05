@@ -13,9 +13,6 @@
     <div class="d-flex gap-2 mb-2">
         <span>Filters: [Location ▼] [Station ▼] [Status ▼]</span>
     </div>
-    <div>
-        Search: [🔍 Search by name...]
-    </div>
 </div>
 
 <hr />
@@ -33,7 +30,7 @@ else
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="fw-bold">@side.SideName</div>
-                        <div class="text-muted small">Station ID: @side.StationId</div>
+                        <div class="text-muted small">Station Name: @ViewModel.GetStationName(side.StationId)</div>
                         <div>Available [Toggle]</div>
                     </div>
                     <div class="text-end">
