@@ -160,9 +160,8 @@ public class FoodOptionTypeIntegrationTests : IAsyncLifetime
 
         var response = await _client.DeleteAsync($"/api/manager/option-option-types/{result}");
         response.EnsureSuccessStatusCode();
-        var deleteResult = await response.Content.ReadFromJsonAsync<bool>();
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        Assert.True(deleteResult);
         var remaining = await _client.GetAsync("/api/manager/option-option-types");
         var relations = await remaining.Content.ReadFromJsonAsync<List<OptionOptionTypeDto>>();
         Assert.NotNull(relations);
