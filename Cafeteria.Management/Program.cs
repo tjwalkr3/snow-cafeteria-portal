@@ -1,6 +1,8 @@
 using Cafeteria.Management.Components;
 using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
+using Cafeteria.Management.Components.Pages.FoodOption;
+using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Management.Services;
@@ -19,21 +21,15 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
-    client.BaseAddress = new Uri("http://api"));
-
-builder.Services.AddHttpClient<IFoodOptionService, FoodOptionService>(client =>
 {
-    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
     client.BaseAddress = new Uri(apiBaseUrl);
 });
-
-builder.Services.AddHttpClient<IFoodTypeService, FoodTypeService>(client =>
-{
-    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
+builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
+builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
+builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IStationService, StationService>();
 
 builder.Services.AddHttpClient<IDrinkService, DrinkService>(client =>
 {
@@ -46,8 +42,14 @@ builder.Services.AddHttpClient<IDrinkService, DrinkService>(client =>
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 builder.Services.AddScoped<EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
-builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>();
+builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>()
+builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<ISideVM, SideVM>();
+builder.Services.AddScoped<IFoodOptionVM, FoodOptionVM>();
+builder.Services.AddScoped<IFoodOptionModalVM, FoodOptionModalVM>();
+builder.Services.AddScoped<IFoodTypeVM, FoodTypeVM>();
+builder.Services.AddScoped<IFoodTypeModalVM, FoodTypeModalVM>();
+builder.Services.AddScoped<IOptionOptionTypeVM, OptionOptionTypeVM>();
 
 
 // Add authentication services

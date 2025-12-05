@@ -27,10 +27,22 @@ public class MenuController : ControllerBase
         return await _menuService.GetStationsByLocation(locationId);
     }
 
+    [HttpGet("entrees")]
+    public async Task<List<EntreeDto>> GetAllEntrees()
+    {
+        return await _menuService.GetAllEntrees();
+    }
+
     [HttpGet("entrees/station/{stationId}")]
     public async Task<List<EntreeDto>> GetEntreesByStation(int stationId)
     {
         return await _menuService.GetEntreesByStation(stationId);
+    }
+
+    [HttpGet("sides")]
+    public async Task<List<SideDto>> GetAllSides()
+    {
+        return await _menuService.GetAllSides();
     }
 
     [HttpGet("sides/station/{stationId}")]

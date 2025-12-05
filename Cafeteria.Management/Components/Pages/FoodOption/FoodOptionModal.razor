@@ -1,0 +1,40 @@
+@rendermode InteractiveServer
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@(IsEditMode ? "Edit Food Option" : "Create Food Option")</h5>
+                <button type="button" class="btn-close" @onclick="Cancel" aria-label="Close"></button>
+            </div>
+            <EditForm Model="@FoodOption" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="foodOptionName" class="form-label">Name</label>
+                        <InputText id="foodOptionName" class="form-control" @bind-Value="FoodOption.FoodOptionName" />
+                        <ValidationMessage For="@(() => FoodOption.FoodOptionName)" />
+                    </div>
+                    <div class="mb-3 form-check">
+                        <InputCheckbox id="inStock" class="form-check-input" @bind-Value="FoodOption.InStock" />
+                        <label for="inStock" class="form-check-label">In Stock</label>
+                    </div>
+                    @if (!string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="alert alert-danger">@ErrorMessage</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" disabled="@IsSaving">
+                        @if (IsSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        }
+                        @(IsEditMode ? "Update" : "Create")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
