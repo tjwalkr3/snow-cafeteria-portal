@@ -30,11 +30,15 @@ builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IStationService, StationService>();
+builder.Services.AddScoped<IDrinkService, DrinkService>();
+builder.Services.AddScoped<IEntreeService, EntreeService>();
+
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
-builder.Services.AddScoped<EntreeVM>();
+builder.Services.AddScoped<IEntreeVM, EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
+builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>();
 builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<ISideVM, SideVM>();
 builder.Services.AddScoped<IFoodOptionVM, FoodOptionVM>();
@@ -42,6 +46,7 @@ builder.Services.AddScoped<IFoodOptionModalVM, FoodOptionModalVM>();
 builder.Services.AddScoped<IFoodTypeVM, FoodTypeVM>();
 builder.Services.AddScoped<IFoodTypeModalVM, FoodTypeModalVM>();
 builder.Services.AddScoped<IOptionOptionTypeVM, OptionOptionTypeVM>();
+
 
 // Add authentication services
 builder.Services.AddCascadingAuthenticationState();

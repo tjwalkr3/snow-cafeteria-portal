@@ -16,6 +16,12 @@ public class StationController : ControllerBase
         _stationService = stationService;
     }
 
+    [HttpGet]
+    public async Task<List<StationDto>> GetAllStations()
+    {
+        return await _stationService.GetAllStations();
+    }
+
     [HttpGet("station/{locationId:int}")]
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {

@@ -47,9 +47,12 @@ public class ManagerController : ControllerBase
     }
 
     [HttpDelete("food-options/{id}")]
-    public async Task<bool> DeleteFoodOption(int id)
+    public async Task<IActionResult> DeleteFoodOption(int id)
     {
-        return await _foodOptionService.DeleteFoodOption(id);
+        var result = await _foodOptionService.DeleteFoodOption(id);
+        if (!result)
+            return NotFound();
+        return NoContent();
     }
 
     [HttpPost("food-types")]
@@ -77,9 +80,12 @@ public class ManagerController : ControllerBase
     }
 
     [HttpDelete("food-types/{id}")]
-    public async Task<bool> DeleteFoodType(int id)
+    public async Task<IActionResult> DeleteFoodType(int id)
     {
-        return await _foodTypeService.DeleteFoodType(id);
+        var result = await _foodTypeService.DeleteFoodType(id);
+        if (!result)
+            return NotFound();
+        return NoContent();
     }
 
     [HttpPost("option-option-types")]
@@ -107,8 +113,11 @@ public class ManagerController : ControllerBase
     }
 
     [HttpDelete("option-option-types/{id}")]
-    public async Task<bool> DeleteOptionOptionType(int id)
+    public async Task<IActionResult> DeleteOptionOptionType(int id)
     {
-        return await _optionOptionTypeService.DeleteOptionOptionTypeById(id);
+        var result = await _optionOptionTypeService.DeleteOptionOptionTypeById(id);
+        if (!result)
+            return NotFound();
+        return NoContent();
     }
 }

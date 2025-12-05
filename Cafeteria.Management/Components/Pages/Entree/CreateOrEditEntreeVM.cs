@@ -1,10 +1,43 @@
+using Cafeteria.Shared.DTOs;
+using Cafeteria.Management.Services;
+
 namespace Cafeteria.Management.Components.Pages.Entree;
 
-public class CreateOrEditEntreeVM
+public class CreateOrEditEntreeVM : ICreateOrEditEntreeVM
 {
-    public CreateOrEditEntreeVM()
+    private readonly IEntreeService _entreeService;
+    private readonly IEntreeVM _parentVM;
+
+    public EntreeDto CurrentEntree { get; set; } = new();
+    public bool IsVisible { get; set; }
+    public bool IsEditing { get; set; }
+
+    public CreateOrEditEntreeVM(IEntreeService entreeService, IEntreeVM parentVM)
     {
+        _entreeService = entreeService;
+        _parentVM = parentVM;
     }
 
-    // Add properties and methods for the CreateOrEditEntree ViewModel here
+    public async Task SaveEntree()
+    {
+        try
+        {
+            if (IsEditing)
+            {
+                await _entreeService.UpdateEntreeById(CurrentEntree.Id, CurrentEntree);
+            }
+            else
+            {
+                await _entreeService.CreateEntree(CurrentEntree);
+            }
+
+            IsVisible = false;
+            await _parentVM.LoadEntrees();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error saving entree: {ex.Message}");
+            throw;
+        }
+    }
 }

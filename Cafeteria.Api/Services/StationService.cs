@@ -18,6 +18,21 @@ public class StationService : IStationService
         _dbConnection = dbConnection;
     }
 
+    public async Task<List<StationDto>> GetAllStations()
+    {
+        const string sql = @"
+            SELECT
+                id AS Id,
+                location_id AS LocationId,
+                station_name AS StationName,
+                station_description AS StationDescription
+            FROM cafeteria.station
+            ORDER BY station_name;";
+
+        var stations = await _dbConnection.QueryAsync<StationDto>(sql);
+        return stations.ToList();
+    }
+
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         const string sql = @"

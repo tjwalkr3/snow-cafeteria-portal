@@ -4,6 +4,11 @@ namespace Cafeteria.Management.Services;
 
 public class StationService(IHttpClientAuth client) : IStationService
 {
+    public async Task<List<StationDto>> GetAllStations()
+    {
+        return await client.GetAsync<List<StationDto>>("api/station") ?? [];
+    }
+
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         return await client.GetAsync<List<StationDto>>($"api/station/station/{locationId}") ?? [];
