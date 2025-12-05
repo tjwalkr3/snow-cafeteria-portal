@@ -6,7 +6,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">@Location.LocationName</h5>
             <div>
-                <button class="btn btn-sm btn-secondary me-2" @onclick="Edit" @onclick:stopPropagation="true">Edit Location</button>
+                <button class="btn btn-sm btn-secondary me-2" @onclick="Edit" @onclick:stopPropagation="true">Edit</button>
+                <button class="btn btn-sm btn-danger me-2" @onclick="Delete" @onclick:stopPropagation="true">Delete</button>
                 <span>@(IsExpanded ? "▲" : "▼")</span>
             </div>
         </div>

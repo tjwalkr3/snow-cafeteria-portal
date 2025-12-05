@@ -29,4 +29,10 @@ public class LocationService(HttpClient client) : ILocationService
         var response = await client.PutAsJsonAsync($"location/{location.Id}", new { Name = location.LocationName, Description = location.LocationDescription });
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task DeleteLocation(int locationId)
+    {
+        var response = await client.DeleteAsync($"location/{locationId}");
+        response.EnsureSuccessStatusCode();
+    }
 }

@@ -10,5 +10,6 @@ public interface ILocationAndStationVM
     Task LoadStationsAsync();
     void OpenCreateLocationModal();
     void EditLocation(LocationDto location);
+    Task DeleteLocation(int locationId);
     void ToggleLocation(int locationId);
 }

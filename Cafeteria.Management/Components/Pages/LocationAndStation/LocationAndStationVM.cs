@@ -53,6 +53,28 @@ public class LocationAndStationVM : ILocationAndStationVM, IDisposable
         _createOrEditLocationViewModel.Show();
     }
 
+    public async Task DeleteLocation(int locationId)
+    {
+        var location = Locations.FirstOrDefault(l => l.Id == locationId);
+        if (location != null)
+        {
+            Locations.Remove(location);
+            OnStateChanged?.Invoke();
+            try
+            {
+                await _locationService.DeleteLocation(locationId);
+            }
+            catch
+            {
+                // Revert if failed
+                Locations.Add(location);
+                Locations = Locations.OrderBy(l => l.LocationName).ToList();
+                OnStateChanged?.Invoke();
+                throw;
+            }
+        }
+    }
+
     public void ToggleLocation(int locationId)
     {
         if (ExpandedLocationId == locationId)

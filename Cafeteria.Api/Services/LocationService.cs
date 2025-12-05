@@ -84,6 +84,26 @@ public class LocationService : ILocationService
     public async Task DeleteLocationByID(int locationId)
     {
         const string sql = @"
+            -- Delete meals that reference items in stations in this location
+            DELETE FROM cafeteria.meal WHERE entree_id IN (SELECT id FROM cafeteria.entree WHERE station_id IN (SELECT id FROM cafeteria.station WHERE location_id = @id));
+            DELETE FROM cafeteria.meal WHERE side_id IN (SELECT id FROM cafeteria.side WHERE station_id IN (SELECT id FROM cafeteria.station WHERE location_id = @id));
+            DELETE FROM cafeteria.meal WHERE drink_id IN (SELECT id FROM cafeteria.drink WHERE station_id IN (SELECT id FROM cafeteria.station WHERE location_id = @id));
+
+            -- Delete items in stations
+            DELETE FROM cafeteria.entree WHERE station_id IN (SELECT id FROM cafeteria.station WHERE location_id = @id);
+            DELETE FROM cafeteria.side WHERE station_id IN (SELECT id FROM cafeteria.station WHERE location_id = @id);
+            DELETE FROM cafeteria.drink WHERE station_id IN (SELECT id FROM cafeteria.station WHERE location_id = @id);
+
+            -- Delete station hours
+            DELETE FROM cafeteria.station_business_hours WHERE station_id IN (SELECT id FROM cafeteria.station WHERE location_id = @id);
+
+            -- Delete stations
+            DELETE FROM cafeteria.station WHERE location_id = @id;
+
+            -- Delete location hours
+            DELETE FROM cafeteria.location_business_hours WHERE location_id = @id;
+
+            -- Delete location
             DELETE FROM cafeteria.cafeteria_location
             WHERE id = @id;";
 

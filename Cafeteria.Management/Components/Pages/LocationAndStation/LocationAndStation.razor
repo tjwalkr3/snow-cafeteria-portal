@@ -10,12 +10,20 @@
 
 <CreateOrEditLocation />
 
-@foreach (var location in ViewModel.Locations)
+@if (!ViewModel.Locations.Any())
 {
-    <LocationCollapsible 
-        Location="location" 
-        IsExpanded="@(ViewModel.ExpandedLocationId == location.Id)" 
-        OnToggle="@(() => ViewModel.ToggleLocation(location.Id))" 
-        OnEdit="@(() => ViewModel.EditLocation(location))" />
+    <p>No locations found.</p>
+}
+else
+{
+    @foreach (var location in ViewModel.Locations)
+    {
+        <LocationCollapsible 
+            Location="location" 
+            IsExpanded="@(ViewModel.ExpandedLocationId == location.Id)" 
+            OnToggle="@(() => ViewModel.ToggleLocation(location.Id))" 
+            OnEdit="@(() => ViewModel.EditLocation(location))" 
+            OnDelete="@(() => ViewModel.DeleteLocation(location.Id))" />
 
+    }
 }
