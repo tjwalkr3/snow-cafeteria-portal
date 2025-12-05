@@ -12,14 +12,14 @@ public partial class CreateOrEditDrink : ComponentBase
     public IDrinkVM ParentVM { get; set; } = default!;
 
     [Inject]
-    public HttpClient HttpClient { get; set; } = default!;
+    public IStationService StationService { get; set; } = default!;
 
     public ICreateOrEditDrinkVM? ViewModel { get; set; }
     private Drink? parentComponent;
 
     protected override async Task OnInitializedAsync()
     {
-        ViewModel = new CreateOrEditDrinkVM(DrinkService, ParentVM, HttpClient);
+        ViewModel = new CreateOrEditDrinkVM(DrinkService, ParentVM, StationService);
         if (ParentVM is DrinkVM drinkVM)
         {
             drinkVM.SetCreateOrEditVM(ViewModel);

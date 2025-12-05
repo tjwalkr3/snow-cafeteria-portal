@@ -7,7 +7,7 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
 {
     private readonly IDrinkService _drinkService;
     private readonly IDrinkVM _parentVM;
-    private readonly HttpClient _httpClient;
+    private readonly IStationService _stationService;
 
     public DrinkDto CurrentDrink { get; set; } = new();
     public bool IsVisible { get; set; }
@@ -15,22 +15,18 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
     public List<StationDto> Stations { get; set; } = [];
     public string? SelectedStationName { get; set; }
 
-    public CreateOrEditDrinkVM(IDrinkService drinkService, IDrinkVM parentVM, HttpClient httpClient)
+    public CreateOrEditDrinkVM(IDrinkService drinkService, IDrinkVM parentVM, IStationService stationService)
     {
         _drinkService = drinkService;
         _parentVM = parentVM;
-        _httpClient = httpClient;
+        _stationService = stationService;
     }
 
     public async Task LoadStations()
     {
         try
         {
-            var response = await _httpClient.GetAsync("station");
-            if (response.IsSuccessStatusCode)
-            {
-                Stations = await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
-            }
+            Stations = await _stationService.GetAllStations();
         }
         catch (Exception ex)
         {
