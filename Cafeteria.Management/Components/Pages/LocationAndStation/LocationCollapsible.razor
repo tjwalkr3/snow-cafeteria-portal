@@ -5,7 +5,10 @@
     <div class="card-header" @onclick="Toggle" style="cursor: pointer;">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">@Location.LocationName</h5>
-            <span>@(IsExpanded ? "▲" : "▼")</span>
+            <div>
+                <button class="btn btn-sm btn-secondary me-2" @onclick="Edit" @onclick:stopPropagation="true">Edit</button>
+                <span>@(IsExpanded ? "▲" : "▼")</span>
+            </div>
         </div>
     </div>
     @if (IsExpanded)

@@ -25,6 +25,9 @@ public partial class LocationCollapsible : ComponentBase
     [Parameter]
     public EventCallback OnToggle { get; set; }
 
+    [Parameter]
+    public EventCallback OnEdit { get; set; }
+
     public List<StationDto> Stations { get; set; } = [];
     public List<LocationBusinessHoursDto> LocationHours { get; set; } = [];
     public Dictionary<int, List<StationBusinessHoursDto>> StationHours { get; set; } = [];
@@ -46,6 +49,14 @@ public partial class LocationCollapsible : ComponentBase
         if (OnToggle.HasDelegate)
         {
             await OnToggle.InvokeAsync();
+        }
+    }
+
+    private async Task Edit()
+    {
+        if (OnEdit.HasDelegate)
+        {
+            await OnEdit.InvokeAsync();
         }
     }
 

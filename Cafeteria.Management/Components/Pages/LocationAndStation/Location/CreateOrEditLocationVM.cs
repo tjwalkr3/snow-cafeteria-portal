@@ -8,14 +8,18 @@ public class CreateOrEditLocationVM : ICreateOrEditLocationVM
 
     public bool IsVisible { get; private set; }
 
+    public event Action? OnStateChanged;
+
     public void Show()
     {
         IsVisible = true;
+        OnStateChanged?.Invoke();
     }
 
     public void Close()
     {
         IsVisible = false;
+        OnStateChanged?.Invoke();
     }
 
     public enum LocationModalState

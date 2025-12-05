@@ -9,17 +9,23 @@ public partial class LocationAndStation : ComponentBase
     [Inject]
     public ILocationAndStationVM ViewModel { get; set; } = null!;
 
-    private CreateOrEditLocation _createOrEditLocationModal = null!;
-    private LocationDto _selectedLocation = new();
+    [Inject]
+    public ICreateOrEditLocationVM CreateOrEditLocationViewModel { get; set; } = null!;
 
     private void OpenCreateLocationModal()
     {
-        _selectedLocation = new LocationDto
+        CreateOrEditLocationViewModel.SelectedLocation = new LocationDto
         {
             LocationName = "",
             LocationDescription = ""
         };
-        _createOrEditLocationModal.Show();
+        CreateOrEditLocationViewModel.Show();
+    }
+
+    private void EditLocation(LocationDto location)
+    {
+        CreateOrEditLocationViewModel.SelectedLocation = location;
+        CreateOrEditLocationViewModel.Show();
     }
 
     private int? ExpandedLocationId { get; set; }

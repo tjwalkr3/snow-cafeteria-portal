@@ -1,6 +1,7 @@
 using Cafeteria.Management.Components;
 using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
+using Cafeteria.Management.Components.Pages.LocationAndStation.Location;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Management.Services;
@@ -51,6 +52,7 @@ builder.Services.AddHttpClient<IStationService, StationService>(client =>
 
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
+builder.Services.AddScoped<ICreateOrEditLocationVM, CreateOrEditLocationVM>();
 builder.Services.AddScoped<EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
 builder.Services.AddScoped<ISideVM, SideVM>();
