@@ -1,21 +1,43 @@
 @rendermode InteractiveServer
 
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create or Edit Drink</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Modal content for creating or editing drinks.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+@if (ViewModel?.IsVisible ?? false)
+{
+    <div class="modal" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(ViewModel.IsEditing ? "Edit Drink" : "Create Drink")</h5>
+                    <button type="button" class="close" @onclick="HandleClose">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Drink Name:</label>
+                        <input type="text" @bind="ViewModel.CurrentDrink.DrinkName" />
+                    </div>
+                    <div class="form-group">
+                        <label>Station ID:</label>
+                        <input type="number" min="1" @bind="ViewModel.CurrentDrink.StationId" />
+                    </div>
+                    <div class="form-group">
+                        <label>Price:</label>
+                        <input type="number" step="0.01" @bind="ViewModel.CurrentDrink.DrinkPrice" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <textarea @bind="ViewModel.CurrentDrink.DrinkDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL:</label>
+                        <input type="text" @bind="ViewModel.CurrentDrink.ImageUrl" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="HandleSave">Save</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
