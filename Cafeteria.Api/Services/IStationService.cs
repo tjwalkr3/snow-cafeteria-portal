@@ -8,6 +8,7 @@ namespace Cafeteria.Api.Services;
 
 public interface IStationService
 {
+    Task<List<StationDto>> GetAllStations();
     Task<List<StationDto>> GetStationsByLocation(int locationId);
     Task<StationDto?> GetStationByID(int stationId);
     Task CreateStationForLocation(int locationId, string stationName, string? stationDescription = null);

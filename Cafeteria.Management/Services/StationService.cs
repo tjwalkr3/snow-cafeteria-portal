@@ -2,13 +2,21 @@ using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.Management.Services;
 
-public class StationService(HttpClient client) : IStationService
+public class StationService(IHttpClientAuth client) : IStationService
 {
+    public async Task<List<StationDto>> GetAllStations()
+    {
+        return await client.GetAsync<List<StationDto>>("api/station") ?? [];
+    }
+
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
-        var response = await client.GetAsync($"station/station/{locationId}");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
+        return await client.GetAsync<List<StationDto>>($"api/station/station/{locationId}") ?? [];
+    }
+
+    public async Task<StationDto?> GetStationById(int stationId)
+    {
+        return await client.GetAsync<StationDto>($"api/station/{stationId}");
     }
 
     public async Task<StationDto?> GetStationById(int stationId)
@@ -42,9 +50,7 @@ public class StationService(HttpClient client) : IStationService
 
     public async Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId)
     {
-        var response = await client.GetAsync($"station/{stationId}/hours");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<StationBusinessHoursDto>>() ?? [];
+        return await client.GetAsync<List<StationBusinessHoursDto>>($"api/station/{stationId}/hours") ?? [];
     }
 
     public async Task<StationBusinessHoursDto?> GetStationBusinessHoursById(int id)

@@ -1,0 +1,18 @@
+# Admins can create and edit sides using a modal R#6.2.3, 6.2.5
+
+## Acceptance Criteria
+
+### **Functionality** (features that should be added, specific details about how a user can interact with them):
+* Admins can add new sides to existing stations with name and price
+* Admins can edit existing side names and prices
+* System prevents adding sides without name or price
+* Error message displayed for duplicate side names within same station: "A side with this name already exists. Please choose a different name."
+
+### **Architecture** (e.g. what approach to use to create functionality; what design pattern(s) to follow; which files should be modified, created, or deleted; etc.):
+* Create ISideService.cs and SideService.cs in the frontend to interact with the existing API endpoints. 
+* Add SideDto.cs, CreateSideDto.cs, UpdateSideDto.cs in DTOs
+* Create Sides management page in Pages with add/edit forms
+* Update init.sql with Sides table if needed 
+
+### **What tests should be written, and/or how we will know this task is complete** (for tests: include possible edge cases, expected functionality, error conditions, etc.; otherwise, include a clear description of what the outcome will be once the task is completed correctly):
+* Unit tests: validate required fields, prevent duplicates within station, allow duplicates across stations, successful add/edit operations

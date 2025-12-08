@@ -16,6 +16,12 @@ public class StationController : ControllerBase
         _stationService = stationService;
     }
 
+    [HttpGet]
+    public async Task<List<StationDto>> GetAllStations()
+    {
+        return await _stationService.GetAllStations();
+    }
+
     [HttpGet("station/{locationId:int}")]
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
@@ -36,16 +42,16 @@ public class StationController : ControllerBase
     }
 
     [HttpPost("station/{locationId:int}")]
-    public async Task<IActionResult> CreateStationForLocation(int locationId, [FromBody] StationUpsertRequest request)
+    public async Task<IActionResult> CreateStationForLocation(int locationId, [FromBody] StationDto station)
     {
-        await _stationService.CreateStationForLocation(locationId, request.Name, request.Description);
+        await _stationService.CreateStationForLocation(locationId, station);
         return NoContent();
     }
 
     [HttpPut("{stationId:int}")]
-    public async Task<IActionResult> UpdateStation(int stationId, [FromBody] StationUpsertRequest request)
+    public async Task<IActionResult> UpdateStation(int stationId, [FromBody] StationDto station)
     {
-        await _stationService.UpdateStationByID(stationId, request.Name, request.Description);
+        await _stationService.UpdateStationByID(stationId, station);
         return NoContent();
     }
 
@@ -104,7 +110,9 @@ public class StationController : ControllerBase
     [HttpDelete("hours/{stationHrsId:int}")]
     public async Task<IActionResult> DeleteStationHours(int stationHrsId)
     {
-        await _stationService.DeleteStationHrsById(stationHrsId);
+        var result = await _stationService.DeleteStationHrsById(stationHrsId);
+        if (!result)
+            return NotFound();
         return NoContent();
     }
 }
