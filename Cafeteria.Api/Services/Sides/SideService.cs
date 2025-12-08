@@ -16,9 +16,9 @@ public class SideService : ISideService
     public async Task<SideDto> CreateSide(SideDto sideDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, image_url)
-            VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @ImageUrl)
-            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl;";
+            INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, image_url, in_stock)
+            VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @ImageUrl, @InStock)
+            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl, in_stock AS InStock;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<SideDto>(sql, sideDto);
         return result ?? throw new InvalidOperationException("Failed to create side");
@@ -33,7 +33,8 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                in_stock AS InStock
             FROM cafeteria.side
             WHERE id = @id;";
 
@@ -50,7 +51,8 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                in_stock AS InStock
             FROM cafeteria.side
             ORDER BY side_name;";
 
@@ -67,7 +69,8 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                in_stock AS InStock
             FROM cafeteria.side
             WHERE station_id = @stationId
             ORDER BY side_name;";
@@ -84,9 +87,10 @@ public class SideService : ISideService
                 side_name = @SideName,
                 side_description = @SideDescription,
                 side_price = @SidePrice,
-                image_url = @ImageUrl
+                image_url = @ImageUrl,
+                in_stock = @InStock
             WHERE id = @id
-            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl;";
+            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl, in_stock AS InStock;";
 
         var parameters = new
         {
@@ -95,7 +99,8 @@ public class SideService : ISideService
             sideDto.SideName,
             sideDto.SideDescription,
             sideDto.SidePrice,
-            sideDto.ImageUrl
+            sideDto.ImageUrl,
+            sideDto.InStock
         };
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<SideDto>(sql, parameters);
@@ -109,6 +114,17 @@ public class SideService : ISideService
             WHERE id = @id;";
 
         var rowsAffected = await _dbConnection.ExecuteAsync(sql, new { id });
+        return rowsAffected > 0;
+    }
+
+    public async Task<bool> SetInStockById(int id, bool inStock)
+    {
+        const string sql = @"
+            UPDATE cafeteria.side
+            SET in_stock = @inStock
+            WHERE id = @id;";
+
+        var rowsAffected = await _dbConnection.ExecuteAsync(sql, new { id, inStock });
         return rowsAffected > 0;
     }
 }

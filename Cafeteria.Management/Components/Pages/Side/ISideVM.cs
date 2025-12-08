@@ -7,5 +7,6 @@ public interface ISideVM
     List<SideDto> Sides { get; }
     Task LoadSidesAsync();
     Task DeleteSideAsync(int id);
+    Task SetInStockAsync(int id, bool inStock);
     string GetStationName(int stationId);
 }

@@ -47,4 +47,10 @@ public class SideVM : ISideVM
         await _sideService.DeleteSide(id);
         await LoadSidesAsync();
     }
+
+    public async Task SetInStockAsync(int id, bool inStock)
+    {
+        await _sideService.SetInStockById(id, inStock);
+        await LoadSidesAsync();
+    }
 }

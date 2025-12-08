@@ -54,6 +54,15 @@ public class SideController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("{id}/stock")]
+    public async Task<IActionResult> SetInStockById(int id, [FromBody] bool inStock)
+    {
+        var result = await _sideService.SetInStockById(id, inStock);
+        if (!result)
+            return NotFound();
+        return NoContent();
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSideByID(int id)
     {

@@ -42,4 +42,13 @@ public class EntreeService(IHttpClientAuth client) : IEntreeService
         var response = await client.DeleteAsync<object>($"api/entree/{id}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> SetInStockById(int id, bool inStock)
+    {
+        if (id < 1)
+            throw new ArgumentOutOfRangeException(nameof(id));
+
+        var response = await client.PutAsync($"api/entree/{id}/stock", inStock);
+        return response.IsSuccessStatusCode;
+    }
 }

@@ -42,4 +42,13 @@ public class DrinkService(IHttpClientAuth client) : IDrinkService
         var response = await client.DeleteAsync<object>($"api/drink/{id}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> SetInStockById(int id, bool inStock)
+    {
+        if (id < 1)
+            throw new ArgumentOutOfRangeException(nameof(id));
+
+        var response = await client.PutAsync($"api/drink/{id}/stock", inStock);
+        return response.IsSuccessStatusCode;
+    }
 }
