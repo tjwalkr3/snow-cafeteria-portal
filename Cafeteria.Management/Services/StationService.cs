@@ -11,6 +11,35 @@ public class StationService(HttpClient client) : IStationService
         return await response.Content.ReadFromJsonAsync<List<StationDto>>() ?? [];
     }
 
+    public async Task<StationDto?> GetStationById(int stationId)
+    {
+        var response = await client.GetAsync($"station/{stationId}");
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<StationDto>();
+    }
+
+    public async Task CreateStation(int locationId, StationDto station)
+    {
+        var response = await client.PostAsJsonAsync($"station/station/{locationId}", new { Name = station.StationName, Description = station.StationDescription });
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateStation(StationDto station)
+    {
+        var response = await client.PutAsJsonAsync($"station/{station.Id}", new { Name = station.StationName, Description = station.StationDescription });
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task DeleteStation(int stationId)
+    {
+        var response = await client.DeleteAsync($"station/{stationId}");
+        response.EnsureSuccessStatusCode();
+    }
+
     public async Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId)
     {
         var response = await client.GetAsync($"station/{stationId}/hours");
