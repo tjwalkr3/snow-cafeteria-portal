@@ -18,6 +18,24 @@ public class LocationService(HttpClient client) : ILocationService
         return await response.Content.ReadFromJsonAsync<List<LocationBusinessHoursDto>>() ?? [];
     }
 
+    public async Task CreateLocationHours(int locationId, DateTime startTime, DateTime endTime, int weekdayId)
+    {
+        var response = await client.PostAsJsonAsync($"location/{locationId}/hours", new { StartTime = startTime, EndTime = endTime, WeekdayId = weekdayId });
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateLocationHours(int id, DateTime startTime, DateTime endTime, int weekdayId)
+    {
+        var response = await client.PutAsJsonAsync($"location/hours/{id}", new { StartTime = startTime, EndTime = endTime, WeekdayId = weekdayId });
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task DeleteLocationHours(int id)
+    {
+        var response = await client.DeleteAsync($"location/hours/{id}");
+        response.EnsureSuccessStatusCode();
+    }
+
     public async Task CreateLocation(LocationDto location)
     {
         var response = await client.PostAsJsonAsync("location", new { Name = location.LocationName, Description = location.LocationDescription });

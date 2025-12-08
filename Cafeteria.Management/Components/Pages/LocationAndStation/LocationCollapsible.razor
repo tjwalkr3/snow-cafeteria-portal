@@ -19,7 +19,7 @@
             
             @if (LocationHours.Any())
             {
-                <h6>Business Hours</h6>
+                <h6>Location Business Hours</h6>
                 <table class="table table-sm table-bordered mt-2 mb-3" style="width: auto;">
                     <thead>
                         <tr>
@@ -64,7 +64,7 @@
                                 @if (StationHours.TryGetValue(station.Id, out var sHours) && sHours.Any() && AreHoursDifferent(LocationHours, sHours))
                                 {
                                     <div class="mt-2">
-                                        <strong>Hours:</strong>
+                                        <strong>Station Hours:</strong>
                                         <table class="table table-sm table-bordered mt-1 mb-0" style="width: auto; font-size: 0.85em;">
                                             <thead>
                                                 <tr>
