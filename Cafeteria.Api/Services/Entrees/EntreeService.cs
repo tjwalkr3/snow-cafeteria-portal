@@ -54,7 +54,7 @@ public class EntreeService : IEntreeService
                 image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.entree
-            ORDER BY entree_name;";
+            ORDER BY entree_name, id;";
 
         var result = await _dbConnection.QueryAsync<EntreeDto>(sql);
         return result.ToList();
@@ -73,7 +73,7 @@ public class EntreeService : IEntreeService
                 in_stock AS InStock
             FROM cafeteria.entree
             WHERE station_id = @stationId
-            ORDER BY entree_name;";
+            ORDER BY entree_name, id;";
 
         var result = await _dbConnection.QueryAsync<EntreeDto>(sql, new { stationId });
         return result.ToList();

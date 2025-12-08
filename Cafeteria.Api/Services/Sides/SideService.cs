@@ -54,7 +54,7 @@ public class SideService : ISideService
                 image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.side
-            ORDER BY side_name;";
+            ORDER BY side_name, id;";
 
         var result = await _dbConnection.QueryAsync<SideDto>(sql);
         return result.ToList();
@@ -73,7 +73,7 @@ public class SideService : ISideService
                 in_stock AS InStock
             FROM cafeteria.side
             WHERE station_id = @stationId
-            ORDER BY side_name;";
+            ORDER BY side_name, id;";
 
         var result = await _dbConnection.QueryAsync<SideDto>(sql, new { stationId });
         return result.ToList();

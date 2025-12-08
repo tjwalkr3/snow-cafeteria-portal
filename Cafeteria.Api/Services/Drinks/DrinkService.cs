@@ -54,7 +54,7 @@ public class DrinkService : IDrinkService
                 image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.drink
-            ORDER BY drink_name;";
+            ORDER BY drink_name, id;";
 
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql);
         return result.ToList();
@@ -73,7 +73,7 @@ public class DrinkService : IDrinkService
                 in_stock AS InStock
             FROM cafeteria.drink
             WHERE station_id = @stationId
-            ORDER BY drink_name;";
+            ORDER BY drink_name, id;";
 
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { stationId });
         return result.ToList();
