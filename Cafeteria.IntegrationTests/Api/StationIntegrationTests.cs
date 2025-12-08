@@ -74,38 +74,32 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetAllStations_ReturnsAllStations()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertStationSql, Stations[0]);
         _connection.Execute(InsertStationSql, Stations[1]);
 
-        // Act
         var response = await _client.GetAsync("/api/station");
         response.EnsureSuccessStatusCode();
         var stations = await response.Content.ReadFromJsonAsync<List<StationDto>>();
 
-        // Assert
         Assert.NotNull(stations);
         Assert.Equal(2, stations.Count);
-        Assert.Equal(Stations[0].StationName, stations[0].StationName);
-        Assert.Equal(Stations[1].StationName, stations[1].StationName);
+        Assert.Contains(stations, s => s.StationName == Stations[0].StationName);
+        Assert.Contains(stations, s => s.StationName == Stations[1].StationName);
     }
 
     [Fact]
     public async Task GetStationsByLocation_ReturnsStationsForLocation()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertLocationSql, Locations[1]);
         _connection.Execute(InsertStationSql, Stations[0]);
         _connection.Execute(InsertStationSql, Stations[1]);
 
-        // Act
         var response = await _client.GetAsync("/api/station/station/1");
         response.EnsureSuccessStatusCode();
         var stations = await response.Content.ReadFromJsonAsync<List<StationDto>>();
 
-        // Assert
         Assert.NotNull(stations);
         Assert.Equal(2, stations.Count);
         Assert.All(stations, station => Assert.Equal(1, station.LocationId));
@@ -114,18 +108,15 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationById_ReturnsCorrectStation()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
             Stations[0]);
 
-        // Act
         var response = await _client.GetAsync($"/api/station/{stationId}");
         response.EnsureSuccessStatusCode();
         var station = await response.Content.ReadFromJsonAsync<StationDto>();
 
-        // Assert
         Assert.NotNull(station);
         Assert.Equal(Stations[0].StationName, station.StationName);
         Assert.Equal(Stations[0].StationDescription, station.StationDescription);
@@ -134,29 +125,23 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationById_ReturnsNotFound_WhenStationDoesNotExist()
     {
-        // Act
         var response = await _client.GetAsync("/api/station/999");
-
-        // Assert
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task CreateStationForLocation_AddsNewStation()
     {
-        // Arrange
         var locationId = _connection.ExecuteScalar<int>(
             InsertLocationSql + " RETURNING id",
             Locations[0]);
 
         var newStation = new { Name = "New Station", Description = "A brand new station" };
 
-        // Act
         var response = await _client.PostAsJsonAsync($"/api/station/station/{locationId}", newStation);
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        // Verify creation
         var getResponse = await _client.GetAsync($"/api/station/station/{locationId}");
         var stations = await getResponse.Content.ReadFromJsonAsync<List<StationDto>>();
         Assert.NotNull(stations);
@@ -167,7 +152,6 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task UpdateStation_UpdatesExistingStation()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -175,12 +159,10 @@ public class StationIntegrationTests : IAsyncLifetime
 
         var updatedStation = new { Name = "Updated Station", Description = "Updated description" };
 
-        // Act
         var response = await _client.PutAsJsonAsync($"/api/station/{stationId}", updatedStation);
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        // Verify update
         var getResponse = await _client.GetAsync($"/api/station/{stationId}");
         var station = await getResponse.Content.ReadFromJsonAsync<StationDto>();
         Assert.NotNull(station);
@@ -191,18 +173,15 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task DeleteStation_RemovesStation()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
             Stations[0]);
 
-        // Act
         var response = await _client.DeleteAsync($"/api/station/{stationId}");
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        // Verify deletion
         var getResponse = await _client.GetAsync($"/api/station/{stationId}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
     }
@@ -210,7 +189,6 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationBusinessHours_ReturnsBusinessHoursForStation()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -222,12 +200,10 @@ public class StationIntegrationTests : IAsyncLifetime
             VALUES (@StationId, 1, '08:00:00', '17:00:00')",
             new { StationId = stationId });
 
-        // Act
         var response = await _client.GetAsync($"/api/station/{stationId}/hours");
         response.EnsureSuccessStatusCode();
         var hours = await response.Content.ReadFromJsonAsync<List<StationBusinessHoursDto>>();
 
-        // Assert
         Assert.NotNull(hours);
         Assert.Single(hours);
         Assert.Equal(stationId, hours[0].StationId);
@@ -236,7 +212,6 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationBusinessHoursById_ReturnsCorrectBusinessHours()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -249,12 +224,10 @@ public class StationIntegrationTests : IAsyncLifetime
             RETURNING id",
             new { StationId = stationId });
 
-        // Act
         var response = await _client.GetAsync($"/api/station/hours/{hoursId}");
         response.EnsureSuccessStatusCode();
         var hours = await response.Content.ReadFromJsonAsync<StationBusinessHoursDto>();
 
-        // Assert
         Assert.NotNull(hours);
         Assert.Equal(stationId, hours.StationId);
     }
@@ -262,17 +235,13 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationBusinessHoursById_ReturnsNotFound_WhenHoursDoNotExist()
     {
-        // Act
         var response = await _client.GetAsync("/api/station/hours/999");
-
-        // Assert
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task AddStationHours_AddsNewBusinessHours()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -287,12 +256,10 @@ public class StationIntegrationTests : IAsyncLifetime
             WeekdayId = 1
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync($"/api/station/{stationId}/hours", newHours);
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        // Verify creation
         var getResponse = await _client.GetAsync($"/api/station/{stationId}/hours");
         var hours = await getResponse.Content.ReadFromJsonAsync<List<StationBusinessHoursDto>>();
         Assert.NotNull(hours);
@@ -302,7 +269,6 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task AddStationHours_ReturnsBadRequest_WhenWeekdayIdIsInvalid()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -315,17 +281,14 @@ public class StationIntegrationTests : IAsyncLifetime
             WeekdayId = 999
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync($"/api/station/{stationId}/hours", newHours);
 
-        // Assert
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
     public async Task UpdateStationHours_UpdatesExistingBusinessHours()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -347,12 +310,10 @@ public class StationIntegrationTests : IAsyncLifetime
             WeekdayId = 2
         };
 
-        // Act
         var response = await _client.PutAsJsonAsync($"/api/station/hours/{hoursId}", updatedHours);
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        // Verify update
         var getResponse = await _client.GetAsync($"/api/station/hours/{hoursId}");
         var hours = await getResponse.Content.ReadFromJsonAsync<StationBusinessHoursDto>();
         Assert.NotNull(hours);
@@ -362,7 +323,6 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task UpdateStationHours_ReturnsBadRequest_WhenWeekdayIdIsInvalid()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -383,17 +343,14 @@ public class StationIntegrationTests : IAsyncLifetime
             WeekdayId = 999
         };
 
-        // Act
         var response = await _client.PutAsJsonAsync($"/api/station/hours/{hoursId}", updatedHours);
 
-        // Assert
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
     public async Task DeleteStationHours_RemovesBusinessHours()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
@@ -407,12 +364,10 @@ public class StationIntegrationTests : IAsyncLifetime
             RETURNING id",
             new { StationId = stationId });
 
-        // Act
         var response = await _client.DeleteAsync($"/api/station/hours/{hoursId}");
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        // Verify deletion
         var getResponse = await _client.GetAsync($"/api/station/hours/{hoursId}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
     }

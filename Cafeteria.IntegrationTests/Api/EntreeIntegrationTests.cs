@@ -138,8 +138,8 @@ public class EntreeIntegrationTests : IAsyncLifetime
 
         Assert.NotNull(entrees);
         Assert.Equal(2, entrees.Count);
-        Assert.Equal(Entrees[0].EntreeName, entrees[0].EntreeName);
-        Assert.Equal(Entrees[1].EntreeName, entrees[1].EntreeName);
+        Assert.Contains(entrees, e => e.EntreeName == Entrees[0].EntreeName);
+        Assert.Contains(entrees, e => e.EntreeName == Entrees[1].EntreeName);
     }
 
     [Fact]

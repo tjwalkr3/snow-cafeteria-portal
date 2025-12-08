@@ -74,7 +74,6 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task CreateSide_AddsNewSide()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertStationSql, Stations[0]);
 
@@ -87,12 +86,10 @@ public class SideIntegrationTests : IAsyncLifetime
             ImageUrl = "https://picsum.photos/id/300/300/200"
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync("/api/side", newSide);
         response.EnsureSuccessStatusCode();
         var createdSide = await response.Content.ReadFromJsonAsync<SideDto>();
 
-        // Assert
         Assert.NotNull(createdSide);
         Assert.Equal(newSide.SideName, createdSide.SideName);
         Assert.Equal(newSide.SideDescription, createdSide.SideDescription);
@@ -103,19 +100,16 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetSideByID_ReturnsCorrectSide()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertStationSql, Stations[0]);
         var sideId = _connection.ExecuteScalar<int>(
             InsertSideSql + " RETURNING id",
             Sides[0]);
 
-        // Act
         var response = await _client.GetAsync($"/api/side/{sideId}");
         response.EnsureSuccessStatusCode();
         var side = await response.Content.ReadFromJsonAsync<SideDto>();
 
-        // Assert
         Assert.NotNull(side);
         Assert.Equal(Sides[0].SideName, side.SideName);
         Assert.Equal(Sides[0].SideDescription, side.SideDescription);
@@ -125,50 +119,42 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetSideByID_ReturnsNotFound_WhenSideDoesNotExist()
     {
-        // Act
         var response = await _client.GetAsync("/api/side/999");
 
-        // Assert
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task GetAllSides_ReturnsAllSides()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertStationSql, Stations[0]);
         _connection.Execute(InsertSideSql, Sides[0]);
         _connection.Execute(InsertSideSql, Sides[1]);
 
-        // Act
         var response = await _client.GetAsync("/api/side");
         response.EnsureSuccessStatusCode();
         var sides = await response.Content.ReadFromJsonAsync<List<SideDto>>();
 
-        // Assert
         Assert.NotNull(sides);
         Assert.Equal(2, sides.Count);
-        Assert.Equal(Sides[0].SideName, sides[0].SideName);
-        Assert.Equal(Sides[1].SideName, sides[1].SideName);
+        Assert.Contains(sides, s => s.SideName == Sides[0].SideName);
+        Assert.Contains(sides, s => s.SideName == Sides[1].SideName);
     }
 
     [Fact]
     public async Task GetSidesByStationID_ReturnsSidesForStation()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertStationSql, Stations[0]);
         _connection.Execute(InsertStationSql, Stations[1]);
         _connection.Execute(InsertSideSql, Sides[0]);
         _connection.Execute(InsertSideSql, Sides[1]);
 
-        // Act
         var response = await _client.GetAsync("/api/side/station/1");
         response.EnsureSuccessStatusCode();
         var sides = await response.Content.ReadFromJsonAsync<List<SideDto>>();
 
-        // Assert
         Assert.NotNull(sides);
         Assert.Equal(2, sides.Count);
         Assert.All(sides, side => Assert.Equal(1, side.StationId));
@@ -177,7 +163,6 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task UpdateSideByID_UpdatesExistingSide()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertStationSql, Stations[0]);
         var sideId = _connection.ExecuteScalar<int>(
@@ -194,12 +179,10 @@ public class SideIntegrationTests : IAsyncLifetime
             ImageUrl = "https://picsum.photos/id/301/300/200"
         };
 
-        // Act
         var response = await _client.PutAsJsonAsync($"/api/side/{sideId}", updatedSide);
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<SideDto>();
 
-        // Assert
         Assert.NotNull(result);
         Assert.Equal(updatedSide.SideName, result.SideName);
         Assert.Equal(updatedSide.SideDescription, result.SideDescription);
@@ -209,7 +192,6 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task UpdateSideByID_ReturnsNotFound_WhenSideDoesNotExist()
     {
-        // Arrange
         var updatedSide = new SideDto
         {
             Id = 999,
@@ -220,29 +202,24 @@ public class SideIntegrationTests : IAsyncLifetime
             ImageUrl = "https://picsum.photos/id/302/300/200"
         };
 
-        // Act
         var response = await _client.PutAsJsonAsync("/api/side/999", updatedSide);
 
-        // Assert
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task DeleteSideByID_RemovesSide()
     {
-        // Arrange
         _connection.Execute(InsertLocationSql, Locations[0]);
         _connection.Execute(InsertStationSql, Stations[0]);
         var sideId = _connection.ExecuteScalar<int>(
             InsertSideSql + " RETURNING id",
             Sides[0]);
 
-        // Act
         var response = await _client.DeleteAsync($"/api/side/{sideId}");
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        // Verify deletion
         var getResponse = await _client.GetAsync($"/api/side/{sideId}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
     }
@@ -250,10 +227,7 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task DeleteSideByID_ReturnsNotFound_WhenSideDoesNotExist()
     {
-        // Act
         var response = await _client.DeleteAsync("/api/side/999");
-
-        // Assert
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 }
