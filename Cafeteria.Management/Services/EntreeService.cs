@@ -43,7 +43,7 @@ public class EntreeService(IHttpClientAuth client) : IEntreeService
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> SetInStockById(int id, bool inStock)
+    public async Task<bool> SetStockStatusById(int id, bool inStock)
     {
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));

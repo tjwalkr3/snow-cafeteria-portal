@@ -9,5 +9,5 @@ public interface IEntreeService
     Task<EntreeDto> CreateEntree(EntreeDto entreeDto);
     Task<EntreeDto?> UpdateEntreeById(int id, EntreeDto entreeDto);
     Task<bool> DeleteEntreeById(int id);
-    Task<bool> SetInStockById(int id, bool inStock);
+    Task<bool> SetStockStatusById(int id, bool inStock);
 }

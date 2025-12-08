@@ -55,9 +55,9 @@ public class EntreeController : ControllerBase
     }
 
     [HttpPut("{id}/stock")]
-    public async Task<IActionResult> SetInStockById(int id, [FromBody] bool inStock)
+    public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
-        var result = await _entreeService.SetInStockById(id, inStock);
+        var result = await _entreeService.SetStockStatusById(id, inStock);
         if (!result)
             return NotFound();
         return NoContent();

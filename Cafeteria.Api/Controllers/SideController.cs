@@ -55,9 +55,9 @@ public class SideController : ControllerBase
     }
 
     [HttpPut("{id}/stock")]
-    public async Task<IActionResult> SetInStockById(int id, [FromBody] bool inStock)
+    public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
-        var result = await _sideService.SetInStockById(id, inStock);
+        var result = await _sideService.SetStockStatusById(id, inStock);
         if (!result)
             return NotFound();
         return NoContent();

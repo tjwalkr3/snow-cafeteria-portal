@@ -50,7 +50,7 @@ public class SideVM : ISideVM
 
     public async Task SetInStockAsync(int id, bool inStock)
     {
-        await _sideService.SetInStockById(id, inStock);
+        await _sideService.SetStockStatusById(id, inStock);
         await LoadSidesAsync();
     }
 }

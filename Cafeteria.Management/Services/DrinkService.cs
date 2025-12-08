@@ -43,7 +43,7 @@ public class DrinkService(IHttpClientAuth client) : IDrinkService
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> SetInStockById(int id, bool inStock)
+    public async Task<bool> SetStockStatusById(int id, bool inStock)
     {
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));

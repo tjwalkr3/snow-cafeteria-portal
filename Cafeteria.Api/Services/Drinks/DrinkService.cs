@@ -117,7 +117,7 @@ public class DrinkService : IDrinkService
         return rowsAffected > 0;
     }
 
-    public async Task<bool> SetInStockById(int id, bool inStock)
+    public async Task<bool> SetStockStatusById(int id, bool inStock)
     {
         const string sql = @"
             UPDATE cafeteria.drink
