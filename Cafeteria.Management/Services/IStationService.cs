@@ -11,8 +11,8 @@ public interface IStationService
     Task UpdateStation(StationDto station);
     Task DeleteStation(int stationId);
     Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId);
-    Task<StationBusinessHoursDto?> GetStationBusinessHoursById(int id);
-    Task CreateStationHours(int stationId, DateTime startTime, DateTime endTime, int weekdayId);
-    Task UpdateStationHours(int id, DateTime startTime, DateTime endTime, int weekdayId);
-    Task DeleteStationHours(int id);
+    Task<StationBusinessHoursDto?> GetStationBusinessHoursById(int hoursId);
+    Task CreateStationHours(int stationId, StationBusinessHoursDto hours);
+    Task UpdateStationHours(int hoursId, StationBusinessHoursDto hours);
+    Task<bool> DeleteStationHoursById(int hoursId);
 }

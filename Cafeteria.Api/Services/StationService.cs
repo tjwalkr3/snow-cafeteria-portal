@@ -64,7 +64,7 @@ public class StationService : IStationService
         return station;
     }
 
-    public async Task CreateStationForLocation(int locationId, string stationName, string? stationDescription = null)
+    public async Task CreateStationForLocation(int locationId, StationDto station)
     {
         const string sql = @"
             INSERT INTO cafeteria.station (location_id, station_name, station_description)
@@ -73,14 +73,14 @@ public class StationService : IStationService
         var parameters = new
         {
             location_id = locationId,
-            station_name = stationName,
-            station_description = stationDescription ?? string.Empty
+            station_name = station.StationName,
+            station_description = station.StationDescription ?? string.Empty
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateStationByID(int stationId, string name, string? description)
+    public async Task UpdateStationByID(int stationId, StationDto station)
     {
         const string sql = @"
             UPDATE cafeteria.station
@@ -91,20 +91,21 @@ public class StationService : IStationService
         var parameters = new
         {
             id = stationId,
-            station_name = name,
-            station_description = description ?? string.Empty
+            station_name = station.StationName,
+            station_description = station.StationDescription ?? string.Empty
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task DeleteStationByID(int id)
+    public async Task<bool> DeleteStationByID(int id)
     {
         const string sql = @"
             DELETE FROM cafeteria.station
             WHERE id = @id;";
 
-        await _dbConnection.ExecuteAsync(sql, new { id });
+        var rowsAffected = await _dbConnection.ExecuteAsync(sql, new { id });
+        return rowsAffected > 0;
     }
 
     public async Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId)
@@ -206,12 +207,13 @@ public class StationService : IStationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task DeleteStationHrsById(int stationHrsId)
+    public async Task<bool> DeleteStationHrsById(int stationHrsId)
     {
         const string sql = @"
             DELETE FROM cafeteria.station_business_hours
             WHERE id = @id;";
 
-        await _dbConnection.ExecuteAsync(sql, new { id = stationHrsId });
+        var rowsAffected = await _dbConnection.ExecuteAsync(sql, new { id = stationHrsId });
+        return rowsAffected > 0;
     }
 }

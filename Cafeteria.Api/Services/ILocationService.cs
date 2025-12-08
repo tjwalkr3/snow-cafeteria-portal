@@ -10,8 +10,8 @@ public interface ILocationService
 {
     Task<List<LocationDto>> GetAllLocations();
     Task<LocationDto?> GetLocationByID(int locationId);
-    Task CreateLocation(string name, string? description = null);
-    Task UpdateLocationByID(int locationId, string name, string? description);
+    Task CreateLocation(LocationDto location);
+    Task UpdateLocationByID(int locationId, LocationDto location);
     Task DeleteLocationByID(int locationId);
     Task<List<LocationBusinessHoursDto>> GetLocationBusinessHours(int locationId);
     Task<LocationBusinessHoursDto?> GetLocationBusinessHoursById(int locationHrsId);
