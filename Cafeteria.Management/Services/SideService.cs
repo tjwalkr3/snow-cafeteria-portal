@@ -46,4 +46,10 @@ public class SideService : ISideService
         var response = await _httpClient.DeleteAsync<object>($"api/side/{id}");
         return response?.IsSuccessStatusCode ?? false;
     }
+
+    public async Task<bool> SetStockStatusById(int id, bool inStock)
+    {
+        var response = await _httpClient.PutAsync($"api/side/{id}/stock", inStock);
+        return response.IsSuccessStatusCode;
+    }
 }

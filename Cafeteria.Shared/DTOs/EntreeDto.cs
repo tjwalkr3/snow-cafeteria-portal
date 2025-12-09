@@ -22,4 +22,6 @@ public class EntreeDto
 
     [StringLength(500)]
     public string? ImageUrl { get; set; }
+
+    public bool InStock { get; set; } = true;
 }

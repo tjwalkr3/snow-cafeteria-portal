@@ -10,4 +10,5 @@ public interface IDrinkService
     Task<List<DrinkDto>> GetDrinksByStationID(int stationId);
     Task<DrinkDto?> UpdateDrinkByID(int id, DrinkDto drinkDto);
     Task<bool> DeleteDrinkByID(int id);
+    Task<bool> SetStockStatusById(int id, bool inStock);
 }

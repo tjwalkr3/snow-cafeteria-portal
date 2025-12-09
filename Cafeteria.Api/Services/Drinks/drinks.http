@@ -34,3 +34,9 @@ Content-Type: application/json
 
 ### Delete a drink
 DELETE {{baseUrl}}/1
+
+### Set Drink In-Stock Status
+PUT http://localhost:5132/api/drink/1/stock
+Content-Type: application/json
+
+false
