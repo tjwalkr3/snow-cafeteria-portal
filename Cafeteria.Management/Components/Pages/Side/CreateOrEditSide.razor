@@ -1,4 +1,10 @@
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
+
+<Toast Message="@ToastMessage" 
+       Type="@ToastType" 
+       IsVisible="@ShowToast" 
+       OnClose="@(() => ShowToast = false)" />
 
 <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog" role="document">

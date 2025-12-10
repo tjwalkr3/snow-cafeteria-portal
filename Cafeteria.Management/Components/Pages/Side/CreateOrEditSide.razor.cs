@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
+using Cafeteria.Management.Components.Shared;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 
@@ -7,6 +8,9 @@ public partial class CreateOrEditSide : ComponentBase
 {
     [Inject]
     public ICreateOrEditSideVM ViewModel { get; set; } = default!;
+
+    [Inject]
+    public ISideVM SideVM { get; set; } = default!;
 
     [Parameter]
     public SideDto SideModel { get; set; } = new();
@@ -25,6 +29,10 @@ public partial class CreateOrEditSide : ComponentBase
     private int SelectedLocationId;
     private bool IsSaving;
     private string? ErrorMessage;
+
+    private bool ShowToast;
+    private string ToastMessage = string.Empty;
+    private Toast.ToastType ToastType;
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,6 +73,14 @@ public partial class CreateOrEditSide : ComponentBase
 
     private async Task HandleValidSubmit()
     {
+        if (!ViewModel.ValidateSide(SideVM.Sides, SideModel))
+        {
+            ShowToast = true;
+            ToastMessage = "A side with this name already exists in this station.";
+            ToastType = Toast.ToastType.Error;
+            return;
+        }
+
         IsSaving = true;
         ErrorMessage = null;
         try
