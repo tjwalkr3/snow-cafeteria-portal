@@ -1,5 +1,6 @@
 using Cafeteria.Management.Services;
 using Cafeteria.Shared.DTOs;
+using Cafeteria.Management.Components.Shared;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 
@@ -10,6 +11,12 @@ public class CreateOrEditSideVM : ICreateOrEditSideVM
     private readonly IStationService _stationService;
     private readonly ISideVM _sideVM;
 
+    public SideDto CurrentSide { get; set; } = new();
+    public bool IsEditMode { get; set; }
+    public bool ShowToast { get; set; }
+    public string ToastMessage { get; set; } = string.Empty;
+    public Toast.ToastType ToastType { get; set; }
+
     public CreateOrEditSideVM(ISideService sideService, ILocationService locationService, IStationService stationService, ISideVM sideVM)
     {
         _sideService = sideService;
@@ -18,14 +25,33 @@ public class CreateOrEditSideVM : ICreateOrEditSideVM
         _sideVM = sideVM;
     }
 
-    public async Task CreateSideAsync(SideDto side)
+    public async Task<bool> SaveSideAsync()
     {
-        await _sideService.CreateSide(side);
-    }
+        if (!ValidateSide(_sideVM.Sides, CurrentSide))
+        {
+            ShowToast = true;
+            ToastMessage = "A side with this name already exists in this station.";
+            ToastType = Toast.ToastType.Error;
+            return false;
+        }
 
-    public async Task UpdateSideAsync(SideDto side)
-    {
-        await _sideService.UpdateSide(side);
+        try
+        {
+            if (IsEditMode)
+            {
+                await _sideService.UpdateSide(CurrentSide);
+            }
+            else
+            {
+                await _sideService.CreateSide(CurrentSide);
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error saving side: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<List<LocationDto>> GetLocationsAsync()

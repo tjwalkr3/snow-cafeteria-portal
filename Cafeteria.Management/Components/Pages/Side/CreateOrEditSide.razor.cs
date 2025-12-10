@@ -9,9 +9,6 @@ public partial class CreateOrEditSide : ComponentBase
     [Inject]
     public ICreateOrEditSideVM ViewModel { get; set; } = default!;
 
-    [Inject]
-    public ISideVM SideVM { get; set; } = default!;
-
     [Parameter]
     public SideDto SideModel { get; set; } = new();
 
@@ -30,12 +27,12 @@ public partial class CreateOrEditSide : ComponentBase
     private bool IsSaving;
     private string? ErrorMessage;
 
-    private bool ShowToast;
-    private string ToastMessage = string.Empty;
-    private Toast.ToastType ToastType;
-
     protected override async Task OnInitializedAsync()
     {
+        ViewModel.CurrentSide = SideModel;
+        ViewModel.IsEditMode = IsEditMode;
+        ViewModel.ShowToast = false;
+
         Locations = await ViewModel.GetLocationsAsync();
 
         if (IsEditMode && SideModel.StationId > 0)
@@ -55,7 +52,7 @@ public partial class CreateOrEditSide : ComponentBase
         {
             SelectedLocationId = locationId;
             await LoadStations(locationId);
-            SideModel.StationId = 0;
+            ViewModel.CurrentSide.StationId = 0;
         }
     }
 
@@ -73,27 +70,15 @@ public partial class CreateOrEditSide : ComponentBase
 
     private async Task HandleValidSubmit()
     {
-        if (!ViewModel.ValidateSide(SideVM.Sides, SideModel))
-        {
-            ShowToast = true;
-            ToastMessage = "A side with this name already exists in this station.";
-            ToastType = Toast.ToastType.Error;
-            return;
-        }
-
         IsSaving = true;
         ErrorMessage = null;
         try
         {
-            if (IsEditMode)
+            bool success = await ViewModel.SaveSideAsync();
+            if (success)
             {
-                await ViewModel.UpdateSideAsync(SideModel);
+                await OnSave.InvokeAsync();
             }
-            else
-            {
-                await ViewModel.CreateSideAsync(SideModel);
-            }
-            await OnSave.InvokeAsync();
         }
         catch (Exception ex)
         {
