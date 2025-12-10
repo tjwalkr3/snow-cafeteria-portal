@@ -23,7 +23,7 @@
         <tbody>
             @foreach (var drink in ViewModel.Drinks)
             {
-                <tr>
+                <tr @key="drink.Id">
                     <td>@drink.DrinkName</td>
                     <td>@drink.StationId</td>
                     <td>@drink.DrinkPrice</td>

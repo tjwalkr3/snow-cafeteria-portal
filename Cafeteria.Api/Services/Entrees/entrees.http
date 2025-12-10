@@ -34,3 +34,9 @@ Content-Type: application/json
 
 ### Delete an entree
 DELETE {{baseUrl}}/1
+
+### Set Entree In-Stock Status
+PUT http://localhost:5132/api/entree/1/stock
+Content-Type: application/json
+
+false

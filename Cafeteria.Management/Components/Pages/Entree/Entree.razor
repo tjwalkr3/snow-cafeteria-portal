@@ -22,7 +22,7 @@
         <tbody>
             @foreach (var entree in ViewModel.Entrees)
             {
-                <tr>
+                <tr @key="entree.Id">
                     <td>@entree.EntreeName</td>
                     <td>@entree.StationId</td>
                     <td>@entree.EntreePrice</td>

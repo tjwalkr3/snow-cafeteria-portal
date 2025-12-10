@@ -16,9 +16,9 @@ public class DrinkService : IDrinkService
     public async Task<DrinkDto> CreateDrink(DrinkDto drinkDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.drink (station_id, drink_name, drink_description, drink_price, image_url)
-            VALUES (@StationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl)
-            RETURNING id AS Id, station_id AS StationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl;";
+            INSERT INTO cafeteria.drink (station_id, drink_name, drink_description, drink_price, image_url, in_stock)
+            VALUES (@StationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl, @InStock)
+            RETURNING id AS Id, station_id AS StationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<DrinkDto>(sql, drinkDto);
         return result ?? throw new InvalidOperationException("Failed to create drink");
@@ -33,7 +33,8 @@ public class DrinkService : IDrinkService
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                in_stock AS InStock
             FROM cafeteria.drink
             WHERE id = @id;";
 
@@ -50,9 +51,10 @@ public class DrinkService : IDrinkService
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                in_stock AS InStock
             FROM cafeteria.drink
-            ORDER BY drink_name;";
+            ORDER BY drink_name, id;";
 
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql);
         return result.ToList();
@@ -67,10 +69,11 @@ public class DrinkService : IDrinkService
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                in_stock AS InStock
             FROM cafeteria.drink
             WHERE station_id = @stationId
-            ORDER BY drink_name;";
+            ORDER BY drink_name, id;";
 
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { stationId });
         return result.ToList();
@@ -84,9 +87,10 @@ public class DrinkService : IDrinkService
                 drink_name = @DrinkName,
                 drink_description = @DrinkDescription,
                 drink_price = @DrinkPrice,
-                image_url = @ImageUrl
+                image_url = @ImageUrl,
+                in_stock = @InStock
             WHERE id = @id
-            RETURNING id AS Id, station_id AS StationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl;";
+            RETURNING id AS Id, station_id AS StationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
 
         var parameters = new
         {
@@ -95,7 +99,8 @@ public class DrinkService : IDrinkService
             drinkDto.DrinkName,
             drinkDto.DrinkDescription,
             drinkDto.DrinkPrice,
-            drinkDto.ImageUrl
+            drinkDto.ImageUrl,
+            drinkDto.InStock
         };
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<DrinkDto>(sql, parameters);
@@ -109,6 +114,17 @@ public class DrinkService : IDrinkService
             WHERE id = @id;";
 
         var rowsAffected = await _dbConnection.ExecuteAsync(sql, new { id });
+        return rowsAffected > 0;
+    }
+
+    public async Task<bool> SetStockStatusById(int id, bool inStock)
+    {
+        const string sql = @"
+            UPDATE cafeteria.drink
+            SET in_stock = @inStock
+            WHERE id = @id;";
+
+        var rowsAffected = await _dbConnection.ExecuteAsync(sql, new { id, inStock });
         return rowsAffected > 0;
     }
 }

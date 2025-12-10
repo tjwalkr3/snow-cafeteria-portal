@@ -17,6 +17,11 @@ public class SideService : ISideService
         return result ?? new List<SideDto>();
     }
 
+    public async Task<SideDto?> GetSideById(int id)
+    {
+        return await _httpClient.GetAsync<SideDto>($"api/side/{id}");
+    }
+
     public async Task<SideDto?> CreateSide(SideDto side)
     {
         var response = await _httpClient.PostAsync("api/Side", side);
@@ -45,5 +50,11 @@ public class SideService : ISideService
     {
         var response = await _httpClient.DeleteAsync<object>($"api/side/{id}");
         return response?.IsSuccessStatusCode ?? false;
+    }
+
+    public async Task<bool> SetStockStatusById(int id, bool inStock)
+    {
+        var response = await _httpClient.PutAsync($"api/side/{id}/stock", inStock);
+        return response.IsSuccessStatusCode;
     }
 }
