@@ -2,45 +2,51 @@
 
 @if (ViewModel.IsVisible)
 {
-    <div style="border: 1px solid black; background: white; padding: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
-        <h3>
-            @if (ViewModel.GetState() == CreateOrEditLocationVM.LocationModalState.Create)
-            {
-                <span>Create Location</span>
-            }
-            else
-            {
-                <span>Edit @ViewModel.SelectedLocation.LocationName</span>
-            }
-        </h3>
-        
-        <EditForm Model="@ViewModel.SelectedLocation" OnValidSubmit="ViewModel.SaveAsync">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @if (ViewModel.GetState() == CreateOrEditLocationVM.LocationModalState.Create)
+                        {
+                            <span>Create Location</span>
+                        }
+                        else
+                        {
+                            <span>Edit @ViewModel.SelectedLocation.LocationName</span>
+                        }
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="ViewModel.Close" aria-label="Close"></button>
+                </div>
+                <EditForm Model="@ViewModel.SelectedLocation" OnValidSubmit="ViewModel.SaveAsync">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <ValidationSummary />
 
-            <div>
-                <label>Name</label>
-                <InputText @bind-Value="ViewModel.SelectedLocation.LocationName" />
-                <ValidationMessage For="@(() => ViewModel.SelectedLocation.LocationName)" />
-            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.SelectedLocation.LocationName" />
+                            <ValidationMessage For="@(() => ViewModel.SelectedLocation.LocationName)" />
+                        </div>
 
-            <div>
-                <label>Description</label>
-                <InputTextArea @bind-Value="ViewModel.SelectedLocation.LocationDescription" />
-                <ValidationMessage For="@(() => ViewModel.SelectedLocation.LocationDescription)" />
-            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea class="form-control" @bind-Value="ViewModel.SelectedLocation.LocationDescription" />
+                            <ValidationMessage For="@(() => ViewModel.SelectedLocation.LocationDescription)" />
+                        </div>
 
-            <div>
-                <label>Image URL</label>
-                <InputText @bind-Value="ViewModel.SelectedLocation.ImageUrl" />
-                <ValidationMessage For="@(() => ViewModel.SelectedLocation.ImageUrl)" />
+                        <div class="mb-3">
+                            <label class="form-label">Image URL</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.SelectedLocation.ImageUrl" />
+                            <ValidationMessage For="@(() => ViewModel.SelectedLocation.ImageUrl)" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="ViewModel.Close">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </EditForm>
             </div>
-
-            <div style="margin-top: 10px;">
-                <button type="button" @onclick="ViewModel.Close">Close</button>
-                <button type="submit">Save</button>
-            </div>
-        </EditForm>
+        </div>
     </div>
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;" @onclick="ViewModel.Close"></div>
 }

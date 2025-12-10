@@ -2,16 +2,20 @@ using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs;
 using Cafeteria.Management.Services;
 using Cafeteria.Shared.Enums;
+using Cafeteria.Management.Components.Pages.LocationAndStation.Station;
 
 namespace Cafeteria.Management.Components.Pages.LocationAndStation;
 
-public partial class LocationCollapsible : ComponentBase
+public partial class LocationCollapsible : ComponentBase, IDisposable
 {
     [Inject]
     public IStationService StationService { get; set; } = default!;
 
     [Inject]
     public ILocationService LocationService { get; set; } = default!;
+
+    [Inject]
+    public ICreateOrEditStationVM CreateOrEditStationViewModel { get; set; } = default!;
 
     [Parameter, EditorRequired]
     public LocationDto Location { get; set; } = default!;
@@ -37,6 +41,12 @@ public partial class LocationCollapsible : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        CreateOrEditStationViewModel.OnStationSaved += HandleStationSaved;
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
         Stations = await StationService.GetStationsByLocation(Location.Id);
         LocationHours = await LocationService.GetLocationBusinessHours(Location.Id);
 
@@ -45,6 +55,12 @@ public partial class LocationCollapsible : ComponentBase
             var hours = await StationService.GetStationBusinessHours(station.Id);
             StationHours[station.Id] = hours;
         }
+        StateHasChanged();
+    }
+
+    private async Task HandleStationSaved()
+    {
+        await LoadDataAsync();
     }
 
     private async Task Toggle()
@@ -71,6 +87,34 @@ public partial class LocationCollapsible : ComponentBase
         }
     }
 
+    private void AddStation()
+    {
+        CreateOrEditStationViewModel.SelectedStation = new StationDto
+        {
+            StationName = "",
+            StationDescription = ""
+        };
+        CreateOrEditStationViewModel.Show(Location.Id);
+    }
+
+    private void EditStation(StationDto station)
+    {
+        CreateOrEditStationViewModel.SelectedStation = new StationDto
+        {
+            Id = station.Id,
+            StationName = station.StationName,
+            StationDescription = station.StationDescription,
+            LocationId = station.LocationId
+        };
+        CreateOrEditStationViewModel.Show(Location.Id);
+    }
+
+    private async Task DeleteStation(int stationId)
+    {
+        await StationService.DeleteStation(stationId);
+        await LoadDataAsync();
+    }
+
     private bool AreHoursDifferent(List<LocationBusinessHoursDto> locationHours, List<StationBusinessHoursDto> stationHours)
     {
         if (locationHours.Count != stationHours.Count)
@@ -92,5 +136,10 @@ public partial class LocationCollapsible : ComponentBase
         }
 
         return false;
+    }
+
+    public void Dispose()
+    {
+        CreateOrEditStationViewModel.OnStationSaved -= HandleStationSaved;
     }
 }

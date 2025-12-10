@@ -200,12 +200,14 @@ public class LocationService : ILocationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task DeleteLocationHrsById(int locationHrsId)
+    public async Task<bool> DeleteLocationHrsById(int locationHrsId)
     {
         const string sql = @"
             DELETE FROM cafeteria.location_business_hours
             WHERE id = @id;";
 
-        await _dbConnection.ExecuteAsync(sql, new { id = locationHrsId });
+ 
+        var rowsAffected = await _dbConnection.ExecuteAsync(sql, new { id = locationHrsId });
+        return rowsAffected > 0;
     }
 }

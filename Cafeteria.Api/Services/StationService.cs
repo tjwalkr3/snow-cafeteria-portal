@@ -101,6 +101,20 @@ public class StationService : IStationService
     public async Task<bool> DeleteStationByID(int id)
     {
         const string sql = @"
+            -- Delete meals that reference items in this station
+            DELETE FROM cafeteria.meal WHERE entree_id IN (SELECT id FROM cafeteria.entree WHERE station_id = @id);
+            DELETE FROM cafeteria.meal WHERE side_id IN (SELECT id FROM cafeteria.side WHERE station_id = @id);
+            DELETE FROM cafeteria.meal WHERE drink_id IN (SELECT id FROM cafeteria.drink WHERE station_id = @id);
+
+            -- Delete items in this station
+            DELETE FROM cafeteria.entree WHERE station_id = @id;
+            DELETE FROM cafeteria.side WHERE station_id = @id;
+            DELETE FROM cafeteria.drink WHERE station_id = @id;
+
+            -- Delete station hours
+            DELETE FROM cafeteria.station_business_hours WHERE station_id = @id;
+
+            -- Delete station
             DELETE FROM cafeteria.station
             WHERE id = @id;";
 

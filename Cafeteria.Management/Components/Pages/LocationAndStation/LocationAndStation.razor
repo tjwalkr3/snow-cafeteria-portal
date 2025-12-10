@@ -1,14 +1,16 @@
 @page "/location-station"
 @using Cafeteria.Management.Components.Pages.LocationAndStation.Location
+@using Cafeteria.Management.Components.Pages.LocationAndStation.Station
 @rendermode InteractiveServer
 
 <h1>Locations and Stations</h1>
 
 <p>Manage locations/stations here.</p>
 
-<button class="btn btn-primary mb-3" @onclick="ViewModel.OpenCreateLocationModal">Create Location</button>
+<button @onclick="ViewModel.OpenCreateLocationModal">Create Location</button>
 
 <CreateOrEditLocation />
+<CreateOrEditStation />
 
 @if (!ViewModel.Locations.Any())
 {

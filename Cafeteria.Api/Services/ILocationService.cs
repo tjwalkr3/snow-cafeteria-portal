@@ -17,5 +17,5 @@ public interface ILocationService
     Task<LocationBusinessHoursDto?> GetLocationBusinessHoursById(int locationHrsId);
     Task AddLocationHours(int locationId, LocationBusinessHoursDto hours);
     Task UpdateLocationHoursById(int locationHrsId, LocationBusinessHoursDto hours);
-    Task DeleteLocationHrsById(int locationHrsId);
+    Task<bool> DeleteLocationHrsById(int locationHrsId);
 }

@@ -1,26 +1,30 @@
 @using Cafeteria.Shared.Enums
 @using System
 
-<div class="card mb-3">
-    <div class="card-header" @onclick="Toggle" style="cursor: pointer;">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">@Location.LocationName</h5>
+<div>
+    <div @onclick="Toggle">
+        <div>
+            <h5>@Location.LocationName</h5>
             <div>
-                <button class="btn btn-sm btn-secondary me-2" @onclick="Edit" @onclick:stopPropagation="true">Edit</button>
-                <button class="btn btn-sm btn-danger me-2" @onclick="Delete" @onclick:stopPropagation="true">Delete</button>
+                <button @onclick="Edit" @onclick:stopPropagation="true">Edit</button>
+                <button @onclick="Delete" @onclick:stopPropagation="true">Delete</button>
                 <span>@(IsExpanded ? "▲" : "▼")</span>
             </div>
         </div>
     </div>
     @if (IsExpanded)
     {
-        <div class="card-body">
+        <div>
             <p>@Location.LocationDescription</p>
             
+            <div>
+                <button @onclick="AddStation">Add Station</button>
+            </div>
+
             @if (LocationHours.Any())
             {
                 <h6>Location Business Hours</h6>
-                <table class="table table-sm table-bordered mt-2 mb-3" style="width: auto;">
+                <table>
                     <thead>
                         <tr>
                             <th></th>
@@ -51,21 +55,29 @@
                 </table>
             }
 
-            <div class="station-container">
+            <div>
                 @if (Stations.Any())
                 {
-                    <ul class="list-group">
+                    <ul>
                         @foreach (var station in Stations)
                         {
-                            <li class="list-group-item">
-                                <h6>@station.StationName</h6>
-                                <small>@station.StationDescription</small>
+                            <li>
+                                <div>
+                                    <div>
+                                        <h6>@station.StationName</h6>
+                                        <small>@station.StationDescription</small>
+                                    </div>
+                                    <div>
+                                        <button @onclick="() => EditStation(station)">Edit</button>
+                                        <button @onclick="() => DeleteStation(station.Id)">Delete</button>
+                                    </div>
+                                </div>
 
                                 @if (StationHours.TryGetValue(station.Id, out var sHours) && sHours.Any() && AreHoursDifferent(LocationHours, sHours))
                                 {
-                                    <div class="mt-2">
+                                    <div>
                                         <strong>Station Hours:</strong>
-                                        <table class="table table-sm table-bordered mt-1 mb-0" style="width: auto; font-size: 0.85em;">
+                                        <table>
                                             <thead>
                                                 <tr>
                                                     <th></th>

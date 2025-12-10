@@ -2,6 +2,7 @@ using Cafeteria.Management.Components;
 using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
 using Cafeteria.Management.Components.Pages.LocationAndStation.Location;
+using Cafeteria.Management.Components.Pages.LocationAndStation.Station;
 using Cafeteria.Management.Components.Pages.FoodOption;
 using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IEntreeService, EntreeService>();
 // Register ViewModels
 builder.Services.AddScoped<ILocationAndStationVM, LocationAndStationVM>();
 builder.Services.AddScoped<ICreateOrEditLocationVM, CreateOrEditLocationVM>();
+builder.Services.AddScoped<ICreateOrEditStationVM, CreateOrEditStationVM>();
 builder.Services.AddScoped<IEntreeVM, EntreeVM>();
 builder.Services.AddScoped<IDrinkVM, DrinkVM>();
 builder.Services.AddScoped<ICreateOrEditDrinkVM, CreateOrEditDrinkVM>();

@@ -21,17 +21,17 @@ public class StationService(IHttpClientAuth client) : IStationService
 
     public async Task CreateStation(int locationId, StationDto station)
     {
-        await client.PostAsync($"station/station/{locationId}", station);
+        await client.PostAsync($"api/station/station/{locationId}", station);
     }
 
     public async Task UpdateStation(StationDto station)
     {
-        await client.PutAsync($"station/{station.Id}", station);
+        await client.PutAsync($"api/station/{station.Id}", station);
     }
 
     public async Task DeleteStation(int stationId)
     {
-        await client.DeleteAsync<object>($"station/{stationId}");
+        await client.DeleteAsync<object>($"api/station/{stationId}");
     }
 
     public async Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId)
@@ -41,22 +41,22 @@ public class StationService(IHttpClientAuth client) : IStationService
 
     public async Task<StationBusinessHoursDto?> GetStationBusinessHoursById(int hoursId)
     {
-        return await client.GetAsync<StationBusinessHoursDto?>($"station/hours/{hoursId}");
+        return await client.GetAsync<StationBusinessHoursDto?>($"api/station/hours/{hoursId}");
     }
 
     public async Task CreateStationHours(int stationId, StationBusinessHoursDto hours)
     {
-        await client.PostAsync($"station/{stationId}/hours", hours);
+        await client.PostAsync($"api/station/{stationId}/hours", hours);
     }
 
     public async Task UpdateStationHours(int hourId, StationBusinessHoursDto hours)
     {
-        await client.PutAsync($"station/hours/{hourId}", hours);
+        await client.PutAsync($"api/station/hours/{hourId}", hours);
     }
 
     public async Task<bool> DeleteStationHoursById(int hourId)
     {
-        var response = await client.DeleteAsync<object>($"station/hours/{hourId}");
+        var response = await client.DeleteAsync<object>($"api/station/hours/{hourId}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<bool>();
     }

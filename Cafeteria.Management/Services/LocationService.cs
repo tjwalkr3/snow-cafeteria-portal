@@ -16,37 +16,37 @@ public class LocationService(IHttpClientAuth client) : ILocationService
 
     public async Task CreateLocationHours(int locationId, LocationBusinessHoursDto hours)
     {
-        var response = await client.PostAsync($"location/{locationId}/hours", hours);
+        var response = await client.PostAsync($"api/location/{locationId}/hours", hours);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task UpdateLocationHours(int hoursId, LocationBusinessHoursDto hours)
     {
-        var response = await client.PutAsync($"location/hours/{hoursId}", hours);
+        var response = await client.PutAsync($"api/location/hours/{hoursId}", hours);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteLocationHours(int hoursId)
     {
-        var response = await client.DeleteAsync<Task>($"location/hours/{hoursId}");
+        var response = await client.DeleteAsync<Task>($"api/location/hours/{hoursId}");
         response.EnsureSuccessStatusCode();
     }
 
     public async Task CreateLocation(LocationDto location)
     {
-        var response = await client.PostAsync("location", location);
+        var response = await client.PostAsync("api/location", location);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task UpdateLocation(LocationDto location)
     {
-        var response = await client.PutAsync($"location/{location.Id}", location);
+        var response = await client.PutAsync($"api/location/{location.Id}", location);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteLocation(int locationId)
     {
-        var response = await client.DeleteAsync<Task>($"location/{locationId}");
+        var response = await client.DeleteAsync<Task>($"api/location/{locationId}");
         response.EnsureSuccessStatusCode();
     }
 }
