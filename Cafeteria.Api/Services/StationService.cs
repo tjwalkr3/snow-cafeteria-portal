@@ -112,11 +112,11 @@ public class StationService : IStationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                station_id AS StationId,
-                weekday_id AS WeekdayId,
-                open_time AS OpenTime,
-                close_time AS CloseTime
+                id,
+                station_id,
+                weekday_id,
+                open_time,
+                close_time
             FROM cafeteria.station_business_hours
             WHERE station_id = @station_id
             ORDER BY weekday_id, open_time;";
@@ -124,11 +124,11 @@ public class StationService : IStationService
         var hours = await _dbConnection.QueryAsync<dynamic>(sql, new { station_id = stationId });
         return hours.Select(h => new StationBusinessHoursDto
         {
-            Id = h.Id,
-            StationId = h.StationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            Id = h.id,
+            StationId = h.station_id,
+            WeekdayId = h.weekday_id,
+            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)h.open_time),
+            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)h.close_time)
         }).ToList();
     }
 
@@ -136,11 +136,11 @@ public class StationService : IStationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                station_id AS StationId,
-                weekday_id AS WeekdayId,
-                open_time AS OpenTime,
-                close_time AS CloseTime
+                id,
+                station_id,
+                weekday_id,
+                open_time,
+                close_time
             FROM cafeteria.station_business_hours
             WHERE id = @id;";
 
@@ -153,11 +153,11 @@ public class StationService : IStationService
 
         return new StationBusinessHoursDto
         {
-            Id = h.Id,
-            StationId = h.StationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            Id = h.id,
+            StationId = h.station_id,
+            WeekdayId = h.weekday_id,
+            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)h.open_time),
+            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)h.close_time)
         };
     }
 

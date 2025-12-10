@@ -114,11 +114,11 @@ public class LocationService : ILocationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                location_id AS LocationId,
-                weekday_id AS WeekdayId,
-                open_time AS OpenTime,
-                close_time AS CloseTime
+                id,
+                location_id,
+                weekday_id,
+                open_time,
+                close_time
             FROM cafeteria.location_business_hours
             WHERE location_id = @location_id
             ORDER BY weekday_id, open_time;";
@@ -126,11 +126,11 @@ public class LocationService : ILocationService
         var hours = await _dbConnection.QueryAsync<dynamic>(sql, new { location_id = locationId });
         return hours.Select(h => new LocationBusinessHoursDto
         {
-            Id = h.Id,
-            LocationId = h.LocationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            Id = h.id,
+            LocationId = h.location_id,
+            WeekdayId = h.weekday_id,
+            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)h.open_time),
+            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)h.close_time)
         }).ToList();
     }
 
@@ -138,11 +138,11 @@ public class LocationService : ILocationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                location_id AS LocationId,
-                weekday_id AS WeekdayId,
-                open_time AS OpenTime,
-                close_time AS CloseTime
+                id,
+                location_id,
+                weekday_id,
+                open_time,
+                close_time
             FROM cafeteria.location_business_hours
             WHERE id = @id;";
 
@@ -155,11 +155,11 @@ public class LocationService : ILocationService
 
         return new LocationBusinessHoursDto
         {
-            Id = h.Id,
-            LocationId = h.LocationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            Id = h.id,
+            LocationId = h.location_id,
+            WeekdayId = h.weekday_id,
+            OpenTime = TimeOnly.FromTimeSpan((TimeSpan)h.open_time),
+            CloseTime = TimeOnly.FromTimeSpan((TimeSpan)h.close_time)
         };
     }
 
