@@ -44,16 +44,16 @@ public class LocationController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateLocation([FromBody] LocationUpsertRequest request)
+    public async Task<IActionResult> CreateLocation([FromBody] LocationDto location)
     {
-        await _locationService.CreateLocation(request.Name, request.Description);
+        await _locationService.CreateLocation(location);
         return NoContent();
     }
 
     [HttpPut("{locationId:int}")]
-    public async Task<IActionResult> UpdateLocation(int locationId, [FromBody] LocationUpsertRequest request)
+    public async Task<IActionResult> UpdateLocation(int locationId, [FromBody] LocationDto location)
     {
-        await _locationService.UpdateLocationByID(locationId, request.Name, request.Description);
+        await _locationService.UpdateLocationByID(locationId, location);
         return NoContent();
     }
 
@@ -84,28 +84,28 @@ public class LocationController : ControllerBase
     }
 
     [HttpPost("{locationId:int}/hours")]
-    public async Task<IActionResult> AddLocationHours(int locationId, [FromBody] LocationHoursRequest request)
+    public async Task<IActionResult> AddLocationHours(int locationId, [FromBody] LocationBusinessHoursDto hours)
     {
-        if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
+        if (!Enum.IsDefined(typeof(WeekDay), hours.WeekdayId))
         {
-            return BadRequest($"Invalid weekdayId {request.WeekdayId}");
+            return BadRequest($"Invalid weekdayId {hours.WeekdayId}");
         }
 
-        var weekday = (WeekDay)request.WeekdayId;
-        await _locationService.AddLocationHours(locationId, request.StartTime, request.EndTime, weekday);
+        var weekday = (WeekDay)hours.WeekdayId;
+        await _locationService.AddLocationHours(locationId, hours);
         return NoContent();
     }
 
     [HttpPut("hours/{locationHrsId:int}")]
-    public async Task<IActionResult> UpdateLocationHours(int locationHrsId, [FromBody] LocationHoursRequest request)
+    public async Task<IActionResult> UpdateLocationHours(int locationHrsId, [FromBody] LocationBusinessHoursDto hours)
     {
-        if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
+        if (!Enum.IsDefined(typeof(WeekDay), hours.WeekdayId))
         {
-            return BadRequest($"Invalid weekdayId {request.WeekdayId}");
+            return BadRequest($"Invalid weekdayId {hours.WeekdayId}");
         }
 
-        var weekday = (WeekDay)request.WeekdayId;
-        await _locationService.UpdateLocationHoursById(locationHrsId, request.StartTime, request.EndTime, weekday);
+        var weekday = (WeekDay)hours.WeekdayId;
+        await _locationService.UpdateLocationHoursById(locationHrsId, hours);
         return NoContent();
     }
 
@@ -116,7 +116,3 @@ public class LocationController : ControllerBase
         return NoContent();
     }
 }
-
-public record LocationUpsertRequest(string Name, string? Description);
-
-public record LocationHoursRequest(DateTime StartTime, DateTime EndTime, int WeekdayId);

@@ -121,15 +121,8 @@ public class StationService : IStationService
             WHERE station_id = @station_id
             ORDER BY weekday_id, open_time;";
 
-        var hours = await _dbConnection.QueryAsync<StationBusinessHoursDbModel>(sql, new { station_id = stationId });
-        return hours.Select(h => new StationBusinessHoursDto
-        {
-            Id = h.Id,
-            StationId = h.StationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
-        }).ToList();
+        var hours = await _dbConnection.QueryAsync<StationBusinessHoursDto>(sql, new { station_id = stationId });
+        return hours.ToList();
     }
 
     public async Task<StationBusinessHoursDto?> GetStationBusinessHoursById(int stationHrsId)
@@ -144,33 +137,10 @@ public class StationService : IStationService
             FROM cafeteria.station_business_hours
             WHERE id = @id;";
 
-        var h = await _dbConnection.QuerySingleOrDefaultAsync<StationBusinessHoursDbModel>(sql, new { id = stationHrsId });
-
-        if (h is null)
-        {
-            return null;
-        }
-
-        return new StationBusinessHoursDto
-        {
-            Id = h.Id,
-            StationId = h.StationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
-        };
+        return await _dbConnection.QuerySingleOrDefaultAsync<StationBusinessHoursDto>(sql, new { id = stationHrsId });
     }
 
-    private class StationBusinessHoursDbModel
-    {
-        public int Id { get; set; }
-        public int StationId { get; set; }
-        public int WeekdayId { get; set; }
-        public TimeSpan OpenTime { get; set; }
-        public TimeSpan CloseTime { get; set; }
-    }
-
-    public async Task AddStationHours(int stationId, DateTime startTime, DateTime endTime, WeekDay weekday)
+    public async Task AddStationHours(int stationId, StationBusinessHoursDto hours)
     {
         const string sql = @"
             INSERT INTO cafeteria.station_business_hours (station_id, weekday_id, open_time, close_time)
@@ -179,15 +149,15 @@ public class StationService : IStationService
         var parameters = new
         {
             station_id = stationId,
-            weekday_id = (int)weekday,
-            open_time = startTime.TimeOfDay,
-            close_time = endTime.TimeOfDay
+            weekday_id = (int)hours.WeekdayId,
+            open_time = hours.OpenTime,
+            close_time = hours.CloseTime
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateStationHoursById(int stationHrsId, DateTime startTime, DateTime endTime, WeekDay weekday)
+    public async Task UpdateStationHoursById(int stationHrsId, StationBusinessHoursDto hours)
     {
         const string sql = @"
             UPDATE cafeteria.station_business_hours
@@ -199,9 +169,9 @@ public class StationService : IStationService
         var parameters = new
         {
             id = stationHrsId,
-            weekday_id = (int)weekday,
-            open_time = startTime.TimeOfDay,
-            close_time = endTime.TimeOfDay
+            weekday_id = (int)hours.WeekdayId,
+            open_time = hours.OpenTime,
+            close_time = hours.CloseTime
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);

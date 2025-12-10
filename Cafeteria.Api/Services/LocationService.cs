@@ -48,7 +48,7 @@ public class LocationService : ILocationService
         return location;
     }
 
-    public async Task CreateLocation(string name, string? description = null)
+    public async Task CreateLocation(LocationDto location)
     {
         const string sql = @"
             INSERT INTO cafeteria.cafeteria_location (location_name, location_description)
@@ -56,14 +56,14 @@ public class LocationService : ILocationService
 
         var parameters = new
         {
-            location_name = name,
-            location_description = description ?? string.Empty
+            location_name = location.LocationName,
+            location_description = location.LocationDescription ?? string.Empty
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateLocationByID(int locationId, string name, string? description)
+    public async Task UpdateLocationByID(int locationId, LocationDto location)
     {
         const string sql = @"
             UPDATE cafeteria.cafeteria_location
@@ -74,8 +74,8 @@ public class LocationService : ILocationService
         var parameters = new
         {
             id = locationId,
-            location_name = name,
-            location_description = description ?? string.Empty
+            location_name = location.LocationName,
+            location_description = location.LocationDescription ?? string.Empty
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
@@ -123,15 +123,8 @@ public class LocationService : ILocationService
             WHERE location_id = @location_id
             ORDER BY weekday_id, open_time;";
 
-        var hours = await _dbConnection.QueryAsync<LocationBusinessHoursDbModel>(sql, new { location_id = locationId });
-        return hours.Select(h => new LocationBusinessHoursDto
-        {
-            Id = h.Id,
-            LocationId = h.LocationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
-        }).ToList();
+        var hours = await _dbConnection.QueryAsync<LocationBusinessHoursDto>(sql, new { location_id = locationId });
+        return hours.ToList();
     }
 
     public async Task<LocationBusinessHoursDto?> GetLocationBusinessHoursById(int locationHrsId)
@@ -146,33 +139,10 @@ public class LocationService : ILocationService
             FROM cafeteria.location_business_hours
             WHERE id = @id;";
 
-        var h = await _dbConnection.QuerySingleOrDefaultAsync<LocationBusinessHoursDbModel>(sql, new { id = locationHrsId });
-
-        if (h is null)
-        {
-            return null;
-        }
-
-        return new LocationBusinessHoursDto
-        {
-            Id = h.Id,
-            LocationId = h.LocationId,
-            WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
-        };
+        return await _dbConnection.QuerySingleOrDefaultAsync<LocationBusinessHoursDto>(sql, new { id = locationHrsId });
     }
 
-    private class LocationBusinessHoursDbModel
-    {
-        public int Id { get; set; }
-        public int LocationId { get; set; }
-        public int WeekdayId { get; set; }
-        public TimeSpan OpenTime { get; set; }
-        public TimeSpan CloseTime { get; set; }
-    }
-
-    public async Task AddLocationHours(int locationId, DateTime startTime, DateTime endTime, WeekDay weekday)
+    public async Task AddLocationHours(int locationId, LocationBusinessHoursDto hours)
     {
         const string sql = @"
             INSERT INTO cafeteria.location_business_hours (location_id, weekday_id, open_time, close_time)
@@ -181,15 +151,15 @@ public class LocationService : ILocationService
         var parameters = new
         {
             location_id = locationId,
-            weekday_id = (int)weekday,
-            open_time = startTime.TimeOfDay,
-            close_time = endTime.TimeOfDay
+            weekday_id = (int)hours.WeekdayId,
+            open_time = hours.OpenTime,
+            close_time = hours.CloseTime
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateLocationHoursById(int locationHrsId, DateTime startTime, DateTime endTime, WeekDay weekday)
+    public async Task UpdateLocationHoursById(int locationHrsId, LocationBusinessHoursDto hours)
     {
         const string sql = @"
             UPDATE cafeteria.location_business_hours
@@ -201,9 +171,9 @@ public class LocationService : ILocationService
         var parameters = new
         {
             id = locationHrsId,
-            weekday_id = (int)weekday,
-            open_time = startTime.TimeOfDay,
-            close_time = endTime.TimeOfDay
+            weekday_id = (int)hours.WeekdayId,
+            open_time = hours.OpenTime,
+            close_time = hours.CloseTime
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);

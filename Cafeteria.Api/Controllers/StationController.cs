@@ -82,28 +82,28 @@ public class StationController : ControllerBase
     }
 
     [HttpPost("{stationId:int}/hours")]
-    public async Task<IActionResult> AddStationHours(int stationId, [FromBody] StationHoursRequest request)
+    public async Task<IActionResult> AddStationHours(int stationId, [FromBody] StationBusinessHoursDto hours)
     {
-        if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
+        if (!Enum.IsDefined(typeof(WeekDay), hours.WeekdayId))
         {
-            return BadRequest($"Invalid weekdayId {request.WeekdayId}");
+            return BadRequest($"Invalid weekdayId {hours.WeekdayId}");
         }
 
-        var weekday = (WeekDay)request.WeekdayId;
-        await _stationService.AddStationHours(stationId, request.StartTime, request.EndTime, weekday);
+        var weekday = (WeekDay)hours.WeekdayId;
+        await _stationService.AddStationHours(stationId, hours);
         return NoContent();
     }
 
     [HttpPut("hours/{stationHrsId:int}")]
-    public async Task<IActionResult> UpdateStationHours(int stationHrsId, [FromBody] StationHoursRequest request)
+    public async Task<IActionResult> UpdateStationHours(int stationHrsId, [FromBody] StationBusinessHoursDto hours)
     {
-        if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
+        if (!Enum.IsDefined(typeof(WeekDay), hours.WeekdayId))
         {
-            return BadRequest($"Invalid weekdayId {request.WeekdayId}");
+            return BadRequest($"Invalid weekdayId {hours.WeekdayId}");
         }
 
-        var weekday = (WeekDay)request.WeekdayId;
-        await _stationService.UpdateStationHoursById(stationHrsId, request.StartTime, request.EndTime, weekday);
+        var weekday = (WeekDay)hours.WeekdayId;
+        await _stationService.UpdateStationHoursById(stationHrsId, hours);
         return NoContent();
     }
 
@@ -116,7 +116,3 @@ public class StationController : ControllerBase
         return NoContent();
     }
 }
-
-public record StationUpsertRequest(string Name, string? Description);
-
-public record StationHoursRequest(DateTime StartTime, DateTime EndTime, int WeekdayId);
