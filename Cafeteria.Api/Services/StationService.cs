@@ -121,8 +121,15 @@ public class StationService : IStationService
             WHERE station_id = @station_id
             ORDER BY weekday_id, open_time;";
 
-        var hours = await _dbConnection.QueryAsync<StationBusinessHoursDto>(sql, new { station_id = stationId });
-        return hours.ToList();
+        var hours = await _dbConnection.QueryAsync<dynamic>(sql, new { station_id = stationId });
+        return hours.Select(h => new StationBusinessHoursDto
+        {
+            Id = h.Id,
+            StationId = h.StationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+        }).ToList();
     }
 
     public async Task<StationBusinessHoursDto?> GetStationBusinessHoursById(int stationHrsId)
@@ -137,7 +144,21 @@ public class StationService : IStationService
             FROM cafeteria.station_business_hours
             WHERE id = @id;";
 
-        return await _dbConnection.QuerySingleOrDefaultAsync<StationBusinessHoursDto>(sql, new { id = stationHrsId });
+        var h = await _dbConnection.QuerySingleOrDefaultAsync<dynamic>(sql, new { id = stationHrsId });
+
+        if (h is null)
+        {
+            return null;
+        }
+
+        return new StationBusinessHoursDto
+        {
+            Id = h.Id,
+            StationId = h.StationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+        };
     }
 
     public async Task AddStationHours(int stationId, StationBusinessHoursDto hours)

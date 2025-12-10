@@ -123,8 +123,15 @@ public class LocationService : ILocationService
             WHERE location_id = @location_id
             ORDER BY weekday_id, open_time;";
 
-        var hours = await _dbConnection.QueryAsync<LocationBusinessHoursDto>(sql, new { location_id = locationId });
-        return hours.ToList();
+        var hours = await _dbConnection.QueryAsync<dynamic>(sql, new { location_id = locationId });
+        return hours.Select(h => new LocationBusinessHoursDto
+        {
+            Id = h.Id,
+            LocationId = h.LocationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+        }).ToList();
     }
 
     public async Task<LocationBusinessHoursDto?> GetLocationBusinessHoursById(int locationHrsId)
@@ -139,7 +146,21 @@ public class LocationService : ILocationService
             FROM cafeteria.location_business_hours
             WHERE id = @id;";
 
-        return await _dbConnection.QuerySingleOrDefaultAsync<LocationBusinessHoursDto>(sql, new { id = locationHrsId });
+        var h = await _dbConnection.QuerySingleOrDefaultAsync<dynamic>(sql, new { id = locationHrsId });
+
+        if (h is null)
+        {
+            return null;
+        }
+
+        return new LocationBusinessHoursDto
+        {
+            Id = h.Id,
+            LocationId = h.LocationId,
+            WeekdayId = h.WeekdayId,
+            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
+            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+        };
     }
 
     public async Task AddLocationHours(int locationId, LocationBusinessHoursDto hours)
