@@ -1,74 +1,43 @@
 @rendermode InteractiveServer
 
-<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@(IsEditMode ? $"Edit Side: {SideModel.SideName}" : "Create a Side")</h5>
-                <button type="button" class="btn-close" @onclick="OnCancel" aria-label="Close"></button>
-            </div>
-            <EditForm Model="@SideModel" OnValidSubmit="HandleValidSubmit">
-                <DataAnnotationsValidator />
+@if (ViewModel?.IsVisible ?? false)
+{
+    <div class="modal" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(ViewModel.IsEditing ? "Edit Side" : "Create Side")</h5>
+                    <button type="button" class="close" @onclick="HandleClose">
+                        <span>&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
-                    @if (!string.IsNullOrEmpty(ErrorMessage))
-                    {
-                        <div class="alert alert-danger">@ErrorMessage</div>
-                    }
-
-                    <h6>BASIC INFORMATION</h6>
-                    <div class="mb-3">
-                        <label class="form-label">Side Name:</label>
-                        <InputText class="form-control" @bind-Value="SideModel.SideName" />
-                        <ValidationMessage For="@(() => SideModel.SideName)" />
+                    <div class="form-group">
+                        <label>Side Name:</label>
+                        <input type="text" @bind="ViewModel.CurrentSide.SideName" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description:</label>
-                        <InputTextArea class="form-control" @bind-Value="SideModel.SideDescription" />
-                        <ValidationMessage For="@(() => SideModel.SideDescription)" />
+                    <div class="form-group">
+                        <label>Station ID:</label>
+                        <input type="number" min="1" @bind="ViewModel.CurrentSide.StationId" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Price:</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <InputNumber class="form-control" @bind-Value="SideModel.SidePrice" />
-                        </div>
-                        <ValidationMessage For="@(() => SideModel.SidePrice)" />
+                    <div class="form-group">
+                        <label>Price:</label>
+                        <input type="number" step="0.01" @bind="ViewModel.CurrentSide.SidePrice" />
                     </div>
-
-                    <h6>LOCATION & STATION</h6>
-                    <div class="mb-3">
-                        <label class="form-label">Location:</label>
-                        <select class="form-select" value="@SelectedLocationId" @onchange="OnLocationChanged">
-                            <option value="0">Select a location</option>
-                            @foreach (var loc in Locations)
-                            {
-                                <option value="@loc.Id">@loc.LocationName</option>
-                            }
-                        </select>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <textarea @bind="ViewModel.CurrentSide.SideDescription"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Station:</label>
-                        <InputSelect class="form-select" @bind-Value="SideModel.StationId">
-                            <option value="0">Select a station</option>
-                            @foreach (var station in Stations)
-                            {
-                                <option value="@station.Id">@station.StationName</option>
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="@(() => SideModel.StationId)" />
+                    <div class="form-group">
+                        <label>Image URL:</label>
+                        <input type="text" @bind="ViewModel.CurrentSide.ImageUrl" />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="OnCancel">Cancel</button>
-                    <button type="submit" class="btn btn-primary" disabled="@IsSaving">
-                        @if (IsSaving)
-                        {
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        }
-                        @(IsEditMode ? "Save Side" : "Create Side")
-                    </button>
+                    <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="HandleSave">Save</button>
                 </div>
-            </EditForm>
+            </div>
         </div>
     </div>
-</div>
+}
