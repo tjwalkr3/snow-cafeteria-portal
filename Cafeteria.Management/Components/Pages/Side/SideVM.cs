@@ -1,56 +1,81 @@
-using Cafeteria.Management.Services;
 using Cafeteria.Shared.DTOs;
+using Cafeteria.Management.Services;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 
 public class SideVM : ISideVM
 {
     private readonly ISideService _sideService;
-    private readonly ILocationService _locationService;
-    private readonly IStationService _stationService;
-    private Dictionary<int, string> _stationNames = new();
+    public ICreateOrEditSideVM? CreateOrEditVM { get; set; }
 
-    public SideVM(ISideService sideService, ILocationService locationService, IStationService stationService)
+    public List<SideDto> Sides { get; set; } = [];
+
+    public SideVM(ISideService sideService)
     {
         _sideService = sideService;
-        _locationService = locationService;
-        _stationService = stationService;
     }
 
-    public List<SideDto> Sides { get; private set; } = new();
-
-    public async Task LoadSidesAsync()
+    public void SetCreateOrEditVM(ICreateOrEditSideVM vm)
     {
-        Sides = await _sideService.GetAllSides();
-        await LoadStationNamesAsync();
+        CreateOrEditVM = vm;
     }
 
-    private async Task LoadStationNamesAsync()
+    public async Task LoadSides()
     {
-        var locations = await _locationService.GetAllLocations();
-        var tasks = locations.Select(l => _stationService.GetStationsByLocation(l.Id));
-        var stationsLists = await Task.WhenAll(tasks);
-
-        _stationNames = stationsLists
-            .SelectMany(s => s)
-            .DistinctBy(s => s.Id)
-            .ToDictionary(s => s.Id, s => s.StationName);
+        try
+        {
+            Sides = await _sideService.GetAllSides();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading sides: {ex.Message}");
+        }
     }
 
-    public string GetStationName(int stationId)
+    public async Task DeleteSide(int id)
     {
-        return _stationNames.TryGetValue(stationId, out var name) ? name : $"Station {stationId}";
+        try
+        {
+            await _sideService.DeleteSide(id);
+            await LoadSides();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error deleting side: {ex.Message}");
+            throw;
+        }
     }
 
-    public async Task DeleteSideAsync(int id)
+    public Task ShowCreateModal()
     {
-        await _sideService.DeleteSide(id);
-        await LoadSidesAsync();
+        if (CreateOrEditVM != null)
+        {
+            CreateOrEditVM.CurrentSide = new SideDto();
+            CreateOrEditVM.IsEditing = false;
+            CreateOrEditVM.IsVisible = true;
+        }
+        return Task.CompletedTask;
     }
 
-    public async Task SetInStockAsync(int id, bool inStock)
+    public async Task ShowEditModal(int id)
     {
-        await _sideService.SetStockStatusById(id, inStock);
-        await LoadSidesAsync();
+        if (CreateOrEditVM != null)
+        {
+            var side = await _sideService.GetSideById(id);
+            if (side != null)
+            {
+                CreateOrEditVM.CurrentSide = side;
+                CreateOrEditVM.IsEditing = true;
+                CreateOrEditVM.IsVisible = true;
+            }
+        }
+    }
+
+    public void HideModal()
+    {
+        if (CreateOrEditVM != null)
+        {
+            CreateOrEditVM.IsVisible = false;
+        }
     }
 }

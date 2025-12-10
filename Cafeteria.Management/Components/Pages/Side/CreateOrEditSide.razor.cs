@@ -1,91 +1,57 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Management.Services;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 
 public partial class CreateOrEditSide : ComponentBase
 {
     [Inject]
-    public ICreateOrEditSideVM ViewModel { get; set; } = default!;
+    public ISideService SideService { get; set; } = default!;
 
-    [Parameter]
-    public SideDto SideModel { get; set; } = new();
+    [Inject]
+    public ISideVM ParentVM { get; set; } = default!;
 
-    [Parameter]
-    public bool IsEditMode { get; set; }
+    public ICreateOrEditSideVM? ViewModel { get; set; }
+    private Side? parentComponent;
 
-    [Parameter]
-    public EventCallback OnSave { get; set; }
-
-    [Parameter]
-    public EventCallback OnCancel { get; set; }
-
-    private List<LocationDto> Locations = new();
-    private List<StationDto> Stations = new();
-    private int SelectedLocationId;
-    private bool IsSaving;
-    private string? ErrorMessage;
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        Locations = await ViewModel.GetLocationsAsync();
-
-        if (IsEditMode && SideModel.StationId > 0)
+        ViewModel = new CreateOrEditSideVM(SideService, ParentVM);
+        if (ParentVM is SideVM sideVM)
         {
-            var station = await ViewModel.GetStationByIdAsync(SideModel.StationId);
-            if (station != null)
+            sideVM.SetCreateOrEditVM(ViewModel);
+        }
+    }
+
+    private async Task HandleSave()
+    {
+        if (ViewModel != null)
+        {
+            await ViewModel.SaveSide();
+            StateHasChanged();
+            if (parentComponent != null)
             {
-                SelectedLocationId = station.LocationId;
-                await LoadStations(SelectedLocationId);
+                await parentComponent.RefreshSidesAfterSave();
             }
         }
     }
 
-    private async Task OnLocationChanged(ChangeEventArgs e)
+    private void HandleClose()
     {
-        if (int.TryParse(e.Value?.ToString(), out int locationId))
+        if (ViewModel != null)
         {
-            SelectedLocationId = locationId;
-            await LoadStations(locationId);
-            SideModel.StationId = 0;
+            ViewModel.IsVisible = false;
+            StateHasChanged();
         }
     }
 
-    private async Task LoadStations(int locationId)
+    public void Refresh()
     {
-        if (locationId > 0)
-        {
-            Stations = await ViewModel.GetStationsByLocationAsync(locationId);
-        }
-        else
-        {
-            Stations.Clear();
-        }
+        StateHasChanged();
     }
 
-    private async Task HandleValidSubmit()
+    public void SetParentComponent(Side parent)
     {
-        IsSaving = true;
-        ErrorMessage = null;
-        try
-        {
-            if (IsEditMode)
-            {
-                await ViewModel.UpdateSideAsync(SideModel);
-            }
-            else
-            {
-                await ViewModel.CreateSideAsync(SideModel);
-            }
-            await OnSave.InvokeAsync();
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = ex.Message;
-        }
-        finally
-        {
-            IsSaving = false;
-        }
+        parentComponent = parent;
     }
 }
