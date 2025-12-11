@@ -72,6 +72,23 @@ public class DrinkVM : IDrinkVM
         }
     }
 
+    public async Task ToggleStockStatus(int id, bool inStock)
+    {
+        try
+        {
+            await _drinkService.SetStockStatusById(id, inStock);
+            var drink = Drinks.FirstOrDefault(d => d.Id == id);
+            if (drink != null)
+            {
+                drink.InStock = inStock;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error toggling stock status: {ex.Message}");
+        }
+    }
+
     public void HideModal()
     {
         if (CreateOrEditVM != null)

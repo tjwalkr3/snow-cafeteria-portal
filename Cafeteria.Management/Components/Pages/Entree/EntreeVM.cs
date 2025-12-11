@@ -71,6 +71,23 @@ public class EntreeVM : IEntreeVM
         }
     }
 
+    public async Task ToggleStockStatus(int id, bool inStock)
+    {
+        try
+        {
+            await _entreeService.SetStockStatusById(id, inStock);
+            var entree = Entrees.FirstOrDefault(e => e.Id == id);
+            if (entree != null)
+            {
+                entree.InStock = inStock;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error toggling stock status: {ex.Message}");
+        }
+    }
+
     public void HideModal()
     {
         if (CreateOrEditVM != null)

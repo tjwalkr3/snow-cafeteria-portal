@@ -17,6 +17,7 @@
                 <th>Station ID</th>
                 <th>Price</th>
                 <th>Description</th>
+                <th>In-Stock</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -28,6 +29,9 @@
                     <td>@drink.StationId</td>
                     <td>@drink.DrinkPrice</td>
                     <td>@drink.DrinkDescription</td>
+                    <td>
+                        <input type="checkbox" checked="@drink.InStock" @onchange="@(e => ViewModel.ToggleStockStatus(drink.Id, (bool)e.Value!))" />
+                    </td>
                     <td>
                         <button type="button" @onclick="() => HandleEditClick(drink.Id)">Edit</button>
                         <button type="button" @onclick="() => HandleDeleteClick(drink.Id)">Delete</button>
