@@ -1,5 +1,6 @@
 @page "/entrees"
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
 <PageTitle>Entrees</PageTitle>
 
@@ -42,3 +43,8 @@ else
 }
 
 <CreateOrEditEntree @ref="modalComponent"></CreateOrEditEntree>
+
+<ConfirmationModal IsVisible="ShowDeleteModal" Title="Delete Entree" Message="@DeleteMessage" ConfirmText="Delete"
+    OnConfirm="ConfirmDelete" OnCancel="CancelDelete" />
+
+<Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />

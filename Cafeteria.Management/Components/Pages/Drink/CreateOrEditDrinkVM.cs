@@ -17,7 +17,6 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
     public string ToastMessage { get; set; } = string.Empty;
     public Toast.ToastType ToastType { get; set; }
     public List<StationDto> Stations { get; set; } = [];
-    public string? SelectedStationName { get; set; }
 
     public CreateOrEditDrinkVM(IDrinkService drinkService, IDrinkVM parentVM, IStationService stationService)
     {
@@ -36,12 +35,6 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
         {
             System.Diagnostics.Debug.WriteLine($"Error loading stations: {ex.Message}");
         }
-    }
-
-    public void SetSelectedStation(int stationId)
-    {
-        CurrentDrink.StationId = stationId;
-        SelectedStationName = Stations.FirstOrDefault(s => s.Id == stationId)?.StationName ?? "Unknown";
     }
 
     public bool ValidateDrink(IEnumerable<DrinkDto> existingDrinks, DrinkDto newDrink)

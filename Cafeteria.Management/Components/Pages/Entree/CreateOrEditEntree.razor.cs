@@ -11,27 +11,46 @@ public partial class CreateOrEditEntree : ComponentBase
     [Inject]
     public IEntreeVM ParentVM { get; set; } = default!;
 
+    [Inject]
+    public IStationService StationService { get; set; } = default!;
+
     public ICreateOrEditEntreeVM? ViewModel { get; set; }
     private Entree? parentComponent;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        ViewModel = new CreateOrEditEntreeVM(EntreeService, ParentVM);
+        ViewModel = new CreateOrEditEntreeVM(EntreeService, ParentVM, StationService);
         if (ParentVM is EntreeVM entreeVM)
         {
             entreeVM.SetCreateOrEditVM(ViewModel);
+        }
+
+        if (ViewModel is CreateOrEditEntreeVM vm)
+        {
+            await vm.LoadStations();
         }
     }
 
     private async Task HandleSave()
     {
-        if (ViewModel != null)
+        if (ViewModel != null && parentComponent != null)
         {
-            await ViewModel.SaveEntree();
-            StateHasChanged();
-            if (parentComponent != null)
+            var entreeName = ViewModel.CurrentEntree.EntreeName ?? "Entree";
+            var isEdit = ViewModel.IsEditing;
+
+            try
             {
-                await parentComponent.RefreshEntreesAfterSave();
+                var success = await ViewModel.SaveEntree();
+                if (success)
+                {
+                    StateHasChanged();
+                    await parentComponent.RefreshEntreesAfterSave();
+                    parentComponent.ShowSaveSuccessToast(entreeName, isEdit);
+                }
+            }
+            catch
+            {
+                parentComponent.ShowSaveErrorToast(entreeName, isEdit);
             }
         }
     }

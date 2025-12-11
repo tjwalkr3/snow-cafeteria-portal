@@ -8,6 +8,7 @@ public class CreateOrEditEntreeVM : ICreateOrEditEntreeVM
 {
     private readonly IEntreeService _entreeService;
     private readonly IEntreeVM _parentVM;
+    private readonly IStationService _stationService;
 
     public EntreeDto CurrentEntree { get; set; } = new();
     public bool IsVisible { get; set; }
@@ -15,11 +16,25 @@ public class CreateOrEditEntreeVM : ICreateOrEditEntreeVM
     public bool ShowToast { get; set; }
     public string ToastMessage { get; set; } = string.Empty;
     public Toast.ToastType ToastType { get; set; }
+    public List<StationDto> Stations { get; set; } = [];
 
-    public CreateOrEditEntreeVM(IEntreeService entreeService, IEntreeVM parentVM)
+    public CreateOrEditEntreeVM(IEntreeService entreeService, IEntreeVM parentVM, IStationService stationService)
     {
         _entreeService = entreeService;
         _parentVM = parentVM;
+        _stationService = stationService;
+    }
+
+    public async Task LoadStations()
+    {
+        try
+        {
+            Stations = await _stationService.GetAllStations();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading stations: {ex.Message}");
+        }
     }
 
     public bool ValidateEntree(IEnumerable<EntreeDto> existingEntrees, EntreeDto newEntree)
@@ -30,14 +45,14 @@ public class CreateOrEditEntreeVM : ICreateOrEditEntreeVM
             e.Id != newEntree.Id);
     }
 
-    public async Task SaveEntree()
+    public async Task<bool> SaveEntree()
     {
         if (!ValidateEntree(_parentVM.Entrees, CurrentEntree))
         {
             ShowToast = true;
             ToastMessage = "An entree with this name already exists in this station.";
             ToastType = Toast.ToastType.Error;
-            return;
+            return false;
         }
 
         try
@@ -53,6 +68,7 @@ public class CreateOrEditEntreeVM : ICreateOrEditEntreeVM
 
             IsVisible = false;
             await _parentVM.LoadEntrees();
+            return true;
         }
         catch (Exception ex)
         {

@@ -11,5 +11,7 @@ public interface ICreateOrEditEntreeVM
     bool ShowToast { get; set; }
     string ToastMessage { get; set; }
     Toast.ToastType ToastType { get; set; }
-    Task SaveEntree();
+    List<StationDto> Stations { get; set; }
+    Task LoadStations();
+    Task<bool> SaveEntree();
 }

@@ -12,8 +12,6 @@ public interface ICreateOrEditDrinkVM
     string ToastMessage { get; set; }
     Toast.ToastType ToastType { get; set; }
     List<StationDto> Stations { get; set; }
-    string? SelectedStationName { get; set; }
     Task<bool> SaveDrink();
     Task LoadStations();
-    void SetSelectedStation(int stationId);
 }

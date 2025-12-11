@@ -11,5 +11,7 @@ public interface ICreateOrEditSideVM
     bool ShowToast { get; set; }
     string ToastMessage { get; set; }
     Toast.ToastType ToastType { get; set; }
-    Task SaveSide();
+    List<StationDto> Stations { get; set; }
+    Task LoadStations();
+    Task<bool> SaveSide();
 }

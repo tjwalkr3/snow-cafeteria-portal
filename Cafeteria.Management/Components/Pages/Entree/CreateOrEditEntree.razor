@@ -26,8 +26,14 @@
                             <ValidationMessage For="@(() => ViewModel.CurrentEntree.EntreeName)" />
                         </div>
                         <div class="form-group">
-                            <label>Station ID:</label>
-                            <InputNumber class="form-control" @bind-Value="ViewModel.CurrentEntree.StationId" min="1" />
+                            <label>Station:</label>
+                            <InputSelect @bind-Value="ViewModel.CurrentEntree.StationId" class="form-control">
+                                <option value="0">-- Select a Station --</option>
+                                @foreach (var station in ViewModel.Stations)
+                                {
+                                    <option value="@station.Id">@station.StationName</option>
+                                }
+                            </InputSelect>
                             <ValidationMessage For="@(() => ViewModel.CurrentEntree.StationId)" />
                         </div>
                         <div class="form-group">
