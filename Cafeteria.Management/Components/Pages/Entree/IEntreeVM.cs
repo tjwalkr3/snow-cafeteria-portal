@@ -9,5 +9,6 @@ public interface IEntreeVM
     Task DeleteEntree(int id);
     Task ShowCreateModal();
     Task ShowEditModal(int id);
+    Task ToggleStockStatus(int id, bool inStock);
     void HideModal();
 }

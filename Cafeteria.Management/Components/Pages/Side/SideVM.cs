@@ -71,6 +71,23 @@ public class SideVM : ISideVM
         }
     }
 
+    public async Task ToggleStockStatus(int id, bool inStock)
+    {
+        try
+        {
+            await _sideService.SetStockStatusById(id, inStock);
+            var side = Sides.FirstOrDefault(s => s.Id == id);
+            if (side != null)
+            {
+                side.InStock = inStock;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error toggling stock status: {ex.Message}");
+        }
+    }
+
     public void HideModal()
     {
         if (CreateOrEditVM != null)
