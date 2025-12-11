@@ -40,4 +40,12 @@ public class CreateOrEditSideVM : ICreateOrEditSideVM
             throw;
         }
     }
+
+    public bool ValidateSide(IEnumerable<SideDto> existingSides, SideDto newSide)
+    {
+        return !existingSides.Any(s => 
+            s.SideName.Equals(newSide.SideName, StringComparison.OrdinalIgnoreCase) && 
+            s.StationId == newSide.StationId &&
+            s.Id != newSide.Id);
+    }
 }

@@ -1,4 +1,10 @@
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
+
+<Toast Message="@ViewModel.ToastMessage" 
+    Type="@ViewModel.ToastType" 
+    IsVisible="@ViewModel.ShowToast" 
+    OnClose="@(() => ViewModel.ShowToast = false)" />
 
 @if (ViewModel?.IsVisible ?? false)
 {
