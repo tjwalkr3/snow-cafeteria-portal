@@ -46,8 +46,8 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
 
     public bool ValidateDrink(IEnumerable<DrinkDto> existingDrinks, DrinkDto newDrink)
     {
-        return !existingDrinks.Any(d => 
-            d.DrinkName.Equals(newDrink.DrinkName, StringComparison.OrdinalIgnoreCase) && 
+        return !existingDrinks.Any(d =>
+            d.DrinkName.Equals(newDrink.DrinkName, StringComparison.OrdinalIgnoreCase) &&
             d.StationId == newDrink.StationId &&
             d.Id != newDrink.Id);
     }

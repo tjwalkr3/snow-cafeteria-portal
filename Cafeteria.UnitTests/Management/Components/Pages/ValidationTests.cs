@@ -85,7 +85,7 @@ public class ValidationTests
     public void ValidateSide_ReturnsFalse_WhenDuplicateExists()
     {
         // Arrange
-        var vm = new CreateOrEditSideVM(null!, null!, null!, null!);
+        var vm = new CreateOrEditSideVM(null!, null!);
         var existingSides = new List<SideDto>
         {
             new SideDto { Id = 1, SideName = "Fries", StationId = 1 }

@@ -24,8 +24,8 @@ public class CreateOrEditEntreeVM : ICreateOrEditEntreeVM
 
     public bool ValidateEntree(IEnumerable<EntreeDto> existingEntrees, EntreeDto newEntree)
     {
-        return !existingEntrees.Any(e => 
-            e.EntreeName.Equals(newEntree.EntreeName, StringComparison.OrdinalIgnoreCase) && 
+        return !existingEntrees.Any(e =>
+            e.EntreeName.Equals(newEntree.EntreeName, StringComparison.OrdinalIgnoreCase) &&
             e.StationId == newEntree.StationId &&
             e.Id != newEntree.Id);
     }
