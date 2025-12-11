@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@using Cafeteria.Management.Components.Layout.NotSignedIn
 
 <div class="page">
     <div class="sidebar">
@@ -7,7 +8,14 @@
 
     <main>
         <article class="content px-4">
-            @Body
+            <AuthorizeView>
+                <Authorized>
+                    @Body
+                </Authorized>
+                <NotAuthorized>
+                    <NotSignedIn />
+                </NotAuthorized>
+            </AuthorizeView>
         </article>
     </main>
 </div>
