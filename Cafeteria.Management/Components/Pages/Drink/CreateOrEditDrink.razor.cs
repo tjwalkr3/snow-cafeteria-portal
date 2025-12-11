@@ -40,10 +40,13 @@ public partial class CreateOrEditDrink : ComponentBase
 
             try
             {
-                await ViewModel.SaveDrink();
-                StateHasChanged();
-                await parentComponent.RefreshDrinksAfterSave();
-                parentComponent.ShowSaveSuccessToast(drinkName, isEdit);
+                var success = await ViewModel.SaveDrink();
+                if (success)
+                {
+                    StateHasChanged();
+                    await parentComponent.RefreshDrinksAfterSave();
+                    parentComponent.ShowSaveSuccessToast(drinkName, isEdit);
+                }
             }
             catch
             {

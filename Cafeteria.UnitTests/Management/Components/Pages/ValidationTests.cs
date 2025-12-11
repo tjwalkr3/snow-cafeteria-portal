@@ -82,6 +82,42 @@ public class ValidationTests
     }
 
     [Fact]
+    public void ValidateDrink_ReturnsTrue_WhenNoDuplicateExists()
+    {
+        // Arrange
+        var vm = new CreateOrEditDrinkVM(null!, null!, null!);
+        var existingDrinks = new List<DrinkDto>
+        {
+            new DrinkDto { Id = 1, DrinkName = "Coke", StationId = 1 }
+        };
+        var newDrink = new DrinkDto { DrinkName = "Pepsi", StationId = 1 };
+
+        // Act
+        var result = vm.ValidateDrink(existingDrinks, newDrink);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void ValidateDrink_ReturnsTrue_WhenDuplicateExistsInDifferentStation()
+    {
+        // Arrange
+        var vm = new CreateOrEditDrinkVM(null!, null!, null!);
+        var existingDrinks = new List<DrinkDto>
+        {
+            new DrinkDto { Id = 1, DrinkName = "Coke", StationId = 1 }
+        };
+        var newDrink = new DrinkDto { DrinkName = "Coke", StationId = 2 };
+
+        // Act
+        var result = vm.ValidateDrink(existingDrinks, newDrink);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public void ValidateSide_ReturnsFalse_WhenDuplicateExists()
     {
         // Arrange

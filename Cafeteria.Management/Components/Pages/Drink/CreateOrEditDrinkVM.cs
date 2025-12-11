@@ -52,14 +52,14 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
             d.Id != newDrink.Id);
     }
 
-    public async Task SaveDrink()
+    public async Task<bool> SaveDrink()
     {
         if (!ValidateDrink(_parentVM.Drinks, CurrentDrink))
         {
             ShowToast = true;
             ToastMessage = "A drink with this name already exists in this station.";
             ToastType = Toast.ToastType.Error;
-            return;
+            return false;
         }
 
         try
@@ -75,6 +75,7 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
 
             IsVisible = false;
             await _parentVM.LoadDrinks();
+            return true;
         }
         catch (Exception ex)
         {

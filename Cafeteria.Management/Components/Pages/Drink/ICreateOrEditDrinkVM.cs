@@ -13,7 +13,7 @@ public interface ICreateOrEditDrinkVM
     Toast.ToastType ToastType { get; set; }
     List<StationDto> Stations { get; set; }
     string? SelectedStationName { get; set; }
-    Task SaveDrink();
+    Task<bool> SaveDrink();
     Task LoadStations();
     void SetSelectedStation(int stationId);
 }
