@@ -13,7 +13,7 @@ public class ValidationTests
     public void ValidateEntree_ReturnsFalse_WhenDuplicateExists()
     {
         // Arrange
-        var vm = new CreateOrEditEntreeVM(null!, null!);
+        var vm = new CreateOrEditEntreeVM(null!, null!, null!);
         var existingEntrees = new List<EntreeDto>
         {
             new EntreeDto { Id = 1, EntreeName = "Burger", StationId = 1 }
@@ -31,7 +31,7 @@ public class ValidationTests
     public void ValidateEntree_ReturnsTrue_WhenNoDuplicateExists()
     {
         // Arrange
-        var vm = new CreateOrEditEntreeVM(null!, null!);
+        var vm = new CreateOrEditEntreeVM(null!, null!, null!);
         var existingEntrees = new List<EntreeDto>
         {
             new EntreeDto { Id = 1, EntreeName = "Burger", StationId = 1 }
@@ -49,7 +49,7 @@ public class ValidationTests
     public void ValidateEntree_ReturnsTrue_WhenDuplicateExistsInDifferentStation()
     {
         // Arrange
-        var vm = new CreateOrEditEntreeVM(null!, null!);
+        var vm = new CreateOrEditEntreeVM(null!, null!, null!);
         var existingEntrees = new List<EntreeDto>
         {
             new EntreeDto { Id = 1, EntreeName = "Burger", StationId = 1 }
@@ -121,7 +121,7 @@ public class ValidationTests
     public void ValidateSide_ReturnsFalse_WhenDuplicateExists()
     {
         // Arrange
-        var vm = new CreateOrEditSideVM(null!, null!);
+        var vm = new CreateOrEditSideVM(null!, null!, null!);
         var existingSides = new List<SideDto>
         {
             new SideDto { Id = 1, SideName = "Fries", StationId = 1 }
