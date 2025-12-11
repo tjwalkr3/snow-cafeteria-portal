@@ -10,4 +10,5 @@ public interface ISideService
     Task<List<SideDto>> GetSidesByStationID(int stationId);
     Task<SideDto?> UpdateSideByID(int id, SideDto sideDto);
     Task<bool> DeleteSideByID(int id);
+    Task<bool> SetStockStatusById(int id, bool inStock);
 }

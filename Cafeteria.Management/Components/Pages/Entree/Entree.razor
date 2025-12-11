@@ -1,8 +1,50 @@
-@page "/entree"
+@page "/entrees"
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
-<PageTitle>Entree</PageTitle>
+<PageTitle>Entrees</PageTitle>
 
-<h1>Entree</h1>
+<h1>Entrees</h1>
 
-<p>Manage entrees here.</p>
+<button type="button" @onclick="HandleCreateClick">Add Entree</button>
+
+@if (ViewModel.Entrees.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Station ID</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entree in ViewModel.Entrees)
+            {
+                <tr @key="entree.Id">
+                    <td>@entree.EntreeName</td>
+                    <td>@entree.StationId</td>
+                    <td>@entree.EntreePrice</td>
+                    <td>@entree.EntreeDescription</td>
+                    <td>
+                        <button type="button" @onclick="() => HandleEditClick(entree.Id)">Edit</button>
+                        <button type="button" @onclick="() => HandleDeleteClick(entree.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No entrees found.</p>
+}
+
+<CreateOrEditEntree @ref="modalComponent"></CreateOrEditEntree>
+
+<ConfirmationModal IsVisible="ShowDeleteModal" Title="Delete Entree" Message="@DeleteMessage" ConfirmText="Delete"
+    OnConfirm="ConfirmDelete" OnCancel="CancelDelete" />
+
+<Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />

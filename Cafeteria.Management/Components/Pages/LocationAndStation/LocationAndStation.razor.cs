@@ -1,43 +1,31 @@
 namespace Cafeteria.Management.Components.Pages.LocationAndStation;
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Services;
+using Cafeteria.Management.Components.Pages.LocationAndStation.Location;
+using Cafeteria.Shared.DTOs;
 
 public partial class LocationAndStation : ComponentBase
 {
     [Inject]
     public ILocationAndStationVM ViewModel { get; set; } = null!;
 
+    private int? ExpandedLocationId { get; set; }
+
+    private void ToggleLocation(int locationId)
+    {
+        if (ExpandedLocationId == locationId)
+        {
+            ExpandedLocationId = null;
+        }
+        else
+        {
+            ExpandedLocationId = locationId;
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        await ViewModel.LoadStationsAsync();
         await base.OnInitializedAsync();
     }
-
-    /* Start */
-    // This is a proof-of-concept. Delete it when you begin implementation. */
-    [Inject]
-    private IHttpClientAuth HttpClientAuth { get; set; } = default!;
-
-    private string _authResult = "";
-
-    private async Task CallAuthenticatedEndpoint()
-    {
-        try
-        {
-            var result = await HttpClientAuth.GetAsync<AuthResponse>("api/Location/authenticated");
-            if (result != null)
-            {
-                _authResult = $"Authenticated as: {result.Username}";
-            }
-        }
-        catch (Exception ex)
-        {
-            _authResult = $"Error: {ex.Message}";
-        }
-    }
-
-    private class AuthResponse
-    {
-        public string Username { get; set; } = "";
-    }
-    /* End */
 }

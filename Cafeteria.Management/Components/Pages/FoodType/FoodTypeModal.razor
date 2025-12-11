@@ -1,0 +1,73 @@
+@rendermode InteractiveServer
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@(IsEditMode ? "Edit Food Type" : "Create Food Type")</h5>
+                <button type="button" class="btn-close" @onclick="Cancel" aria-label="Close"></button>
+            </div>
+            <EditForm Model="@FoodType" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="foodTypeName" class="form-label">Type Name</label>
+                        <InputText id="foodTypeName" class="form-control" @bind-Value="FoodType.FoodOptionTypeName" />
+                        <ValidationMessage For="@(() => FoodType.FoodOptionTypeName)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="numIncluded" class="form-label">Number Included</label>
+                        <InputNumber id="numIncluded" class="form-control" @bind-Value="FoodType.NumIncluded" />
+                        <ValidationMessage For="@(() => FoodType.NumIncluded)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxAmount" class="form-label">Max Amount</label>
+                        <InputNumber id="maxAmount" class="form-control" @bind-Value="FoodType.MaxAmount" />
+                        <ValidationMessage For="@(() => FoodType.MaxAmount)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <InputNumber id="price" class="form-control" @bind-Value="FoodType.FoodOptionPrice" />
+                        <ValidationMessage For="@(() => FoodType.FoodOptionPrice)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="entreeId" class="form-label">Entree (Optional)</label>
+                        <InputSelect id="entreeId" class="form-select" @bind-Value="FoodType.EntreeId">
+                            <option value="">-- Select Entree --</option>
+                            @foreach (var entree in Entrees)
+                            {
+                                <option value="@entree.Id">@entree.EntreeName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => FoodType.EntreeId)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="sideId" class="form-label">Side (Optional)</label>
+                        <InputSelect id="sideId" class="form-select" @bind-Value="FoodType.SideId">
+                            <option value="">-- Select Side --</option>
+                            @foreach (var side in Sides)
+                            {
+                                <option value="@side.Id">@side.SideName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => FoodType.SideId)" />
+                    </div>
+                    @if (!string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="alert alert-danger">@ErrorMessage</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" disabled="@IsSaving">
+                        @if (IsSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        }
+                        @(IsEditMode ? "Update" : "Create")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>

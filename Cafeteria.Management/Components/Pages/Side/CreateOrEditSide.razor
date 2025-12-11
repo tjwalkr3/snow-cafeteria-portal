@@ -1,21 +1,63 @@
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create or Edit Side</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Modal content for creating or editing sides.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+@if (ViewModel?.IsVisible ?? false)
+{
+    <Toast Message="@ViewModel.ToastMessage" 
+        Type="@ViewModel.ToastType" 
+        IsVisible="@ViewModel.ShowToast" 
+        OnClose="@(() => ViewModel.ShowToast = false)" />
+
+    <div class="modal" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(ViewModel.IsEditing ? "Edit Side" : "Create Side")</h5>
+                    <button type="button" class="close" @onclick="HandleClose">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <EditForm Model="@ViewModel.CurrentSide" OnValidSubmit="HandleSave">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Side Name:</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.CurrentSide.SideName" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.SideName)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Station:</label>
+                            <InputSelect @bind-Value="ViewModel.CurrentSide.StationId" class="form-control">
+                                <option value="0">-- Select a Station --</option>
+                                @foreach (var station in ViewModel.Stations)
+                                {
+                                    <option value="@station.Id">@station.StationName</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.StationId)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Price:</label>
+                            <InputNumber class="form-control" @bind-Value="ViewModel.CurrentSide.SidePrice" step="0.01" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.SidePrice)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <InputTextArea class="form-control" @bind-Value="ViewModel.CurrentSide.SideDescription" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.SideDescription)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Image URL:</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.CurrentSide.ImageUrl" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.ImageUrl)" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </EditForm>
             </div>
         </div>
     </div>
-</div>
+}

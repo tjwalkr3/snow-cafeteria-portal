@@ -120,6 +120,7 @@ data:
             entree_description varchar(200),
             entree_price decimal NOT NULL,
             image_url varchar(500),
+            in_stock boolean NOT NULL DEFAULT true,
             PRIMARY KEY (id),
             FOREIGN KEY (station_id) REFERENCES cafeteria.station (id)
         );
@@ -132,6 +133,7 @@ data:
             side_description varchar(200),
             side_price decimal NOT NULL,
             image_url varchar(500),
+            in_stock boolean NOT NULL DEFAULT true,
             PRIMARY KEY (id),
             FOREIGN KEY (station_id) REFERENCES cafeteria.station (id)
         );
@@ -144,6 +146,7 @@ data:
             drink_description varchar(200),
             drink_price decimal NOT NULL,
             image_url varchar(500),
+            in_stock boolean NOT NULL DEFAULT true,
             PRIMARY KEY (id),
             FOREIGN KEY (station_id) REFERENCES cafeteria.station (id)
         );

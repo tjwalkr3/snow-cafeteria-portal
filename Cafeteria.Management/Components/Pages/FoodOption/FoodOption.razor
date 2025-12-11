@@ -1,0 +1,103 @@
+@page "/food-options"
+@rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
+@using Cafeteria.Management.Components.Pages.FoodType
+
+<PageTitle>Food Options & Types</PageTitle>
+
+<h1>Food Option Types</h1>
+
+<button type="button" @onclick="ShowCreateTypeModal">Add Type</button>
+
+@if (FoodTypeVM.FoodTypes != null && FoodTypeVM.FoodTypes.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Min</th>
+                <th>Max</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var foodType in FoodTypeVM.FoodTypes)
+            {
+                <tr @key="foodType.Id">
+                    <td>@foodType.FoodOptionTypeName</td>
+                    <td>@foodType.FoodOptionPrice</td>
+                    <td>@foodType.NumIncluded</td>
+                    <td>@foodType.MaxAmount</td>
+                    <td>
+                        <button type="button" @onclick="() => ShowEditTypeModal(foodType)">Edit</button>
+                        <button type="button" @onclick="() => ShowDeleteTypeConfirmation(foodType)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No food option types found.</p>
+}
+
+<hr />
+
+<h1>Food Options</h1>
+
+<button type="button" @onclick="ShowCreateStandaloneOptionModal">Add Food Option</button>
+
+@if (FoodOptionVM.FoodOptions != null && FoodOptionVM.FoodOptions.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>In Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var option in FoodOptionVM.FoodOptions)
+            {
+                <tr @key="option.Id">
+                    <td>@option.FoodOptionName</td>
+                    <td>@(option.InStock ? "Yes" : "No")</td>
+                    <td>
+                        <button type="button" @onclick="() => ShowEditStandaloneOptionModal(option)">Edit</button>
+                        <button type="button" @onclick="() => ShowDeleteOptionConfirmation(option)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No food options found.</p>
+}
+
+@if (ShowOptionModal)
+{
+    <FoodOptionModal FoodOption="SelectedFoodOption" FoodTypeId="CurrentFoodTypeId" OnSave="HandleOptionSave"
+        OnCancel="HandleOptionCancel" />
+}
+
+@if (ShowTypeModal)
+{
+    <FoodTypeModal FoodType="SelectedFoodType" OnSave="HandleTypeSave" OnCancel="HandleTypeCancel" />
+}
+
+<ConfirmationModal IsVisible="ShowDeleteOptionModal" Title="Delete Food Option" Message="@DeleteOptionMessage"
+    ConfirmText="Delete" OnConfirm="ConfirmDeleteOption" OnCancel="CancelDeleteOption" />
+
+<ConfirmationModal IsVisible="ShowDeleteTypeModal" Title="Delete Food Type"
+    Message="@($"Are you sure you want to delete '{FoodTypeToDelete?.FoodOptionTypeName}'? This action cannot be undone.")"
+    ConfirmText="Delete" OnConfirm="ConfirmDeleteType" OnCancel="CancelDeleteType" />
+
+<ConfirmationModal IsVisible="ShowRemoveFromTypeModal" Title="Remove Option from Type" Message="@RemoveFromTypeMessage"
+    ConfirmText="Remove" OnConfirm="ConfirmRemoveFromType" OnCancel="CancelRemoveFromType" />
+
+<Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />

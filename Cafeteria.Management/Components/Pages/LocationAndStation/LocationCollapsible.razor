@@ -1,0 +1,107 @@
+@using Cafeteria.Shared.Enums
+@using System
+
+<div class="card mb-3">
+    <div class="card-header" @onclick="Toggle" style="cursor: pointer;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">@Location.LocationName</h5>
+            <span>@(IsExpanded ? "▲" : "▼")</span>
+        </div>
+    </div>
+    @if (IsExpanded)
+    {
+        <div class="card-body">
+            <p>@Location.LocationDescription</p>
+            
+            @if (LocationHours.Any())
+            {
+                <h6>Business Hours</h6>
+                <table class="table table-sm table-bordered mt-2 mb-3" style="width: auto;">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            @foreach (var day in Enum.GetValues<WeekDay>())
+                            {
+                                <th>@day</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Open</th>
+                            @foreach (var day in Enum.GetValues<WeekDay>())
+                            {
+                                var hours = LocationHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                <td>@(hours?.OpenTime.ToString() ?? "-")</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Close</th>
+                            @foreach (var day in Enum.GetValues<WeekDay>())
+                            {
+                                var hours = LocationHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                <td>@(hours?.CloseTime.ToString() ?? "-")</td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            }
+
+            <div class="station-container">
+                @if (Stations.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var station in Stations)
+                        {
+                            <li class="list-group-item">
+                                <h6>@station.StationName</h6>
+                                <small>@station.StationDescription</small>
+
+                                @if (StationHours.TryGetValue(station.Id, out var sHours) && sHours.Any() && AreHoursDifferent(LocationHours, sHours))
+                                {
+                                    <div class="mt-2">
+                                        <strong>Hours:</strong>
+                                        <table class="table table-sm table-bordered mt-1 mb-0" style="width: auto; font-size: 0.85em;">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    @foreach (var day in Enum.GetValues<WeekDay>())
+                                                    {
+                                                        <th>@day</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th>Open</th>
+                                                    @foreach (var day in Enum.GetValues<WeekDay>())
+                                                    {
+                                                        var hours = sHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                                        <td>@(hours?.OpenTime.ToString() ?? "-")</td>
+                                                    }
+                                                </tr>
+                                                <tr>
+                                                    <th>Close</th>
+                                                    @foreach (var day in Enum.GetValues<WeekDay>())
+                                                    {
+                                                        var hours = sHours.FirstOrDefault(h => h.WeekdayId == (int)day);
+                                                        <td>@(hours?.CloseTime.ToString() ?? "-")</td>
+                                                    }
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No stations found for this location.</p>
+                }
+            </div>
+            @ChildContent
+        </div>
+    }
+</div>

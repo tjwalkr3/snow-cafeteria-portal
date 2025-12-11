@@ -48,7 +48,7 @@ builder.AddProject<Projects.Cafeteria_Management>("management")
     .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
     .WithEnvironment("OpenIDConnectSettings__ClientId", "cafeteria")
     .WithEnvironment("OpenIDConnectSettings__ClientSecret", string.Empty)
-    .WithEnvironment("ApiBaseUrl", "http://api")
+    .WithEnvironment("ApiBaseUrl", "http://api/")
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

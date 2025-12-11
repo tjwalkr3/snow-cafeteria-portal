@@ -1,8 +1,50 @@
 @page "/sides"
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
-<PageTitle>Side</PageTitle>
+<PageTitle>Sides</PageTitle>
 
-<h1>Side</h1>
+<h1>Sides</h1>
 
-<p>Manage sides here.</p>
+<button type="button" @onclick="HandleCreateClick">Add Side</button>
+
+@if (ViewModel.Sides.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Station ID</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var side in ViewModel.Sides)
+            {
+                <tr @key="side.Id">
+                    <td>@side.SideName</td>
+                    <td>@side.StationId</td>
+                    <td>@side.SidePrice</td>
+                    <td>@side.SideDescription</td>
+                    <td>
+                        <button type="button" @onclick="() => HandleEditClick(side.Id)">Edit</button>
+                        <button type="button" @onclick="() => HandleDeleteClick(side.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No sides found.</p>
+}
+
+<CreateOrEditSide @ref="modalComponent"></CreateOrEditSide>
+
+<ConfirmationModal IsVisible="ShowDeleteModal" Title="Delete Side" Message="@DeleteMessage" ConfirmText="Delete"
+    OnConfirm="ConfirmDelete" OnCancel="CancelDelete" />
+
+<Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />
