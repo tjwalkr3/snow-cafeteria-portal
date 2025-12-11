@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Shared.DTOs;
+using Microsoft.JSInterop;
+using Cafeteria.Management.Components.Pages.Side;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 
@@ -8,68 +9,59 @@ public partial class Side : ComponentBase
     [Inject]
     public ISideVM ViewModel { get; set; } = default!;
 
-    private bool ShowModal { get; set; }
-    private bool IsEditMode { get; set; }
-    private SideDto CurrentSide { get; set; } = new();
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
 
-    // Confirmation Modal State
-    private bool ShowConfirmation { get; set; }
-    private string ConfirmationTitle { get; set; } = "Confirm Delete";
-    private string ConfirmationMessage { get; set; } = "Are you sure you want to delete this side?";
-    private int _sideIdToDelete;
+    private CreateOrEditSide? modalComponent;
 
     protected override async Task OnInitializedAsync()
     {
-        await ViewModel.LoadSidesAsync();
+        await ViewModel.LoadSides();
     }
 
-    private void ShowCreateModal()
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        CurrentSide = new SideDto();
-        IsEditMode = false;
-        ShowModal = true;
-    }
-
-    private void ShowEditModal(SideDto side)
-    {
-        CurrentSide = new SideDto
+        if (firstRender && modalComponent != null)
         {
-            Id = side.Id,
-            StationId = side.StationId,
-            SideName = side.SideName,
-            SideDescription = side.SideDescription,
-            SidePrice = side.SidePrice,
-            ImageUrl = side.ImageUrl
-        };
-        IsEditMode = true;
-        ShowModal = true;
+            modalComponent.SetParentComponent(this);
+        }
+        return base.OnAfterRenderAsync(firstRender);
     }
 
-    private void CloseModal()
+    private async Task HandleCreateClick()
     {
-        ShowModal = false;
+        await ViewModel.ShowCreateModal();
+        modalComponent?.Refresh();
     }
 
-    private async Task HandleSave()
+    private async Task HandleEditClick(int id)
     {
-        ShowModal = false;
-        await ViewModel.LoadSidesAsync();
+        await ViewModel.ShowEditModal(id);
+        modalComponent?.Refresh();
     }
 
-    private void DeleteSide(int id)
+    private async Task HandleDeleteClick(int id)
     {
-        _sideIdToDelete = id;
-        ShowConfirmation = true;
+        if (await ConfirmDelete())
+        {
+            await ViewModel.DeleteSide(id);
+            await RefreshSides();
+        }
     }
 
-    private async Task ConfirmDelete()
+    private async Task RefreshSides()
     {
-        ShowConfirmation = false;
-        await ViewModel.DeleteSideAsync(_sideIdToDelete);
+        await ViewModel.LoadSides();
+        StateHasChanged();
     }
 
-    private void CancelDelete()
+    public async Task RefreshSidesAfterSave()
     {
-        ShowConfirmation = false;
+        await RefreshSides();
+    }
+
+    private async Task<bool> ConfirmDelete()
+    {
+        return await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this side?");
     }
 }

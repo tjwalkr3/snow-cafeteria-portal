@@ -6,14 +6,7 @@ namespace Cafeteria.Management.Components.Pages.Side;
 public interface ICreateOrEditSideVM
 {
     SideDto CurrentSide { get; set; }
-    bool IsEditMode { get; set; }
-    bool ShowToast { get; set; }
-    string ToastMessage { get; set; }
-    Toast.ToastType ToastType { get; set; }
-
-    Task<bool> SaveSideAsync();
-    Task<List<LocationDto>> GetLocationsAsync();
-    Task<List<StationDto>> GetStationsByLocationAsync(int locationId);
-    Task<StationDto?> GetStationByIdAsync(int stationId);
-    bool ValidateSide(IEnumerable<SideDto> existingSides, SideDto newSide);
+    bool IsVisible { get; set; }
+    bool IsEditing { get; set; }
+    Task SaveSide();
 }

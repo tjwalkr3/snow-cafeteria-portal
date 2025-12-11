@@ -1,43 +1,28 @@
-using Cafeteria.Management.Services;
 using Cafeteria.Shared.DTOs;
-using Cafeteria.Management.Components.Shared;
+using Cafeteria.Management.Services;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 
 public class CreateOrEditSideVM : ICreateOrEditSideVM
 {
     private readonly ISideService _sideService;
-    private readonly ILocationService _locationService;
-    private readonly IStationService _stationService;
-    private readonly ISideVM _sideVM;
+    private readonly ISideVM _parentVM;
 
     public SideDto CurrentSide { get; set; } = new();
-    public bool IsEditMode { get; set; }
-    public bool ShowToast { get; set; }
-    public string ToastMessage { get; set; } = string.Empty;
-    public Toast.ToastType ToastType { get; set; }
+    public bool IsVisible { get; set; }
+    public bool IsEditing { get; set; }
 
-    public CreateOrEditSideVM(ISideService sideService, ILocationService locationService, IStationService stationService, ISideVM sideVM)
+    public CreateOrEditSideVM(ISideService sideService, ISideVM parentVM)
     {
         _sideService = sideService;
-        _locationService = locationService;
-        _stationService = stationService;
-        _sideVM = sideVM;
+        _parentVM = parentVM;
     }
 
-    public async Task<bool> SaveSideAsync()
+    public async Task SaveSide()
     {
-        if (!ValidateSide(_sideVM.Sides, CurrentSide))
-        {
-            ShowToast = true;
-            ToastMessage = "A side with this name already exists in this station.";
-            ToastType = Toast.ToastType.Error;
-            return false;
-        }
-
         try
         {
-            if (IsEditMode)
+            if (IsEditing)
             {
                 await _sideService.UpdateSide(CurrentSide);
             }
@@ -45,28 +30,15 @@ public class CreateOrEditSideVM : ICreateOrEditSideVM
             {
                 await _sideService.CreateSide(CurrentSide);
             }
-            return true;
+
+            IsVisible = false;
+            await _parentVM.LoadSides();
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error saving side: {ex.Message}");
             throw;
         }
-    }
-
-    public async Task<List<LocationDto>> GetLocationsAsync()
-    {
-        return await _locationService.GetAllLocations();
-    }
-
-    public async Task<List<StationDto>> GetStationsByLocationAsync(int locationId)
-    {
-        return await _stationService.GetStationsByLocation(locationId);
-    }
-
-    public async Task<StationDto?> GetStationByIdAsync(int stationId)
-    {
-        return await _stationService.GetStationById(stationId);
     }
 
     public bool ValidateSide(IEnumerable<SideDto> existingSides, SideDto newSide)
