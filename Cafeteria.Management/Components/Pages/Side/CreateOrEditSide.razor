@@ -1,7 +1,13 @@
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
 @if (ViewModel?.IsVisible ?? false)
 {
+    <Toast Message="@ViewModel.ToastMessage" 
+        Type="@ViewModel.ToastType" 
+        IsVisible="@ViewModel.ShowToast" 
+        OnClose="@(() => ViewModel.ShowToast = false)" />
+
     <div class="modal" style="display: block;">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -11,32 +17,46 @@
                         <span>&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Side Name:</label>
-                        <input type="text" @bind="ViewModel.CurrentSide.SideName" />
+                <EditForm Model="@ViewModel.CurrentSide" OnValidSubmit="HandleSave">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Side Name:</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.CurrentSide.SideName" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.SideName)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Station:</label>
+                            <InputSelect @bind-Value="ViewModel.CurrentSide.StationId" class="form-control">
+                                <option value="0">-- Select a Station --</option>
+                                @foreach (var station in ViewModel.Stations)
+                                {
+                                    <option value="@station.Id">@station.StationName</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.StationId)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Price:</label>
+                            <InputNumber class="form-control" @bind-Value="ViewModel.CurrentSide.SidePrice" step="0.01" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.SidePrice)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <InputTextArea class="form-control" @bind-Value="ViewModel.CurrentSide.SideDescription" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.SideDescription)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Image URL:</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.CurrentSide.ImageUrl" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentSide.ImageUrl)" />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Station ID:</label>
-                        <input type="number" min="1" @bind="ViewModel.CurrentSide.StationId" />
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
-                    <div class="form-group">
-                        <label>Price:</label>
-                        <input type="number" step="0.01" @bind="ViewModel.CurrentSide.SidePrice" />
-                    </div>
-                    <div class="form-group">
-                        <label>Description:</label>
-                        <textarea @bind="ViewModel.CurrentSide.SideDescription"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Image URL:</label>
-                        <input type="text" @bind="ViewModel.CurrentSide.ImageUrl" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
-                    <button type="button" class="btn btn-primary" @onclick="HandleSave">Save</button>
-                </div>
+                </EditForm>
             </div>
         </div>
     </div>

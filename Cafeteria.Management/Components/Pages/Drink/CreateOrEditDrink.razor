@@ -1,7 +1,13 @@
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
 @if (ViewModel?.IsVisible ?? false)
 {
+    <Toast Message="@ViewModel.ToastMessage" 
+        Type="@ViewModel.ToastType" 
+        IsVisible="@ViewModel.ShowToast" 
+        OnClose="@(() => ViewModel.ShowToast = false)" />
+
     <div class="modal" style="display: block;">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -11,34 +17,41 @@
                         <span>&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Drink Name:</label>
-                        <input type="text" @bind="ViewModel.CurrentDrink.DrinkName" />
+                <EditForm Model="@ViewModel.CurrentDrink" OnValidSubmit="HandleSave">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Drink Name:</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.CurrentDrink.DrinkName" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentDrink.DrinkName)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Station:</label>
+                            <InputSelect @bind-Value="ViewModel.CurrentDrink.StationId" class="form-control">
+                                <option value="0">-- Select a Station --</option>
+                                @foreach (var station in ViewModel.Stations)
+                                {
+                                    <option value="@station.Id">@station.StationName</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => ViewModel.CurrentDrink.StationId)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Price:</label>
+                            <InputNumber class="form-control" @bind-Value="ViewModel.CurrentDrink.DrinkPrice" step="0.01" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentDrink.DrinkPrice)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <InputTextArea class="form-control" @bind-Value="ViewModel.CurrentDrink.DrinkDescription" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentDrink.DrinkDescription)" />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Station:</label>
-                        <select @bind="ViewModel.CurrentDrink.StationId" class="form-control">
-                            <option value="0">-- Select a Station --</option>
-                            @foreach (var station in ViewModel.Stations)
-                            {
-                                <option value="@station.Id">@station.StationName</option>
-                            }
-                        </select>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
-                    <div class="form-group">
-                        <label>Price:</label>
-                        <input type="number" step="0.01" @bind="ViewModel.CurrentDrink.DrinkPrice" />
-                    </div>
-                    <div class="form-group">
-                        <label>Description:</label>
-                        <textarea @bind="ViewModel.CurrentDrink.DrinkDescription"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
-                    <button type="button" class="btn btn-primary" @onclick="HandleSave">Save</button>
-                </div>
+                </EditForm>
             </div>
         </div>
     </div>

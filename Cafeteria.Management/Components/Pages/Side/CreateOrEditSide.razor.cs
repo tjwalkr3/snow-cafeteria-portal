@@ -11,27 +11,46 @@ public partial class CreateOrEditSide : ComponentBase
     [Inject]
     public ISideVM ParentVM { get; set; } = default!;
 
+    [Inject]
+    public IStationService StationService { get; set; } = default!;
+
     public ICreateOrEditSideVM? ViewModel { get; set; }
     private Side? parentComponent;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        ViewModel = new CreateOrEditSideVM(SideService, ParentVM);
+        ViewModel = new CreateOrEditSideVM(SideService, ParentVM, StationService);
         if (ParentVM is SideVM sideVM)
         {
             sideVM.SetCreateOrEditVM(ViewModel);
+        }
+
+        if (ViewModel is CreateOrEditSideVM vm)
+        {
+            await vm.LoadStations();
         }
     }
 
     private async Task HandleSave()
     {
-        if (ViewModel != null)
+        if (ViewModel != null && parentComponent != null)
         {
-            await ViewModel.SaveSide();
-            StateHasChanged();
-            if (parentComponent != null)
+            var sideName = ViewModel.CurrentSide.SideName ?? "Side";
+            var isEdit = ViewModel.IsEditing;
+
+            try
             {
-                await parentComponent.RefreshSidesAfterSave();
+                var success = await ViewModel.SaveSide();
+                if (success)
+                {
+                    StateHasChanged();
+                    await parentComponent.RefreshSidesAfterSave();
+                    parentComponent.ShowSaveSuccessToast(sideName, isEdit);
+                }
+            }
+            catch
+            {
+                parentComponent.ShowSaveErrorToast(sideName, isEdit);
             }
         }
     }
