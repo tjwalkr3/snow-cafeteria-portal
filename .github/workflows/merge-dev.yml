@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_lint_unit_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
     - name: Check out the code. 
       uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
       run: dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj --no-build
 
   # run_integration_tests:
-  #   runs-on: ubuntu-latest
+  #   runs-on: ubuntu-slim
   #   steps:
   #   - name: Check out the code. 
   #     uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
   #     run: dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
 
   notify_discord:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     needs: [build_lint_unit_test]
     if: always()
     steps:
