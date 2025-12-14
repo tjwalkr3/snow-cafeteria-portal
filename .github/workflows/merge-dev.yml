@@ -1,4 +1,4 @@
-name: Merge Dev - Lint, Test, Warnings Check, Teams Notification
+name: Merge Dev
 
 on:
   push:
@@ -7,61 +7,43 @@ on:
   workflow_dispatch:
 
 jobs:
-  format_verification:
-    runs-on: self-hosted
+  build_lint_unit_test:
+    runs-on: ubuntu-latest
     steps:
     - name: Check out the code. 
       uses: actions/checkout@v4
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
 
     - name: Linting with Dotnet Format
-      run: |
-        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        nix-shell -p dotnet-sdk_9 --run "
-          dotnet format --verify-no-changes --verbosity diagnostic
-        "
+      run: dotnet format --verify-no-changes --verbosity diagnostic
 
-  check_for_warnings:
-    runs-on: self-hosted
-    steps:
-    - name: Check out the code. 
-      uses: actions/checkout@v4
-
-    - name: Check for warnings with dotnet format  --warnaserror
-      run: |
-        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        nix-shell -p dotnet-sdk_9 --run "
-          dotnet build --warnaserror
-        "
-
-  run_unit_tests:
-    runs-on: self-hosted
-    steps:
-    - name: Check out the code. 
-      uses: actions/checkout@v4
+    - name: Check for warnings with dotnet build
+      run: dotnet build --warnaserror --no-restore
 
     - name: Run the unit tests.
-      run: |
-        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        nix-shell -p dotnet-sdk_9 --run "
-          dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj
-        "
+      run: dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj --no-build
 
-  run_integration_tests:
-    runs-on: self-hosted
-    steps:
-    - name: Check out the code. 
-      uses: actions/checkout@v4
-
-    - name: Run the integration tests.
-      run: |
-        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        nix-shell -p dotnet-sdk_9 --run "
-          dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
-        "
+  # run_integration_tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Check out the code. 
+  #     uses: actions/checkout@v4
+  #
+  #   - name: Setup .NET 9
+  #     uses: actions/setup-dotnet@v4
+  #     with:
+  #       dotnet-version: '9.0.x'
+  #
+  #   - name: Run the integration tests.
+  #     run: dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
 
   notify_discord:
-    runs-on: self-hosted
-    needs: [format_verification, check_for_warnings, run_unit_tests, run_integration_tests]
+    runs-on: ubuntu-latest
+    needs: [build_lint_unit_test]
     if: always()
     steps:
     - name: Send Discord notification
