@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_lint_test:
+  build_lint_unit_test:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the code. 

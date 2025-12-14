@@ -42,7 +42,7 @@ jobs:
   #     run: dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
 
   build_and_push_api_to_dockerhub:
-    needs: [build_lint_test]
+    needs: [build_lint_unit_test]
     runs-on: ubuntu-latest
     steps:
     - name: Check out the code
@@ -63,7 +63,7 @@ jobs:
         docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-api:${{ github.run_number }}.${{ github.run_attempt }}
 
   build_and_push_customer_to_dockerhub:
-    needs: [build_lint_test]
+    needs: [build_lint_unit_test]
     runs-on: ubuntu-latest
     steps:
     - name: Check out the code
@@ -84,7 +84,7 @@ jobs:
         docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-customer:${{ github.run_number }}.${{ github.run_attempt }}
 
   build_and_push_management_to_dockerhub:
-    needs: [build_lint_test]
+    needs: [build_lint_unit_test]
     runs-on: ubuntu-latest
     steps:
     - name: Check out the code
