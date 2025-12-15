@@ -28,7 +28,7 @@ jobs:
       run: dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj --no-build
 
   # run_integration_tests:
-  #   runs-on: ubuntu-slim
+  #   runs-on: ubuntu-latest
   #   steps:
   #   - name: Check out the code. 
   #     uses: actions/checkout@v4
