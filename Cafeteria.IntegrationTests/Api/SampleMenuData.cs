@@ -22,8 +22,8 @@ public static class SampleMenuData
         VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @ImageUrl)";
 
     public const string InsertDrinkSql = @"
-        INSERT INTO cafeteria.drink (station_id, drink_name, drink_description, drink_price, image_url)
-        VALUES (@StationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl)";
+        INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, image_url)
+        VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl)";
 
     public const string InsertFoodOptionSql = @"
         INSERT INTO cafeteria.food_option (food_option_name, in_stock, image_url)
@@ -109,7 +109,7 @@ public static class SampleMenuData
     public static List<DrinkDto> Drinks => [
         new() {
             Id = 1,
-            StationId = 1,
+            LocationId = 1,
             DrinkName = "Coca-Cola",
             DrinkDescription = "Classic Coke",
             DrinkPrice = 1.99m,
@@ -117,7 +117,7 @@ public static class SampleMenuData
         },
         new() {
             Id = 2,
-            StationId = 1,
+            LocationId = 1,
             DrinkName = "Lemonade",
             DrinkDescription = "Fresh squeezed lemonade",
             DrinkPrice = 2.49m,

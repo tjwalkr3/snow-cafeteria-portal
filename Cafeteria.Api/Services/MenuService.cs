@@ -110,15 +110,15 @@ public class MenuService : IMenuService
     {
         const string sql = @"
             SELECT
-                d.id AS Id, 
-                d.station_id AS StationId, 
-                d.drink_name AS DrinkName, 
-                d.drink_description AS DrinkDescription, 
-                d.drink_price AS DrinkPrice, 
-                d.image_url AS ImageUrl
-            FROM cafeteria.drink d
-            INNER JOIN cafeteria.station s ON d.station_id = s.id
-            WHERE s.location_id = @locationId;";
+                id AS Id, 
+                location_id AS LocationId, 
+                drink_name AS DrinkName, 
+                drink_description AS DrinkDescription, 
+                drink_price AS DrinkPrice, 
+                image_url AS ImageUrl,
+                in_stock AS InStock
+            FROM cafeteria.drink
+            WHERE location_id = @locationId;";
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
         return result.ToList();
     }

@@ -16,9 +16,9 @@ public class DrinkService : IDrinkService
     public async Task<DrinkDto> CreateDrink(DrinkDto drinkDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.drink (station_id, drink_name, drink_description, drink_price, image_url, in_stock)
-            VALUES (@StationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl, @InStock)
-            RETURNING id AS Id, station_id AS StationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
+            INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, image_url, in_stock)
+            VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl, @InStock)
+            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<DrinkDto>(sql, drinkDto);
         return result ?? throw new InvalidOperationException("Failed to create drink");
@@ -29,7 +29,7 @@ public class DrinkService : IDrinkService
         const string sql = @"
             SELECT 
                 id AS Id, 
-                station_id AS StationId, 
+                location_id AS LocationId, 
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
@@ -47,7 +47,7 @@ public class DrinkService : IDrinkService
         const string sql = @"
             SELECT 
                 id AS Id, 
-                station_id AS StationId, 
+                location_id AS LocationId, 
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
@@ -60,22 +60,22 @@ public class DrinkService : IDrinkService
         return result.ToList();
     }
 
-    public async Task<List<DrinkDto>> GetDrinksByStationID(int stationId)
+    public async Task<List<DrinkDto>> GetDrinksByLocationID(int locationId)
     {
         const string sql = @"
             SELECT 
                 id AS Id, 
-                station_id AS StationId, 
+                location_id AS LocationId, 
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
                 image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.drink
-            WHERE station_id = @stationId
+            WHERE location_id = @locationId
             ORDER BY drink_name, id;";
 
-        var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { stationId });
+        var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
         return result.ToList();
     }
 
@@ -83,19 +83,19 @@ public class DrinkService : IDrinkService
     {
         const string sql = @"
             UPDATE cafeteria.drink
-            SET station_id = @StationId,
+            SET location_id = @LocationId,
                 drink_name = @DrinkName,
                 drink_description = @DrinkDescription,
                 drink_price = @DrinkPrice,
                 image_url = @ImageUrl,
                 in_stock = @InStock
             WHERE id = @id
-            RETURNING id AS Id, station_id AS StationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
+            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
 
         var parameters = new
         {
             id,
-            drinkDto.StationId,
+            drinkDto.LocationId,
             drinkDto.DrinkName,
             drinkDto.DrinkDescription,
             drinkDto.DrinkPrice,

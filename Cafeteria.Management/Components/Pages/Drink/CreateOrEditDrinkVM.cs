@@ -8,7 +8,7 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
 {
     private readonly IDrinkService _drinkService;
     private readonly IDrinkVM _parentVM;
-    private readonly IStationService _stationService;
+    private readonly ILocationService _locationService;
 
     public DrinkDto CurrentDrink { get; set; } = new();
     public bool IsVisible { get; set; }
@@ -16,24 +16,24 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
     public bool ShowToast { get; set; }
     public string ToastMessage { get; set; } = string.Empty;
     public Toast.ToastType ToastType { get; set; }
-    public List<StationDto> Stations { get; set; } = [];
+    public List<LocationDto> Locations { get; set; } = [];
 
-    public CreateOrEditDrinkVM(IDrinkService drinkService, IDrinkVM parentVM, IStationService stationService)
+    public CreateOrEditDrinkVM(IDrinkService drinkService, IDrinkVM parentVM, ILocationService locationService)
     {
         _drinkService = drinkService;
         _parentVM = parentVM;
-        _stationService = stationService;
+        _locationService = locationService;
     }
 
-    public async Task LoadStations()
+    public async Task LoadLocations()
     {
         try
         {
-            Stations = await _stationService.GetAllStations();
+            Locations = await _locationService.GetAllLocations();
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error loading stations: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error loading locations: {ex.Message}");
         }
     }
 
@@ -41,7 +41,7 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
     {
         return !existingDrinks.Any(d =>
             d.DrinkName.Equals(newDrink.DrinkName, StringComparison.OrdinalIgnoreCase) &&
-            d.StationId == newDrink.StationId &&
+            d.LocationId == newDrink.LocationId &&
             d.Id != newDrink.Id);
     }
 
@@ -50,7 +50,7 @@ public class CreateOrEditDrinkVM : ICreateOrEditDrinkVM
         if (!ValidateDrink(_parentVM.Drinks, CurrentDrink))
         {
             ShowToast = true;
-            ToastMessage = "A drink with this name already exists in this station.";
+            ToastMessage = "A drink with this name already exists in this location.";
             ToastType = Toast.ToastType.Error;
             return false;
         }

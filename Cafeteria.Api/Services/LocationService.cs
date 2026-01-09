@@ -109,8 +109,8 @@ public class LocationService : ILocationService
             Id = h.Id,
             LocationId = h.LocationId,
             WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            OpenTime = h.OpenTime,
+            CloseTime = h.CloseTime
         }).ToList();
     }
 
@@ -138,8 +138,8 @@ public class LocationService : ILocationService
             Id = h.Id,
             LocationId = h.LocationId,
             WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            OpenTime = h.OpenTime,
+            CloseTime = h.CloseTime
         };
     }
 
@@ -148,8 +148,8 @@ public class LocationService : ILocationService
         public int Id { get; set; }
         public int LocationId { get; set; }
         public int WeekdayId { get; set; }
-        public TimeSpan OpenTime { get; set; }
-        public TimeSpan CloseTime { get; set; }
+        public TimeOnly OpenTime { get; set; }
+        public TimeOnly CloseTime { get; set; }
     }
 
     public async Task AddLocationHours(int locationId, DateTime startTime, DateTime endTime, WeekDay weekday)
