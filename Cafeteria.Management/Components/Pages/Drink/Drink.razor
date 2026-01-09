@@ -6,39 +6,6 @@
 
 <PageTitle>Drinks</PageTitle>
 
-<h1>Drinks</h1>
-
-<button type="button" @onclick="HandleCreateClick">Add Drink</button>
-
-@if (ViewModel.Drinks.Any())
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Location ID</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>In-Stock</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var drink in ViewModel.Drinks)
-            {
-                <tr @key="drink.Id">
-                    <td>@drink.DrinkName</td>
-                    <td>@drink.LocationId</td>
-                    <td>@drink.DrinkPrice</td>
-                    <td>@drink.DrinkDescription</td>
-                    <td>
-                        <input type="checkbox" checked="@drink.InStock" @onchange="@(e => ViewModel.ToggleStockStatus(drink.Id, (bool)e.Value!))" />
-                    </td>
-                    <td>
-                        <button type="button" @onclick="() => HandleEditClick(drink.Id)">Edit</button>
-                        <button type="button" @onclick="() => HandleDeleteClick(drink.Id)">Delete</button>
-                    </td>
-                </tr>
 <div class="container px-3">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="page-title fw-bold mb-0">Drinks</h1>
@@ -100,6 +67,7 @@
         </div>
     }
 </div>
+
 
 <CreateOrEditDrink @ref="modalComponent"></CreateOrEditDrink>
 
