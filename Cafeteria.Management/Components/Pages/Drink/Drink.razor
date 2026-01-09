@@ -1,13 +1,17 @@
 @page "/drinks"
 @rendermode InteractiveServer
-@using Cafeteria.Management.Components.Shared'
+@using Microsoft.AspNetCore.Components.Web
+@using Cafeteria.Management.Components.Shared
+@using Cafeteria.Management.Components.Pages.Drink
+
+<PageTitle>Drinks</PageTitle>
 
 <div class="container px-3">
     <div class="mb-4">
         <h1 class="page-title fw-bold mb-2">Drinks</h1>
     </div>
 
-    <button type="button" class="add-btn btn mb-4 d-inline-flex align-items-center" @onclick="HandleCreateClick">
+    <button type="button" class="btn btn-primary mb-4 d-inline-flex align-items-center" @onclick="HandleCreateClick">
         <i class="bi bi-plus-circle me-2"></i>Add Drink
     </button>
 
@@ -42,10 +46,10 @@
                             </div>
 
                             <div class="d-flex gap-2 pt-3 border-top">
-                                <button type="button" class="btn-edit btn flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => HandleEditClick(drink.Id)">
+                                <button type="button" class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => HandleEditClick(drink.Id)">
                                     <i class="bi bi-pencil me-1"></i>Edit
                                 </button>
-                                <button type="button" class="btn-delete btn flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => HandleDeleteClick(drink.Id)">
+                                <button type="button" class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => HandleDeleteClick(drink.Id)">
                                     <i class="bi bi-trash me-1"></i>Delete
                                 </button>
                             </div>
