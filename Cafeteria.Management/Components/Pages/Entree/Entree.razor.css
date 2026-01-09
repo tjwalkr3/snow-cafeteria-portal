@@ -1,0 +1,39 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.entree-card {
+    transition: all 0.2s ease;
+}
+
+.entree-card:hover {
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.entree-name {
+    color: #333;
+}
+
+.entree-price {
+    color: #333;
+}
+
+.detail-label {
+    letter-spacing: 0.5px;
+}
+
+.stock-toggle input[type="checkbox"] {
+    accent-color: #1e366c;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.stock-toggle input[type="checkbox"]:checked + label {
+    color: #28a745;
+}
+
+.stock-toggle input[type="checkbox"]:not(:checked) + label {
+    color: #dc3545;
+}

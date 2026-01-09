@@ -1,4 +1,5 @@
 namespace Cafeteria.Management.Components.Pages.LocationAndStation;
+
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Services;
 using Cafeteria.Management.Components.Pages.LocationAndStation.Location;

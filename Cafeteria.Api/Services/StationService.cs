@@ -126,8 +126,8 @@ public class StationService : IStationService
             Id = h.Id,
             StationId = h.StationId,
             WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            OpenTime = h.OpenTime,
+            CloseTime = h.CloseTime
         }).ToList();
     }
 
@@ -155,8 +155,8 @@ public class StationService : IStationService
             Id = h.Id,
             StationId = h.StationId,
             WeekdayId = h.WeekdayId,
-            OpenTime = TimeOnly.FromTimeSpan(h.OpenTime),
-            CloseTime = TimeOnly.FromTimeSpan(h.CloseTime)
+            OpenTime = h.OpenTime,
+            CloseTime = h.CloseTime
         };
     }
 
@@ -165,8 +165,8 @@ public class StationService : IStationService
         public int Id { get; set; }
         public int StationId { get; set; }
         public int WeekdayId { get; set; }
-        public TimeSpan OpenTime { get; set; }
-        public TimeSpan CloseTime { get; set; }
+        public TimeOnly OpenTime { get; set; }
+        public TimeOnly CloseTime { get; set; }
     }
 
     public async Task AddStationHours(int stationId, DateTime startTime, DateTime endTime, WeekDay weekday)

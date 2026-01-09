@@ -70,9 +70,9 @@ public class ValidationTests
         var vm = new CreateOrEditDrinkVM(null!, null!, null!);
         var existingDrinks = new List<DrinkDto>
         {
-            new DrinkDto { Id = 1, DrinkName = "Coke", StationId = 1 }
+            new DrinkDto { Id = 1, DrinkName = "Coke", LocationId = 1 }
         };
-        var newDrink = new DrinkDto { DrinkName = "Coke", StationId = 1 };
+        var newDrink = new DrinkDto { DrinkName = "Coke", LocationId = 1 };
 
         // Act
         var result = vm.ValidateDrink(existingDrinks, newDrink);
@@ -88,9 +88,9 @@ public class ValidationTests
         var vm = new CreateOrEditDrinkVM(null!, null!, null!);
         var existingDrinks = new List<DrinkDto>
         {
-            new DrinkDto { Id = 1, DrinkName = "Coke", StationId = 1 }
+            new DrinkDto { Id = 1, DrinkName = "Coke", LocationId = 1 }
         };
-        var newDrink = new DrinkDto { DrinkName = "Pepsi", StationId = 1 };
+        var newDrink = new DrinkDto { DrinkName = "Pepsi", LocationId = 1 };
 
         // Act
         var result = vm.ValidateDrink(existingDrinks, newDrink);
@@ -100,15 +100,15 @@ public class ValidationTests
     }
 
     [Fact]
-    public void ValidateDrink_ReturnsTrue_WhenDuplicateExistsInDifferentStation()
+    public void ValidateDrink_ReturnsTrue_WhenDuplicateExistsInDifferentLocation()
     {
         // Arrange
         var vm = new CreateOrEditDrinkVM(null!, null!, null!);
         var existingDrinks = new List<DrinkDto>
         {
-            new DrinkDto { Id = 1, DrinkName = "Coke", StationId = 1 }
+            new DrinkDto { Id = 1, DrinkName = "Coke", LocationId = 1 }
         };
-        var newDrink = new DrinkDto { DrinkName = "Coke", StationId = 2 };
+        var newDrink = new DrinkDto { DrinkName = "Coke", LocationId = 2 };
 
         // Act
         var result = vm.ValidateDrink(existingDrinks, newDrink);

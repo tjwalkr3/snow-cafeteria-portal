@@ -7,7 +7,7 @@ public class DrinkDto
     public int Id { get; set; }
 
     [Required]
-    public int StationId { get; set; }
+    public int LocationId { get; set; }
 
     [Required]
     [StringLength(100)]
