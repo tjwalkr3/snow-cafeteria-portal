@@ -7,13 +7,12 @@
 <PageTitle>Drinks</PageTitle>
 
 <div class="container px-3">
-    <div class="mb-4">
-        <h1 class="page-title fw-bold mb-2">Drinks</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title fw-bold mb-0">Drinks</h1>
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="HandleCreateClick">
+            <i class="bi bi-plus-circle me-2"></i>Add Drink
+        </button>
     </div>
-
-    <button type="button" class="btn btn-primary mb-4 d-inline-flex align-items-center" @onclick="HandleCreateClick">
-        <i class="bi bi-plus-circle me-2"></i>Add Drink
-    </button>
 
     @if (ViewModel.Drinks.Any())
     {
