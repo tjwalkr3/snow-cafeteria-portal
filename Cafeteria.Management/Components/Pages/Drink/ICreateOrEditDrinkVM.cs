@@ -11,7 +11,7 @@ public interface ICreateOrEditDrinkVM
     bool ShowToast { get; set; }
     string ToastMessage { get; set; }
     Toast.ToastType ToastType { get; set; }
-    List<StationDto> Stations { get; set; }
+    List<LocationDto> Locations { get; set; }
     Task<bool> SaveDrink();
-    Task LoadStations();
+    Task LoadLocations();
 }

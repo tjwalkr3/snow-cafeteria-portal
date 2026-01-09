@@ -38,10 +38,10 @@ public class DrinkController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("station/{stationId}")]
-    public async Task<ActionResult<List<DrinkDto>>> GetDrinksByStationID(int stationId)
+    [HttpGet("location/{locationId}")]
+    public async Task<ActionResult<List<DrinkDto>>> GetDrinksByLocationID(int locationId)
     {
-        var result = await _drinkService.GetDrinksByStationID(stationId);
+        var result = await _drinkService.GetDrinksByLocationID(locationId);
         return Ok(result);
     }
 

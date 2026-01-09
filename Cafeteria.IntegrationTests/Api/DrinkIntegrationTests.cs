@@ -74,11 +74,10 @@ public class DrinkIntegrationTests : IAsyncLifetime
     public async Task CreateDrink_AddsNewDrink()
     {
         _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
 
         var newDrink = new DrinkDto
         {
-            StationId = 1,
+            LocationId = 1,
             DrinkName = "Sprite",
             DrinkDescription = "Lemon-lime soda",
             DrinkPrice = 1.99m,
@@ -100,7 +99,6 @@ public class DrinkIntegrationTests : IAsyncLifetime
     public async Task GetDrinkByID_ReturnsCorrectDrink()
     {
         _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
         var drinkId = _connection.ExecuteScalar<int>(
             InsertDrinkSql + " RETURNING id",
             Drinks[0]);
@@ -126,7 +124,6 @@ public class DrinkIntegrationTests : IAsyncLifetime
     public async Task GetAllDrinks_ReturnsAllDrinks()
     {
         _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
         _connection.Execute(InsertDrinkSql, Drinks[0]);
         _connection.Execute(InsertDrinkSql, Drinks[1]);
 
@@ -141,28 +138,26 @@ public class DrinkIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetDrinksByStationID_ReturnsDrinksForStation()
+    public async Task GetDrinksByLocationID_ReturnsDrinksForLocation()
     {
         _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        _connection.Execute(InsertStationSql, Stations[1]);
+        _connection.Execute(InsertLocationSql, Locations[1]);
         _connection.Execute(InsertDrinkSql, Drinks[0]);
         _connection.Execute(InsertDrinkSql, Drinks[1]);
 
-        var response = await _client.GetAsync("/api/drink/station/1");
+        var response = await _client.GetAsync("/api/drink/location/1");
         response.EnsureSuccessStatusCode();
         var drinks = await response.Content.ReadFromJsonAsync<List<DrinkDto>>();
 
         Assert.NotNull(drinks);
         Assert.Equal(2, drinks.Count);
-        Assert.All(drinks, drink => Assert.Equal(1, drink.StationId));
+        Assert.All(drinks, drink => Assert.Equal(1, drink.LocationId));
     }
 
     [Fact]
     public async Task UpdateDrinkByID_UpdatesExistingDrink()
     {
         _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
         var drinkId = _connection.ExecuteScalar<int>(
             InsertDrinkSql + " RETURNING id",
             Drinks[0]);
@@ -170,7 +165,7 @@ public class DrinkIntegrationTests : IAsyncLifetime
         var updatedDrink = new DrinkDto
         {
             Id = drinkId,
-            StationId = 1,
+            LocationId = 1,
             DrinkName = "Updated Drink",
             DrinkDescription = "Updated description",
             DrinkPrice = 3.99m,
@@ -193,7 +188,7 @@ public class DrinkIntegrationTests : IAsyncLifetime
         var updatedDrink = new DrinkDto
         {
             Id = 999,
-            StationId = 1,
+            LocationId = 1,
             DrinkName = "Nonexistent",
             DrinkDescription = "Description",
             DrinkPrice = 1.99m,
@@ -209,7 +204,6 @@ public class DrinkIntegrationTests : IAsyncLifetime
     public async Task DeleteDrinkByID_RemovesDrink()
     {
         _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
         var drinkId = _connection.ExecuteScalar<int>(
             InsertDrinkSql + " RETURNING id",
             Drinks[0]);
