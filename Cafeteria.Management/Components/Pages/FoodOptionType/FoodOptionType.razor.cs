@@ -50,6 +50,8 @@ public partial class FoodOptionType : ComponentBase
     private HashSet<int> expandedTypes = new HashSet<int>();
     private HashSet<int> expandedOptions = new HashSet<int>();
 
+    private string activeTab = "types";
+
     private List<EntreeDto> Entrees { get; set; } = new List<EntreeDto>();
     private List<SideDto> Sides { get; set; } = new List<SideDto>();
 

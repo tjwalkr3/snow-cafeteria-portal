@@ -10,7 +10,7 @@ const int keycloakPort = 8080;
 const string keycloakHost = "keycloak";
 const string keycloakRealm = "AppRealm";
 
-var postgres = builder.AddContainer("postgres", "postgres", "17-trixie")
+var postgres = builder.AddContainer("postgres", "postgres", "18-alpine")
     .WithEnvironment("POSTGRES_PASSWORD", postgresPassword)
     .WithEnvironment("POSTGRES_USER", postgresUser)
     .WithEnvironment("POSTGRES_DB", postgresDb)
@@ -18,12 +18,11 @@ var postgres = builder.AddContainer("postgres", "postgres", "17-trixie")
     .WithEndpoint(port: postgresPort, targetPort: postgresPort, name: "postgres")
     .WithLifetime(ContainerLifetime.Session);
 
-builder.AddContainer(keycloakHost, "keycloak/keycloak", "26.0")
+builder.AddContainer(keycloakHost, "keycloak/keycloak", "26.5")
     .WithBindMount(realmPath, "/opt/keycloak/data/import/AppRealm.json")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", "password123")
     .WithEnvironment("KC_HOSTNAME_STRICT", "false")
-    .WithEnvironment("KC_HOSTNAME_STRICT_HTTPS", "false")
     .WithHttpEndpoint(port: keycloakPort, targetPort: keycloakPort, name: "http")
     .WithArgs("start-dev", "--import-realm")
     .WithLifetime(ContainerLifetime.Session);
