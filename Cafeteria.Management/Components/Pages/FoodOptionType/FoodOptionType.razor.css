@@ -1,0 +1,46 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.type-card {
+    transition: all 0.2s ease;
+}
+
+.type-card:hover {
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.type-name {
+    color: #333;
+}
+
+.type-price {
+    color: #333;
+}
+
+.option-card {
+    transition: all 0.2s ease;
+}
+
+.option-card:hover {
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.option-name {
+    color: #333;
+}
+
+.detail-label {
+    letter-spacing: 0.5px;
+}
+
+.stock-status.in-stock {
+    color: #28a745;
+}
+
+.stock-status.out-of-stock {
+    color: #dc3545;
+}

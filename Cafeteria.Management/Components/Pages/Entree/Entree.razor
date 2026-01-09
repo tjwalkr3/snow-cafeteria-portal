@@ -1,50 +1,72 @@
 @page "/entrees"
 @rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
 @using Cafeteria.Management.Components.Shared
+@using Cafeteria.Management.Components.Pages.Entree
 
 <PageTitle>Entrees</PageTitle>
 
-<h1>Entrees</h1>
+<div class="container px-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title fw-bold mb-0">Entrees</h1>
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="HandleCreateClick">
+            <i class="bi bi-plus-circle me-2"></i>Add Entree
+        </button>
+    </div>
 
-<button type="button" @onclick="HandleCreateClick">Add Entree</button>
-
-@if (ViewModel.Entrees.Any())
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Station ID</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>In-Stock</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (ViewModel.Entrees.Any())
+    {
+        <div class="row g-4 mb-4">
             @foreach (var entree in ViewModel.Entrees)
             {
-                <tr @key="entree.Id">
-                    <td>@entree.EntreeName</td>
-                    <td>@entree.StationId</td>
-                    <td>@entree.EntreePrice</td>
-                    <td>@entree.EntreeDescription</td>
-                    <td>
-                        <input type="checkbox" checked="@entree.InStock" @onchange="@(e => ViewModel.ToggleStockStatus(entree.Id, (bool)e.Value!))" />
-                    </td>
-                    <td>
-                        <button type="button" @onclick="() => HandleEditClick(entree.Id)">Edit</button>
-                        <button type="button" @onclick="() => HandleDeleteClick(entree.Id)">Delete</button>
-                    </td>
-                </tr>
+                <div class="col-12 col-md-6 col-lg-4" @key="entree.Id">
+                    <div class="entree-card card h-100 border-1 rounded-3 shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                                <div class="flex-grow-1">
+                                    <h5 class="entree-name fw-semibold mb-2">@entree.EntreeName</h5>
+                                    <p class="entree-description text-muted small mb-0">@entree.EntreeDescription</p>
+                                </div>
+                                <div class="entree-price ms-3 fs-4 fw-bold text-nowrap">$@entree.EntreePrice.ToString("F2")</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3 py-2">
+                                <span class="detail-label text-muted text-uppercase small fw-medium">Status:</span>
+                                <div class="stock-toggle d-flex align-items-center gap-2">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           id="stock-@entree.Id"
+                                           checked="@entree.InStock"
+                                           @onchange="@(e => ViewModel.ToggleStockStatus(entree.Id, (bool)e.Value!))" />
+                                    <label class="form-check-label fw-medium mb-0" for="stock-@entree.Id">
+                                        @(entree.InStock ? "In Stock" : "Out of Stock")
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 pt-3 border-top">
+                                <button type="button" class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => HandleEditClick(entree.Id)">
+                                    <i class="bi bi-pencil me-1"></i>Edit
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => HandleDeleteClick(entree.Id)">
+                                    <i class="bi bi-trash me-1"></i>Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No entrees found.</p>
-}
+        </div>
+    }
+    else
+    {
+        <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
+            <i class="bi bi-egg-fried fs-1 mb-3 text-muted d-block"></i>
+            <p class="fs-5 mb-2">No entrees found.</p>
+            <p class="text-muted small mb-0">Click "Add Entree" to create your first entree item.</p>
+        </div>
+    }
+</div>
 
 <CreateOrEditEntree @ref="modalComponent"></CreateOrEditEntree>
 
