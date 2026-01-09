@@ -1,83 +1,143 @@
 @page "/food-option-type"
 @rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
 @using Cafeteria.Management.Components.Shared
 @using Cafeteria.Management.Components.Pages.FoodType
+@using Cafeteria.Management.Components.Pages.FoodOptionType
 
 <PageTitle>Food Options & Types</PageTitle>
 
-<h1>Food Option Types</h1>
+<div class="container px-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title fw-bold mb-0">Food Options & Types</h1>
+    </div>
 
-<button type="button" @onclick="ShowCreateTypeModal">Add Type</button>
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "types" ? "active" : "")" type="button" @onclick="@(() => activeTab = "types")">
+                <i class="bi bi-grid-3x3 me-2"></i>Option Types
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == "options" ? "active" : "")" type="button" @onclick="@(() => activeTab = "options")">
+                <i class="bi bi-menu-button-wide me-2"></i>Food Options
+            </button>
+        </li>
+    </ul>
 
-@if (FoodTypeVM.FoodTypes != null && FoodTypeVM.FoodTypes.Any())
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Min</th>
-                <th>Max</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var foodType in FoodTypeVM.FoodTypes)
+    <div class="tab-content">
+        @if (activeTab == "types")
+        {
+        <div class="tab-pane fade show active" id="types" role="tabpanel">
+            <div class="d-flex justify-content-end mb-4">
+                <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateTypeModal">
+                    <i class="bi bi-plus-circle me-2"></i>Add Type
+                </button>
+            </div>
+
+            @if (FoodTypeVM.FoodTypes != null && FoodTypeVM.FoodTypes.Any())
             {
-                <tr @key="foodType.Id">
-                    <td>@foodType.FoodOptionTypeName</td>
-                    <td>@foodType.FoodOptionPrice</td>
-                    <td>@foodType.NumIncluded</td>
-                    <td>@foodType.MaxAmount</td>
-                    <td>
-                        <button type="button" @onclick="() => ShowEditTypeModal(foodType)">Edit</button>
-                        <button type="button" @onclick="() => ShowDeleteTypeConfirmation(foodType)">Delete</button>
-                    </td>
-                </tr>
+                <div class="row g-4 mb-4">
+                    @foreach (var foodType in FoodTypeVM.FoodTypes)
+                    {
+                        <div class="col-12 col-md-6 col-lg-4" @key="foodType.Id">
+                            <div class="type-card card h-100 border-1 rounded-3 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="mb-3 pb-3 border-bottom">
+                                        <h5 class="type-name fw-semibold mb-2">@foodType.FoodOptionTypeName</h5>
+                                        <div class="type-price fs-5 fw-bold">$@foodType.FoodOptionPrice.ToString("F2")</div>
+                                    </div>
+
+                                    <div class="d-flex flex-column gap-2 mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="detail-label text-muted text-uppercase small fw-medium">Min Included:</span>
+                                            <span class="fw-semibold">@foodType.NumIncluded</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="detail-label text-muted text-uppercase small fw-medium">Max Amount:</span>
+                                            <span class="fw-semibold">@foodType.MaxAmount</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2 pt-3 border-top">
+                                        <button type="button" class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowEditTypeModal(foodType)">
+                                            <i class="bi bi-pencil me-1"></i>Edit
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowDeleteTypeConfirmation(foodType)">
+                                            <i class="bi bi-trash me-1"></i>Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No food option types found.</p>
-}
-
-<hr />
-
-<h1>Food Options</h1>
-
-<button type="button" @onclick="ShowCreateStandaloneOptionModal">Add Food Option</button>
-
-@if (FoodOptionVM.FoodOptions != null && FoodOptionVM.FoodOptions.Any())
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>In Stock</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var option in FoodOptionVM.FoodOptions)
+            else
             {
-                <tr @key="option.Id">
-                    <td>@option.FoodOptionName</td>
-                    <td>@(option.InStock ? "Yes" : "No")</td>
-                    <td>
-                        <button type="button" @onclick="() => ShowEditStandaloneOptionModal(option)">Edit</button>
-                        <button type="button" @onclick="() => ShowDeleteOptionConfirmation(option)">Delete</button>
-                    </td>
-                </tr>
+                <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
+                    <i class="bi bi-grid-3x3 fs-1 mb-3 text-muted d-block"></i>
+                    <p class="fs-5 mb-2">No food option types found.</p>
+                    <p class="text-muted small mb-0">Click "Add Type" to create your first type.</p>
+                </div>
             }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No food options found.</p>
-}
+        </div>
+        }
+
+        @if (activeTab == "options")
+        {
+        <div class="tab-pane fade show active" id="options" role="tabpanel">
+            <div class="d-flex justify-content-end mb-4">
+                <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateStandaloneOptionModal">
+                    <i class="bi bi-plus-circle me-2"></i>Add Food Option
+                </button>
+            </div>
+
+            @if (FoodOptionVM.FoodOptions != null && FoodOptionVM.FoodOptions.Any())
+            {
+                <div class="row g-4 mb-4">
+                    @foreach (var option in FoodOptionVM.FoodOptions)
+                    {
+                        <div class="col-12 col-md-6 col-lg-4" @key="option.Id">
+                            <div class="option-card card h-100 border-1 rounded-3 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="mb-3 pb-3 border-bottom">
+                                        <h5 class="option-name fw-semibold mb-2">@option.FoodOptionName</h5>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-3 py-2">
+                                        <span class="detail-label text-muted text-uppercase small fw-medium">Status:</span>
+                                        <span class="fw-semibold stock-status @(option.InStock ? "in-stock" : "out-of-stock")">
+                                            @(option.InStock ? "In Stock" : "Out of Stock")
+                                        </span>
+                                    </div>
+
+                                    <div class="d-flex gap-2 pt-3 border-top">
+                                        <button type="button" class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowEditStandaloneOptionModal(option)">
+                                            <i class="bi bi-pencil me-1"></i>Edit
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowDeleteOptionConfirmation(option)">
+                                            <i class="bi bi-trash me-1"></i>Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
+                    <i class="bi bi-menu-button-wide fs-1 mb-3 text-muted d-block"></i>
+                    <p class="fs-5 mb-2">No food options found.</p>
+                    <p class="text-muted small mb-0">Click "Add Food Option" to create your first option.</p>
+                </div>
+            }
+        </div>
+        }
+    </div>
+</div>
 
 @if (ShowOptionModal)
 {
