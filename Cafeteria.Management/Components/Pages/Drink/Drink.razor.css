@@ -1,0 +1,95 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.add-btn {
+    background-color: #1e366c;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.add-btn:hover:not(:disabled) {
+    background-color: #2d4a8f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.3);
+}
+
+.add-btn:active {
+    transform: translateY(0);
+}
+
+.drink-card {
+    transition: all 0.2s ease;
+}
+
+.drink-card:hover {
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.drink-name {
+    color: #1e366c;
+}
+
+.drink-price {
+    color: #28a745;
+}
+
+.detail-label {
+    letter-spacing: 0.5px;
+}
+
+.stock-toggle input[type="checkbox"] {
+    accent-color: #1e366c;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.stock-toggle input[type="checkbox"]:checked + label {
+    color: #28a745;
+}
+
+.stock-toggle input[type="checkbox"]:not(:checked) + label {
+    color: #dc3545;
+}
+
+.btn-edit {
+    background-color: transparent;
+    border: 1px solid #1e366c;
+    color: #1e366c;
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-edit:hover:not(:disabled) {
+    background-color: #1e366c;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(30, 54, 108, 0.2);
+}
+
+.btn-delete {
+    background-color: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-delete:hover:not(:disabled) {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.2);
+}
