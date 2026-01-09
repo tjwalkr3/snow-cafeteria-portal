@@ -118,7 +118,7 @@ spec:
     spec:
       containers:
       - name: cafeteria-keycloak-container
-        image: keycloak/keycloak:26.4
+        image: keycloak/keycloak:26.5
         args:
           - "start-dev"
           - "--import-realm"
@@ -134,9 +134,9 @@ spec:
         - name: KC_HOSTNAME_ADMIN_URL
           value: "https://auth.dragonbytes.org"
         - name: KC_HOSTNAME_STRICT
-          value: "true"
-        - name: KC_HOSTNAME_STRICT_HTTPS
-          value: "true"
+          value: "false"
+        - name: KC_PROXY_HEADERS
+          value: "xforwarded"
         - name: KC_PROXY
           value: "edge"
         - name: KC_PROXY_HEADERS

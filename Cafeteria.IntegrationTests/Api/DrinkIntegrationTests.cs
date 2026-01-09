@@ -20,8 +20,7 @@ public class DrinkIntegrationTests : IAsyncLifetime
 
     public DrinkIntegrationTests()
     {
-        _postgresContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:17-alpine")
+        _postgresContainer = new PostgreSqlBuilder("postgres:18-alpine")
             .WithDatabase("cafeteria")
             .WithUsername("cafeteria_admin")
             .WithPassword("SnowCafe")
