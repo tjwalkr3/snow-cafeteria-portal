@@ -14,10 +14,43 @@
         </button>
     </div>
 
-    @if (ViewModel.Entrees.Any())
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-2">
+            <label class="form-label mb-0 me-2 text-nowrap fw-medium">Location:</label>
+            <div class="d-flex align-items-center">
+                <select class="form-select" @onchange="OnLocationChanged" value="@selectedLocationId">
+                    <option value="">All Locations</option>
+                    @foreach (var location in locations)
+                    {
+                        <option value="@location.Id">@location.LocationName</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-12 col-md-2">
+            <label class="form-label mb-0 me-2 text-nowrap fw-medium">Station:</label>
+            <div class="d-flex align-items-center">
+                <select class="form-select" @onchange="OnStationChanged" value="@selectedStationId">
+                    <option value="">All Stations</option>
+                    @foreach (var station in filteredStations)
+                    {
+                        <option value="@station.Id">@station.StationName</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <label class="form-label mb-0 me-2 text-nowrap fw-medium">Search:</label>
+            <div class="d-flex align-items-center">
+                <input type="text" class="form-control" placeholder="Search entrees..." @oninput="OnSearchChanged" value="@searchText" />
+            </div>
+        </div>
+    </div>
+
+    @if (FilteredEntrees.Any())
     {
         <div class="row g-4 mb-4">
-            @foreach (var entree in ViewModel.Entrees)
+            @foreach (var entree in FilteredEntrees)
             {
                 <div class="col-12 col-md-6 col-lg-4" @key="entree.Id">
                     <div class="entree-card card h-100 border-1 rounded-3 shadow-sm">
