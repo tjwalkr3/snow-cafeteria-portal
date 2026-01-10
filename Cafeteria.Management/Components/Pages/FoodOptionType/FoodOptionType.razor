@@ -8,11 +8,11 @@
 <PageTitle>Food Options & Types</PageTitle>
 
 <div class="px-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
         <h1 class="page-title fw-bold mb-0">Food Options & Types</h1>
     </div>
 
-    <ul class="nav nav-tabs mb-4" role="tablist">
+    <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link @(activeTab == "types" ? "active" : "")" type="button" @onclick="@(() => activeTab = "types")">
                 <i class="bi bi-grid-3x3 me-2"></i>Option Types
@@ -29,16 +29,24 @@
         @if (activeTab == "types")
         {
         <div class="tab-pane fade show active" id="types" role="tabpanel">
-            <div class="d-flex justify-content-end mb-4">
-                <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateTypeModal">
-                    <i class="bi bi-plus-circle me-2"></i>Add Type
-                </button>
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-md-8">
+                        <label class="form-label mb-0 me-2 text-nowrap fw-medium mt-4">Search:</label>
+                    <div class="d-flex align-items-center">
+                        <input type="text" class="form-control" placeholder="Search option types..." @bind="FilterText" @bind:event="oninput" />
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 d-flex justify-content-end align-items-end">
+                    <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateTypeModal">
+                        <i class="bi bi-plus-circle me-2"></i>Add Type
+                    </button>
+                </div>
             </div>
 
-            @if (FoodTypeVM.FoodTypes != null && FoodTypeVM.FoodTypes.Any())
+            @if (FilteredFoodTypes != null && FilteredFoodTypes.Any())
             {
                 <div class="row g-4 mb-4">
-                    @foreach (var foodType in FoodTypeVM.FoodTypes)
+                    @foreach (var foodType in FilteredFoodTypes)
                     {
                         <div class="col-12 col-md-6 col-lg-4" @key="foodType.Id">
                             <div class="type-card card h-100 border-1 rounded-3 shadow-sm">
@@ -87,16 +95,24 @@
         @if (activeTab == "options")
         {
         <div class="tab-pane fade show active" id="options" role="tabpanel">
-            <div class="d-flex justify-content-end mb-4">
-                <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateStandaloneOptionModal">
-                    <i class="bi bi-plus-circle me-2"></i>Add Food Option
-                </button>
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-md-8">
+                    <div class="d-flex align-items-center">
+                        <label class="form-label mb-0 me-2 text-nowrap fw-medium">Search:</label>
+                        <input type="text" class="form-control" placeholder="Search food options..." @bind="OptionFilterText" @bind:event="oninput" />
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 d-flex justify-content-end align-items-center">
+                    <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateStandaloneOptionModal">
+                        <i class="bi bi-plus-circle me-2"></i>Add Food Option
+                    </button>
+                </div>
             </div>
 
-            @if (FoodOptionVM.FoodOptions != null && FoodOptionVM.FoodOptions.Any())
+            @if (FilteredFoodOptions != null && FilteredFoodOptions.Any())
             {
                 <div class="row g-4 mb-4">
-                    @foreach (var option in FoodOptionVM.FoodOptions)
+                    @foreach (var option in FilteredFoodOptions)
                     {
                         <div class="col-12 col-md-6 col-lg-4" @key="option.Id">
                             <div class="option-card card h-100 border-1 rounded-3 shadow-sm">

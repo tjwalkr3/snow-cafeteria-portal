@@ -7,17 +7,30 @@
 <PageTitle>Drinks</PageTitle>
 
 <div class="px-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-center align-items-center">
         <h1 class="page-title fw-bold mb-0">Drinks</h1>
-        <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="HandleCreateClick">
-            <i class="bi bi-plus-circle me-2"></i>Add Drink
-        </button>
     </div>
 
-    @if (ViewModel.Drinks.Any())
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-10">
+            <label class="form-label mb-0 me-2 text-nowrap fw-medium">Search:</label>
+            <div class="d-flex align-items-center">
+                <input type="text" class="form-control" placeholder="Search drinks..." @oninput="OnSearchChanged" value="@searchText" />
+            </div>
+        </div>
+        <div class="col-12 col-md-2">
+            <div class="d-flex justify-content-end align-items-center mt-4">
+                <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="HandleCreateClick">
+                    <i class="bi bi-plus-circle me-2"></i>Add Drink
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (FilteredDrinks.Any())
     {
         <div class="row g-4 mb-4">
-            @foreach (var drink in ViewModel.Drinks)
+            @foreach (var drink in FilteredDrinks)
             {
                 <div class="col-12 col-md-6 col-lg-4" @key="drink.Id">
                     <div class="drink-card card h-100 border-1 rounded-3 shadow-sm">

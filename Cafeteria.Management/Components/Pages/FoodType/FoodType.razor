@@ -32,9 +32,18 @@
             </div>
         </div>
 
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="d-flex align-items-center">
+                    <label class="form-label mb-0 me-2 text-nowrap fw-medium">Search:</label>
+                    <input type="text" class="form-control" placeholder="Search food types..." @oninput="OnSearchChanged" value="@searchText" />
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12">
-                @if (FoodTypeVM.FoodTypes.Count == 0)
+                @if (FilteredFoodTypes.Count == 0)
                 {
                     <div class="alert alert-info">
                         No food types found. Click "Add New Food Type" to create one.
@@ -54,7 +63,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var foodType in FoodTypeVM.FoodTypes)
+                                @foreach (var foodType in FilteredFoodTypes)
                                 {
                                     <tr>
                                         <td>@foodType.FoodOptionTypeName</td>
