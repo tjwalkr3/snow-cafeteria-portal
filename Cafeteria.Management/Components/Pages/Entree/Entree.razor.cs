@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Components.Shared;
+using Cafeteria.Management.Services;
+using Cafeteria.Shared.DTOs;
 using static Cafeteria.Management.Components.Shared.Toast;
 
 namespace Cafeteria.Management.Components.Pages.Entree;
@@ -8,6 +10,9 @@ public partial class Entree : ComponentBase
 {
     [Inject]
     public IEntreeVM ViewModel { get; set; } = default!;
+
+    [Inject]
+    public IStationService StationService { get; set; } = default!;
 
     private CreateOrEditEntree? modalComponent;
     private bool ShowDeleteModal { get; set; } = false;
@@ -18,9 +23,30 @@ public partial class Entree : ComponentBase
     private string toastMessage = string.Empty;
     private ToastType toastType = ToastType.Success;
 
+    private Dictionary<int, string> stationNames = new();
+
     protected override async Task OnInitializedAsync()
     {
+        await LoadStations();
         await ViewModel.LoadEntrees();
+    }
+
+    private async Task LoadStations()
+    {
+        try
+        {
+            var stations = await StationService.GetAllStations();
+            stationNames = stations.ToDictionary(s => s.Id, s => s.StationName);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading stations: {ex.Message}");
+        }
+    }
+
+    private string GetStationName(int stationId)
+    {
+        return stationNames.TryGetValue(stationId, out var name) ? name : "Unknown Station";
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
