@@ -27,19 +27,19 @@ jobs:
     - name: Run the unit tests.
       run: dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj --no-build
 
-  # integration_test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Check out the code. 
-  #     uses: actions/checkout@v4
-  #
-  #   - name: Setup .NET 10
-  #     uses: actions/setup-dotnet@v4
-  #     with:
-  #       dotnet-version: '10.0.x'
-  #
-  #   - name: Run the integration tests.
-  #     run: dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
+  integration_test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the code. 
+      uses: actions/checkout@v4
+  
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+  
+    - name: Run the integration tests.
+      run: dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
 
   build_and_push_api_to_dockerhub:
     needs: [build_lint_unit_test]
