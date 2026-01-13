@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_lint_unit_test:
+  build_lint_test:
     runs-on: ubuntu-slim
     steps:
     - name: Check out the code. 
@@ -27,22 +27,11 @@ jobs:
     - name: Run the unit tests.
       run: dotnet test Cafeteria.UnitTests/Cafeteria.UnitTests.csproj --no-build
 
-  integration_test:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Check out the code. 
-      uses: actions/checkout@v4
-  
-    - name: Setup .NET 10
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
-  
     - name: Run the integration tests.
-      run: dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj
+      run: dotnet test Cafeteria.IntegrationTests/Cafeteria.IntegrationTests.csproj --no-build
 
   build_and_push_api_to_dockerhub:
-    needs: [build_lint_unit_test]
+    needs: [build_lint_test]
     runs-on: ubuntu-latest
     steps:
     - name: Check out the code
@@ -63,7 +52,7 @@ jobs:
         docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-api:${{ github.run_number }}.${{ github.run_attempt }}
 
   build_and_push_customer_to_dockerhub:
-    needs: [build_lint_unit_test]
+    needs: [build_lint_test]
     runs-on: ubuntu-latest
     steps:
     - name: Check out the code
@@ -84,7 +73,7 @@ jobs:
         docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-customer:${{ github.run_number }}.${{ github.run_attempt }}
 
   build_and_push_management_to_dockerhub:
-    needs: [build_lint_unit_test]
+    needs: [build_lint_test]
     runs-on: ubuntu-latest
     steps:
     - name: Check out the code
