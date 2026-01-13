@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -32,5 +31,4 @@
     <ProjectReference Include="..\Cafeteria.Api\Cafeteria.Api.csproj" />
     <ProjectReference Include="..\Cafeteria.Shared\Cafeteria.Shared.csproj" />
   </ItemGroup>
-
 </Project>

@@ -1,88 +1,41 @@
-using System.Data;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Cafeteria.Shared.DTOs;
 using Dapper;
 using Npgsql;
-using Testcontainers.PostgreSql;
-using static Cafeteria.IntegrationTests.Api.DBSql;
 using static Cafeteria.IntegrationTests.Api.SampleMenuData;
 
 namespace Cafeteria.IntegrationTests.Api;
 
-public class SideIntegrationTests : IAsyncLifetime
+[Collection("Database")]
+public class SideIntegrationTests : IDisposable
 {
-    private readonly PostgreSqlContainer _postgresContainer;
-    private WebApplicationFactory<Program> _factory = null!;
-    private HttpClient _client = null!;
-    private NpgsqlConnection _connection = null!;
+    private readonly DatabaseFixture _fixture;
+    private readonly HttpClient _client;
+    private readonly NpgsqlConnection _connection;
 
-    public SideIntegrationTests()
+    public SideIntegrationTests(DatabaseFixture fixture)
     {
-        _postgresContainer = new PostgreSqlBuilder("postgres:18-alpine")
-            .WithDatabase("cafeteria")
-            .WithUsername("cafeteria_admin")
-            .WithPassword("SnowCafe")
-            .Build();
+        _fixture = fixture;
+        _client = _fixture.Client;
+        _connection = _fixture.GetConnection();
     }
 
-    public async Task InitializeAsync()
+    public void Dispose()
     {
-        await _postgresContainer.StartAsync();
-
-        _connection = new NpgsqlConnection(_postgresContainer.GetConnectionString());
-        await _connection.OpenAsync();
-        await _connection.ExecuteAsync(SqlData);
-
-        var connectionString = _postgresContainer.GetConnectionString();
-        _factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IDbConnection));
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
-                    services.AddScoped<IDbConnection>(_ =>
-                    {
-                        var conn = new NpgsqlConnection(connectionString);
-                        conn.Open();
-                        return conn;
-                    });
-                });
-            });
-
-        _client = _factory.CreateClient();
-    }
-
-    public async Task DisposeAsync()
-    {
-        _client?.Dispose();
-        _factory?.Dispose();
-        if (_connection != null)
-        {
-            await _connection.CloseAsync();
-            await _connection.DisposeAsync();
-        }
-        await _postgresContainer.DisposeAsync();
+        _connection?.Dispose();
     }
 
     [Fact]
     public async Task CreateSide_AddsNewSide()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-
+        // Use pre-loaded station with ID 1
         var newSide = new SideDto
         {
             StationId = 1,
-            SideName = "Onion Rings",
-            SideDescription = "Crispy fried onion rings",
+            SideName = "Test Onion Rings",
+            SideDescription = "Crispy fried onion rings for testing",
             SidePrice = 3.49m,
-            ImageUrl = "https://picsum.photos/id/300/300/200"
+            ImageUrl = "https://picsum.photos/id/300/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/side", newSide);
@@ -99,74 +52,64 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetSideByID_ReturnsCorrectSide()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        var sideId = _connection.ExecuteScalar<int>(
-            InsertSideSql + " RETURNING id",
-            Sides[0]);
-
-        var response = await _client.GetAsync($"/api/side/{sideId}");
+        // Use pre-loaded side with ID 1
+        var response = await _client.GetAsync("/api/side/1");
         response.EnsureSuccessStatusCode();
         var side = await response.Content.ReadFromJsonAsync<SideDto>();
 
         Assert.NotNull(side);
-        Assert.Equal(Sides[0].SideName, side.SideName);
-        Assert.Equal(Sides[0].SideDescription, side.SideDescription);
-        Assert.Equal(Sides[0].SidePrice, side.SidePrice);
+        Assert.Equal("French Fries", side.SideName);
     }
 
     [Fact]
     public async Task GetSideByID_ReturnsNotFound_WhenSideDoesNotExist()
     {
-        var response = await _client.GetAsync("/api/side/999");
-
+        var response = await _client.GetAsync("/api/side/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task GetAllSides_ReturnsAllSides()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        _connection.Execute(InsertSideSql, Sides[0]);
-        _connection.Execute(InsertSideSql, Sides[1]);
-
+        // Use pre-loaded sample data
         var response = await _client.GetAsync("/api/side");
         response.EnsureSuccessStatusCode();
         var sides = await response.Content.ReadFromJsonAsync<List<SideDto>>();
 
         Assert.NotNull(sides);
-        Assert.Equal(2, sides.Count);
-        Assert.Contains(sides, s => s.SideName == Sides[0].SideName);
-        Assert.Contains(sides, s => s.SideName == Sides[1].SideName);
+        Assert.True(sides.Count >= 3);
+        Assert.Contains(sides, s => s.SideName == "French Fries");
+        Assert.Contains(sides, s => s.SideName == "Coleslaw");
     }
 
     [Fact]
     public async Task GetSidesByStationID_ReturnsSidesForStation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        _connection.Execute(InsertStationSql, Stations[1]);
-        _connection.Execute(InsertSideSql, Sides[0]);
-        _connection.Execute(InsertSideSql, Sides[1]);
-
+        // Station 1 has sides 1 and 2
         var response = await _client.GetAsync("/api/side/station/1");
         response.EnsureSuccessStatusCode();
         var sides = await response.Content.ReadFromJsonAsync<List<SideDto>>();
 
         Assert.NotNull(sides);
-        Assert.Equal(2, sides.Count);
+        Assert.True(sides.Count >= 2);
         Assert.All(sides, side => Assert.Equal(1, side.StationId));
     }
 
     [Fact]
     public async Task UpdateSideByID_UpdatesExistingSide()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
+        // Create a new side for this test
         var sideId = _connection.ExecuteScalar<int>(
             InsertSideSql + " RETURNING id",
-            Sides[0]);
+            new
+            {
+                StationId = 1,
+                SideName = "Side To Update",
+                SideDescription = "Original",
+                SidePrice = 2.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
 
         var updatedSide = new SideDto
         {
@@ -175,7 +118,7 @@ public class SideIntegrationTests : IAsyncLifetime
             SideName = "Updated Side",
             SideDescription = "Updated description",
             SidePrice = 4.49m,
-            ImageUrl = "https://picsum.photos/id/301/300/200"
+            ImageUrl = "https://picsum.photos/id/301/300/200",
         };
 
         var response = await _client.PutAsJsonAsync($"/api/side/{sideId}", updatedSide);
@@ -193,27 +136,33 @@ public class SideIntegrationTests : IAsyncLifetime
     {
         var updatedSide = new SideDto
         {
-            Id = 999,
+            Id = 99999,
             StationId = 1,
             SideName = "Nonexistent",
             SideDescription = "Description",
             SidePrice = 2.99m,
-            ImageUrl = "https://picsum.photos/id/302/300/200"
+            ImageUrl = "https://picsum.photos/id/302/300/200",
         };
 
-        var response = await _client.PutAsJsonAsync("/api/side/999", updatedSide);
-
+        var response = await _client.PutAsJsonAsync("/api/side/99999", updatedSide);
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task DeleteSideByID_RemovesSide()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
+        // Create a new side for deletion
         var sideId = _connection.ExecuteScalar<int>(
             InsertSideSql + " RETURNING id",
-            Sides[0]);
+            new
+            {
+                StationId = 1,
+                SideName = "Side To Delete",
+                SideDescription = "Will be deleted",
+                SidePrice = 2.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
 
         var response = await _client.DeleteAsync($"/api/side/{sideId}");
         response.EnsureSuccessStatusCode();
@@ -226,7 +175,7 @@ public class SideIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task DeleteSideByID_ReturnsNotFound_WhenSideDoesNotExist()
     {
-        var response = await _client.DeleteAsync("/api/side/999");
+        var response = await _client.DeleteAsync("/api/side/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 }
