@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_lint_test:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     steps:
     - name: Check out the code. 
       uses: actions/checkout@v4
@@ -112,7 +112,7 @@ jobs:
   #       done
 
   notify_discord:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     needs: [build_and_push_api_to_dockerhub, build_and_push_customer_to_dockerhub, build_and_push_management_to_dockerhub]
     if: always()
     steps:
