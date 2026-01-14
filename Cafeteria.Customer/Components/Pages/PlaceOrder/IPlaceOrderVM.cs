@@ -9,4 +9,5 @@ public interface IPlaceOrderVM
     Task InitializeLocations();
     LocationDto? GetLocationById(int locationId);
     bool ErrorOccurred();
+    List<SwipeGroup> GroupItemsIntoSwipes(BrowserOrder order);
 }

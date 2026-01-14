@@ -4,11 +4,13 @@
             <a href="/" class="brand-text fs-2 fw-semibold text-decoration-none">Snow Cafeteria</a>
         </div>
         <nav class="d-flex align-items-center gap-3">
-            <button class="btn btn-link text-white position-relative p-1 text-decoration-none" @onclick="NavigateToCart">
+            <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
+                @onclick="NavigateToCart">
                 <span class="bi bi-cart3 fs-5"></span>
                 @if (cartItemCount > 0)
                 {
-                    <span class="position-absolute translate-middle badge rounded-pill bg-danger" style="top: 5px; left: 85%;">
+                    <span class="position-absolute translate-middle badge rounded-pill bg-danger"
+                        style="top: 5px; left: 85%;">
                         @cartItemCount
                     </span>
                 }
@@ -26,6 +28,7 @@
 @rendermode InteractiveServer
 @inject ICartService CartService
 @inject NavigationManager NavigationManager
+@inject CartNotificationService CartNotification
 
 @code {
     private int cartItemCount = 0;
@@ -34,9 +37,16 @@
     {
         await LoadCartCount();
         NavigationManager.LocationChanged += OnLocationChanged;
+        CartNotification.OnCartChanged += OnCartChanged;
     }
 
     private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        await LoadCartCount();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnCartChanged()
     {
         await LoadCartCount();
         await InvokeAsync(StateHasChanged);
@@ -47,7 +57,15 @@
         var order = await CartService.GetOrder("order");
         if (order != null)
         {
-            cartItemCount = order.Entrees.Count + order.Sides.Count + order.Drinks.Count;
+            if (!order.IsCardOrder)
+            {
+                cartItemCount = Math.Min(order.Entrees.Count,
+                Math.Min(order.Sides.Count, order.Drinks.Count));
+            }
+            else
+            {
+                cartItemCount = order.Entrees.Count + order.Sides.Count + order.Drinks.Count;
+            }
         }
         else
         {
@@ -68,5 +86,6 @@
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+        CartNotification.OnCartChanged -= OnCartChanged;
     }
 }

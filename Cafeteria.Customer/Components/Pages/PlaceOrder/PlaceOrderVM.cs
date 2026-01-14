@@ -67,4 +67,53 @@ public class PlaceOrderVM : IPlaceOrderVM
     {
         return locationParameterInvalid || paymentParameterMissing || locationFetchFailed;
     }
+
+    public List<SwipeGroup> GroupItemsIntoSwipes(BrowserOrder order)
+    {
+        if (order == null || order.IsCardOrder)
+            return new List<SwipeGroup>();
+
+        var groupMap = new Dictionary<string, SwipeGroup>();
+
+        int swipeCount = Math.Min(order.Entrees.Count,
+                         Math.Min(order.Sides.Count, order.Drinks.Count));
+
+        for (int i = 0; i < swipeCount; i++)
+        {
+            var swipe = new SwipeGroup
+            {
+                Entree = order.Entrees[i],
+                Side = order.Sides[i],
+                Drink = order.Drinks[i],
+                Quantity = 1
+            };
+
+            string key = swipe.GroupKey;
+            if (groupMap.ContainsKey(key))
+                groupMap[key].Quantity++;
+            else
+                groupMap[key] = swipe;
+        }
+
+        return groupMap.Values.ToList();
+    }
+}
+
+public class SwipeGroup
+{
+    public OrderEntreeItem Entree { get; set; } = new();
+    public OrderSideItem Side { get; set; } = new();
+    public DrinkDto Drink { get; set; } = new();
+    public int Quantity { get; set; } = 1;
+
+    public string GroupKey =>
+        $"{Entree?.Entree?.Id ?? 0}-{GetOptionsHash(Entree?.SelectedOptions)}-" +
+        $"{Side?.Side?.Id ?? 0}-{GetOptionsHash(Side?.SelectedOptions)}-{Drink?.Id ?? 0}";
+
+    private string GetOptionsHash(List<SelectedFoodOption>? options)
+    {
+        if (options == null || options.Count == 0)
+            return "none";
+        return string.Join(",", options.OrderBy(o => o.Option.Id).Select(o => o.Option.Id));
+    }
 }

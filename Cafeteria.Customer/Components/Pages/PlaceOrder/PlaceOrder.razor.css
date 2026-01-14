@@ -261,3 +261,35 @@
     text-align: center;
     padding: 60px 20px;
 }
+
+.swipe-item {
+    border-left: 4px solid #ffc107;
+}
+
+.item-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.option-badge {
+    display: inline-block;
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #dee2e6;
+}
+
+.qty-btn:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.qty-btn:disabled:hover {
+    background-color: #e9ecef;
+}

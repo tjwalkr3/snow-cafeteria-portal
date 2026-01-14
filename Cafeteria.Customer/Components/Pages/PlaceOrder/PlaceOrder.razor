@@ -5,11 +5,7 @@
 
 <PageTitle>Review Your Order</PageTitle>
 
-<ConfirmationToast
-    IsVisible="@_showToast"
-    Title="Order Placed!"
-    Message="@_toastMessage"
-    OnHidden="@OnToastHidden" />
+<ConfirmationToast IsVisible="@_showToast" Title="Order Placed!" Message="@_toastMessage" OnHidden="@OnToastHidden" />
 
 @if (!IsInitialized || _isLoading)
 {
@@ -25,8 +21,8 @@ else if (Order == null || (!Order.Entrees.Any() && !Order.Sides.Any() && !Order.
 {
     <div class="container px-3 py-4">
         <div class="empty-state">
-            <h4>Error loading order</h4>
-            <p>Your order is empty. Please build an order first.</p>
+            <h4>Your Order is Empty</h4>
+            <p>You haven't added any items yet. Start building your order!</p>
             <a href="@GetStationSelectUrl()" class="btn btn-primary">Start an Order</a>
         </div>
     </div>
@@ -49,108 +45,144 @@ else
             <div class="col-lg-8">
                 <div class="items-summary">
                     <div class="items-count">
-                        ITEMS <span>@GetTotalItemCount()</span>
+                        @if (Order.IsCardOrder)
+                        {
+                            <text>ITEMS <span>@GetTotalItemCount()</span></text>
+                        }
+                        else
+                        {
+                            <text>SWIPES <span>@GetTotalItemCount()</span></text>
+                        }
                     </div>
                     <div class="est-time">
                         EST. MINUTES <span>15-20</span>
                     </div>
                 </div>
 
-                @* Entrees *@
-                @foreach (var entreeItem in Order.Entrees)
-        {
-            <div class="order-item">
-                <div class="item-header">
-                    <div class="item-info">
-                        <div class="item-name">@entreeItem.Entree.EntreeName</div>
-                        <div class="item-description">
-                            @if (entreeItem.SelectedOptions.Any())
-                            {
-                                @string.Join(", ", entreeItem.SelectedOptions.Select(o => o.Option.FoodOptionName))
-                            }
-                            else
-                            {
-                                <text>Our classic @entreeItem.Entree.EntreeName.ToLower()</text>
-                            }
+                @if (Order.IsCardOrder)
+                {
+                    @foreach (var entreeItem in Order.Entrees)
+                    {
+                        <div class="order-item">
+                            <div class="item-header">
+                                <div class="item-info">
+                                    <div class="item-name">@entreeItem.Entree.EntreeName</div>
+                                    <div class="item-description">
+                                        @if (entreeItem.SelectedOptions.Any())
+                                        {
+                                            @string.Join(", ", entreeItem.SelectedOptions.Select(o => o.Option.FoodOptionName))
+                                        }
+                                        else
+                                        {
+                                            <text>Our classic @entreeItem.Entree.EntreeName.ToLower()</text>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="item-price">$@GetItemPrice(entreeItem).ToString("F2")</div>
+                            </div>
+
+                            <div class="item-controls">
+                                <div class="quantity-controls">
+                                    <button class="qty-btn" disabled>−</button>
+                                    <span class="qty-display">Qty: 1</span>
+                                    <button class="qty-btn" disabled>+</button>
+                                </div>
+                                <button class="remove-btn" disabled>Remove</button>
+                            </div>
                         </div>
-                    </div>
-                    @if (Order.IsCardOrder)
-                    {
-                        <div class="item-price">$@GetItemPrice(entreeItem).ToString("F2")</div>
                     }
-                </div>
 
-                <div class="item-controls">
-                    <div class="quantity-controls">
-                        <button class="qty-btn" disabled>−</button>
-                        <span class="qty-display">Qty: 1</span>
-                        <button class="qty-btn" disabled>+</button>
-                    </div>
-                    <button class="remove-btn" disabled>Remove</button>
-                </div>
-            </div>
-        }
+                    @foreach (var sideItem in Order.Sides)
+                    {
+                        <div class="order-item">
+                            <div class="item-header">
+                                <div class="item-info">
+                                    <div class="item-name">@sideItem.Side.SideName</div>
+                                    <div class="item-description">
+                                        @if (sideItem.SelectedOptions.Any())
+                                        {
+                                            @string.Join(", ", sideItem.SelectedOptions.Select(o => o.Option.FoodOptionName))
+                                        }
+                                        else
+                                        {
+                                            <text>Fresh @sideItem.Side.SideName.ToLower()</text>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="item-price">$@GetItemPrice(sideItem).ToString("F2")</div>
+                            </div>
 
-        @* Sides *@
-        @foreach (var sideItem in Order.Sides)
-        {
-            <div class="order-item">
-                <div class="item-header">
-                    <div class="item-info">
-                        <div class="item-name">@sideItem.Side.SideName</div>
-                        <div class="item-description">
-                            @if (sideItem.SelectedOptions.Any())
-                            {
-                                @string.Join(", ", sideItem.SelectedOptions.Select(o => o.Option.FoodOptionName))
-                            }
-                            else
-                            {
-                                <text>Fresh @sideItem.Side.SideName.ToLower()</text>
-                            }
+                            <div class="item-controls">
+                                <div class="quantity-controls">
+                                    <button class="qty-btn" disabled>−</button>
+                                    <span class="qty-display">Qty: 1</span>
+                                    <button class="qty-btn" disabled>+</button>
+                                </div>
+                                <button class="remove-btn" disabled>Remove</button>
+                            </div>
                         </div>
-                    </div>
-                    @if (Order.IsCardOrder)
-                    {
-                        <div class="item-price">$@GetItemPrice(sideItem).ToString("F2")</div>
                     }
-                </div>
 
-                <div class="item-controls">
-                    <div class="quantity-controls">
-                        <button class="qty-btn" disabled>−</button>
-                        <span class="qty-display">Qty: 1</span>
-                        <button class="qty-btn" disabled>+</button>
-                    </div>
-                    <button class="remove-btn" disabled>Remove</button>
-                </div>
-            </div>
-        }
-
-        @* Drinks *@
-        @foreach (var drink in Order.Drinks)
-        {
-            <div class="order-item">
-                <div class="item-header">
-                    <div class="item-info">
-                        <div class="item-name">@drink.DrinkName</div>
-                        <div class="item-description">Refreshing beverage</div>
-                    </div>
-                    @if (Order.IsCardOrder)
+                    @foreach (var drink in Order.Drinks)
                     {
-                        <div class="item-price">$@drink.DrinkPrice.ToString("F2")</div>
-                    }
-                </div>
+                        <div class="order-item">
+                            <div class="item-header">
+                                <div class="item-info">
+                                    <div class="item-name">@drink.DrinkName</div>
+                                    <div class="item-description">Refreshing beverage</div>
+                                </div>
+                                <div class="item-price">$@drink.DrinkPrice.ToString("F2")</div>
+                            </div>
 
-                <div class="item-controls">
-                    <div class="quantity-controls">
-                        <button class="qty-btn" disabled>−</button>
-                        <span class="qty-display">Qty: 1</span>
-                        <button class="qty-btn" disabled>+</button>
-                    </div>
-                    <button class="remove-btn" disabled>Remove</button>
-                </div>
-            </div>
-        }
+                            <div class="item-controls">
+                                <div class="quantity-controls">
+                                    <button class="qty-btn" disabled>−</button>
+                                    <span class="qty-display">Qty: 1</span>
+                                    <button class="qty-btn" disabled>+</button>
+                                </div>
+                                <button class="remove-btn" disabled>Remove</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    @foreach (var swipe in SwipeGroups)
+                    {
+                        <div class="order-item swipe-item">
+                            <div class="item-header">
+                                <div class="item-info">
+                                    <div class="item-name">@swipe.Entree.Entree.EntreeName</div>
+                                    <div class="item-description">
+                                        @swipe.Side.Side.SideName • @swipe.Drink.DrinkName
+                                    </div>
+                                    @if (swipe.Entree.SelectedOptions.Any() || swipe.Side.SelectedOptions.Any())
+                                    {
+                                        <div class="item-options mt-2">
+                                            @foreach (var opt in swipe.Entree.SelectedOptions)
+                                            {
+                                                <span class="option-badge">@opt.Option.FoodOptionName</span>
+                                            }
+                                            @foreach (var opt in swipe.Side.SelectedOptions)
+                                            {
+                                                <span class="option-badge">@opt.Option.FoodOptionName</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="item-controls">
+                                <div class="quantity-controls">
+                                    <button class="qty-btn" @onclick="() => DecreaseSwipeQuantity(swipe)">−</button>
+                                    <span class="qty-display">Qty: @swipe.Quantity</span>
+                                    <button class="qty-btn" @onclick="() => IncreaseSwipeQuantity(swipe)">+</button>
+                                </div>
+                                <button class="remove-btn" @onclick="() => RemoveSwipeGroup(swipe)">Remove</button>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
 
             <div class="col-lg-4">
@@ -175,12 +207,12 @@ else
                     {
                         <div class="summary-row">
                             <span class="summary-label">Subtotal:</span>
-                            <span class="summary-value">1 Swipe</span>
+                            <span class="summary-value">@GetTotalSwipeCount() Swipe@(GetTotalSwipeCount() > 1 ? "s" : "")</span>
                         </div>
                         <hr class="summary-divider" />
                         <div class="total-row">
                             <span class="total-label">Total:</span>
-                            <span class="total-value">1 Swipe</span>
+                            <span class="total-value">@GetTotalSwipeCount() Swipe@(GetTotalSwipeCount() > 1 ? "s" : "")</span>
                         </div>
                     }
 
