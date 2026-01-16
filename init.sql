@@ -164,6 +164,7 @@ CREATE TABLE
         sale_swipe_id int4, -- fk to sale_swipe if paid by swipe nullable   
         swipe_cost int4, 
         card_cost decimal,
+        special boolean NOT NULL DEFAULT false,
         PRIMARY KEY (id),
         FOREIGN KEY (order_id) REFERENCES cafeteria.order (id),
         FOREIGN KEY (station_id) REFERENCES cafeteria.station (id),
