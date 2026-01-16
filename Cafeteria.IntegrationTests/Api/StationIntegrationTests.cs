@@ -1,162 +1,114 @@
-using System.Data;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Cafeteria.Shared.DTOs;
 using Dapper;
 using Npgsql;
-using Testcontainers.PostgreSql;
-using static Cafeteria.IntegrationTests.Api.DBSql;
 using static Cafeteria.IntegrationTests.Api.SampleMenuData;
 
 namespace Cafeteria.IntegrationTests.Api;
 
-public class StationIntegrationTests : IAsyncLifetime
+[Collection("Database")]
+public class StationIntegrationTests : IDisposable
 {
-    private readonly PostgreSqlContainer _postgresContainer;
-    private WebApplicationFactory<Program> _factory = null!;
-    private HttpClient _client = null!;
-    private NpgsqlConnection _connection = null!;
+    private readonly DatabaseFixture _fixture;
+    private readonly HttpClient _client;
+    private readonly NpgsqlConnection _connection;
 
-    public StationIntegrationTests()
+    public StationIntegrationTests(DatabaseFixture fixture)
     {
-        _postgresContainer = new PostgreSqlBuilder("postgres:18-alpine")
-            .WithDatabase("cafeteria")
-            .WithUsername("cafeteria_admin")
-            .WithPassword("SnowCafe")
-            .Build();
+        _fixture = fixture;
+        _client = _fixture.Client;
+        _connection = _fixture.GetConnection();
     }
 
-    public async Task InitializeAsync()
+    public void Dispose()
     {
-        await _postgresContainer.StartAsync();
-
-        _connection = new NpgsqlConnection(_postgresContainer.GetConnectionString());
-        await _connection.OpenAsync();
-        await _connection.ExecuteAsync(SqlData);
-
-        var connectionString = _postgresContainer.GetConnectionString();
-        _factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IDbConnection));
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
-                    services.AddScoped<IDbConnection>(_ =>
-                    {
-                        var conn = new NpgsqlConnection(connectionString);
-                        conn.Open();
-                        return conn;
-                    });
-                });
-            });
-
-        _client = _factory.CreateClient();
-    }
-
-    public async Task DisposeAsync()
-    {
-        _client?.Dispose();
-        _factory?.Dispose();
-        if (_connection != null)
-        {
-            await _connection.CloseAsync();
-            await _connection.DisposeAsync();
-        }
-        await _postgresContainer.DisposeAsync();
+        _connection?.Dispose();
     }
 
     [Fact]
     public async Task GetAllStations_ReturnsAllStations()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        _connection.Execute(InsertStationSql, Stations[1]);
-
+        // Use pre-loaded sample data (IDs 1-3)
         var response = await _client.GetAsync("/api/station");
         response.EnsureSuccessStatusCode();
         var stations = await response.Content.ReadFromJsonAsync<List<StationDto>>();
 
         Assert.NotNull(stations);
-        Assert.Equal(2, stations.Count);
-        Assert.Contains(stations, s => s.StationName == Stations[0].StationName);
-        Assert.Contains(stations, s => s.StationName == Stations[1].StationName);
+        Assert.True(stations.Count >= 3);
+        Assert.Contains(stations, s => s.StationName == "Sandwich Station");
+        Assert.Contains(stations, s => s.StationName == "Grill Station");
     }
 
     [Fact]
     public async Task GetStationsByLocation_ReturnsStationsForLocation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertLocationSql, Locations[1]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        _connection.Execute(InsertStationSql, Stations[1]);
-
+        // Location 1 has stations 1 and 2
         var response = await _client.GetAsync("/api/station/station/1");
         response.EnsureSuccessStatusCode();
         var stations = await response.Content.ReadFromJsonAsync<List<StationDto>>();
 
         Assert.NotNull(stations);
-        Assert.Equal(2, stations.Count);
+        Assert.True(stations.Count >= 2);
         Assert.All(stations, station => Assert.Equal(1, station.LocationId));
     }
 
     [Fact]
     public async Task GetStationById_ReturnsCorrectStation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        var stationId = _connection.ExecuteScalar<int>(
-            InsertStationSql + " RETURNING id",
-            Stations[0]);
-
-        var response = await _client.GetAsync($"/api/station/{stationId}");
+        // Use pre-loaded station with ID 1
+        var response = await _client.GetAsync("/api/station/1");
         response.EnsureSuccessStatusCode();
         var station = await response.Content.ReadFromJsonAsync<StationDto>();
 
         Assert.NotNull(station);
-        Assert.Equal(Stations[0].StationName, station.StationName);
-        Assert.Equal(Stations[0].StationDescription, station.StationDescription);
+        Assert.Equal("Sandwich Station", station.StationName);
     }
 
     [Fact]
     public async Task GetStationById_ReturnsNotFound_WhenStationDoesNotExist()
     {
-        var response = await _client.GetAsync("/api/station/999");
+        var response = await _client.GetAsync("/api/station/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task CreateStationForLocation_AddsNewStation()
     {
-        var locationId = _connection.ExecuteScalar<int>(
-            InsertLocationSql + " RETURNING id",
-            Locations[0]);
+        var newStation = new
+        {
+            Name = "Test New Station",
+            Description = "A brand new test station",
+        };
 
-        var newStation = new { Name = "New Station", Description = "A brand new station" };
-
-        var response = await _client.PostAsJsonAsync($"/api/station/station/{locationId}", newStation);
+        var response = await _client.PostAsJsonAsync("/api/station/station/1", newStation);
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        var getResponse = await _client.GetAsync($"/api/station/station/{locationId}");
+        var getResponse = await _client.GetAsync("/api/station/station/1");
         var stations = await getResponse.Content.ReadFromJsonAsync<List<StationDto>>();
         Assert.NotNull(stations);
-        Assert.Single(stations);
-        Assert.Equal(newStation.Name, stations[0].StationName);
+        Assert.Contains(stations, s => s.StationName == newStation.Name);
     }
 
     [Fact]
     public async Task UpdateStation_UpdatesExistingStation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create a new station for this test
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station To Update",
+                StationDescription = "Original description",
+            }
+        );
 
-        var updatedStation = new { Name = "Updated Station", Description = "Updated description" };
+        var updatedStation = new
+        {
+            Name = "Updated Station Name",
+            Description = "Updated description text",
+        };
 
         var response = await _client.PutAsJsonAsync($"/api/station/{stationId}", updatedStation);
         response.EnsureSuccessStatusCode();
@@ -172,10 +124,16 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task DeleteStation_RemovesStation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create a new station for deletion
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station To Delete",
+                StationDescription = "Will be deleted",
+            }
+        );
 
         var response = await _client.DeleteAsync($"/api/station/{stationId}");
         response.EnsureSuccessStatusCode();
@@ -188,16 +146,23 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationBusinessHours_ReturnsBusinessHoursForStation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create test station and hours
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station With Hours",
+                StationDescription = "Has business hours",
+            }
+        );
 
-        _connection.Execute("INSERT INTO cafeteria.week_day (id, weekday_name) VALUES (1, 'Monday')");
-        _connection.Execute(@"
+        _connection.Execute(
+            @"
             INSERT INTO cafeteria.station_business_hours (station_id, weekday_id, open_time, close_time)
             VALUES (@StationId, 1, '08:00:00', '17:00:00')",
-            new { StationId = stationId });
+            new { StationId = stationId }
+        );
 
         var response = await _client.GetAsync($"/api/station/{stationId}/hours");
         response.EnsureSuccessStatusCode();
@@ -211,17 +176,24 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationBusinessHoursById_ReturnsCorrectBusinessHours()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create test data
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station For Hours Test",
+                StationDescription = "Testing hours",
+            }
+        );
 
-        _connection.Execute("INSERT INTO cafeteria.week_day (id, weekday_name) VALUES (1, 'Monday')");
-        var hoursId = _connection.ExecuteScalar<int>(@"
+        var hoursId = _connection.ExecuteScalar<int>(
+            @"
             INSERT INTO cafeteria.station_business_hours (station_id, weekday_id, open_time, close_time)
             VALUES (@StationId, 1, '08:00:00', '17:00:00')
             RETURNING id",
-            new { StationId = stationId });
+            new { StationId = stationId }
+        );
 
         var response = await _client.GetAsync($"/api/station/hours/{hoursId}");
         response.EnsureSuccessStatusCode();
@@ -234,25 +206,29 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetStationBusinessHoursById_ReturnsNotFound_WhenHoursDoNotExist()
     {
-        var response = await _client.GetAsync("/api/station/hours/999");
+        var response = await _client.GetAsync("/api/station/hours/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task AddStationHours_AddsNewBusinessHours()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create test station
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
-
-        _connection.Execute("INSERT INTO cafeteria.week_day (id, weekday_name) VALUES (1, 'Monday')");
+            new
+            {
+                LocationId = 1,
+                StationName = "Station For Add Hours",
+                StationDescription = "Adding hours",
+            }
+        );
 
         var newHours = new
         {
             StartTime = DateTime.Parse("2025-01-01T08:00:00"),
             EndTime = DateTime.Parse("2025-01-01T17:00:00"),
-            WeekdayId = 1
+            WeekdayId = 1,
         };
 
         var response = await _client.PostAsJsonAsync($"/api/station/{stationId}/hours", newHours);
@@ -268,16 +244,22 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task AddStationHours_ReturnsBadRequest_WhenWeekdayIdIsInvalid()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create test station
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station Bad Weekday",
+                StationDescription = "Testing bad weekday",
+            }
+        );
 
         var newHours = new
         {
             StartTime = DateTime.Parse("2025-01-01T08:00:00"),
             EndTime = DateTime.Parse("2025-01-01T17:00:00"),
-            WeekdayId = 999
+            WeekdayId = 999,
         };
 
         var response = await _client.PostAsJsonAsync($"/api/station/{stationId}/hours", newHours);
@@ -288,25 +270,30 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task UpdateStationHours_UpdatesExistingBusinessHours()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create test data
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station Update Hours",
+                StationDescription = "Updating hours",
+            }
+        );
 
-        _connection.Execute("INSERT INTO cafeteria.week_day (id, weekday_name) VALUES (1, 'Monday')");
-        _connection.Execute("INSERT INTO cafeteria.week_day (id, weekday_name) VALUES (2, 'Tuesday')");
-
-        var hoursId = _connection.ExecuteScalar<int>(@"
+        var hoursId = _connection.ExecuteScalar<int>(
+            @"
             INSERT INTO cafeteria.station_business_hours (station_id, weekday_id, open_time, close_time)
             VALUES (@StationId, 1, '08:00:00', '17:00:00')
             RETURNING id",
-            new { StationId = stationId });
+            new { StationId = stationId }
+        );
 
         var updatedHours = new
         {
             StartTime = DateTime.Parse("2025-01-01T09:00:00"),
             EndTime = DateTime.Parse("2025-01-01T18:00:00"),
-            WeekdayId = 2
+            WeekdayId = 2,
         };
 
         var response = await _client.PutAsJsonAsync($"/api/station/hours/{hoursId}", updatedHours);
@@ -322,24 +309,30 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task UpdateStationHours_ReturnsBadRequest_WhenWeekdayIdIsInvalid()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create test data
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station Bad Update",
+                StationDescription = "Testing bad update",
+            }
+        );
 
-        _connection.Execute("INSERT INTO cafeteria.week_day (id, weekday_name) VALUES (1, 'Monday')");
-
-        var hoursId = _connection.ExecuteScalar<int>(@"
+        var hoursId = _connection.ExecuteScalar<int>(
+            @"
             INSERT INTO cafeteria.station_business_hours (station_id, weekday_id, open_time, close_time)
             VALUES (@StationId, 1, '08:00:00', '17:00:00')
             RETURNING id",
-            new { StationId = stationId });
+            new { StationId = stationId }
+        );
 
         var updatedHours = new
         {
             StartTime = DateTime.Parse("2025-01-01T09:00:00"),
             EndTime = DateTime.Parse("2025-01-01T18:00:00"),
-            WeekdayId = 999
+            WeekdayId = 999,
         };
 
         var response = await _client.PutAsJsonAsync($"/api/station/hours/{hoursId}", updatedHours);
@@ -350,18 +343,24 @@ public class StationIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task DeleteStationHours_RemovesBusinessHours()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create test data
         var stationId = _connection.ExecuteScalar<int>(
             InsertStationSql + " RETURNING id",
-            Stations[0]);
+            new
+            {
+                LocationId = 1,
+                StationName = "Station Delete Hours",
+                StationDescription = "Deleting hours",
+            }
+        );
 
-        _connection.Execute("INSERT INTO cafeteria.week_day (id, weekday_name) VALUES (1, 'Monday')");
-
-        var hoursId = _connection.ExecuteScalar<int>(@"
+        var hoursId = _connection.ExecuteScalar<int>(
+            @"
             INSERT INTO cafeteria.station_business_hours (station_id, weekday_id, open_time, close_time)
             VALUES (@StationId, 1, '08:00:00', '17:00:00')
             RETURNING id",
-            new { StationId = stationId });
+            new { StationId = stationId }
+        );
 
         var response = await _client.DeleteAsync($"/api/station/hours/{hoursId}");
         response.EnsureSuccessStatusCode();

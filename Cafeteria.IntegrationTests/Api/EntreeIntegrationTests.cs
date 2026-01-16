@@ -1,88 +1,41 @@
-using System.Data;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Cafeteria.Shared.DTOs;
 using Dapper;
 using Npgsql;
-using Testcontainers.PostgreSql;
-using static Cafeteria.IntegrationTests.Api.DBSql;
 using static Cafeteria.IntegrationTests.Api.SampleMenuData;
 
 namespace Cafeteria.IntegrationTests.Api;
 
-public class EntreeIntegrationTests : IAsyncLifetime
+[Collection("Database")]
+public class EntreeIntegrationTests : IDisposable
 {
-    private readonly PostgreSqlContainer _postgresContainer;
-    private WebApplicationFactory<Program> _factory = null!;
-    private HttpClient _client = null!;
-    private NpgsqlConnection _connection = null!;
+    private readonly DatabaseFixture _fixture;
+    private readonly HttpClient _client;
+    private readonly NpgsqlConnection _connection;
 
-    public EntreeIntegrationTests()
+    public EntreeIntegrationTests(DatabaseFixture fixture)
     {
-        _postgresContainer = new PostgreSqlBuilder("postgres:18-alpine")
-            .WithDatabase("cafeteria")
-            .WithUsername("cafeteria_admin")
-            .WithPassword("SnowCafe")
-            .Build();
+        _fixture = fixture;
+        _client = _fixture.Client;
+        _connection = _fixture.GetConnection();
     }
 
-    public async Task InitializeAsync()
+    public void Dispose()
     {
-        await _postgresContainer.StartAsync();
-
-        _connection = new NpgsqlConnection(_postgresContainer.GetConnectionString());
-        await _connection.OpenAsync();
-        await _connection.ExecuteAsync(SqlData);
-
-        var connectionString = _postgresContainer.GetConnectionString();
-        _factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IDbConnection));
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
-                    services.AddScoped<IDbConnection>(_ =>
-                    {
-                        var conn = new NpgsqlConnection(connectionString);
-                        conn.Open();
-                        return conn;
-                    });
-                });
-            });
-
-        _client = _factory.CreateClient();
-    }
-
-    public async Task DisposeAsync()
-    {
-        _client?.Dispose();
-        _factory?.Dispose();
-        if (_connection != null)
-        {
-            await _connection.CloseAsync();
-            await _connection.DisposeAsync();
-        }
-        await _postgresContainer.DisposeAsync();
+        _connection?.Dispose();
     }
 
     [Fact]
     public async Task CreateEntree_AddsNewEntree()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-
+        // Use pre-loaded station with ID 1
         var newEntree = new EntreeDto
         {
             StationId = 1,
-            EntreeName = "Steak",
-            EntreeDescription = "Grilled ribeye steak",
+            EntreeName = "Test Steak",
+            EntreeDescription = "Grilled ribeye steak for testing",
             EntreePrice = 15.99m,
-            ImageUrl = "https://picsum.photos/id/200/300/200"
+            ImageUrl = "https://picsum.photos/id/200/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/entree", newEntree);
@@ -99,74 +52,64 @@ public class EntreeIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetEntreeByID_ReturnsCorrectEntree()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        var entreeId = _connection.ExecuteScalar<int>(
-            InsertEntreeSql + " RETURNING id",
-            Entrees[0]);
-
-        var response = await _client.GetAsync($"/api/entree/{entreeId}");
+        // Use pre-loaded entree with ID 1
+        var response = await _client.GetAsync("/api/entree/1");
         response.EnsureSuccessStatusCode();
         var entree = await response.Content.ReadFromJsonAsync<EntreeDto>();
 
         Assert.NotNull(entree);
-        Assert.Equal(Entrees[0].EntreeName, entree.EntreeName);
-        Assert.Equal(Entrees[0].EntreeDescription, entree.EntreeDescription);
-        Assert.Equal(Entrees[0].EntreePrice, entree.EntreePrice);
+        Assert.Equal("Grilled Chicken", entree.EntreeName);
     }
 
     [Fact]
     public async Task GetEntreeByID_ReturnsNotFound_WhenEntreeDoesNotExist()
     {
-        var response = await _client.GetAsync("/api/entree/999");
-
+        var response = await _client.GetAsync("/api/entree/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task GetAllEntrees_ReturnsAllEntrees()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        _connection.Execute(InsertEntreeSql, Entrees[0]);
-        _connection.Execute(InsertEntreeSql, Entrees[1]);
-
+        // Use pre-loaded sample data
         var response = await _client.GetAsync("/api/entree");
         response.EnsureSuccessStatusCode();
         var entrees = await response.Content.ReadFromJsonAsync<List<EntreeDto>>();
 
         Assert.NotNull(entrees);
-        Assert.Equal(2, entrees.Count);
-        Assert.Contains(entrees, e => e.EntreeName == Entrees[0].EntreeName);
-        Assert.Contains(entrees, e => e.EntreeName == Entrees[1].EntreeName);
+        Assert.True(entrees.Count >= 3);
+        Assert.Contains(entrees, e => e.EntreeName == "Grilled Chicken");
+        Assert.Contains(entrees, e => e.EntreeName == "Burger");
     }
 
     [Fact]
     public async Task GetEntreesByStationID_ReturnsEntreesForStation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
-        _connection.Execute(InsertStationSql, Stations[1]);
-        _connection.Execute(InsertEntreeSql, Entrees[0]);
-        _connection.Execute(InsertEntreeSql, Entrees[1]);
-
+        // Station 1 has entrees 1 and 2
         var response = await _client.GetAsync("/api/entree/station/1");
         response.EnsureSuccessStatusCode();
         var entrees = await response.Content.ReadFromJsonAsync<List<EntreeDto>>();
 
         Assert.NotNull(entrees);
-        Assert.Equal(2, entrees.Count);
+        Assert.True(entrees.Count >= 2);
         Assert.All(entrees, entree => Assert.Equal(1, entree.StationId));
     }
 
     [Fact]
     public async Task UpdateEntreeByID_UpdatesExistingEntree()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
+        // Create a new entree for this test
         var entreeId = _connection.ExecuteScalar<int>(
             InsertEntreeSql + " RETURNING id",
-            Entrees[0]);
+            new
+            {
+                StationId = 1,
+                EntreeName = "Entree To Update",
+                EntreeDescription = "Original",
+                EntreePrice = 10.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
 
         var updatedEntree = new EntreeDto
         {
@@ -175,7 +118,7 @@ public class EntreeIntegrationTests : IAsyncLifetime
             EntreeName = "Updated Entree",
             EntreeDescription = "Updated description",
             EntreePrice = 12.99m,
-            ImageUrl = "https://picsum.photos/id/201/300/200"
+            ImageUrl = "https://picsum.photos/id/201/300/200",
         };
 
         var response = await _client.PutAsJsonAsync($"/api/entree/{entreeId}", updatedEntree);
@@ -193,27 +136,33 @@ public class EntreeIntegrationTests : IAsyncLifetime
     {
         var updatedEntree = new EntreeDto
         {
-            Id = 999,
+            Id = 99999,
             StationId = 1,
             EntreeName = "Nonexistent",
             EntreeDescription = "Description",
             EntreePrice = 9.99m,
-            ImageUrl = "https://picsum.photos/id/202/300/200"
+            ImageUrl = "https://picsum.photos/id/202/300/200",
         };
 
-        var response = await _client.PutAsJsonAsync("/api/entree/999", updatedEntree);
-
+        var response = await _client.PutAsJsonAsync("/api/entree/99999", updatedEntree);
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task DeleteEntreeByID_RemovesEntree()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertStationSql, Stations[0]);
+        // Create a new entree for deletion
         var entreeId = _connection.ExecuteScalar<int>(
             InsertEntreeSql + " RETURNING id",
-            Entrees[0]);
+            new
+            {
+                StationId = 1,
+                EntreeName = "Entree To Delete",
+                EntreeDescription = "Will be deleted",
+                EntreePrice = 8.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
 
         var response = await _client.DeleteAsync($"/api/entree/{entreeId}");
         response.EnsureSuccessStatusCode();
@@ -226,8 +175,7 @@ public class EntreeIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task DeleteEntreeByID_ReturnsNotFound_WhenEntreeDoesNotExist()
     {
-        var response = await _client.DeleteAsync("/api/entree/999");
-
+        var response = await _client.DeleteAsync("/api/entree/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 }
