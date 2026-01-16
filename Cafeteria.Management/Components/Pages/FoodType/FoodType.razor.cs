@@ -20,10 +20,38 @@ public partial class FoodType : ComponentBase
     private string toastMessage = string.Empty;
     private ToastType toastType = ToastType.Success;
 
+    private string searchText = string.Empty;
+
+    private List<FoodOptionTypeDto> FilteredFoodTypes
+    {
+        get
+        {
+            if (FoodTypeVM.FoodTypes == null)
+                return new List<FoodOptionTypeDto>();
+
+            var foodTypes = FoodTypeVM.FoodTypes.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                foodTypes = foodTypes.Where(ft =>
+                    ft.FoodOptionTypeName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                );
+            }
+
+            return foodTypes.ToList();
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await FoodTypeVM.InitializeFoodTypesAsync();
         IsInitialized = true;
+    }
+
+    private void OnSearchChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? string.Empty;
+        StateHasChanged();
     }
 
     private void ShowCreateModal()

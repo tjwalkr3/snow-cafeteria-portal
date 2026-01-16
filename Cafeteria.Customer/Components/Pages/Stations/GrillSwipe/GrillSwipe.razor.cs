@@ -26,7 +26,8 @@ public partial class GrillSwipe : ComponentBase
     {
         if (firstRender)
         {
-            await VM.LoadDataAsync(Station, Location);
+            bool isCardOrder = Payment == "card";
+            await VM.LoadDataAsync(Station, Location, isCardOrder);
             _isLoading = false;
             StateHasChanged();
         }

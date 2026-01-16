@@ -38,6 +38,7 @@ builder.Services.AddScoped<IPizzaSwipeVM, PizzaSwipeVM>();
 // Register cart service and storage wrapper
 builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddSingleton<CartNotificationService>();
 
 var app = builder.Build();
 

@@ -26,11 +26,13 @@ public class GrillSwipeVM : IGrillSwipeVM
 
     public int StationId { get; set; }
     public int LocationId { get; set; }
+    public bool IsCardOrder { get; set; }
 
-    public async Task LoadDataAsync(int stationId, int locationId)
+    public async Task LoadDataAsync(int stationId, int locationId, bool isCardOrder)
     {
         StationId = stationId;
         LocationId = locationId;
+        IsCardOrder = isCardOrder;
 
         Entrees = await _menuService.GetEntreesByStation(stationId);
         Sides = await _menuService.GetSidesByStation(stationId);
@@ -68,17 +70,41 @@ public class GrillSwipeVM : IGrillSwipeVM
 
     public bool IsValidSelection()
     {
+        if (IsCardOrder)
+        {
+            // Card orders: allow any selection
+            return SelectedEntree != null || SelectedSide != null || SelectedDrink != null;
+        }
+
+        // Swipe orders: require all three
         return SelectedEntree != null && SelectedSide != null && SelectedDrink != null;
     }
 
     public async Task<bool> AddToOrderAsync()
     {
-        if (!IsValidSelection() || SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
+        if (!IsValidSelection())
             return false;
 
-        await _cartService.AddEntree(CART_KEY, SelectedEntree);
-        await _cartService.AddSide(CART_KEY, SelectedSide);
-        await _cartService.AddDrink(CART_KEY, SelectedDrink);
+        if (IsCardOrder)
+        {
+            // Add only selected items
+            if (SelectedEntree != null)
+                await _cartService.AddEntree(CART_KEY, SelectedEntree);
+            if (SelectedSide != null)
+                await _cartService.AddSide(CART_KEY, SelectedSide);
+            if (SelectedDrink != null)
+                await _cartService.AddDrink(CART_KEY, SelectedDrink);
+        }
+        else
+        {
+            // Swipe: add all three (existing behavior)
+            if (SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
+                return false;
+
+            await _cartService.AddEntree(CART_KEY, SelectedEntree);
+            await _cartService.AddSide(CART_KEY, SelectedSide);
+            await _cartService.AddDrink(CART_KEY, SelectedDrink);
+        }
 
         ClearSelections();
         return true;

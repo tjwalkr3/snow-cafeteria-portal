@@ -19,8 +19,9 @@ public interface IBreakfastSwipeVM
 
     int StationId { get; set; }
     int LocationId { get; set; }
+    bool IsCardOrder { get; set; }
 
-    Task LoadDataAsync(int stationId, int locationId);
+    Task LoadDataAsync(int stationId, int locationId, bool isCardOrder);
     void SetActiveTab(string tab);
     Task SelectEntree(EntreeDto entree);
     void SelectSide(SideDto side);

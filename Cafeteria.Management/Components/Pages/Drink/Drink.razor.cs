@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Cafeteria.Management.Components.Shared;
 using Cafeteria.Shared.DTOs;
 using static Cafeteria.Management.Components.Shared.Toast;
 
@@ -18,9 +19,35 @@ public partial class Drink : ComponentBase
     private string toastMessage = string.Empty;
     private ToastType toastType = ToastType.Success;
 
+    private string searchText = string.Empty;
+
+    private List<DrinkDto> FilteredDrinks
+    {
+        get
+        {
+            var drinks = ViewModel.Drinks.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                drinks = drinks.Where(d =>
+                    d.DrinkName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    (d.DrinkDescription != null && d.DrinkDescription.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            return drinks.ToList();
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await ViewModel.LoadDrinks();
+    }
+
+    private void OnSearchChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? string.Empty;
+        StateHasChanged();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)

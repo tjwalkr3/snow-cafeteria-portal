@@ -30,8 +30,9 @@ public interface IDeliSwipeVM
 
     int StationId { get; set; }
     int LocationId { get; set; }
+    bool IsCardOrder { get; set; }
 
-    Task LoadDataAsync(int stationId, int locationId);
+    Task LoadDataAsync(int stationId, int locationId, bool isCardOrder);
     void SetActiveTab(string tab);
     void SelectSide(SideDto side);
     void SelectDrink(DrinkDto drink);
