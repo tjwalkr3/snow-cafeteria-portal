@@ -61,86 +61,86 @@ else
 
                 @if (Order.IsCardOrder)
                 {
-                    @foreach (var entreeItem in Order.Entrees)
+                    @foreach (var entreeGroup in EntreeGroups)
                     {
                         <div class="order-item">
                             <div class="item-header">
                                 <div class="item-info">
-                                    <div class="item-name">@entreeItem.Entree.EntreeName</div>
+                                    <div class="item-name">@entreeGroup.Entree.Entree.EntreeName</div>
                                     <div class="item-description">
-                                        @if (entreeItem.SelectedOptions.Any())
+                                        @if (entreeGroup.Entree.SelectedOptions.Any())
                                         {
-                                            @string.Join(", ", entreeItem.SelectedOptions.Select(o => o.Option.FoodOptionName))
+                                            @string.Join(", ", entreeGroup.Entree.SelectedOptions.Select(o => o.Option.FoodOptionName))
                                         }
                                         else
                                         {
-                                            <text>Our classic @entreeItem.Entree.EntreeName.ToLower()</text>
+                                            <text>Our classic @entreeGroup.Entree.Entree.EntreeName.ToLower()</text>
                                         }
                                     </div>
                                 </div>
-                                <div class="item-price">$@GetItemPrice(entreeItem).ToString("F2")</div>
+                                <div class="item-price">$@GetItemPrice(entreeGroup.Entree).ToString("F2")</div>
                             </div>
 
                             <div class="item-controls">
                                 <div class="quantity-controls">
-                                    <button class="qty-btn" disabled>−</button>
-                                    <span class="qty-display">Qty: 1</span>
-                                    <button class="qty-btn" disabled>+</button>
+                                    <button class="qty-btn" @onclick="() => RemoveEntreeItem(entreeGroup)">−</button>
+                                    <span class="qty-display">Qty: @entreeGroup.Quantity</span>
+                                    <button class="qty-btn" @onclick="() => AddEntreeItem(entreeGroup)">+</button>
                                 </div>
-                                <button class="remove-btn" disabled>Remove</button>
+                                <button class="remove-btn" @onclick="() => RemoveEntreeItem(entreeGroup)">Remove</button>
                             </div>
                         </div>
                     }
 
-                    @foreach (var sideItem in Order.Sides)
+                    @foreach (var sideGroup in SideGroups)
                     {
                         <div class="order-item">
                             <div class="item-header">
                                 <div class="item-info">
-                                    <div class="item-name">@sideItem.Side.SideName</div>
+                                    <div class="item-name">@sideGroup.Side.Side.SideName</div>
                                     <div class="item-description">
-                                        @if (sideItem.SelectedOptions.Any())
+                                        @if (sideGroup.Side.SelectedOptions.Any())
                                         {
-                                            @string.Join(", ", sideItem.SelectedOptions.Select(o => o.Option.FoodOptionName))
+                                            @string.Join(", ", sideGroup.Side.SelectedOptions.Select(o => o.Option.FoodOptionName))
                                         }
                                         else
                                         {
-                                            <text>Fresh @sideItem.Side.SideName.ToLower()</text>
+                                            <text>Fresh @sideGroup.Side.Side.SideName.ToLower()</text>
                                         }
                                     </div>
                                 </div>
-                                <div class="item-price">$@GetItemPrice(sideItem).ToString("F2")</div>
+                                <div class="item-price">$@GetItemPrice(sideGroup.Side).ToString("F2")</div>
                             </div>
 
                             <div class="item-controls">
                                 <div class="quantity-controls">
-                                    <button class="qty-btn" disabled>−</button>
-                                    <span class="qty-display">Qty: 1</span>
-                                    <button class="qty-btn" disabled>+</button>
+                                    <button class="qty-btn" @onclick="() => RemoveSideItem(sideGroup)">−</button>
+                                    <span class="qty-display">Qty: @sideGroup.Quantity</span>
+                                    <button class="qty-btn" @onclick="() => AddSideItem(sideGroup)">+</button>
                                 </div>
-                                <button class="remove-btn" disabled>Remove</button>
+                                <button class="remove-btn" @onclick="() => RemoveSideItem(sideGroup)">Remove</button>
                             </div>
                         </div>
                     }
 
-                    @foreach (var drink in Order.Drinks)
+                    @foreach (var drinkGroup in DrinkGroups)
                     {
                         <div class="order-item">
                             <div class="item-header">
                                 <div class="item-info">
-                                    <div class="item-name">@drink.DrinkName</div>
+                                    <div class="item-name">@drinkGroup.Drink.DrinkName</div>
                                     <div class="item-description">Refreshing beverage</div>
                                 </div>
-                                <div class="item-price">$@drink.DrinkPrice.ToString("F2")</div>
+                                <div class="item-price">$@drinkGroup.Drink.DrinkPrice.ToString("F2")</div>
                             </div>
 
                             <div class="item-controls">
                                 <div class="quantity-controls">
-                                    <button class="qty-btn" disabled>−</button>
-                                    <span class="qty-display">Qty: 1</span>
-                                    <button class="qty-btn" disabled>+</button>
+                                    <button class="qty-btn" @onclick="() => RemoveDrinkItem(drinkGroup)">−</button>
+                                    <span class="qty-display">Qty: @drinkGroup.Quantity</span>
+                                    <button class="qty-btn" @onclick="() => AddDrinkItem(drinkGroup)">+</button>
                                 </div>
-                                <button class="remove-btn" disabled>Remove</button>
+                                <button class="remove-btn" @onclick="() => RemoveDrinkItem(drinkGroup)">Remove</button>
                             </div>
                         </div>
                     }

@@ -10,4 +10,7 @@ public interface IPlaceOrderVM
     LocationDto? GetLocationById(int locationId);
     bool ErrorOccurred();
     List<SwipeGroup> GroupItemsIntoSwipes(BrowserOrder order);
+    List<EntreeGroup> GroupEntrees(BrowserOrder order);
+    List<SideGroup> GroupSides(BrowserOrder order);
+    List<DrinkGroup> GroupDrinks(BrowserOrder order);
 }

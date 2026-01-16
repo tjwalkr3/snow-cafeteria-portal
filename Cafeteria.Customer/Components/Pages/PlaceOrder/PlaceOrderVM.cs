@@ -97,6 +97,82 @@ public class PlaceOrderVM : IPlaceOrderVM
 
         return groupMap.Values.ToList();
     }
+
+    // Card order item grouping methods
+    public List<EntreeGroup> GroupEntrees(BrowserOrder order)
+    {
+        if (order == null || !order.IsCardOrder)
+            return new List<EntreeGroup>();
+
+        var groupMap = new Dictionary<string, EntreeGroup>();
+
+        foreach (var entreeItem in order.Entrees)
+        {
+            var group = new EntreeGroup
+            {
+                Entree = entreeItem,
+                Quantity = 1
+            };
+
+            string key = group.GroupKey;
+            if (groupMap.ContainsKey(key))
+                groupMap[key].Quantity++;
+            else
+                groupMap[key] = group;
+        }
+
+        return groupMap.Values.ToList();
+    }
+
+    public List<SideGroup> GroupSides(BrowserOrder order)
+    {
+        if (order == null || !order.IsCardOrder)
+            return new List<SideGroup>();
+
+        var groupMap = new Dictionary<string, SideGroup>();
+
+        foreach (var sideItem in order.Sides)
+        {
+            var group = new SideGroup
+            {
+                Side = sideItem,
+                Quantity = 1
+            };
+
+            string key = group.GroupKey;
+            if (groupMap.ContainsKey(key))
+                groupMap[key].Quantity++;
+            else
+                groupMap[key] = group;
+        }
+
+        return groupMap.Values.ToList();
+    }
+
+    public List<DrinkGroup> GroupDrinks(BrowserOrder order)
+    {
+        if (order == null || !order.IsCardOrder)
+            return new List<DrinkGroup>();
+
+        var groupMap = new Dictionary<string, DrinkGroup>();
+
+        foreach (var drink in order.Drinks)
+        {
+            var group = new DrinkGroup
+            {
+                Drink = drink,
+                Quantity = 1
+            };
+
+            string key = group.GroupKey;
+            if (groupMap.ContainsKey(key))
+                groupMap[key].Quantity++;
+            else
+                groupMap[key] = group;
+        }
+
+        return groupMap.Values.ToList();
+    }
 }
 
 public class SwipeGroup
@@ -116,4 +192,44 @@ public class SwipeGroup
             return "none";
         return string.Join(",", options.OrderBy(o => o.Option.Id).Select(o => o.Option.Id));
     }
+}
+
+public class EntreeGroup
+{
+    public OrderEntreeItem Entree { get; set; } = new();
+    public int Quantity { get; set; } = 1;
+
+    public string GroupKey =>
+        $"{Entree?.Entree?.Id ?? 0}-{GetOptionsHash(Entree?.SelectedOptions)}";
+
+    private string GetOptionsHash(List<SelectedFoodOption>? options)
+    {
+        if (options == null || options.Count == 0)
+            return "none";
+        return string.Join(",", options.OrderBy(o => o.Option.Id).Select(o => o.Option.Id));
+    }
+}
+
+public class SideGroup
+{
+    public OrderSideItem Side { get; set; } = new();
+    public int Quantity { get; set; } = 1;
+
+    public string GroupKey =>
+        $"{Side?.Side?.Id ?? 0}-{GetOptionsHash(Side?.SelectedOptions)}";
+
+    private string GetOptionsHash(List<SelectedFoodOption>? options)
+    {
+        if (options == null || options.Count == 0)
+            return "none";
+        return string.Join(",", options.OrderBy(o => o.Option.Id).Select(o => o.Option.Id));
+    }
+}
+
+public class DrinkGroup
+{
+    public DrinkDto Drink { get; set; } = new();
+    public int Quantity { get; set; } = 1;
+
+    public string GroupKey => $"{Drink?.Id ?? 0}";
 }
