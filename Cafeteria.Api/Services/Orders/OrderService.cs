@@ -15,7 +15,9 @@ public class OrderService : IOrderService
 
     public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto)
     {
-        _dbConnection.Open();
+        if (_dbConnection.State != ConnectionState.Open)
+            _dbConnection.Open();
+
         using var transaction = _dbConnection.BeginTransaction();
 
         try
