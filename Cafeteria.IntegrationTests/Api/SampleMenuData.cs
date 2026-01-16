@@ -44,4 +44,19 @@ public static class SampleMenuData
         @"
         INSERT INTO cafeteria.option_option_type (food_option_id, food_option_type_id)
         VALUES (@FoodOptionId, @FoodOptionTypeId)";
+
+    public const string InsertOrderSql =
+        @"
+        INSERT INTO cafeteria.order (total_price)
+        VALUES (@TotalPrice)";
+
+    public const string InsertFoodItemOrderSql =
+        @"
+        INSERT INTO cafeteria.food_item_order (order_id, station_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
+        VALUES (@OrderId, @StationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)";
+
+    public const string InsertFoodItemOptionSql =
+        @"
+        INSERT INTO cafeteria.food_item_option (food_item_order_id, food_option_name)
+        VALUES (@FoodItemOrderId, @FoodOptionName)";
 }
