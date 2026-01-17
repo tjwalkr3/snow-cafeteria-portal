@@ -19,6 +19,9 @@ public partial class PlaceOrder : ComponentBase
     [Inject]
     private CartNotificationService CartNotification { get; set; } = default!;
 
+    [Inject]
+    private IApiOrderService OrderService { get; set; } = default!;
+
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
 
@@ -146,17 +149,40 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task HandlePlaceOrder()
     {
-        _toastMessage = Order?.IsCardOrder == true
-            ? $"Your order of ${Price:F2} has been placed successfully!"
-            : "Your order has been placed successfully!";
-        _showToast = true;
-        StateHasChanged();
+        if (Order == null)
+        {
+            _toastMessage = "No order to place!";
+            _showToast = true;
+            StateHasChanged();
+            return;
+        }
 
-        await Task.Delay(3000);
+        try
+        {
+            // Convert BrowserOrder to CreateOrderDto
+            var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
 
-        await Cart.ClearOrder("order");
+            // Call API to create the order
+            var createdOrder = await OrderService.CreateOrder(createOrderDto);
 
-        Navigation.NavigateTo("/", true);
+            _toastMessage = Order.IsCardOrder
+                ? $"Your order of ${Price:F2} has been placed successfully! Order #{createdOrder.Id}"
+                : $"Your order has been placed successfully! Order #{createdOrder.Id}";
+            _showToast = true;
+            StateHasChanged();
+
+            await Task.Delay(3000);
+
+            await Cart.ClearOrder("order");
+
+            Navigation.NavigateTo("/", true);
+        }
+        catch (Exception ex)
+        {
+            _toastMessage = $"Failed to place order: {ex.Message}";
+            _showToast = true;
+            StateHasChanged();
+        }
     }
 
     private void OnToastHidden()

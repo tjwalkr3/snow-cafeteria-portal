@@ -32,6 +32,35 @@ public class OrderService : IOrderService
                 new { createOrderDto.TotalPrice },
                 transaction);
 
+            bool isCardOrder = createOrderDto.FoodItems.Any() && createOrderDto.FoodItems[0].CardCost.HasValue;
+            int? saleCardId = null;
+            int? saleSwipeId = null;
+
+            if (isCardOrder)
+            {
+                const string insertSaleCardSql = @"
+                    INSERT INTO cafeteria.sale_card (order_id)
+                    VALUES (@OrderId)
+                    RETURNING id;";
+
+                saleCardId = await _dbConnection.QuerySingleAsync<int>(
+                    insertSaleCardSql,
+                    new { OrderId = order.Id },
+                    transaction);
+            }
+            else
+            {
+                const string insertSaleSwipeSql = @"
+                    INSERT INTO cafeteria.sale_swipe (order_id)
+                    VALUES (@OrderId)
+                    RETURNING id;";
+
+                saleSwipeId = await _dbConnection.QuerySingleAsync<int>(
+                    insertSaleSwipeSql,
+                    new { OrderId = order.Id },
+                    transaction);
+            }
+
             foreach (var foodItem in createOrderDto.FoodItems)
             {
                 const string insertFoodItemSql = @"
@@ -49,8 +78,8 @@ public class OrderService : IOrderService
                     {
                         OrderId = order.Id,
                         foodItem.StationId,
-                        foodItem.SaleCardId,
-                        foodItem.SaleSwipeId,
+                        SaleCardId = saleCardId,
+                        SaleSwipeId = saleSwipeId,
                         foodItem.SwipeCost,
                         foodItem.CardCost,
                         foodItem.Special

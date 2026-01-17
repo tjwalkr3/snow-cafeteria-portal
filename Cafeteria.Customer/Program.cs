@@ -25,6 +25,12 @@ builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 });
 
+builder.Services.AddHttpClient<IApiOrderService, ApiOrderService>(client =>
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
