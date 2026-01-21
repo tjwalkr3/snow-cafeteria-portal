@@ -183,6 +183,16 @@ public class PlaceOrderVM : IPlaceOrderVM
                Math.Min(order.Sides.Count, order.Drinks.Count));
     }
 
+    private const decimal TaxRate = 0.0775m;
+
+    public decimal CalculateTax(BrowserOrder order)
+    {
+        if (order == null || !order.IsCardOrder)
+            return 0m;
+
+        return Math.Round(CalculateTotalPrice(order) * TaxRate, 2);
+    }
+
     public CreateOrderDto ConvertToCreateOrderDto(BrowserOrder order)
     {
         if (order == null)
@@ -191,6 +201,7 @@ public class PlaceOrderVM : IPlaceOrderVM
         var createOrderDto = new CreateOrderDto
         {
             TotalPrice = order.IsCardOrder ? CalculateTotalPrice(order) : 0,
+            Tax = CalculateTax(order),
             TotalSwipe = CalculateTotalSwipe(order),
             FoodItems = new List<CreateFoodItemOrderDto>()
         };

@@ -165,8 +165,9 @@ public partial class PlaceOrder : ComponentBase
             // Call API to create the order
             var createdOrder = await OrderService.CreateOrder(createOrderDto);
 
+            var totalWithTax = Price + PlaceOrderVM.CalculateTax(Order);
             _toastMessage = Order.IsCardOrder
-                ? $"Your order of ${Price:F2} has been placed successfully! Order #{createdOrder.Id}"
+                ? $"Your order of ${totalWithTax:F2} has been placed successfully! Order #{createdOrder.Id}"
                 : $"Your order has been placed successfully! Order #{createdOrder.Id}";
             _showToast = true;
             StateHasChanged();

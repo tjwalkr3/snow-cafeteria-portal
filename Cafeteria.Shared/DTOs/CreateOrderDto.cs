@@ -9,6 +9,10 @@ public class CreateOrderDto
     public decimal TotalPrice { get; set; }
 
     [Required]
+    [Range(0, double.MaxValue)]
+    public decimal Tax { get; set; }
+
+    [Required]
     [Range(0, int.MaxValue)]
     public int TotalSwipe { get; set; }
 
