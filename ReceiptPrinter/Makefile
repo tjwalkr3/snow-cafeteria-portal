@@ -8,7 +8,7 @@ install:
 test-print:
 	LD_LIBRARY_PATH=$$HOME/.nix-profile/lib:$$LD_LIBRARY_PATH $(VENV)/bin/python test_print.py
 
-lint: install
+lint:
 	$(VENV)/bin/pylint --disable=missing-module-docstring,missing-function-docstring,missing-class-docstring *.py
 
 check-warnings:

@@ -13,23 +13,27 @@ def open_printer(vendor_id=DEFAULT_VENDOR_ID, product_id=DEFAULT_PRODUCT_ID):
 
 
 def print_lines(printer, lines):
-    text = "\n".join(lines) + "\n\n"
-    extra_feed = "\n" * 8
-    printer.text(text)
-    printer.text(extra_feed)
+    printer.text("\n".join(lines) + "\n\n")
+    printer.text("\n" * 8)
     printer.text("\x0c")
 
 
 def hello_world():
-    lorem_ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    lorem_ipsum = (
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
+        "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris "
+        "nisi ut aliquip ex ea commodo consequat."
+    )
     wrapped_lines = textwrap.wrap(lorem_ipsum, width=LINE_WIDTH)
     lines = ["Hello, world!", ""] + wrapped_lines
-    printer = open_printer()
-    print_lines(printer, lines)
+    return lines
 
 
 def main():
-    hello_world()
+    lines = hello_world()
+    printer = open_printer()
+    print_lines(printer, lines)
 
 
 if __name__ == "__main__":
