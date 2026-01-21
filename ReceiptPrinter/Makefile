@@ -1,0 +1,20 @@
+VENV = .venv
+
+install:
+	python3 -m venv $(VENV)
+	$(VENV)/bin/pip install --upgrade pip
+	$(VENV)/bin/pip install python-escpos pyusb pytest pylint requests fastapi uvicorn
+
+test-print:
+	LD_LIBRARY_PATH=$$HOME/.nix-profile/lib:$$LD_LIBRARY_PATH $(VENV)/bin/python test_print.py
+
+lint: install
+	$(VENV)/bin/pylint --disable=missing-module-docstring,missing-function-docstring,missing-class-docstring *.py
+
+check-warnings:
+	$(VENV)/bin/pytest -W error
+
+clean:
+	rm -rf $(VENV)
+
+reinstall: clean install
