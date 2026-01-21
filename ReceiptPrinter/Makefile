@@ -14,6 +14,9 @@ lint:
 check-warnings:
 	$(VENV)/bin/pytest -W error
 
+run-server:
+	$(VENV)/bin/uvicorn main:app --reload
+
 clean:
 	rm -rf $(VENV)
 
