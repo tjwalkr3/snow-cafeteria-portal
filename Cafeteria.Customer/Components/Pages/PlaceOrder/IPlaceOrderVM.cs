@@ -5,6 +5,7 @@ namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 public interface IPlaceOrderVM
 {
     decimal CalculateTotalPrice(BrowserOrder order);
+    int CalculateTotalSwipe(BrowserOrder order);
     void ValidateParameters(int location, string? payment);
     Task InitializeLocations();
     LocationDto? GetLocationById(int locationId);

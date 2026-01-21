@@ -23,13 +23,13 @@ public class OrderService : IOrderService
         try
         {
             const string insertOrderSql = @"
-                INSERT INTO cafeteria.order (total_price)
-                VALUES (@TotalPrice)
-                RETURNING id AS Id, order_time AS OrderTime, total_price AS TotalPrice;";
+                INSERT INTO cafeteria.order (total_price, total_swipe)
+                VALUES (@TotalPrice, @TotalSwipe)
+                RETURNING id AS Id, order_time AS OrderTime, total_price AS TotalPrice, total_swipe AS TotalSwipe;";
 
             var order = await _dbConnection.QuerySingleAsync<OrderDto>(
                 insertOrderSql,
-                new { createOrderDto.TotalPrice },
+                new { createOrderDto.TotalPrice, createOrderDto.TotalSwipe },
                 transaction);
 
             bool isCardOrder = createOrderDto.FoodItems.Any() && createOrderDto.FoodItems[0].CardCost.HasValue;
@@ -121,7 +121,7 @@ public class OrderService : IOrderService
     public async Task<OrderDto?> GetOrderById(int id)
     {
         const string orderSql = @"
-            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice
+            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice, total_swipe AS TotalSwipe
             FROM cafeteria.order
             WHERE id = @id;";
 
@@ -155,7 +155,7 @@ public class OrderService : IOrderService
     public async Task<List<OrderDto>> GetAllOrders()
     {
         const string ordersSql = @"
-            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice
+            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice, total_swipe AS TotalSwipe
             FROM cafeteria.order
             ORDER BY order_time DESC;";
 

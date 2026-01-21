@@ -29,6 +29,7 @@ public class OrderIntegrationTests : IDisposable
         var newOrder = new CreateOrderDto
         {
             TotalPrice = 15.99m,
+            TotalSwipe = 0,
             FoodItems = new List<CreateFoodItemOrderDto>
             {
                 new CreateFoodItemOrderDto

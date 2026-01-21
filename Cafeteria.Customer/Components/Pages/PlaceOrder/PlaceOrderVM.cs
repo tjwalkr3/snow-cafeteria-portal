@@ -174,6 +174,15 @@ public class PlaceOrderVM : IPlaceOrderVM
         return groupMap.Values.ToList();
     }
 
+    public int CalculateTotalSwipe(BrowserOrder order)
+    {
+        if (order == null || order.IsCardOrder)
+            return 0;
+
+        return Math.Min(order.Entrees.Count,
+               Math.Min(order.Sides.Count, order.Drinks.Count));
+    }
+
     public CreateOrderDto ConvertToCreateOrderDto(BrowserOrder order)
     {
         if (order == null)
@@ -181,7 +190,8 @@ public class PlaceOrderVM : IPlaceOrderVM
 
         var createOrderDto = new CreateOrderDto
         {
-            TotalPrice = CalculateTotalPrice(order),
+            TotalPrice = order.IsCardOrder ? CalculateTotalPrice(order) : 0,
+            TotalSwipe = CalculateTotalSwipe(order),
             FoodItems = new List<CreateFoodItemOrderDto>()
         };
 
@@ -247,7 +257,7 @@ public class PlaceOrderVM : IPlaceOrderVM
                 {
                     StationId = entreeItem.Entree.StationId,
                     CardCost = null,
-                    SwipeCost = 1, // 1 swipe cost
+                    SwipeCost = 1,
                     Special = false,
                     Options = entreeItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
                     {
