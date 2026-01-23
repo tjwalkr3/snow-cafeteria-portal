@@ -7,6 +7,7 @@ CREATE TABLE
         location_name varchar(100) NOT NULL,
         location_description varchar(200) NOT NULL,
         image_url varchar(500),
+        printer_url varchar(500),
         PRIMARY KEY (id)
     );
 
@@ -184,17 +185,19 @@ CREATE TABLE
 
 
 INSERT INTO
-    cafeteria.cafeteria_location (location_name, location_description, image_url)
+    cafeteria.cafeteria_location (location_name, location_description, image_url, printer_url)
 VALUES
     (
         'Badger Den',
         'Located on the main floor of the Greenwood Student Center',
-        'https://picsum.photos/id/292/300/200'
+        'https://picsum.photos/id/292/300/200',
+        'http://cafeteria-2:8000'
     ),
     (
         'Busters Bistro',
         'Located on the main floor of the Karen H Huntsman Library',
-        'https://picsum.photos/id/326/300/200'
+        'https://picsum.photos/id/326/300/200',
+        'http://cafeteria-3:8000'
     );
 
 INSERT INTO

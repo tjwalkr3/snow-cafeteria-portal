@@ -13,4 +13,6 @@ public class LocationDto
     public string LocationDescription { get; set; } = string.Empty;
     [StringLength(500)]
     public string? ImageUrl { get; set; }
+    [StringLength(500)]
+    public string? PrinterUrl { get; set; }
 }
