@@ -274,6 +274,63 @@
   border-left: 4px solid #ffc107;
 }
 
+.swipe-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swipe-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swipe-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.swipe-label--entree {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.swipe-label--side {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.swipe-label--drink {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.swipe-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.swipe-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-left: 60px;
+  margin-top: -4px;
+}
+
+.swipe-separator {
+  color: #dee2e6;
+  font-weight: 300;
+}
+
 .item-options {
   display: flex;
   flex-wrap: wrap;

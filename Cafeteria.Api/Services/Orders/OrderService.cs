@@ -23,14 +23,43 @@ public class OrderService : IOrderService
         try
         {
             const string insertOrderSql = @"
-                INSERT INTO cafeteria.order (total_price)
-                VALUES (@TotalPrice)
-                RETURNING id AS Id, order_time AS OrderTime, total_price AS TotalPrice;";
+                INSERT INTO cafeteria.order (total_price, tax, total_swipe)
+                VALUES (@TotalPrice, @Tax, @TotalSwipe)
+                RETURNING id AS Id, order_time AS OrderTime, total_price AS TotalPrice, tax AS Tax, total_swipe AS TotalSwipe;";
 
             var order = await _dbConnection.QuerySingleAsync<OrderDto>(
                 insertOrderSql,
-                new { createOrderDto.TotalPrice },
+                new { createOrderDto.TotalPrice, createOrderDto.Tax, createOrderDto.TotalSwipe },
                 transaction);
+
+            bool isCardOrder = createOrderDto.FoodItems.Any() && createOrderDto.FoodItems[0].CardCost.HasValue;
+            int? saleCardId = null;
+            int? saleSwipeId = null;
+
+            if (isCardOrder)
+            {
+                const string insertSaleCardSql = @"
+                    INSERT INTO cafeteria.sale_card (order_id)
+                    VALUES (@OrderId)
+                    RETURNING id;";
+
+                saleCardId = await _dbConnection.QuerySingleAsync<int>(
+                    insertSaleCardSql,
+                    new { OrderId = order.Id },
+                    transaction);
+            }
+            else
+            {
+                const string insertSaleSwipeSql = @"
+                    INSERT INTO cafeteria.sale_swipe (order_id)
+                    VALUES (@OrderId)
+                    RETURNING id;";
+
+                saleSwipeId = await _dbConnection.QuerySingleAsync<int>(
+                    insertSaleSwipeSql,
+                    new { OrderId = order.Id },
+                    transaction);
+            }
 
             foreach (var foodItem in createOrderDto.FoodItems)
             {
@@ -49,8 +78,8 @@ public class OrderService : IOrderService
                     {
                         OrderId = order.Id,
                         foodItem.StationId,
-                        foodItem.SaleCardId,
-                        foodItem.SaleSwipeId,
+                        SaleCardId = saleCardId,
+                        SaleSwipeId = saleSwipeId,
                         foodItem.SwipeCost,
                         foodItem.CardCost,
                         foodItem.Special
@@ -92,7 +121,7 @@ public class OrderService : IOrderService
     public async Task<OrderDto?> GetOrderById(int id)
     {
         const string orderSql = @"
-            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice
+            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice, tax AS Tax, total_swipe AS TotalSwipe
             FROM cafeteria.order
             WHERE id = @id;";
 
@@ -126,7 +155,7 @@ public class OrderService : IOrderService
     public async Task<List<OrderDto>> GetAllOrders()
     {
         const string ordersSql = @"
-            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice
+            SELECT id AS Id, order_time AS OrderTime, total_price AS TotalPrice, tax AS Tax, total_swipe AS TotalSwipe
             FROM cafeteria.order
             ORDER BY order_time DESC;";
 

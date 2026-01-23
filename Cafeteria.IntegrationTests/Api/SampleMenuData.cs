@@ -47,8 +47,8 @@ public static class SampleMenuData
 
     public const string InsertOrderSql =
         @"
-        INSERT INTO cafeteria.order (total_price)
-        VALUES (@TotalPrice)";
+        INSERT INTO cafeteria.order (total_price, tax, total_swipe)
+        VALUES (@TotalPrice, @Tax, @TotalSwipe)";
 
     public const string InsertFoodItemOrderSql =
         @"

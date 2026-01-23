@@ -173,6 +173,137 @@ public class PlaceOrderVM : IPlaceOrderVM
 
         return groupMap.Values.ToList();
     }
+
+    public int CalculateTotalSwipe(BrowserOrder order)
+    {
+        if (order == null || order.IsCardOrder)
+            return 0;
+
+        return Math.Min(order.Entrees.Count,
+               Math.Min(order.Sides.Count, order.Drinks.Count));
+    }
+
+    private const decimal TaxRate = 0.0775m;
+
+    public decimal CalculateTax(BrowserOrder order)
+    {
+        if (order == null || !order.IsCardOrder)
+            return 0m;
+
+        return Math.Round(CalculateTotalPrice(order) * TaxRate, 2);
+    }
+
+    public CreateOrderDto ConvertToCreateOrderDto(BrowserOrder order)
+    {
+        if (order == null)
+            throw new ArgumentNullException(nameof(order));
+
+        var createOrderDto = new CreateOrderDto
+        {
+            TotalPrice = order.IsCardOrder ? CalculateTotalPrice(order) : null,
+            Tax = CalculateTax(order),
+            TotalSwipe = order.IsCardOrder ? null : CalculateTotalSwipe(order),
+            FoodItems = new List<CreateFoodItemOrderDto>()
+        };
+
+        if (order.IsCardOrder)
+        {
+            foreach (var entreeItem in order.Entrees)
+            {
+                var foodItem = new CreateFoodItemOrderDto
+                {
+                    StationId = entreeItem.Entree.StationId,
+                    CardCost = entreeItem.Entree.EntreePrice + entreeItem.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice),
+                    SwipeCost = null,
+                    Special = false,
+                    Options = entreeItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
+                    {
+                        FoodOptionName = o.Option.FoodOptionName
+                    }).ToList()
+                };
+                createOrderDto.FoodItems.Add(foodItem);
+            }
+
+            foreach (var sideItem in order.Sides)
+            {
+                var foodItem = new CreateFoodItemOrderDto
+                {
+                    StationId = sideItem.Side.StationId,
+                    CardCost = sideItem.Side.SidePrice + sideItem.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice),
+                    SwipeCost = null,
+                    Special = false,
+                    Options = sideItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
+                    {
+                        FoodOptionName = o.Option.FoodOptionName
+                    }).ToList()
+                };
+                createOrderDto.FoodItems.Add(foodItem);
+            }
+
+            foreach (var drink in order.Drinks)
+            {
+                var foodItem = new CreateFoodItemOrderDto
+                {
+                    StationId = order.Location?.Id ?? 0, 
+                    CardCost = drink.DrinkPrice,
+                    SwipeCost = null,
+                    Special = false,
+                    Options = new List<CreateFoodItemOptionDto>()
+                };
+                createOrderDto.FoodItems.Add(foodItem);
+            }
+        }
+        else
+        {
+            int swipeCount = Math.Min(order.Entrees.Count,
+                             Math.Min(order.Sides.Count, order.Drinks.Count));
+
+            for (int i = 0; i < swipeCount; i++)
+            {
+                var entreeItem = order.Entrees[i];
+                var sideItem = order.Sides[i];
+                var drink = order.Drinks[i];
+
+                var entreeFoodItem = new CreateFoodItemOrderDto
+                {
+                    StationId = entreeItem.Entree.StationId,
+                    CardCost = null,
+                    SwipeCost = 1,
+                    Special = false,
+                    Options = entreeItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
+                    {
+                        FoodOptionName = o.Option.FoodOptionName
+                    }).ToList()
+                };
+                createOrderDto.FoodItems.Add(entreeFoodItem);
+
+                var sideFoodItem = new CreateFoodItemOrderDto
+                {
+                    StationId = sideItem.Side.StationId,
+                    CardCost = null,
+                    SwipeCost = 0, // Side and drink don't add swipe cost, only entree does
+                    Special = false,
+                    Options = sideItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
+                    {
+                        FoodOptionName = o.Option.FoodOptionName
+                    }).ToList()
+                };
+                createOrderDto.FoodItems.Add(sideFoodItem);
+
+                var drinkFoodItem = new CreateFoodItemOrderDto
+                {
+                    StationId = order.Location?.Id ?? 0,
+                    CardCost = null,
+                    SwipeCost = 0,
+                    Special = false,
+                    Options = new List<CreateFoodItemOptionDto>()
+                };
+                createOrderDto.FoodItems.Add(drinkFoodItem);
+            }
+        }
+
+        return createOrderDto;
+    }
 }
 
 public class SwipeGroup
