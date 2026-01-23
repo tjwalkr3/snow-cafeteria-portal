@@ -159,10 +159,8 @@ public partial class PlaceOrder : ComponentBase
 
         try
         {
-            // Convert BrowserOrder to CreateOrderDto
             var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
 
-            // Call API to create the order
             var createdOrder = await OrderService.CreateOrder(createOrderDto);
 
             var totalWithTax = Price + PlaceOrderVM.CalculateTax(Order);

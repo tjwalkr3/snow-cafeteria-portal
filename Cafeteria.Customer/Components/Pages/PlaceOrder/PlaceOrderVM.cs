@@ -200,9 +200,9 @@ public class PlaceOrderVM : IPlaceOrderVM
 
         var createOrderDto = new CreateOrderDto
         {
-            TotalPrice = order.IsCardOrder ? CalculateTotalPrice(order) : 0,
+            TotalPrice = order.IsCardOrder ? CalculateTotalPrice(order) : null,
             Tax = CalculateTax(order),
-            TotalSwipe = CalculateTotalSwipe(order),
+            TotalSwipe = order.IsCardOrder ? null : CalculateTotalSwipe(order),
             FoodItems = new List<CreateFoodItemOrderDto>()
         };
 
