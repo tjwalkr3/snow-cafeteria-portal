@@ -31,6 +31,7 @@ builder.Services.AddScoped<IStationService, StationService>();
 builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddScoped<IEntreeService, EntreeService>();
 builder.Services.AddScoped<ISideService, SideService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

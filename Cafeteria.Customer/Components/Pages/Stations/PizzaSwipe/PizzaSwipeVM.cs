@@ -30,11 +30,13 @@ public class PizzaSwipeVM : IPizzaSwipeVM
 
     public int StationId { get; set; }
     public int LocationId { get; set; }
+    public bool IsCardOrder { get; set; }
 
-    public async Task LoadDataAsync(int stationId, int locationId)
+    public async Task LoadDataAsync(int stationId, int locationId, bool isCardOrder)
     {
         StationId = stationId;
         LocationId = locationId;
+        IsCardOrder = isCardOrder;
 
         Entrees = await _menuService.GetEntreesByStation(stationId);
         Sides = await _menuService.GetSidesByStation(stationId);
@@ -104,40 +106,90 @@ public class PizzaSwipeVM : IPizzaSwipeVM
 
     public bool IsValidSelection()
     {
+        if (IsCardOrder)
+        {
+            // Card orders: allow pizza with toppings, or just side, or just drink
+            if (SelectedToppings.Count >= 2)
+                return true;
+            return SelectedSide != null || SelectedDrink != null;
+        }
+
+        // Swipe orders: require pizza with 2+ toppings + side + drink
         return SelectedToppings.Count >= 2 && SelectedSide != null && SelectedDrink != null;
     }
 
     public async Task<bool> AddToOrderAsync()
     {
-        if (!IsValidSelection() || SelectedDrink == null || SelectedSide == null)
+        if (!IsValidSelection())
             return false;
 
-        if (SelectedEntree == null && Entrees.Any())
+        if (IsCardOrder)
         {
-            SelectedEntree = Entrees.First();
-        }
-
-        if (SelectedEntree == null)
-            return false;
-
-        await _cartService.AddEntree(CART_KEY, SelectedEntree);
-
-        foreach (var topping in SelectedToppings)
-        {
-            var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
-            if (toppingOption != null)
+            // Add only selected items
+            if (SelectedToppings.Count >= 2)
             {
-                var optionType = new FoodOptionTypeDto
+                if (SelectedEntree == null && Entrees.Any())
                 {
-                    FoodOptionTypeName = "Pizza Toppings",
-                    EntreeId = SelectedEntree.Id
-                };
-                await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, toppingOption, optionType);
-            }
-        }
+                    SelectedEntree = Entrees.First();
+                }
 
-        await _cartService.AddDrink(CART_KEY, SelectedDrink);
-        await _cartService.AddSide(CART_KEY, SelectedSide);
+                if (SelectedEntree != null)
+                {
+                    await _cartService.AddEntree(CART_KEY, SelectedEntree);
+
+                    foreach (var topping in SelectedToppings)
+                    {
+                        var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
+                        if (toppingOption != null)
+                        {
+                            var optionType = new FoodOptionTypeDto
+                            {
+                                FoodOptionTypeName = "Pizza Toppings",
+                                EntreeId = SelectedEntree.Id
+                            };
+                            await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, toppingOption, optionType);
+                        }
+                    }
+                }
+            }
+            if (SelectedSide != null)
+                await _cartService.AddSide(CART_KEY, SelectedSide);
+            if (SelectedDrink != null)
+                await _cartService.AddDrink(CART_KEY, SelectedDrink);
+        }
+        else
+        {
+            // Swipe: add all three (existing behavior)
+            if (SelectedDrink == null || SelectedSide == null)
+                return false;
+
+            if (SelectedEntree == null && Entrees.Any())
+            {
+                SelectedEntree = Entrees.First();
+            }
+
+            if (SelectedEntree == null)
+                return false;
+
+            await _cartService.AddEntree(CART_KEY, SelectedEntree);
+
+            foreach (var topping in SelectedToppings)
+            {
+                var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
+                if (toppingOption != null)
+                {
+                    var optionType = new FoodOptionTypeDto
+                    {
+                        FoodOptionTypeName = "Pizza Toppings",
+                        EntreeId = SelectedEntree.Id
+                    };
+                    await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, toppingOption, optionType);
+                }
+            }
+
+            await _cartService.AddDrink(CART_KEY, SelectedDrink);
+            await _cartService.AddSide(CART_KEY, SelectedSide);
+        }
 
         ClearSelections();
         return true;

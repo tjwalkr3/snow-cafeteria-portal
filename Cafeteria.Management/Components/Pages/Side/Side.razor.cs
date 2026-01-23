@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Components.Shared;
+using Cafeteria.Shared.DTOs;
 using static Cafeteria.Management.Components.Shared.Toast;
 
 namespace Cafeteria.Management.Components.Pages.Side;
@@ -18,9 +19,35 @@ public partial class Side : ComponentBase
     private string toastMessage = string.Empty;
     private ToastType toastType = ToastType.Success;
 
+    private string searchText = string.Empty;
+
+    private List<SideDto> FilteredSides
+    {
+        get
+        {
+            var sides = ViewModel.Sides.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                sides = sides.Where(s =>
+                    s.SideName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    (s.SideDescription != null && s.SideDescription.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            return sides.ToList();
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await ViewModel.LoadSides();
+    }
+
+    private void OnSearchChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? string.Empty;
+        StateHasChanged();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)

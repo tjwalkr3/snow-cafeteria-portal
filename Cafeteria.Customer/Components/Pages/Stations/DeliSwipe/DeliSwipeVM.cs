@@ -41,11 +41,13 @@ public class DeliSwipeVM : IDeliSwipeVM
 
     public int StationId { get; set; }
     public int LocationId { get; set; }
+    public bool IsCardOrder { get; set; }
 
-    public async Task LoadDataAsync(int stationId, int locationId)
+    public async Task LoadDataAsync(int stationId, int locationId, bool isCardOrder)
     {
         StationId = stationId;
         LocationId = locationId;
+        IsCardOrder = isCardOrder;
 
         Entrees = await _menuService.GetEntreesByStation(stationId);
         Sides = await _menuService.GetSidesByStation(stationId);
@@ -233,11 +235,8 @@ public class DeliSwipeVM : IDeliSwipeVM
         return $"{SelectedBread}, {SelectedMeat}, {SelectedCheese}, {SelectedToppings.Count} topping(s), {SelectedDressing}";
     }
 
-    public bool IsValidSelection()
+    private bool IsSandwichComplete()
     {
-        if (SelectedSide == null || SelectedDrink == null)
-            return false;
-
         if (OptionTypes.Any())
         {
             foreach (var optionType in OptionTypes)
@@ -259,42 +258,104 @@ public class DeliSwipeVM : IDeliSwipeVM
             && SelectedDressing != null;
     }
 
-    public async Task<bool> AddToOrderAsync()
+    public bool IsValidSelection()
     {
-        if (!IsValidSelection() || SelectedSide == null || SelectedDrink == null)
+        if (IsCardOrder)
+        {
+            // Card orders: allow complete sandwich, or just side, or just drink
+            if (IsSandwichComplete())
+                return true;
+            return SelectedSide != null || SelectedDrink != null;
+        }
+
+        // Swipe orders: require complete sandwich + side + drink
+        if (SelectedSide == null || SelectedDrink == null)
             return false;
 
-        var customSandwichEntree = Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
-        if (customSandwichEntree == null)
+        return IsSandwichComplete();
+    }
+
+    public async Task<bool> AddToOrderAsync()
+    {
+        if (!IsValidSelection())
+            return false;
+
+        if (IsCardOrder)
         {
-            customSandwichEntree = new EntreeDto
+            // Add only selected items
+            if (IsSandwichComplete())
             {
-                Id = 0,
-                StationId = StationId,
-                EntreeName = "Custom Deli Sandwich",
-                EntreePrice = 6.99m
-            };
-        }
-
-        await _cartService.AddEntree(CART_KEY, customSandwichEntree);
-
-        foreach (var optionType in OptionTypes)
-        {
-            var selectedOptions = GetSelectedOptionsForType(optionType.OptionType.Id);
-
-            foreach (var selectedOptionName in selectedOptions)
-            {
-                var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
-                if (option != null)
+                var customSandwichEntree = Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
+                if (customSandwichEntree == null)
                 {
-                    await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, option, optionType.OptionType);
+                    customSandwichEntree = new EntreeDto
+                    {
+                        Id = 0,
+                        StationId = StationId,
+                        EntreeName = "Custom Deli Sandwich",
+                        EntreePrice = 6.99m
+                    };
+                }
+
+                await _cartService.AddEntree(CART_KEY, customSandwichEntree);
+
+                foreach (var optionType in OptionTypes)
+                {
+                    var selectedOptions = GetSelectedOptionsForType(optionType.OptionType.Id);
+
+                    foreach (var selectedOptionName in selectedOptions)
+                    {
+                        var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
+                        if (option != null)
+                        {
+                            await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, option, optionType.OptionType);
+                        }
+                    }
                 }
             }
+            if (SelectedSide != null)
+                await _cartService.AddSide(CART_KEY, SelectedSide);
+            if (SelectedDrink != null)
+                await _cartService.AddDrink(CART_KEY, SelectedDrink);
         }
+        else
+        {
+            // Swipe: add all three (existing behavior)
+            if (SelectedSide == null || SelectedDrink == null)
+                return false;
 
-        await _cartService.AddSide(CART_KEY, SelectedSide);
+            var customSandwichEntree = Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
+            if (customSandwichEntree == null)
+            {
+                customSandwichEntree = new EntreeDto
+                {
+                    Id = 0,
+                    StationId = StationId,
+                    EntreeName = "Custom Deli Sandwich",
+                    EntreePrice = 6.99m
+                };
+            }
 
-        await _cartService.AddDrink(CART_KEY, SelectedDrink);
+            await _cartService.AddEntree(CART_KEY, customSandwichEntree);
+
+            foreach (var optionType in OptionTypes)
+            {
+                var selectedOptions = GetSelectedOptionsForType(optionType.OptionType.Id);
+
+                foreach (var selectedOptionName in selectedOptions)
+                {
+                    var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
+                    if (option != null)
+                    {
+                        await _cartService.AddEntreeOption(CART_KEY, customSandwichEntree.Id, option, optionType.OptionType);
+                    }
+                }
+            }
+
+            await _cartService.AddSide(CART_KEY, SelectedSide);
+
+            await _cartService.AddDrink(CART_KEY, SelectedDrink);
+        }
 
         ClearSelections();
         return true;

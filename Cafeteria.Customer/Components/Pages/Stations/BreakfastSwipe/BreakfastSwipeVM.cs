@@ -30,11 +30,13 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
 
     public int StationId { get; set; }
     public int LocationId { get; set; }
+    public bool IsCardOrder { get; set; }
 
-    public async Task LoadDataAsync(int stationId, int locationId)
+    public async Task LoadDataAsync(int stationId, int locationId, bool isCardOrder)
     {
         StationId = stationId;
         LocationId = locationId;
+        IsCardOrder = isCardOrder;
 
         Entrees = await _menuService.GetEntreesByStation(stationId);
         Sides = await _menuService.GetSidesByStation(stationId);
@@ -85,6 +87,27 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
 
     public bool IsValidSelection()
     {
+        if (IsCardOrder)
+        {
+            // Card orders: allow any selection
+            // If entree is selected, ensure all required options are selected
+            if (SelectedEntree != null)
+            {
+                foreach (var optionType in CurrentOptionTypes)
+                {
+                    if (!SelectedOptionsByType.ContainsKey(optionType.OptionType.Id) ||
+                        string.IsNullOrEmpty(SelectedOptionsByType[optionType.OptionType.Id]))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            // Allow just side or just drink
+            return SelectedSide != null || SelectedDrink != null;
+        }
+
+        // Swipe orders: require all three
         if (SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
             return false;
 
@@ -102,26 +125,57 @@ public class BreakfastSwipeVM : IBreakfastSwipeVM
 
     public async Task<bool> AddToOrderAsync()
     {
-        if (!IsValidSelection() || SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
+        if (!IsValidSelection())
             return false;
 
-        await _cartService.AddEntree(CART_KEY, SelectedEntree);
-
-        foreach (var optionType in CurrentOptionTypes)
+        if (IsCardOrder)
         {
-            if (SelectedOptionsByType.TryGetValue(optionType.OptionType.Id, out var selectedOptionName))
+            // Add only selected items
+            if (SelectedEntree != null)
             {
-                var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
-                if (option != null)
+                await _cartService.AddEntree(CART_KEY, SelectedEntree);
+
+                foreach (var optionType in CurrentOptionTypes)
                 {
-                    await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, option, optionType.OptionType);
+                    if (SelectedOptionsByType.TryGetValue(optionType.OptionType.Id, out var selectedOptionName))
+                    {
+                        var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
+                        if (option != null)
+                        {
+                            await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, option, optionType.OptionType);
+                        }
+                    }
                 }
             }
+            if (SelectedSide != null)
+                await _cartService.AddSide(CART_KEY, SelectedSide);
+            if (SelectedDrink != null)
+                await _cartService.AddDrink(CART_KEY, SelectedDrink);
         }
+        else
+        {
+            // Swipe: add all three (existing behavior)
+            if (SelectedEntree == null || SelectedSide == null || SelectedDrink == null)
+                return false;
 
-        await _cartService.AddSide(CART_KEY, SelectedSide);
+            await _cartService.AddEntree(CART_KEY, SelectedEntree);
 
-        await _cartService.AddDrink(CART_KEY, SelectedDrink);
+            foreach (var optionType in CurrentOptionTypes)
+            {
+                if (SelectedOptionsByType.TryGetValue(optionType.OptionType.Id, out var selectedOptionName))
+                {
+                    var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
+                    if (option != null)
+                    {
+                        await _cartService.AddEntreeOption(CART_KEY, SelectedEntree.Id, option, optionType.OptionType);
+                    }
+                }
+            }
+
+            await _cartService.AddSide(CART_KEY, SelectedSide);
+
+            await _cartService.AddDrink(CART_KEY, SelectedDrink);
+        }
 
         ClearSelections();
         return true;
