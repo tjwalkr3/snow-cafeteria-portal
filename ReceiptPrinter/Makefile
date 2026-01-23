@@ -15,7 +15,7 @@ check-warnings:
 	$(VENV)/bin/pytest -W error
 
 run-server:
-	$(VENV)/bin/uvicorn main:app --reload
+	$(VENV)/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 clean:
 	rm -rf $(VENV)

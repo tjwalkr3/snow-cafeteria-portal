@@ -1,6 +1,9 @@
 ### Variables
 @baseUrl = http://cafeteria-2:8000
 
+### Hello World
+GET {{baseUrl}}/
+
 ### Print Order
 POST {{baseUrl}}/print-order
 Content-Type: application/json
