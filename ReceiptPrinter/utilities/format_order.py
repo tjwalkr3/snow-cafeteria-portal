@@ -59,7 +59,8 @@ def format_food_item(item: FoodItemOrderDto) -> List[str]:
     
     # Determine which cost to display (prefer swipe cost)
     if item.SwipeCost is not None:
-        cost_str = f"${item.SwipeCost}.00"
+        swipe_word = "swipe" if item.SwipeCost == 1 else "swipes"
+        cost_str = f"{item.SwipeCost} {swipe_word}"
     elif item.CardCost is not None:
         cost_str = f"${item.CardCost:.2f}"
     else:
