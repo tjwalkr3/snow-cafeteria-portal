@@ -244,7 +244,7 @@ public class PlaceOrderVM : IPlaceOrderVM
             {
                 var foodItem = new CreateFoodItemOrderDto
                 {
-                    StationId = order.Location?.Id ?? 0, 
+                    StationId = order.Location?.Id ?? 0,
                     CardCost = drink.DrinkPrice,
                     SwipeCost = null,
                     Special = false,
