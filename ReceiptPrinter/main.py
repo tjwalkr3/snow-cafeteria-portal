@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from DTOs.PrintOrderDto import PrintOrderDto
 from utilities.format_order import format_order
-from utilities.print_order import open_printer, print_lines
+from utilities.print_order import print_receipt
 
 app = FastAPI()
 
@@ -15,9 +15,8 @@ def print_order(order: PrintOrderDto):
     # Format the order into 48-character lines
     formatted_lines = format_order(order)
     
-    # Open the printer and print the lines
-    printer = open_printer()
-    print_lines(printer, formatted_lines)
+    # Print the receipt (handles opening and closing printer)
+    print_receipt(formatted_lines)
     
     return {"message": "Order printed successfully", "order_id": order.OrderId}
   except Exception as e:
