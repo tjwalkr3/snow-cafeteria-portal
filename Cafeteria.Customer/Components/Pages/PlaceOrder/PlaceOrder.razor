@@ -150,25 +150,30 @@ else
                     @foreach (var swipe in SwipeGroups)
                     {
                         <div class="order-item swipe-item">
-                            <div class="item-header">
-                                <div class="item-info">
-                                    <div class="item-name">@swipe.Entree.Entree.EntreeName</div>
-                                    <div class="item-description">
-                                        @swipe.Side.Side.SideName • @swipe.Drink.DrinkName
+                            <div class="swipe-details">
+                                <div class="swipe-row">
+                                    <span class="swipe-label swipe-label--entree">Entree</span>
+                                    <span class="swipe-value">@swipe.Entree.Entree.EntreeName</span>
+                                </div>
+                                @if (swipe.Entree.SelectedOptions.Any())
+                                {
+                                    <div class="swipe-options">
+                                        @foreach (var opt in swipe.Entree.SelectedOptions)
+                                        {
+                                            <span class="option-badge">@opt.Option.FoodOptionName</span>
+                                        }
                                     </div>
-                                    @if (swipe.Entree.SelectedOptions.Any() || swipe.Side.SelectedOptions.Any())
+                                }
+                                <div class="swipe-row">
+                                    <span class="swipe-label swipe-label--side">Side</span>
+                                    <span class="swipe-value">@swipe.Side.Side.SideName</span>
+                                    @foreach (var opt in swipe.Side.SelectedOptions)
                                     {
-                                        <div class="item-options mt-2">
-                                            @foreach (var opt in swipe.Entree.SelectedOptions)
-                                            {
-                                                <span class="option-badge">@opt.Option.FoodOptionName</span>
-                                            }
-                                            @foreach (var opt in swipe.Side.SelectedOptions)
-                                            {
-                                                <span class="option-badge">@opt.Option.FoodOptionName</span>
-                                            }
-                                        </div>
+                                        <span class="option-badge">@opt.Option.FoodOptionName</span>
                                     }
+                                    <span class="swipe-separator">|</span>
+                                    <span class="swipe-label swipe-label--drink">Drink</span>
+                                    <span class="swipe-value">@swipe.Drink.DrinkName</span>
                                 </div>
                             </div>
 
