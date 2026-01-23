@@ -60,7 +60,7 @@ public class CartService : ICartService
     public async Task AddEntreeOption(string key, int entreeId, FoodOptionDto option, FoodOptionTypeDto optionType)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
-        var item = order.Entrees.FirstOrDefault(e => e.Entree.Id == entreeId);
+        var item = order.Entrees.LastOrDefault(e => e.Entree.Id == entreeId);
         if (item != null)
         {
             item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
@@ -71,7 +71,7 @@ public class CartService : ICartService
     public async Task AddSideOption(string key, int sideId, FoodOptionDto option, FoodOptionTypeDto optionType)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
-        var item = order.Sides.FirstOrDefault(s => s.Side.Id == sideId);
+        var item = order.Sides.LastOrDefault(s => s.Side.Id == sideId);
         if (item != null)
         {
             item.SelectedOptions.Add(new SelectedFoodOption { Option = option, OptionType = optionType });
