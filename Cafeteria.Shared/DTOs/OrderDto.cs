@@ -7,5 +7,5 @@ public class OrderDto
     public decimal? TotalPrice { get; set; }
     public decimal Tax { get; set; }
     public int? TotalSwipe { get; set; }
-    public List<FoodItemOrderDto> FoodItems { get; set; } = new();
+    public List<FoodItemDto> FoodItems { get; set; } = new();
 }
