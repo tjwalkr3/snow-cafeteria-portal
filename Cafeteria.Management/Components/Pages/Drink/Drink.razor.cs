@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Components.Shared;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using static Cafeteria.Management.Components.Shared.Toast;
 
 namespace Cafeteria.Management.Components.Pages.Drink;

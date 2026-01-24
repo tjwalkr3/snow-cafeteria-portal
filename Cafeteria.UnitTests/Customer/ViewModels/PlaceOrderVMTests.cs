@@ -1,7 +1,7 @@
 using Cafeteria.Customer;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Moq;
 
 namespace Cafeteria.UnitTests.Customer.ViewModels;

@@ -1,5 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 

@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Dapper;
 using Npgsql;
 using static Cafeteria.IntegrationTests.Api.SampleMenuData;

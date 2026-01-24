@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Api.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
 
 namespace Cafeteria.Api.Controllers;

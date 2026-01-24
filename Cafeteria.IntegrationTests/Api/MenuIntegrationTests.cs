@@ -1,8 +1,6 @@
 using System.Net.Http.Json;
-using Cafeteria.Shared.DTOs;
-using Dapper;
+using Cafeteria.Shared.DTOs.Menu;
 using Npgsql;
-using static Cafeteria.IntegrationTests.Api.SampleMenuData;
 
 namespace Cafeteria.IntegrationTests.Api;
 

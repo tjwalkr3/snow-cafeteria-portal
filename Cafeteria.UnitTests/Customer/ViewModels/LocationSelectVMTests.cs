@@ -1,6 +1,6 @@
 using Cafeteria.Customer;
 using Cafeteria.Customer.Components.Pages.LocationSelect;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Customer.Services;
 using Moq;
 

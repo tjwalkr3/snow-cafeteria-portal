@@ -1,5 +1,6 @@
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Shared.DTOs.Order;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 

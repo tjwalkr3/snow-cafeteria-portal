@@ -1,4 +1,4 @@
-namespace Cafeteria.Shared.DTOs;
+namespace Cafeteria.Shared.DTOs.Order;
 
 public class FoodItemDto
 {

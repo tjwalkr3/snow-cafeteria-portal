@@ -1,4 +1,4 @@
-﻿using Cafeteria.Shared.DTOs;
+﻿using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Customer.Services;
 
 namespace Cafeteria.Customer.Components.Pages.StationSelect;

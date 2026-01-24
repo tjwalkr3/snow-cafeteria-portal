@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
@@ -190,9 +191,8 @@ public partial class PlaceOrder : ComponentBase
             {
                 var printOrderData = new PrintOrderDto
                 {
-                    OrderId = 0,
+                    Id = 0,
                     OrderTime = DateTime.Now,
-                    TotalPrice = Price,
                     FoodItems = ConvertOrderToFoodItems()
                 };
                 await PrinterService.PrintOrder(printerUrl, printOrderData);
