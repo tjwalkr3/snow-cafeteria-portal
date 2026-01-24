@@ -1,5 +1,5 @@
 ### Variables
-@baseUrl = http://cafeteria-2:8000
+@baseUrl = http://localhost:8000
 
 ### Hello World
 GET {{baseUrl}}/
@@ -9,45 +9,46 @@ POST {{baseUrl}}/print-order
 Content-Type: application/json
 
 {
-  "OrderId": 12345,
+  "Id": 12345,
   "OrderTime": "2026-01-23T14:30:00",
-  "TotalPrice": 15.75,
   "FoodItems": [
     {
       "Id": 1,
+      "Name": "Cheeseburger",
       "OrderId": 12345,
       "StationId": 101,
       "SaleCardId": null,
       "SaleSwipeId": 5001,
-      "SwipeCost": 6,
+      "SwipeCost": null,
       "CardCost": null,
       "Special": false,
       "Options": [
         {
           "Id": 1001,
-          "FoodItemOrderId": 1,
+          "FoodItemId": 1,
           "FoodOptionName": "Extra Cheese"
         },
         {
           "Id": 1002,
-          "FoodItemOrderId": 1,
+          "FoodItemId": 1,
           "FoodOptionName": "No Onions"
         }
       ]
     },
     {
       "Id": 2,
+      "Name": "Veggie Wrap",
       "OrderId": 12345,
       "StationId": 102,
       "SaleCardId": 6001,
       "SaleSwipeId": null,
       "SwipeCost": null,
-      "CardCost": 9.75,
+      "CardCost": null,
       "Special": true,
       "Options": [
         {
           "Id": 1003,
-          "FoodItemOrderId": 2,
+          "FoodItemId": 2,
           "FoodOptionName": "Gluten Free Bun"
         }
       ]

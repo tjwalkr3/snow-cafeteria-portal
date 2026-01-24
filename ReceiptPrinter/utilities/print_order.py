@@ -8,7 +8,7 @@ LINE_WIDTH = int(os.environ.get("PRINTER_LINE_WIDTH", "48"))
 
 
 def open_printer(vendor_id=DEFAULT_VENDOR_ID, product_id=DEFAULT_PRODUCT_ID):
-    return Usb(vendor_id, product_id, 0)
+    return Usb(vendor_id, product_id)
 
 
 def print_lines(printer, lines):

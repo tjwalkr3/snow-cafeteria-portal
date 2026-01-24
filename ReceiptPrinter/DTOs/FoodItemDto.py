@@ -3,8 +3,9 @@ from typing import Optional, List
 from .FoodItemOptionDto import FoodItemOptionDto
 
 
-class FoodItemOrderDto(BaseModel):
+class FoodItemDto(BaseModel):
     Id: int
+    Name: str = ""
     OrderId: int
     StationId: int
     SaleCardId: Optional[int] = None

@@ -4,5 +4,5 @@ from typing import Optional
 
 class FoodItemOptionDto(BaseModel):
     Id: int
-    FoodItemOrderId: int
+    FoodItemId: int
     FoodOptionName: Optional[str] = None
