@@ -1,5 +1,5 @@
-import os
 import textwrap
+import os
 
 from escpos.printer import Usb
 

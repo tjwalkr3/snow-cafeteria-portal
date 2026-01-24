@@ -20,6 +20,9 @@ public partial class PlaceOrder : ComponentBase
     private CartNotificationService CartNotification { get; set; } = default!;
 
     [Inject]
+    private IPrinterService PrinterService { get; set; } = default!
+
+    [Inject]
     private IApiOrderService OrderService { get; set; } = default!;
 
     [SupplyParameterFromQuery(Name = "location")]
@@ -160,7 +163,6 @@ public partial class PlaceOrder : ComponentBase
         try
         {
             var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
-
             var createdOrder = await OrderService.CreateOrder(createOrderDto);
 
             var totalWithTax = Price + PlaceOrderVM.CalculateTax(Order);
@@ -171,9 +173,7 @@ public partial class PlaceOrder : ComponentBase
             StateHasChanged();
 
             await Task.Delay(3000);
-
             await Cart.ClearOrder("order");
-
             Navigation.NavigateTo("/", true);
         }
         catch (Exception ex)
@@ -181,6 +181,22 @@ public partial class PlaceOrder : ComponentBase
             _toastMessage = $"Failed to place order: {ex.Message}";
             _showToast = true;
             StateHasChanged();
+        }
+
+        if (Order?.Location != null)
+        {
+            var printerUrl = await PrinterService.GetPrinterUrl(Order.Location.Id);
+            if (!string.IsNullOrWhiteSpace(printerUrl))
+            {
+                var printOrderData = new PrintOrderDto
+                {
+                    OrderId = 0,
+                    OrderTime = DateTime.Now,
+                    TotalPrice = Price,
+                    FoodItems = ConvertOrderToFoodItems()
+                };
+                await PrinterService.PrintOrder(printerUrl, printOrderData);
+            }
         }
     }
 
@@ -340,5 +356,47 @@ public partial class PlaceOrder : ComponentBase
         }
         CartNotification.NotifyCartChanged();
         StateHasChanged();
+    }
+
+    private List<FoodItemOrderDto> ConvertOrderToFoodItems()
+    {
+        var foodItems = new List<FoodItemOrderDto>();
+
+        if (Order == null) return foodItems;
+
+        foreach (var entree in Order.Entrees)
+        {
+            foodItems.Add(new FoodItemOrderDto
+            {
+                FoodItemId = entree.Entree.Id,
+                FoodItemName = entree.Entree.EntreeName,
+                FoodItemType = "Entree",
+                Price = entree.Entree.EntreePrice
+            });
+        }
+
+        foreach (var side in Order.Sides)
+        {
+            foodItems.Add(new FoodItemOrderDto
+            {
+                FoodItemId = side.Side.Id,
+                FoodItemName = side.Side.SideName,
+                FoodItemType = "Side",
+                Price = side.Side.SidePrice
+            });
+        }
+
+        foreach (var drink in Order.Drinks)
+        {
+            foodItems.Add(new FoodItemOrderDto
+            {
+                FoodItemId = drink.Id,
+                FoodItemName = drink.DrinkName,
+                FoodItemType = "Drink",
+                Price = drink.DrinkPrice
+            });
+        }
+
+        return foodItems;
     }
 }
