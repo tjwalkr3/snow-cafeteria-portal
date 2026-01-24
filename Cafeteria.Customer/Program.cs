@@ -46,6 +46,9 @@ builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddSingleton<CartNotificationService>();
 
+// Register printer services
+builder.Services.AddSingleton<IPrinterService, PrinterService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
