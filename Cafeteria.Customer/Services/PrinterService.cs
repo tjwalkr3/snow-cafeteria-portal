@@ -14,7 +14,7 @@ public class PrinterService(HttpClient client) : IPrinterService
             var response = await client.GetAsync($"menu/locations");
             response.EnsureSuccessStatusCode();
             var locations = await response.Content.ReadFromJsonAsync<List<LocationDto>>() ?? new List<LocationDto>();
-            
+
             return locations.FirstOrDefault(l => l.Id == locationId);
         }
         catch
