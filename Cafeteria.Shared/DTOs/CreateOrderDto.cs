@@ -4,16 +4,25 @@ namespace Cafeteria.Shared.DTOs;
 
 public class CreateOrderDto
 {
-    [Required]
-    [Range(0.01, double.MaxValue)]
-    public decimal TotalPrice { get; set; }
+    [Range(0, double.MaxValue)]
+    public decimal? TotalPrice { get; set; }
 
     [Required]
-    public List<CreateFoodItemOrderDto> FoodItems { get; set; } = new();
+    [Range(0, double.MaxValue)]
+    public decimal Tax { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int? TotalSwipe { get; set; }
+
+    [Required]
+    public List<CreateFoodItemDto> FoodItems { get; set; } = new();
 }
 
-public class CreateFoodItemOrderDto
+public class CreateFoodItemDto
 {
+    [Required]
+    public string Name { get; set; } = string.Empty;
+
     [Required]
     public int StationId { get; set; }
 

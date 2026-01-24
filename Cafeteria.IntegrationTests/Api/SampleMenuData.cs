@@ -47,16 +47,16 @@ public static class SampleMenuData
 
     public const string InsertOrderSql =
         @"
-        INSERT INTO cafeteria.order (total_price)
-        VALUES (@TotalPrice)";
+        INSERT INTO cafeteria.order (total_price, tax, total_swipe)
+        VALUES (@TotalPrice, @Tax, @TotalSwipe)";
 
-    public const string InsertFoodItemOrderSql =
+    public const string InsertFoodItemSql =
         @"
-        INSERT INTO cafeteria.food_item_order (order_id, station_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
-        VALUES (@OrderId, @StationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)";
+        INSERT INTO cafeteria.food_item (name, order_id, station_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
+        VALUES (@Name, @OrderId, @StationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)";
 
     public const string InsertFoodItemOptionSql =
         @"
         INSERT INTO cafeteria.food_item_option (food_item_order_id, food_option_name)
-        VALUES (@FoodItemOrderId, @FoodOptionName)";
+        VALUES (@FoodItemId, @FoodOptionName)";
 }

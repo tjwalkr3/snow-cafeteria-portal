@@ -2,10 +2,9 @@ using Cafeteria.Customer.Components;
 using Cafeteria.Customer.Components.Pages.LocationSelect;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Components.Pages.StationSelect;
-using Cafeteria.Customer.Components.Pages.Stations.BreakfastSwipe;
-using Cafeteria.Customer.Components.Pages.Stations.DeliSwipe;
-using Cafeteria.Customer.Components.Pages.Stations.GrillSwipe;
-using Cafeteria.Customer.Components.Pages.Stations.PizzaSwipe;
+using Cafeteria.Customer.Components.Pages.Stations.Configuration;
+using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
+using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Customer.Services;
 using Microsoft.Extensions.Hosting;
 
@@ -26,14 +25,21 @@ builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 });
 
+builder.Services.AddHttpClient<IApiOrderService, ApiOrderService>(client =>
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
 builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
-builder.Services.AddScoped<IBreakfastSwipeVM, BreakfastSwipeVM>();
-builder.Services.AddScoped<IDeliSwipeVM, DeliSwipeVM>();
-builder.Services.AddScoped<IGrillSwipeVM, GrillSwipeVM>();
-builder.Services.AddScoped<IPizzaSwipeVM, PizzaSwipeVM>();
+
+// Register generic station services
+builder.Services.AddSingleton<IStationConfigurationProvider, StationConfigurationProvider>();
+builder.Services.AddScoped<ISelectionStrategyFactory, SelectionStrategyFactory>();
+builder.Services.AddScoped<IGenericSwipeVM, GenericSwipeVM>();
 
 // Register cart service and storage wrapper
 builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();

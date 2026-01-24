@@ -29,10 +29,13 @@ public class OrderIntegrationTests : IDisposable
         var newOrder = new CreateOrderDto
         {
             TotalPrice = 15.99m,
-            FoodItems = new List<CreateFoodItemOrderDto>
+            Tax = 1.24m,
+            TotalSwipe = 0,
+            FoodItems = new List<CreateFoodItemDto>
             {
-                new CreateFoodItemOrderDto
+                new CreateFoodItemDto
                 {
+                    Name = "Test Entree",
                     StationId = 1,
                     CardCost = 10.99m,
                     Special = false,
@@ -42,8 +45,9 @@ public class OrderIntegrationTests : IDisposable
                         new CreateFoodItemOptionDto { FoodOptionName = "Tomato" }
                     }
                 },
-                new CreateFoodItemOrderDto
+                new CreateFoodItemDto
                 {
+                    Name = "Test Side",
                     StationId = 2,
                     SwipeCost = 1,
                     Special = true,

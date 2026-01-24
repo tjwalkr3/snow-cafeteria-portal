@@ -1,8 +1,9 @@
 namespace Cafeteria.Shared.DTOs;
 
-public class FoodItemOrderDto
+public class FoodItemDto
 {
     public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
     public int OrderId { get; set; }
     public int StationId { get; set; }
     public int? SaleCardId { get; set; }

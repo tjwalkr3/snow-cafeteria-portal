@@ -20,7 +20,10 @@ public partial class PlaceOrder : ComponentBase
     private CartNotificationService CartNotification { get; set; } = default!;
 
     [Inject]
-    private IPrinterService PrinterService { get; set; } = default!;
+    private IPrinterService PrinterService { get; set; } = default!
+
+    [Inject]
+    private IApiOrderService OrderService { get; set; } = default!;
 
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
@@ -149,6 +152,37 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task HandlePlaceOrder()
     {
+        if (Order == null)
+        {
+            _toastMessage = "No order to place!";
+            _showToast = true;
+            StateHasChanged();
+            return;
+        }
+
+        try
+        {
+            var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
+            var createdOrder = await OrderService.CreateOrder(createOrderDto);
+
+            var totalWithTax = Price + PlaceOrderVM.CalculateTax(Order);
+            _toastMessage = Order.IsCardOrder
+                ? $"Your order of ${totalWithTax:F2} has been placed successfully! Order #{createdOrder.Id}"
+                : $"Your order has been placed successfully! Order #{createdOrder.Id}";
+            _showToast = true;
+            StateHasChanged();
+
+            await Task.Delay(3000);
+            await Cart.ClearOrder("order");
+            Navigation.NavigateTo("/", true);
+        }
+        catch (Exception ex)
+        {
+            _toastMessage = $"Failed to place order: {ex.Message}";
+            _showToast = true;
+            StateHasChanged();
+        }
+
         if (Order?.Location != null)
         {
             var printerUrl = await PrinterService.GetPrinterUrl(Order.Location.Id);
@@ -164,18 +198,6 @@ public partial class PlaceOrder : ComponentBase
                 await PrinterService.PrintOrder(printerUrl, printOrderData);
             }
         }
-
-        _toastMessage = Order?.IsCardOrder == true
-            ? $"Your order of ${Price:F2} has been placed successfully!"
-            : "Your order has been placed successfully!";
-        _showToast = true;
-        StateHasChanged();
-
-        await Task.Delay(3000);
-
-        await Cart.ClearOrder("order");
-
-        Navigation.NavigateTo("/", true);
     }
 
     private void OnToastHidden()
