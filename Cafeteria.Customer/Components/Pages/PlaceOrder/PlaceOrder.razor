@@ -63,84 +63,78 @@ else
                 {
                     @foreach (var entreeGroup in EntreeGroups)
                     {
-                        <div class="order-item">
-                            <div class="item-header">
-                                <div class="item-info">
-                                    <div class="item-name">@entreeGroup.Entree.Entree.EntreeName</div>
-                                    <div class="item-description">
-                                        @if (entreeGroup.Entree.SelectedOptions.Any())
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title fw-bold mb-2">@entreeGroup.Entree.Entree.EntreeName</h5>
+                                    <span class="text-muted fw-semibold">$@GetItemPrice(entreeGroup.Entree).ToString("F2")</span>
+                                </div>
+                                @if (entreeGroup.Entree.SelectedOptions.Any())
+                                {
+                                    <div class="d-flex flex-wrap gap-1 mb-2">
+                                        @foreach (var opt in entreeGroup.Entree.SelectedOptions)
                                         {
-                                            @string.Join(", ", entreeGroup.Entree.SelectedOptions.Select(o => o.Option.FoodOptionName))
-                                        }
-                                        else
-                                        {
-                                            <text>Our classic @entreeGroup.Entree.Entree.EntreeName.ToLower()</text>
+                                            <span class="badge rounded-pill bg-light text-dark border">@opt.Option.FoodOptionName</span>
                                         }
                                     </div>
+                                }
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button class="qty-btn" @onclick="() => RemoveEntreeItem(entreeGroup)"><i class="bi bi-dash"></i></button>
+                                        <span class="fw-semibold">Qty: @entreeGroup.Quantity</span>
+                                        <button class="qty-btn" @onclick="() => AddEntreeItem(entreeGroup)"><i class="bi bi-plus"></i></button>
+                                    </div>
+                                    <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveEntreeItem(entreeGroup)">Remove</button>
                                 </div>
-                                <div class="item-price">$@GetItemPrice(entreeGroup.Entree).ToString("F2")</div>
-                            </div>
-
-                            <div class="item-controls">
-                                <div class="quantity-controls">
-                                    <button class="qty-btn" @onclick="() => RemoveEntreeItem(entreeGroup)">−</button>
-                                    <span class="qty-display">Qty: @entreeGroup.Quantity</span>
-                                    <button class="qty-btn" @onclick="() => AddEntreeItem(entreeGroup)">+</button>
-                                </div>
-                                <button class="remove-btn" @onclick="() => RemoveEntreeItem(entreeGroup)">Remove</button>
                             </div>
                         </div>
                     }
 
                     @foreach (var sideGroup in SideGroups)
                     {
-                        <div class="order-item">
-                            <div class="item-header">
-                                <div class="item-info">
-                                    <div class="item-name">@sideGroup.Side.Side.SideName</div>
-                                    <div class="item-description">
-                                        @if (sideGroup.Side.SelectedOptions.Any())
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title fw-bold mb-2">@sideGroup.Side.Side.SideName</h5>
+                                    <span class="text-muted fw-semibold">$@GetItemPrice(sideGroup.Side).ToString("F2")</span>
+                                </div>
+                                @if (sideGroup.Side.SelectedOptions.Any())
+                                {
+                                    <div class="d-flex flex-wrap gap-1 mb-2">
+                                        @foreach (var opt in sideGroup.Side.SelectedOptions)
                                         {
-                                            @string.Join(", ", sideGroup.Side.SelectedOptions.Select(o => o.Option.FoodOptionName))
-                                        }
-                                        else
-                                        {
-                                            <text>Fresh @sideGroup.Side.Side.SideName.ToLower()</text>
+                                            <span class="badge rounded-pill bg-light text-dark border">@opt.Option.FoodOptionName</span>
                                         }
                                     </div>
+                                }
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button class="qty-btn" @onclick="() => RemoveSideItem(sideGroup)"><i class="bi bi-dash"></i></button>
+                                        <span class="fw-semibold">Qty: @sideGroup.Quantity</span>
+                                        <button class="qty-btn" @onclick="() => AddSideItem(sideGroup)"><i class="bi bi-plus"></i></button>
+                                    </div>
+                                    <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveSideItem(sideGroup)">Remove</button>
                                 </div>
-                                <div class="item-price">$@GetItemPrice(sideGroup.Side).ToString("F2")</div>
-                            </div>
-
-                            <div class="item-controls">
-                                <div class="quantity-controls">
-                                    <button class="qty-btn" @onclick="() => RemoveSideItem(sideGroup)">−</button>
-                                    <span class="qty-display">Qty: @sideGroup.Quantity</span>
-                                    <button class="qty-btn" @onclick="() => AddSideItem(sideGroup)">+</button>
-                                </div>
-                                <button class="remove-btn" @onclick="() => RemoveSideItem(sideGroup)">Remove</button>
                             </div>
                         </div>
                     }
 
                     @foreach (var drinkGroup in DrinkGroups)
                     {
-                        <div class="order-item">
-                            <div class="item-header">
-                                <div class="item-info">
-                                    <div class="item-name">@drinkGroup.Drink.DrinkName</div>
-                                    <div class="item-description">Refreshing beverage</div>
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title fw-bold mb-2">@drinkGroup.Drink.DrinkName</h5>
+                                    <span class="text-muted fw-semibold">$@drinkGroup.Drink.DrinkPrice.ToString("F2")</span>
                                 </div>
-                                <div class="item-price">$@drinkGroup.Drink.DrinkPrice.ToString("F2")</div>
-                            </div>
-
-                            <div class="item-controls">
-                                <div class="quantity-controls">
-                                    <button class="qty-btn" @onclick="() => RemoveDrinkItem(drinkGroup)">−</button>
-                                    <span class="qty-display">Qty: @drinkGroup.Quantity</span>
-                                    <button class="qty-btn" @onclick="() => AddDrinkItem(drinkGroup)">+</button>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button class="qty-btn" @onclick="() => RemoveDrinkItem(drinkGroup)"><i class="bi bi-dash"></i></button>
+                                        <span class="fw-semibold">Qty: @drinkGroup.Quantity</span>
+                                        <button class="qty-btn" @onclick="() => AddDrinkItem(drinkGroup)"><i class="bi bi-plus"></i></button>
+                                    </div>
+                                    <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveDrinkItem(drinkGroup)">Remove</button>
                                 </div>
-                                <button class="remove-btn" @onclick="() => RemoveDrinkItem(drinkGroup)">Remove</button>
                             </div>
                         </div>
                     }
@@ -149,41 +143,33 @@ else
                 {
                     @foreach (var swipe in SwipeGroups)
                     {
-                        <div class="order-item swipe-item">
-                            <div class="swipe-details">
-                                <div class="swipe-row">
-                                    <span class="swipe-label swipe-label--entree">Entree</span>
-                                    <span class="swipe-value">@swipe.Entree.Entree.EntreeName</span>
-                                </div>
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold mb-2">@swipe.Entree.Entree.EntreeName</h5>
                                 @if (swipe.Entree.SelectedOptions.Any())
                                 {
-                                    <div class="swipe-options">
+                                    <div class="d-flex flex-wrap gap-1 mb-2">
                                         @foreach (var opt in swipe.Entree.SelectedOptions)
                                         {
-                                            <span class="option-badge">@opt.Option.FoodOptionName</span>
+                                            <span class="badge rounded-pill bg-light text-dark border">@opt.Option.FoodOptionName</span>
                                         }
                                     </div>
                                 }
-                                <div class="swipe-row">
-                                    <span class="swipe-label swipe-label--side">Side</span>
-                                    <span class="swipe-value">@swipe.Side.Side.SideName</span>
-                                    @foreach (var opt in swipe.Side.SelectedOptions)
-                                    {
-                                        <span class="option-badge">@opt.Option.FoodOptionName</span>
-                                    }
-                                    <span class="swipe-separator">|</span>
-                                    <span class="swipe-label swipe-label--drink">Drink</span>
-                                    <span class="swipe-value">@swipe.Drink.DrinkName</span>
+                                <div class="pt-2 border-top">
+                                    <span class="small fw-bold">Drink and Side(s):</span>
+                                    <ul class="mb-0 mt-1 ps-3 small text-secondary">
+                                        <li>@swipe.Drink.DrinkName</li>
+                                        <li>@swipe.Side.Side.SideName</li>
+                                    </ul>
                                 </div>
-                            </div>
-
-                            <div class="item-controls">
-                                <div class="quantity-controls">
-                                    <button class="qty-btn" @onclick="() => DecreaseSwipeQuantity(swipe)">−</button>
-                                    <span class="qty-display">Qty: @swipe.Quantity</span>
-                                    <button class="qty-btn" @onclick="() => IncreaseSwipeQuantity(swipe)">+</button>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button class="qty-btn" @onclick="() => DecreaseSwipeQuantity(swipe)"><i class="bi bi-dash"></i></button>
+                                        <span class="fw-semibold">Qty: @swipe.Quantity</span>
+                                        <button class="qty-btn" @onclick="() => IncreaseSwipeQuantity(swipe)"><i class="bi bi-plus"></i></button>
+                                    </div>
+                                    <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveSwipeGroup(swipe)">Remove</button>
                                 </div>
-                                <button class="remove-btn" @onclick="() => RemoveSwipeGroup(swipe)">Remove</button>
                             </div>
                         </div>
                     }

@@ -15,11 +15,14 @@ public class CreateOrderDto
     public int? TotalSwipe { get; set; }
 
     [Required]
-    public List<CreateFoodItemOrderDto> FoodItems { get; set; } = new();
+    public List<CreateFoodItemDto> FoodItems { get; set; } = new();
 }
 
-public class CreateFoodItemOrderDto
+public class CreateFoodItemDto
 {
+    [Required]
+    public string Name { get; set; } = string.Empty;
+
     [Required]
     public int StationId { get; set; }
 

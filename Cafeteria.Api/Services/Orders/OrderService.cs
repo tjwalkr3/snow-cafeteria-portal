@@ -64,18 +64,19 @@ public class OrderService : IOrderService
             foreach (var foodItem in createOrderDto.FoodItems)
             {
                 const string insertFoodItemSql = @"
-                    INSERT INTO cafeteria.food_item_order
-                        (order_id, station_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
+                    INSERT INTO cafeteria.food_item
+                        (name, order_id, station_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
                     VALUES
-                        (@OrderId, @StationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)
-                    RETURNING id AS Id, order_id AS OrderId, station_id AS StationId,
+                        (@Name, @OrderId, @StationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)
+                    RETURNING id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
                         sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                         swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special;";
 
-                var insertedFoodItem = await _dbConnection.QuerySingleAsync<FoodItemOrderDto>(
+                var insertedFoodItem = await _dbConnection.QuerySingleAsync<FoodItemDto>(
                     insertFoodItemSql,
                     new
                     {
+                        foodItem.Name,
                         OrderId = order.Id,
                         foodItem.StationId,
                         SaleCardId = saleCardId,
@@ -90,14 +91,14 @@ public class OrderService : IOrderService
                 {
                     const string insertOptionSql = @"
                         INSERT INTO cafeteria.food_item_option (food_item_order_id, food_option_name)
-                        VALUES (@FoodItemOrderId, @FoodOptionName)
-                        RETURNING id AS Id, food_item_order_id AS FoodItemOrderId, food_option_name AS FoodOptionName;";
+                        VALUES (@FoodItemId, @FoodOptionName)
+                        RETURNING id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName;";
 
                     var insertedOption = await _dbConnection.QuerySingleAsync<FoodItemOptionDto>(
                         insertOptionSql,
                         new
                         {
-                            FoodItemOrderId = insertedFoodItem.Id,
+                            FoodItemId = insertedFoodItem.Id,
                             option.FoodOptionName
                         },
                         transaction);
@@ -129,23 +130,23 @@ public class OrderService : IOrderService
         if (order == null) return null;
 
         const string foodItemsSql = @"
-            SELECT id AS Id, order_id AS OrderId, station_id AS StationId,
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
                 sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                 swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
-            FROM cafeteria.food_item_order
+            FROM cafeteria.food_item
             WHERE order_id = @orderId;";
 
-        var foodItems = await _dbConnection.QueryAsync<FoodItemOrderDto>(foodItemsSql, new { orderId = id });
+        var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = id });
         order.FoodItems = foodItems.ToList();
 
         foreach (var foodItem in order.FoodItems)
         {
             const string optionsSql = @"
-                SELECT id AS Id, food_item_order_id AS FoodItemOrderId, food_option_name AS FoodOptionName
+                SELECT id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName
                 FROM cafeteria.food_item_option
-                WHERE food_item_order_id = @foodItemOrderId;";
+                WHERE food_item_order_id = @foodItemId;";
 
-            var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemOrderId = foodItem.Id });
+            var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemId = foodItem.Id });
             foodItem.Options = options.ToList();
         }
 
@@ -164,23 +165,23 @@ public class OrderService : IOrderService
         foreach (var order in orders)
         {
             const string foodItemsSql = @"
-                SELECT id AS Id, order_id AS OrderId, station_id AS StationId,
+                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
                     sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                     swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
-                FROM cafeteria.food_item_order
+                FROM cafeteria.food_item
                 WHERE order_id = @orderId;";
 
-            var foodItems = await _dbConnection.QueryAsync<FoodItemOrderDto>(foodItemsSql, new { orderId = order.Id });
+            var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = order.Id });
             order.FoodItems = foodItems.ToList();
 
             foreach (var foodItem in order.FoodItems)
             {
                 const string optionsSql = @"
-                    SELECT id AS Id, food_item_order_id AS FoodItemOrderId, food_option_name AS FoodOptionName
+                    SELECT id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName
                     FROM cafeteria.food_item_option
-                    WHERE food_item_order_id = @foodItemOrderId;";
+                    WHERE food_item_order_id = @foodItemId;";
 
-                var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemOrderId = foodItem.Id });
+                var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemId = foodItem.Id });
                 foodItem.Options = options.ToList();
             }
         }

@@ -203,15 +203,16 @@ public class PlaceOrderVM : IPlaceOrderVM
             TotalPrice = order.IsCardOrder ? CalculateTotalPrice(order) : null,
             Tax = CalculateTax(order),
             TotalSwipe = order.IsCardOrder ? null : CalculateTotalSwipe(order),
-            FoodItems = new List<CreateFoodItemOrderDto>()
+            FoodItems = new List<CreateFoodItemDto>()
         };
 
         if (order.IsCardOrder)
         {
             foreach (var entreeItem in order.Entrees)
             {
-                var foodItem = new CreateFoodItemOrderDto
+                var foodItem = new CreateFoodItemDto
                 {
+                    Name = entreeItem.Entree.EntreeName,
                     StationId = entreeItem.Entree.StationId,
                     CardCost = entreeItem.Entree.EntreePrice + entreeItem.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice),
                     SwipeCost = null,
@@ -226,8 +227,9 @@ public class PlaceOrderVM : IPlaceOrderVM
 
             foreach (var sideItem in order.Sides)
             {
-                var foodItem = new CreateFoodItemOrderDto
+                var foodItem = new CreateFoodItemDto
                 {
+                    Name = sideItem.Side.SideName,
                     StationId = sideItem.Side.StationId,
                     CardCost = sideItem.Side.SidePrice + sideItem.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice),
                     SwipeCost = null,
@@ -242,8 +244,9 @@ public class PlaceOrderVM : IPlaceOrderVM
 
             foreach (var drink in order.Drinks)
             {
-                var foodItem = new CreateFoodItemOrderDto
+                var foodItem = new CreateFoodItemDto
                 {
+                    Name = drink.DrinkName,
                     StationId = order.Location?.Id ?? 0,
                     CardCost = drink.DrinkPrice,
                     SwipeCost = null,
@@ -264,8 +267,9 @@ public class PlaceOrderVM : IPlaceOrderVM
                 var sideItem = order.Sides[i];
                 var drink = order.Drinks[i];
 
-                var entreeFoodItem = new CreateFoodItemOrderDto
+                var entreeFoodItem = new CreateFoodItemDto
                 {
+                    Name = entreeItem.Entree.EntreeName,
                     StationId = entreeItem.Entree.StationId,
                     CardCost = null,
                     SwipeCost = 1,
@@ -277,8 +281,9 @@ public class PlaceOrderVM : IPlaceOrderVM
                 };
                 createOrderDto.FoodItems.Add(entreeFoodItem);
 
-                var sideFoodItem = new CreateFoodItemOrderDto
+                var sideFoodItem = new CreateFoodItemDto
                 {
+                    Name = sideItem.Side.SideName,
                     StationId = sideItem.Side.StationId,
                     CardCost = null,
                     SwipeCost = 0, // Side and drink don't add swipe cost, only entree does
@@ -290,8 +295,9 @@ public class PlaceOrderVM : IPlaceOrderVM
                 };
                 createOrderDto.FoodItems.Add(sideFoodItem);
 
-                var drinkFoodItem = new CreateFoodItemOrderDto
+                var drinkFoodItem = new CreateFoodItemDto
                 {
+                    Name = drink.DrinkName,
                     StationId = order.Location?.Id ?? 0,
                     CardCost = null,
                     SwipeCost = 0,
