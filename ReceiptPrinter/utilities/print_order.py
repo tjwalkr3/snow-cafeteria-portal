@@ -22,7 +22,13 @@ def print_logo(printer, logo_path=LOGO_PATH):
         logo_path = os.path.join(os.path.dirname(current_dir), logo_path)
 
     if os.path.exists(logo_path):
-        printer.image(logo_path, center=True)
+        printer.image(
+            logo_path,
+            high_density_vertical=False,
+            high_density_horizontal=True,
+            impl="bitImageColumn",
+            center=True,
+        )
     else:
         printer.text("\n" * 8)
 
