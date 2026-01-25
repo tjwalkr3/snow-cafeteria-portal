@@ -33,6 +33,7 @@ install_service() {
     ensure_venv
 
     echo "📦 Installing systemd service: $SERVICE_NAME"
+    USER_HOME=$(eval echo "~$USER_NAME")
 
     cat > "$SERVICE_FILE" <<EOF
 [Unit]
@@ -43,7 +44,7 @@ After=network.target
 Type=simple
 User=$USER_NAME
 WorkingDirectory=$PROJECT_DIR
-Environment=LD_LIBRARY_PATH=$LD_PATH
+Environment=LD_LIBRARY_PATH=${USER_HOME}/.nix-profile/lib
 ExecStart=$UVICORN main:app --host $HOST --port $PORT
 Restart=always
 RestartSec=5

@@ -384,9 +384,44 @@ public partial class PlaceOrder : ComponentBase
     {
         if (Order == null) return new List<FoodItemDto>();
 
-        return Order.Entrees.Select(e => new FoodItemDto { Name = e.Entree.EntreeName })
-            .Concat(Order.Sides.Select(s => new FoodItemDto { Name = s.Side.SideName }))
-            .Concat(Order.Drinks.Select(d => new FoodItemDto { Name = d.DrinkName }))
-            .ToList();
+        var foodItems = new List<FoodItemDto>();
+
+        // Add entrees with their options
+        foreach (var entreeItem in Order.Entrees)
+        {
+            foodItems.Add(new FoodItemDto
+            {
+                Name = entreeItem.Entree.EntreeName,
+                Options = entreeItem.SelectedOptions.Select(opt => new FoodItemOptionDto
+                {
+                    FoodOptionName = opt.Option.FoodOptionName
+                }).ToList()
+            });
+        }
+
+        // Add sides with their options
+        foreach (var sideItem in Order.Sides)
+        {
+            foodItems.Add(new FoodItemDto
+            {
+                Name = sideItem.Side.SideName,
+                Options = sideItem.SelectedOptions.Select(opt => new FoodItemOptionDto
+                {
+                    FoodOptionName = opt.Option.FoodOptionName
+                }).ToList()
+            });
+        }
+
+        // Add drinks (no options)
+        foreach (var drink in Order.Drinks)
+        {
+            foodItems.Add(new FoodItemDto
+            {
+                Name = drink.DrinkName,
+                Options = new List<FoodItemOptionDto>()
+            });
+        }
+
+        return foodItems;
     }
 }
