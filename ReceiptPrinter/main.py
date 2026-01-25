@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from DTOs.PrintOrderDto import PrintOrderDto
 from utilities.format_order import format_order
 from utilities.print_order import print_receipt
@@ -12,10 +12,15 @@ def root():
 
 
 @app.post("/print-order")
-def print_order(order: PrintOrderDto):
+async def print_order(request: Request):
+    body = await request.body()
+    print(f"Received JSON: {body.decode('utf-8')}")
+
     try:
+        order = PrintOrderDto.model_validate_json(body)
         formatted_lines = format_order(order)
         print_receipt(formatted_lines)
         return {"message": "Order printed successfully", "order_id": order.Id}
     except Exception as e:
+        print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error printing order: {str(e)}")
