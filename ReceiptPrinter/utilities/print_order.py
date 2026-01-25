@@ -1,5 +1,5 @@
 import os
-
+from PIL import Image
 from escpos.printer import Usb
 
 DEFAULT_VENDOR_ID = int(os.environ.get("PRINTER_VENDOR_ID", "04b8"), 16)
@@ -22,13 +22,12 @@ def print_logo(printer, logo_path=LOGO_PATH):
         logo_path = os.path.join(os.path.dirname(current_dir), logo_path)
 
     if os.path.exists(logo_path):
-        printer.image(
-            logo_path,
-            high_density_vertical=False,
-            high_density_horizontal=True,
-            impl="bitImageColumn",
-            center=True,
-        )
+        img = Image.open(logo_path)
+        new_height = img.height // 2
+        img_resized = img.resize((img.width, new_height), Image.Resampling.LANCZOS)
+        printer.set(align="center")
+        printer.image(img_resized)
+        printer.set(align="left")
     else:
         printer.text("\n" * 8)
 
