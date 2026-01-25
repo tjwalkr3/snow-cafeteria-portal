@@ -5,7 +5,7 @@ SERVICE_NAME=receipt-printer
 SERVICE_FILE=/etc/systemd/system/${SERVICE_NAME}.service
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VENV_DIR="${PROJECT_DIR}/.venv"
-USER_NAME="$(id -un)"
+USER_NAME="${SUDO_USER:-$(id -un)}"
 
 UVICORN="${VENV_DIR}/bin/uvicorn"
 PYTHON="${VENV_DIR}/bin/python"
