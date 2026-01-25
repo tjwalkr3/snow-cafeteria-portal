@@ -40,7 +40,7 @@ def format_header(order_id: int, order_time: datetime) -> List[str]:
 
 def format_food_item_option(option: FoodItemOptionDto) -> str:
     """Format a food item option (indented under the food item)."""
-    option_name = option.FoodOptionName or "Unknown Option"
+    option_name = option.foodOptionName or "Unknown Option"
     indented_text = f"    - {option_name}"
     return pad_line(indented_text)
 
@@ -49,13 +49,13 @@ def format_food_item(item: FoodItemDto) -> List[str]:
     """Format a food item with its options."""
     lines = []
 
-    item_name = item.Name or f"Item #{item.Id}"
-    if item.Special:
+    item_name = item.name or f"Item #{item.id}"
+    if item.special:
         item_name += " (Special)"
 
     lines.append(pad_line(item_name))
 
-    for option in item.Options:
+    for option in item.options:
         lines.append(format_food_item_option(option))
 
     return lines
@@ -83,9 +83,9 @@ def format_order(order: PrintOrderDto) -> List[str]:
     """
     receipt_lines = []
 
-    receipt_lines.extend(format_header(order.Id, order.OrderTime))
+    receipt_lines.extend(format_header(order.id, order.orderTime))
 
-    for food_item in order.FoodItems:
+    for food_item in order.foodItems:
         receipt_lines.extend(format_food_item(food_item))
 
     receipt_lines.extend(format_footer())

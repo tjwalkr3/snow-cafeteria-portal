@@ -5,6 +5,6 @@ from .FoodItemDto import FoodItemDto
 
 
 class PrintOrderDto(BaseModel):
-    Id: int
-    OrderTime: datetime
-    FoodItems: List[FoodItemDto] = []
+    id: int
+    orderTime: datetime
+    foodItems: List[FoodItemDto] = []

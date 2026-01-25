@@ -20,7 +20,7 @@ async def print_order(request: Request):
         order = PrintOrderDto.model_validate_json(body)
         formatted_lines = format_order(order)
         print_receipt(formatted_lines)
-        return {"message": "Order printed successfully", "order_id": order.Id}
+        return {"message": "Order printed successfully", "order_id": order.id}
     except Exception as e:
         print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error printing order: {str(e)}")
