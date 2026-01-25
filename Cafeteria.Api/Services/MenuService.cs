@@ -20,7 +20,8 @@ public class MenuService : IMenuService
                 id AS Id, 
                 location_name AS LocationName, 
                 location_description AS LocationDescription, 
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                printer_url AS PrinterUrl
             FROM cafeteria.cafeteria_location";
 
         var result = await _dbConnection.QueryAsync<LocationDto>(sql);

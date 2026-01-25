@@ -20,7 +20,6 @@ builder.Services.AddRazorComponents()
 // Api Data Service with service discovery
 builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
 {
-    // Use configuration that works in both Aspire (via env var) and Kubernetes (via appsettings)
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
     client.BaseAddress = new Uri(apiBaseUrl);
 });
@@ -30,6 +29,8 @@ builder.Services.AddHttpClient<IApiOrderService, ApiOrderService>(client =>
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
     client.BaseAddress = new Uri(apiBaseUrl);
 });
+
+builder.Services.AddHttpClient<IPrinterService, PrinterService>();
 
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
@@ -46,16 +47,12 @@ builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddSingleton<CartNotificationService>();
 
-// Register printer services
-builder.Services.AddSingleton<IPrinterService, PrinterService>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

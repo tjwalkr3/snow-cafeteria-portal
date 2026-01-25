@@ -175,18 +175,28 @@ public partial class PlaceOrder : ComponentBase
 
             await Task.Delay(3000);
             await Cart.ClearOrder("order");
-            Navigation.NavigateTo("/", true);
         }
         catch (Exception ex)
         {
             _toastMessage = $"Failed to place order: {ex.Message}";
             _showToast = true;
             StateHasChanged();
+            return;
         }
 
         if (Order?.Location != null)
         {
-            var printerUrl = await PrinterService.GetPrinterUrl(Order.Location.Id);
+            await PrintPlacedOrder(Order.Location.Id);
+        }
+        
+        Navigation.NavigateTo("/", true);
+    }
+
+    private async Task PrintPlacedOrder(int locationId)
+    {
+        try
+        {
+            var printerUrl = await PrinterService.GetPrinterUrl(locationId);
             if (!string.IsNullOrWhiteSpace(printerUrl))
             {
                 var printOrderData = new PrintOrderDto
@@ -195,8 +205,20 @@ public partial class PlaceOrder : ComponentBase
                     OrderTime = DateTime.Now,
                     FoodItems = ConvertOrderToFoodItems()
                 };
-                await PrinterService.PrintOrder(printerUrl, printOrderData);
+                var printSuccess = await PrinterService.PrintOrder(printerUrl, printOrderData);
+                if (!printSuccess)
+                {
+                    _toastMessage = "Order placed successfully, but receipt printing failed";
+                    _showToast = true;
+                    StateHasChanged();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            _toastMessage = $"Order placed successfully, but receipt printing failed: {ex.Message}";
+            _showToast = true;
+            StateHasChanged();
         }
     }
 
