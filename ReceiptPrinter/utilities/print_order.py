@@ -22,12 +22,14 @@ def print_logo(printer, logo_path=LOGO_PATH):
         logo_path = os.path.join(os.path.dirname(current_dir), logo_path)
 
     if os.path.exists(logo_path):
+        printer.text("\n" * 2)
         img = Image.open(logo_path)
         new_height = img.height // 2
         img_resized = img.resize((img.width, new_height), Image.Resampling.LANCZOS)
         printer.set(align="center")
         printer.image(img_resized)
         printer.set(align="left")
+        printer.text("\n" * 1)
     else:
         printer.text("\n" * 8)
 
