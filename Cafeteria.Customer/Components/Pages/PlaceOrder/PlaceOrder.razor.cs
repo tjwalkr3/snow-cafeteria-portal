@@ -175,6 +175,11 @@ public partial class PlaceOrder : ComponentBase
 
             await Task.Delay(3000);
             await Cart.ClearOrder("order");
+
+            if (Order?.Location != null)
+            {
+                await PrintPlacedOrder(Order.Location.Id, createdOrder.Id);
+            }
         }
         catch (Exception ex)
         {
@@ -183,16 +188,11 @@ public partial class PlaceOrder : ComponentBase
             StateHasChanged();
             return;
         }
-
-        if (Order?.Location != null)
-        {
-            await PrintPlacedOrder(Order.Location.Id);
-        }
         
         Navigation.NavigateTo("/", true);
     }
 
-    private async Task PrintPlacedOrder(int locationId)
+    private async Task PrintPlacedOrder(int locationId, int orderId)
     {
         try
         {
@@ -201,7 +201,7 @@ public partial class PlaceOrder : ComponentBase
             {
                 var printOrderData = new PrintOrderDto
                 {
-                    Id = 0,
+                    Id = orderId,
                     OrderTime = DateTime.Now,
                     FoodItems = ConvertOrderToFoodItems()
                 };
