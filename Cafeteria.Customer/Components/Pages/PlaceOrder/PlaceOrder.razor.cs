@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
@@ -174,29 +175,50 @@ public partial class PlaceOrder : ComponentBase
 
             await Task.Delay(3000);
             await Cart.ClearOrder("order");
-            Navigation.NavigateTo("/", true);
+
+            if (Order?.Location != null)
+            {
+                await PrintPlacedOrder(Order.Location.Id, createdOrder.Id);
+            }
         }
         catch (Exception ex)
         {
             _toastMessage = $"Failed to place order: {ex.Message}";
             _showToast = true;
             StateHasChanged();
+            return;
         }
 
-        if (Order?.Location != null)
+        Navigation.NavigateTo("/", true);
+    }
+
+    private async Task PrintPlacedOrder(int locationId, int orderId)
+    {
+        try
         {
-            var printerUrl = await PrinterService.GetPrinterUrl(Order.Location.Id);
+            var printerUrl = await PrinterService.GetPrinterUrl(locationId);
             if (!string.IsNullOrWhiteSpace(printerUrl))
             {
                 var printOrderData = new PrintOrderDto
                 {
-                    OrderId = 0,
+                    Id = orderId,
                     OrderTime = DateTime.Now,
-                    TotalPrice = Price,
                     FoodItems = ConvertOrderToFoodItems()
                 };
-                await PrinterService.PrintOrder(printerUrl, printOrderData);
+                var printSuccess = await PrinterService.PrintOrder(printerUrl, printOrderData);
+                if (!printSuccess)
+                {
+                    _toastMessage = "Order placed successfully, but receipt printing failed";
+                    _showToast = true;
+                    StateHasChanged();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            _toastMessage = $"Order placed successfully, but receipt printing failed: {ex.Message}";
+            _showToast = true;
+            StateHasChanged();
         }
     }
 
@@ -362,9 +384,44 @@ public partial class PlaceOrder : ComponentBase
     {
         if (Order == null) return new List<FoodItemDto>();
 
-        return Order.Entrees.Select(e => new FoodItemDto { Name = e.Entree.EntreeName })
-            .Concat(Order.Sides.Select(s => new FoodItemDto { Name = s.Side.SideName }))
-            .Concat(Order.Drinks.Select(d => new FoodItemDto { Name = d.DrinkName }))
-            .ToList();
+        var foodItems = new List<FoodItemDto>();
+
+        // Add entrees with their options
+        foreach (var entreeItem in Order.Entrees)
+        {
+            foodItems.Add(new FoodItemDto
+            {
+                Name = entreeItem.Entree.EntreeName,
+                Options = entreeItem.SelectedOptions.Select(opt => new FoodItemOptionDto
+                {
+                    FoodOptionName = opt.Option.FoodOptionName
+                }).ToList()
+            });
+        }
+
+        // Add sides with their options
+        foreach (var sideItem in Order.Sides)
+        {
+            foodItems.Add(new FoodItemDto
+            {
+                Name = sideItem.Side.SideName,
+                Options = sideItem.SelectedOptions.Select(opt => new FoodItemOptionDto
+                {
+                    FoodOptionName = opt.Option.FoodOptionName
+                }).ToList()
+            });
+        }
+
+        // Add drinks (no options)
+        foreach (var drink in Order.Drinks)
+        {
+            foodItems.Add(new FoodItemDto
+            {
+                Name = drink.DrinkName,
+                Options = new List<FoodItemOptionDto>()
+            });
+        }
+
+        return foodItems;
     }
 }

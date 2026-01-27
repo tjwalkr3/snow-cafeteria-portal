@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Order;
 using Npgsql;
 
 namespace Cafeteria.IntegrationTests.Api;

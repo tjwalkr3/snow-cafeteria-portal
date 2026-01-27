@@ -1,4 +1,4 @@
-namespace Cafeteria.Shared.DTOs;
+namespace Cafeteria.Shared.DTOs.Menu;
 
 public class FoodOptionTypeWithOptionsDto
 {

@@ -1,7 +1,6 @@
 using Cafeteria.Management.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Moq;
-using Xunit;
 using System.Net;
 using System.Net.Http.Json;
 

@@ -3,6 +3,6 @@ from typing import Optional
 
 
 class FoodItemOptionDto(BaseModel):
-    Id: int
-    FoodItemOrderId: int
-    FoodOptionName: Optional[str] = None
+    id: int
+    foodItemId: int
+    foodOptionName: Optional[str] = None

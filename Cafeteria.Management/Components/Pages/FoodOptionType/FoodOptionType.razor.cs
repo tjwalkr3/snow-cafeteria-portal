@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Services;
 using Cafeteria.Management.Components.Pages.FoodOption;

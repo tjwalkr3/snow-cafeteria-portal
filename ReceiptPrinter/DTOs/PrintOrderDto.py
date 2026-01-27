@@ -1,11 +1,10 @@
 from pydantic import BaseModel
 from typing import List
 from datetime import datetime
-from .FoodItemOrderDto import FoodItemOrderDto
+from .FoodItemDto import FoodItemDto
 
 
 class PrintOrderDto(BaseModel):
-    OrderId: int
-    OrderTime: datetime
-    TotalPrice: float
-    FoodItems: List[FoodItemOrderDto] = []
+    id: int
+    orderTime: datetime
+    foodItems: List[FoodItemDto] = []

@@ -1,6 +1,6 @@
 namespace Cafeteria.Customer;
 
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 
 public class BrowserOrder
 {

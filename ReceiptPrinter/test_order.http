@@ -1,5 +1,5 @@
 ### Variables
-@baseUrl = http://cafeteria-2:8000
+@baseUrl = http://cafeteria-3:8000
 
 ### Hello World
 GET {{baseUrl}}/
@@ -9,46 +9,47 @@ POST {{baseUrl}}/print-order
 Content-Type: application/json
 
 {
-  "OrderId": 12345,
-  "OrderTime": "2026-01-23T14:30:00",
-  "TotalPrice": 15.75,
-  "FoodItems": [
+  "id": 12345,
+  "orderTime": "2026-01-23T14:30:00",
+  "foodItems": [
     {
-      "Id": 1,
-      "OrderId": 12345,
-      "StationId": 101,
-      "SaleCardId": null,
-      "SaleSwipeId": 5001,
-      "SwipeCost": 6,
-      "CardCost": null,
-      "Special": false,
-      "Options": [
+      "id": 1,
+      "name": "Cheeseburger",
+      "orderId": 12345,
+      "stationId": 101,
+      "saleCardId": null,
+      "saleSwipeId": 5001,
+      "swipeCost": null,
+      "cardCost": null,
+      "special": false,
+      "options": [
         {
-          "Id": 1001,
-          "FoodItemOrderId": 1,
-          "FoodOptionName": "Extra Cheese"
+          "id": 1001,
+          "foodItemId": 1,
+          "foodOptionName": "Extra Cheese"
         },
         {
-          "Id": 1002,
-          "FoodItemOrderId": 1,
-          "FoodOptionName": "No Onions"
+          "id": 1002,
+          "foodItemId": 1,
+          "foodOptionName": "No Onions"
         }
       ]
     },
     {
-      "Id": 2,
-      "OrderId": 12345,
-      "StationId": 102,
-      "SaleCardId": 6001,
-      "SaleSwipeId": null,
-      "SwipeCost": null,
-      "CardCost": 9.75,
-      "Special": true,
-      "Options": [
+      "id": 2,
+      "name": "Veggie Wrap",
+      "orderId": 12345,
+      "stationId": 102,
+      "saleCardId": 6001,
+      "saleSwipeId": null,
+      "swipeCost": null,
+      "cardCost": null,
+      "special": true,
+      "options": [
         {
-          "Id": 1003,
-          "FoodItemOrderId": 2,
-          "FoodOptionName": "Gluten Free Bun"
+          "id": 1003,
+          "foodItemId": 2,
+          "foodOptionName": "Gluten Free Bun"
         }
       ]
     }

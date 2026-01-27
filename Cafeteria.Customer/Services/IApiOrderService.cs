@@ -1,4 +1,4 @@
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Order;
 
 namespace Cafeteria.Customer.Services;
 
