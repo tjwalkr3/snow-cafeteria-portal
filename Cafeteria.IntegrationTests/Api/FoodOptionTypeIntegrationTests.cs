@@ -26,24 +26,10 @@ public class FoodOptionTypeIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task GetAllFoodOptions_ReturnsFoodOptionData()
+    public async Task GetAllFoodOptionTypes_ReturnsFoodOptionTypeData()
     {
         // Use pre-loaded sample data
-        var response = await _client.GetAsync("/api/manager/food-options");
-        response.EnsureSuccessStatusCode();
-        var optionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>();
-
-        Assert.NotNull(optionsAfter);
-        Assert.True(optionsAfter.Count >= 3);
-        Assert.Contains(optionsAfter, o => o.FoodOptionName == "Lettuce");
-        Assert.Contains(optionsAfter, o => o.FoodOptionName == "Tomato");
-    }
-
-    [Fact]
-    public async Task GetAllFoodTypes_ReturnsFoodTypeData()
-    {
-        // Use pre-loaded sample data
-        var response = await _client.GetAsync("/api/manager/food-types");
+        var response = await _client.GetAsync("/api/FoodOptionType");
         response.EnsureSuccessStatusCode();
         var typesAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionTypeDto>>();
 
@@ -54,139 +40,7 @@ public class FoodOptionTypeIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task GetAllOptionOptionTypes_ReturnsRelationshipData()
-    {
-        // Use pre-loaded sample data
-        var response = await _client.GetAsync("/api/manager/option-option-types");
-        response.EnsureSuccessStatusCode();
-        var relationsAfter = await response.Content.ReadFromJsonAsync<List<OptionOptionTypeDto>>();
-
-        Assert.NotNull(relationsAfter);
-        Assert.True(relationsAfter.Count >= 3);
-    }
-
-    [Fact]
-    public async Task CreateFoodOption_AddsNewFoodOption()
-    {
-        var newOption = new FoodOptionDto
-        {
-            FoodOptionName = "Test Pickles",
-            InStock = true,
-            ImageUrl = "https://picsum.photos/id/10/300/200",
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/manager/food-options", newOption);
-        response.EnsureSuccessStatusCode();
-        var createdOption = await response.Content.ReadFromJsonAsync<FoodOptionDto>();
-
-        Assert.NotNull(createdOption);
-        Assert.Equal(newOption.FoodOptionName, createdOption.FoodOptionName);
-        Assert.Equal(newOption.InStock, createdOption.InStock);
-        Assert.True(createdOption.Id > 0);
-    }
-
-    [Fact]
-    public async Task GetFoodOptionByID_ReturnsCorrectFoodOption()
-    {
-        // Use pre-loaded food option with ID 1
-        var response = await _client.GetAsync("/api/manager/food-options/1");
-        response.EnsureSuccessStatusCode();
-        var option = await response.Content.ReadFromJsonAsync<FoodOptionDto>();
-
-        Assert.NotNull(option);
-        Assert.Equal("Lettuce", option.FoodOptionName);
-    }
-
-    [Fact]
-    public async Task GetFoodOptionByID_ReturnsNotFound_WhenFoodOptionDoesNotExist()
-    {
-        var response = await _client.GetAsync("/api/manager/food-options/99999");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task UpdateFoodOption_UpdatesExistingFoodOption()
-    {
-        // Create a new food option for this test
-        var optionId = _connection.ExecuteScalar<int>(
-            InsertFoodOptionSql + " RETURNING id",
-            new
-            {
-                FoodOptionName = "Option To Update",
-                InStock = true,
-                ImageUrl = "https://example.com/img.jpg",
-            }
-        );
-
-        var updatedOption = new FoodOptionDto
-        {
-            Id = optionId,
-            FoodOptionName = "Updated Option Name",
-            InStock = false,
-            ImageUrl = "https://picsum.photos/id/20/300/200",
-        };
-
-        var response = await _client.PutAsJsonAsync(
-            $"/api/manager/food-options/{optionId}",
-            updatedOption
-        );
-        response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<FoodOptionDto>();
-
-        Assert.NotNull(result);
-        Assert.Equal(updatedOption.FoodOptionName, result.FoodOptionName);
-        Assert.Equal(updatedOption.InStock, result.InStock);
-    }
-
-    [Fact]
-    public async Task UpdateFoodOption_ReturnsNotFound_WhenFoodOptionDoesNotExist()
-    {
-        var updatedOption = new FoodOptionDto
-        {
-            Id = 99999,
-            FoodOptionName = "Nonexistent",
-            InStock = true,
-            ImageUrl = "https://example.com/img.jpg",
-        };
-
-        var response = await _client.PutAsJsonAsync(
-            "/api/manager/food-options/99999",
-            updatedOption
-        );
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task DeleteFoodOption_RemovesFoodOption()
-    {
-        // Create a new food option for deletion
-        var optionId = _connection.ExecuteScalar<int>(
-            InsertFoodOptionSql + " RETURNING id",
-            new
-            {
-                FoodOptionName = "Option To Delete",
-                InStock = true,
-                ImageUrl = "https://example.com/img.jpg",
-            }
-        );
-
-        var response = await _client.DeleteAsync($"/api/manager/food-options/{optionId}");
-        response.EnsureSuccessStatusCode();
-        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
-
-        var getResponse = await _client.GetAsync($"/api/manager/food-options/{optionId}");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
-    }
-
-    [Fact]
-    public async Task DeleteFoodOption_ReturnsNotFound_WhenFoodOptionDoesNotExist()
-    {
-        var response = await _client.DeleteAsync("/api/manager/food-options/99999");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task CreateFoodType_AddsNewFoodType()
+    public async Task CreateFoodOptionType_AddsNewFoodOptionType()
     {
         var newType = new FoodOptionTypeDto
         {
@@ -198,7 +52,7 @@ public class FoodOptionTypeIntegrationTests : IDisposable
             SideId = null,
         };
 
-        var response = await _client.PostAsJsonAsync("/api/manager/food-types", newType);
+        var response = await _client.PostAsJsonAsync("/api/FoodOptionType", newType);
         response.EnsureSuccessStatusCode();
         var createdType = await response.Content.ReadFromJsonAsync<FoodOptionTypeDto>();
 
@@ -209,10 +63,10 @@ public class FoodOptionTypeIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task GetFoodTypeByID_ReturnsCorrectFoodType()
+    public async Task GetFoodOptionTypeByID_ReturnsCorrectFoodOptionType()
     {
         // Use pre-loaded food type with ID 1
-        var response = await _client.GetAsync("/api/manager/food-types/1");
+        var response = await _client.GetAsync("/api/FoodOptionType/1");
         response.EnsureSuccessStatusCode();
         var type = await response.Content.ReadFromJsonAsync<FoodOptionTypeDto>();
 
@@ -221,14 +75,14 @@ public class FoodOptionTypeIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task GetFoodTypeByID_ReturnsNotFound_WhenFoodTypeDoesNotExist()
+    public async Task GetFoodOptionTypeByID_ReturnsNotFound_WhenFoodOptionTypeDoesNotExist()
     {
-        var response = await _client.GetAsync("/api/manager/food-types/99999");
+        var response = await _client.GetAsync("/api/FoodOptionType/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
-    public async Task UpdateFoodType_UpdatesExistingFoodType()
+    public async Task UpdateFoodOptionType_UpdatesExistingFoodOptionType()
     {
         // Create a new food type for this test
         var typeId = _connection.ExecuteScalar<int>(
@@ -256,7 +110,7 @@ public class FoodOptionTypeIntegrationTests : IDisposable
         };
 
         var response = await _client.PutAsJsonAsync(
-            $"/api/manager/food-types/{typeId}",
+            $"/api/FoodOptionType/{typeId}",
             updatedType
         );
         response.EnsureSuccessStatusCode();
@@ -269,7 +123,7 @@ public class FoodOptionTypeIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateFoodType_ReturnsNotFound_WhenFoodTypeDoesNotExist()
+    public async Task UpdateFoodOptionType_ReturnsNotFound_WhenFoodOptionTypeDoesNotExist()
     {
         var updatedType = new FoodOptionTypeDto
         {
@@ -282,12 +136,12 @@ public class FoodOptionTypeIntegrationTests : IDisposable
             SideId = null,
         };
 
-        var response = await _client.PutAsJsonAsync("/api/manager/food-types/99999", updatedType);
+        var response = await _client.PutAsJsonAsync("/api/FoodOptionType/99999", updatedType);
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
-    public async Task DeleteFoodType_RemovesFoodType()
+    public async Task DeleteFoodOptionType_RemovesFoodOptionType()
     {
         // Create a new food type for deletion
         var typeId = _connection.ExecuteScalar<int>(
@@ -303,125 +157,18 @@ public class FoodOptionTypeIntegrationTests : IDisposable
             }
         );
 
-        var response = await _client.DeleteAsync($"/api/manager/food-types/{typeId}");
+        var response = await _client.DeleteAsync($"/api/FoodOptionType/{typeId}");
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        var getResponse = await _client.GetAsync($"/api/manager/food-types/{typeId}");
+        var getResponse = await _client.GetAsync($"/api/FoodOptionType/{typeId}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 
     [Fact]
-    public async Task DeleteFoodType_ReturnsNotFound_WhenFoodTypeDoesNotExist()
+    public async Task DeleteFoodOptionType_ReturnsNotFound_WhenFoodOptionTypeDoesNotExist()
     {
-        var response = await _client.DeleteAsync("/api/manager/food-types/99999");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task CreateOptionOptionType_AddsNewRelationship()
-    {
-        var newRelation = new OptionOptionTypeDto { FoodOptionId = 1, FoodOptionTypeId = 2 };
-
-        var response = await _client.PostAsJsonAsync(
-            "/api/manager/option-option-types",
-            newRelation
-        );
-        response.EnsureSuccessStatusCode();
-        var createdRelation = await response.Content.ReadFromJsonAsync<OptionOptionTypeDto>();
-
-        Assert.NotNull(createdRelation);
-        Assert.Equal(newRelation.FoodOptionId, createdRelation.FoodOptionId);
-        Assert.Equal(newRelation.FoodOptionTypeId, createdRelation.FoodOptionTypeId);
-        Assert.True(createdRelation.Id > 0);
-    }
-
-    [Fact]
-    public async Task GetOptionOptionTypeByID_ReturnsCorrectRelationship()
-    {
-        // Use pre-loaded relationship with ID 1
-        var response = await _client.GetAsync("/api/manager/option-option-types/1");
-        response.EnsureSuccessStatusCode();
-        var relation = await response.Content.ReadFromJsonAsync<OptionOptionTypeDto>();
-
-        Assert.NotNull(relation);
-        Assert.Equal(1, relation.FoodOptionId);
-        Assert.Equal(1, relation.FoodOptionTypeId);
-    }
-
-    [Fact]
-    public async Task GetOptionOptionTypeByID_ReturnsNotFound_WhenRelationshipDoesNotExist()
-    {
-        var response = await _client.GetAsync("/api/manager/option-option-types/99999");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task UpdateOptionOptionType_UpdatesExistingRelationship()
-    {
-        // Create a new relationship for this test
-        var relationId = _connection.ExecuteScalar<int>(
-            InsertOptionOptionTypeSql + " RETURNING id",
-            new { FoodOptionId = 1, FoodOptionTypeId = 1 }
-        );
-
-        var updatedRelation = new OptionOptionTypeDto
-        {
-            Id = relationId,
-            FoodOptionId = 2,
-            FoodOptionTypeId = 2,
-        };
-
-        var response = await _client.PutAsJsonAsync(
-            $"/api/manager/option-option-types/{relationId}",
-            updatedRelation
-        );
-        response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<OptionOptionTypeDto>();
-
-        Assert.NotNull(result);
-        Assert.Equal(updatedRelation.FoodOptionId, result.FoodOptionId);
-        Assert.Equal(updatedRelation.FoodOptionTypeId, result.FoodOptionTypeId);
-    }
-
-    [Fact]
-    public async Task UpdateOptionOptionType_ReturnsNotFound_WhenRelationshipDoesNotExist()
-    {
-        var updatedRelation = new OptionOptionTypeDto
-        {
-            Id = 99999,
-            FoodOptionId = 1,
-            FoodOptionTypeId = 1,
-        };
-
-        var response = await _client.PutAsJsonAsync(
-            "/api/manager/option-option-types/99999",
-            updatedRelation
-        );
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task DeleteOptionOptionType_RemovesRelationship()
-    {
-        // Create a new relationship for deletion
-        var relationId = _connection.ExecuteScalar<int>(
-            InsertOptionOptionTypeSql + " RETURNING id",
-            new { FoodOptionId = 1, FoodOptionTypeId = 1 }
-        );
-
-        var response = await _client.DeleteAsync($"/api/manager/option-option-types/{relationId}");
-        response.EnsureSuccessStatusCode();
-        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
-
-        var getResponse = await _client.GetAsync($"/api/manager/option-option-types/{relationId}");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
-    }
-
-    [Fact]
-    public async Task DeleteOptionOptionType_ReturnsNotFound_WhenRelationshipDoesNotExist()
-    {
-        var response = await _client.DeleteAsync("/api/manager/option-option-types/99999");
+        var response = await _client.DeleteAsync("/api/FoodOptionType/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 }
