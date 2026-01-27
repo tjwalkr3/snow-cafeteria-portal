@@ -1,5 +1,5 @@
 using Cafeteria.Management.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Management.Components.Pages.LocationAndStation;
 

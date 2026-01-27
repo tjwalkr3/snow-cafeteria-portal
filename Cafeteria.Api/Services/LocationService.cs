@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
 using Dapper;
 
@@ -25,7 +25,8 @@ public class LocationService : ILocationService
                 id AS Id,
                 location_name AS LocationName,
                 location_description AS LocationDescription,
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                printer_url AS PrinterUrl
             FROM cafeteria.cafeteria_location
             ORDER BY location_name;";
 
@@ -40,7 +41,8 @@ public class LocationService : ILocationService
                 id AS Id,
                 location_name AS LocationName,
                 location_description AS LocationDescription,
-                image_url AS ImageUrl
+                image_url AS ImageUrl,
+                printer_url AS PrinterUrl
             FROM cafeteria.cafeteria_location
             WHERE id = @id;";
 

@@ -1,6 +1,6 @@
 using Cafeteria.Customer;
 using Cafeteria.Customer.Services;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.UnitTests.Customer.Services;
 

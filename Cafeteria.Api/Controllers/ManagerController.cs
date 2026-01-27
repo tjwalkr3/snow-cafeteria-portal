@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using Cafeteria.Shared.DTOs;
 using Cafeteria.Api.Services;
+using Cafeteria.Shared.DTOs.Menu;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Cafeteria.Api.Controllers;
 
@@ -15,7 +15,8 @@ public class ManagerController : ControllerBase
     public ManagerController(
         IFoodOptionService foodOptionService,
         IFoodTypeService foodTypeService,
-        IOptionOptionTypeService optionOptionTypeService)
+        IOptionOptionTypeService optionOptionTypeService
+    )
     {
         _foodOptionService = foodOptionService;
         _foodTypeService = foodTypeService;
@@ -29,9 +30,12 @@ public class ManagerController : ControllerBase
     }
 
     [HttpGet("food-options/{id}")]
-    public async Task<FoodOptionDto?> GetFoodOptionByID(int id)
+    public async Task<ActionResult<FoodOptionDto>> GetFoodOptionByID(int id)
     {
-        return await _foodOptionService.GetFoodOptionByID(id);
+        var result = await _foodOptionService.GetFoodOptionByID(id);
+        if (result == null)
+            return NotFound();
+        return Ok(result);
     }
 
     [HttpGet("food-options")]
@@ -41,9 +45,15 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPut("food-options/{id}")]
-    public async Task<FoodOptionDto?> UpdateFoodOption(int id, [FromBody] FoodOptionDto foodOptionDto)
+    public async Task<ActionResult<FoodOptionDto>> UpdateFoodOption(
+        int id,
+        [FromBody] FoodOptionDto foodOptionDto
+    )
     {
-        return await _foodOptionService.UpdateFoodOption(id, foodOptionDto);
+        var result = await _foodOptionService.UpdateFoodOption(id, foodOptionDto);
+        if (result == null)
+            return NotFound();
+        return Ok(result);
     }
 
     [HttpDelete("food-options/{id}")]
@@ -62,9 +72,12 @@ public class ManagerController : ControllerBase
     }
 
     [HttpGet("food-types/{id}")]
-    public async Task<FoodOptionTypeDto?> GetFoodTypeByID(int id)
+    public async Task<ActionResult<FoodOptionTypeDto>> GetFoodTypeByID(int id)
     {
-        return await _foodTypeService.GetFoodTypeByID(id);
+        var result = await _foodTypeService.GetFoodTypeByID(id);
+        if (result == null)
+            return NotFound();
+        return Ok(result);
     }
 
     [HttpGet("food-types")]
@@ -74,9 +87,15 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPut("food-types/{id}")]
-    public async Task<FoodOptionTypeDto?> UpdateFoodType(int id, [FromBody] FoodOptionTypeDto foodTypeDto)
+    public async Task<ActionResult<FoodOptionTypeDto>> UpdateFoodType(
+        int id,
+        [FromBody] FoodOptionTypeDto foodTypeDto
+    )
     {
-        return await _foodTypeService.UpdateFoodType(id, foodTypeDto);
+        var result = await _foodTypeService.UpdateFoodType(id, foodTypeDto);
+        if (result == null)
+            return NotFound();
+        return Ok(result);
     }
 
     [HttpDelete("food-types/{id}")]
@@ -89,15 +108,20 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPost("option-option-types")]
-    public async Task<OptionOptionTypeDto> CreateOptionOptionType([FromBody] OptionOptionTypeDto optionOptionTypeDto)
+    public async Task<OptionOptionTypeDto> CreateOptionOptionType(
+        [FromBody] OptionOptionTypeDto optionOptionTypeDto
+    )
     {
         return await _optionOptionTypeService.CreateOptionOptionType(optionOptionTypeDto);
     }
 
     [HttpGet("option-option-types/{id}")]
-    public async Task<OptionOptionTypeDto?> GetOptionOptionTypeByID(int id)
+    public async Task<ActionResult<OptionOptionTypeDto>> GetOptionOptionTypeByID(int id)
     {
-        return await _optionOptionTypeService.GetOptionOptionTypeByID(id);
+        var result = await _optionOptionTypeService.GetOptionOptionTypeByID(id);
+        if (result == null)
+            return NotFound();
+        return Ok(result);
     }
 
     [HttpGet("option-option-types")]
@@ -107,9 +131,18 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPut("option-option-types/{id}")]
-    public async Task<OptionOptionTypeDto?> UpdateOptionOptionType(int id, [FromBody] OptionOptionTypeDto optionOptionTypeDto)
+    public async Task<ActionResult<OptionOptionTypeDto>> UpdateOptionOptionType(
+        int id,
+        [FromBody] OptionOptionTypeDto optionOptionTypeDto
+    )
     {
-        return await _optionOptionTypeService.UpdateOptionOptionTypeById(id, optionOptionTypeDto);
+        var result = await _optionOptionTypeService.UpdateOptionOptionTypeById(
+            id,
+            optionOptionTypeDto
+        );
+        if (result == null)
+            return NotFound();
+        return Ok(result);
     }
 
     [HttpDelete("option-option-types/{id}")]

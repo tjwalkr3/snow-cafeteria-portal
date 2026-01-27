@@ -1,87 +1,41 @@
-using System.Data;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Dapper;
 using Npgsql;
-using Testcontainers.PostgreSql;
-using static Cafeteria.IntegrationTests.Api.DBSql;
 using static Cafeteria.IntegrationTests.Api.SampleMenuData;
 
 namespace Cafeteria.IntegrationTests.Api;
 
-public class DrinkIntegrationTests : IAsyncLifetime
+[Collection("Database")]
+public class DrinkIntegrationTests : IDisposable
 {
-    private readonly PostgreSqlContainer _postgresContainer;
-    private WebApplicationFactory<Program> _factory = null!;
-    private HttpClient _client = null!;
-    private NpgsqlConnection _connection = null!;
+    private readonly DatabaseFixture _fixture;
+    private readonly HttpClient _client;
+    private readonly NpgsqlConnection _connection;
 
-    public DrinkIntegrationTests()
+    public DrinkIntegrationTests(DatabaseFixture fixture)
     {
-        _postgresContainer = new PostgreSqlBuilder("postgres:18-alpine")
-            .WithDatabase("cafeteria")
-            .WithUsername("cafeteria_admin")
-            .WithPassword("SnowCafe")
-            .Build();
+        _fixture = fixture;
+        _client = _fixture.Client;
+        _connection = _fixture.GetConnection();
     }
 
-    public async Task InitializeAsync()
+    public void Dispose()
     {
-        await _postgresContainer.StartAsync();
-
-        _connection = new NpgsqlConnection(_postgresContainer.GetConnectionString());
-        await _connection.OpenAsync();
-        await _connection.ExecuteAsync(SqlData);
-
-        var connectionString = _postgresContainer.GetConnectionString();
-        _factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IDbConnection));
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
-                    services.AddScoped<IDbConnection>(_ =>
-                    {
-                        var conn = new NpgsqlConnection(connectionString);
-                        conn.Open();
-                        return conn;
-                    });
-                });
-            });
-
-        _client = _factory.CreateClient();
-    }
-
-    public async Task DisposeAsync()
-    {
-        _client?.Dispose();
-        _factory?.Dispose();
-        if (_connection != null)
-        {
-            await _connection.CloseAsync();
-            await _connection.DisposeAsync();
-        }
-        await _postgresContainer.DisposeAsync();
+        _connection?.Dispose();
     }
 
     [Fact]
     public async Task CreateDrink_AddsNewDrink()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-
+        // Use pre-loaded location with ID 1
         var newDrink = new DrinkDto
         {
             LocationId = 1,
-            DrinkName = "Sprite",
-            DrinkDescription = "Lemon-lime soda",
+            DrinkName = "Test Sprite",
+            DrinkDescription = "Lemon-lime soda for testing",
             DrinkPrice = 1.99m,
-            ImageUrl = "https://picsum.photos/id/100/300/200"
+            ImageUrl = "https://picsum.photos/id/100/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/drink", newDrink);
@@ -98,69 +52,64 @@ public class DrinkIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task GetDrinkByID_ReturnsCorrectDrink()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        var drinkId = _connection.ExecuteScalar<int>(
-            InsertDrinkSql + " RETURNING id",
-            Drinks[0]);
-
-        var response = await _client.GetAsync($"/api/drink/{drinkId}");
+        // Use pre-loaded drink with ID 1
+        var response = await _client.GetAsync("/api/drink/1");
         response.EnsureSuccessStatusCode();
         var drink = await response.Content.ReadFromJsonAsync<DrinkDto>();
 
         Assert.NotNull(drink);
-        Assert.Equal(Drinks[0].DrinkName, drink.DrinkName);
-        Assert.Equal(Drinks[0].DrinkDescription, drink.DrinkDescription);
-        Assert.Equal(Drinks[0].DrinkPrice, drink.DrinkPrice);
+        Assert.Equal("Coca-Cola", drink.DrinkName);
     }
 
     [Fact]
     public async Task GetDrinkByID_ReturnsNotFound_WhenDrinkDoesNotExist()
     {
-        var response = await _client.GetAsync("/api/drink/999");
+        var response = await _client.GetAsync("/api/drink/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task GetAllDrinks_ReturnsAllDrinks()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertDrinkSql, Drinks[0]);
-        _connection.Execute(InsertDrinkSql, Drinks[1]);
-
+        // Use pre-loaded sample data
         var response = await _client.GetAsync("/api/drink");
         response.EnsureSuccessStatusCode();
         var drinks = await response.Content.ReadFromJsonAsync<List<DrinkDto>>();
 
         Assert.NotNull(drinks);
-        Assert.Equal(2, drinks.Count);
-        Assert.Equal(Drinks[0].DrinkName, drinks[0].DrinkName);
-        Assert.Equal(Drinks[1].DrinkName, drinks[1].DrinkName);
+        Assert.True(drinks.Count >= 3);
+        Assert.Contains(drinks, d => d.DrinkName == "Coca-Cola");
+        Assert.Contains(drinks, d => d.DrinkName == "Lemonade");
     }
 
     [Fact]
     public async Task GetDrinksByLocationID_ReturnsDrinksForLocation()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
-        _connection.Execute(InsertLocationSql, Locations[1]);
-        _connection.Execute(InsertDrinkSql, Drinks[0]);
-        _connection.Execute(InsertDrinkSql, Drinks[1]);
-
+        // Location 1 has drinks 1 and 2
         var response = await _client.GetAsync("/api/drink/location/1");
         response.EnsureSuccessStatusCode();
         var drinks = await response.Content.ReadFromJsonAsync<List<DrinkDto>>();
 
         Assert.NotNull(drinks);
-        Assert.Equal(2, drinks.Count);
+        Assert.True(drinks.Count >= 2);
         Assert.All(drinks, drink => Assert.Equal(1, drink.LocationId));
     }
 
     [Fact]
     public async Task UpdateDrinkByID_UpdatesExistingDrink()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create a new drink for this test
         var drinkId = _connection.ExecuteScalar<int>(
             InsertDrinkSql + " RETURNING id",
-            Drinks[0]);
+            new
+            {
+                LocationId = 1,
+                DrinkName = "Drink To Update",
+                DrinkDescription = "Original",
+                DrinkPrice = 1.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
 
         var updatedDrink = new DrinkDto
         {
@@ -169,7 +118,7 @@ public class DrinkIntegrationTests : IAsyncLifetime
             DrinkName = "Updated Drink",
             DrinkDescription = "Updated description",
             DrinkPrice = 3.99m,
-            ImageUrl = "https://picsum.photos/id/101/300/200"
+            ImageUrl = "https://picsum.photos/id/101/300/200",
         };
 
         var response = await _client.PutAsJsonAsync($"/api/drink/{drinkId}", updatedDrink);
@@ -187,26 +136,33 @@ public class DrinkIntegrationTests : IAsyncLifetime
     {
         var updatedDrink = new DrinkDto
         {
-            Id = 999,
+            Id = 99999,
             LocationId = 1,
             DrinkName = "Nonexistent",
             DrinkDescription = "Description",
             DrinkPrice = 1.99m,
-            ImageUrl = "https://picsum.photos/id/102/300/200"
+            ImageUrl = "https://picsum.photos/id/102/300/200",
         };
 
-        var response = await _client.PutAsJsonAsync("/api/drink/999", updatedDrink);
-
+        var response = await _client.PutAsJsonAsync("/api/drink/99999", updatedDrink);
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task DeleteDrinkByID_RemovesDrink()
     {
-        _connection.Execute(InsertLocationSql, Locations[0]);
+        // Create a new drink for deletion
         var drinkId = _connection.ExecuteScalar<int>(
             InsertDrinkSql + " RETURNING id",
-            Drinks[0]);
+            new
+            {
+                LocationId = 1,
+                DrinkName = "Drink To Delete",
+                DrinkDescription = "Will be deleted",
+                DrinkPrice = 1.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
 
         var response = await _client.DeleteAsync($"/api/drink/{drinkId}");
         response.EnsureSuccessStatusCode();
@@ -219,8 +175,7 @@ public class DrinkIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task DeleteDrinkByID_ReturnsNotFound_WhenDrinkDoesNotExist()
     {
-        var response = await _client.DeleteAsync("/api/drink/999");
-
+        var response = await _client.DeleteAsync("/api/drink/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 }

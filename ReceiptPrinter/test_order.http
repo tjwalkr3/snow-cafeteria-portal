@@ -1,0 +1,57 @@
+### Variables
+@baseUrl = http://cafeteria-3:8000
+
+### Hello World
+GET {{baseUrl}}/
+
+### Print Order
+POST {{baseUrl}}/print-order
+Content-Type: application/json
+
+{
+  "id": 12345,
+  "orderTime": "2026-01-23T14:30:00",
+  "foodItems": [
+    {
+      "id": 1,
+      "name": "Cheeseburger",
+      "orderId": 12345,
+      "stationId": 101,
+      "saleCardId": null,
+      "saleSwipeId": 5001,
+      "swipeCost": null,
+      "cardCost": null,
+      "special": false,
+      "options": [
+        {
+          "id": 1001,
+          "foodItemId": 1,
+          "foodOptionName": "Extra Cheese"
+        },
+        {
+          "id": 1002,
+          "foodItemId": 1,
+          "foodOptionName": "No Onions"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Veggie Wrap",
+      "orderId": 12345,
+      "stationId": 102,
+      "saleCardId": 6001,
+      "saleSwipeId": null,
+      "swipeCost": null,
+      "cardCost": null,
+      "special": true,
+      "options": [
+        {
+          "id": 1003,
+          "foodItemId": 2,
+          "foodOptionName": "Gluten Free Bun"
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 using Cafeteria.Management.Components.Pages.Drink;
 using Cafeteria.Management.Components.Pages.Entree;
 using Cafeteria.Management.Components.Pages.Side;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Moq;
 using Xunit;
 

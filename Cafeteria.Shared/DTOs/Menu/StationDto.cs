@@ -1,0 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Cafeteria.Shared.DTOs.Menu;
+
+public class StationDto
+{
+    public int Id { get; set; }
+
+    [Required]
+    public int LocationId { get; set; }
+
+    [Required]
+    [StringLength(50)]
+    public string StationName { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(200)]
+    public string StationDescription { get; set; } = string.Empty;
+}

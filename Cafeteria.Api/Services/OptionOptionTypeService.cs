@@ -1,6 +1,6 @@
 using System.Data;
 using Dapper;
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Api.Services;
 

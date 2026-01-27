@@ -1,4 +1,4 @@
-using Cafeteria.Shared.DTOs;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Management.Components.Shared;
 
 namespace Cafeteria.Management.Components.Pages.Entree;
