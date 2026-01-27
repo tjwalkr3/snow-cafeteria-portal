@@ -54,6 +54,38 @@ public class FoodOptionService : IFoodOptionService
         return result.ToList();
     }
 
+    public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
+    {
+        string sql = @"
+            SELECT 
+                fo.id AS Id,
+                fo.food_option_name AS FoodOptionName, 
+                fo.in_stock AS InStock, 
+                fo.image_url AS ImageUrl
+            FROM cafeteria.food_option fo
+            INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
+            INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
+            WHERE fot.entree_id = @entreeId;";
+        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { entreeId });
+        return result.ToList();
+    }
+
+    public async Task<List<FoodOptionDto>> GetOptionsBySide(int sideId)
+    {
+        string sql = @"
+        SELECT 
+            fo.id AS Id, 
+            fo.food_option_name AS FoodOptionName, 
+            fo.in_stock AS InStock, 
+            fo.image_url AS ImageUrl
+        FROM cafeteria.food_option fo
+        INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
+        INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
+        WHERE fot.side_id = @sideId;";
+        var result = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { sideId });
+        return result.ToList();
+    }
+
     public async Task<FoodOptionDto?> UpdateFoodOption(int id, FoodOptionDto foodOptionDto)
     {
         const string sql = @"

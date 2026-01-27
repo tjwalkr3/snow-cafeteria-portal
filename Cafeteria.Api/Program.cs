@@ -1,6 +1,5 @@
 using System.Data;
 using Npgsql;
-using Cafeteria.Api.Services;
 using Cafeteria.Api.Services.Drinks;
 using Cafeteria.Api.Services.Entrees;
 using Cafeteria.Api.Services.FoodOptionTypes;
@@ -31,7 +30,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IDbConnection>(provider => provider.GetRequiredService<NpgsqlDataSource>().CreateConnection());
-builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodOptionTypeService, FoodOptionTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
