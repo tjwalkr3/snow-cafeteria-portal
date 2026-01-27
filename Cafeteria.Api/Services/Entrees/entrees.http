@@ -17,6 +17,9 @@ Content-Type: application/json
 ### Get all entrees
 GET {{baseUrl}}
 
+### Get entrees by station
+GET {{baseUrl}}/station/1
+
 ### Get a specific entree by ID
 GET {{baseUrl}}/1
 

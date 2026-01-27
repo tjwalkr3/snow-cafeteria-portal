@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs.Menu;
 using static Cafeteria.Management.Components.Shared.Toast;
 using Cafeteria.Management.Components.Pages.FoodType;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.OptionOptionTypes;
 
 namespace Cafeteria.Management.Components.Pages.FoodOption;
 

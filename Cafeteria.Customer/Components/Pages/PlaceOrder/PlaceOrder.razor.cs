@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
-using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
-using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Customer.Services.Printer;
+using Cafeteria.Customer.Services.Order;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 

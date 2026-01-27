@@ -2,6 +2,7 @@ using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Models;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
@@ -43,6 +44,9 @@ public class GenericSwipeVM : IGenericSwipeVM
 
     public async Task InitializeAsync(StationType stationType, int stationId, int locationId, bool isCardOrder)
     {
+        // Clear any previous selections when switching stations
+        State.Clear();
+
         CurrentStationType = stationType;
         Configuration = _configProvider.GetConfiguration(stationType);
         _strategy = _strategyFactory.CreateStrategy(stationType);

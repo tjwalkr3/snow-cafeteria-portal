@@ -3,6 +3,7 @@ using Cafeteria.Customer.Components.Pages.LocationSelect;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Customer.Services;
 using Moq;
+using Cafeteria.Customer.Services.Menu;
 
 namespace Cafeteria.Customer.ViewModels.Tests;
 

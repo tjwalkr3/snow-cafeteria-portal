@@ -1,6 +1,14 @@
 using System.Data;
 using Npgsql;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.Drinks;
+using Cafeteria.Api.Services.Entrees;
+using Cafeteria.Api.Services.FoodOptionTypes;
+using Cafeteria.Api.Services.Orders;
+using Cafeteria.Api.Services.Sides;
+using Cafeteria.Api.Services.Stations;
+using Cafeteria.Api.Services.FoodOptions;
+using Cafeteria.Api.Services.Locations;
+using Cafeteria.Api.Services.OptionOptionTypes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,9 +30,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IDbConnection>(provider => provider.GetRequiredService<NpgsqlDataSource>().CreateConnection());
-builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
-builder.Services.AddScoped<IFoodTypeService, FoodTypeService>();
+builder.Services.AddScoped<IFoodOptionTypeService, FoodOptionTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IStationService, StationService>();

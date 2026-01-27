@@ -1,16 +1,16 @@
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.FoodOptionTypes;
 
 namespace Cafeteria.Management.Components.Pages.FoodType;
 
 public class FoodTypeVM : IFoodTypeVM
 {
-    private readonly IFoodTypeService _foodTypeService;
+    private readonly IFoodOptionTypeService _foodTypeService;
     private bool initializationFailed = false;
 
     public List<FoodOptionTypeDto> FoodTypes { get; private set; } = new();
 
-    public FoodTypeVM(IFoodTypeService foodTypeService)
+    public FoodTypeVM(IFoodOptionTypeService foodTypeService)
     {
         _foodTypeService = foodTypeService;
     }

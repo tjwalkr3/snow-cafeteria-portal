@@ -1,6 +1,6 @@
 using Cafeteria.Shared.DTOs.Order;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Orders;
 
 public interface IOrderService
 {
