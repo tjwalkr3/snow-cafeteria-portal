@@ -1,7 +1,7 @@
 using Microsoft.JSInterop;
 using System.Text.Json;
 
-namespace Cafeteria.Customer.Services;
+namespace Cafeteria.Customer.Services.Storage;
 
 public class StorageWrapper : IStorageWrapper
 {

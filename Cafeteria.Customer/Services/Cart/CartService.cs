@@ -1,5 +1,6 @@
-namespace Cafeteria.Customer.Services;
+namespace Cafeteria.Customer.Services.Cart;
 
+using Cafeteria.Customer.Services.Storage;
 using Cafeteria.Shared.DTOs.Menu;
 
 public class CartService : ICartService

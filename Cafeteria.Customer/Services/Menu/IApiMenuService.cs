@@ -1,6 +1,6 @@
 using Cafeteria.Shared.DTOs.Menu;
 
-namespace Cafeteria.Customer.Services;
+namespace Cafeteria.Customer.Services.Menu;
 
 public interface IApiMenuService
 {

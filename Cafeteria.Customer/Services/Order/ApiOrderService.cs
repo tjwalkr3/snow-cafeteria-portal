@@ -1,7 +1,7 @@
 using Cafeteria.Shared.DTOs.Order;
 
 
-namespace Cafeteria.Customer.Services;
+namespace Cafeteria.Customer.Services.Order;
 
 public class ApiOrderService(HttpClient client) : IApiOrderService
 {

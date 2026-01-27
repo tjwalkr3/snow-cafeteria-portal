@@ -2,7 +2,7 @@ using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.Extensions.Configuration;
 
-namespace Cafeteria.Customer.Services;
+namespace Cafeteria.Customer.Services.Printer;
 
 public class PrinterService(HttpClient client, IConfiguration configuration, ILogger<PrinterService> logger) : IPrinterService
 {

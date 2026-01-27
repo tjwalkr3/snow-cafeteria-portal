@@ -1,4 +1,4 @@
-namespace Cafeteria.Customer.Services;
+namespace Cafeteria.Customer.Services.Storage;
 
 public interface IStorageWrapper
 {

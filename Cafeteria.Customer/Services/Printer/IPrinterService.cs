@@ -1,4 +1,4 @@
-namespace Cafeteria.Customer.Services;
+namespace Cafeteria.Customer.Services.Printer;
 
 using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Shared.DTOs.Menu;
