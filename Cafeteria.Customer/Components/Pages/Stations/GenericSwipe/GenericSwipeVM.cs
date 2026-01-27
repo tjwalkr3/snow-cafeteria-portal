@@ -43,6 +43,9 @@ public class GenericSwipeVM : IGenericSwipeVM
 
     public async Task InitializeAsync(StationType stationType, int stationId, int locationId, bool isCardOrder)
     {
+        // Clear any previous selections when switching stations
+        State.Clear();
+
         CurrentStationType = stationType;
         Configuration = _configProvider.GetConfiguration(stationType);
         _strategy = _strategyFactory.CreateStrategy(stationType);
