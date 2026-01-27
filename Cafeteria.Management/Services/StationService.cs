@@ -11,7 +11,7 @@ public class StationService(IHttpClientAuth client) : IStationService
 
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
-        return await client.GetAsync<List<StationDto>>($"api/station/station/{locationId}") ?? [];
+        return await client.GetAsync<List<StationDto>>($"api/station/location/{locationId}") ?? [];
     }
 
     public async Task<StationDto?> GetStationById(int stationId)

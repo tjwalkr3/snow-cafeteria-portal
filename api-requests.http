@@ -1,17 +1,17 @@
 ### Get stations by location ID
 
 # Get stations for Badger Den (location_id = 1)
-GET http://localhost:5132/api/menu/stations/location/1
+GET http://localhost:5132/api/station/location/1
 
 ###
 
 # Get stations for Busters Bistro (location_id = 2)
-GET http://localhost:5132/api/menu/stations/location/2
+GET http://localhost:5132/api/station/location/2
 
 ###
 
 # Get the list of all locations
-GET http://localhost:5132/api/menu/locations
+GET http://localhost:5132/api/location
 
 ###
 
@@ -96,7 +96,7 @@ DELETE http://localhost:5132/api/location/hours/5
 ### Station Controller
 
 # Get all stations for a location
-GET http://localhost:5132/api/station/station/1
+GET http://localhost:5132/api/station/location/1
 
 ###
 
@@ -106,7 +106,7 @@ GET http://localhost:5132/api/station/2
 ###
 
 # Create a station for a location
-POST http://localhost:5132/api/station/station/1
+POST http://localhost:5132/api/station/location/1
 Content-Type: application/json
 
 {

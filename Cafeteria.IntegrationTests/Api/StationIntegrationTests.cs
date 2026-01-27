@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using Cafeteria.Shared.DTOs.Menu;
 using Dapper;
 using Npgsql;
-using static Cafeteria.IntegrationTests.Api.SampleMenuData;
+using static Cafeteria.IntegrationTests.Api.SqlInsertQueries;
 
 namespace Cafeteria.IntegrationTests.Api;
 
@@ -43,7 +43,7 @@ public class StationIntegrationTests : IDisposable
     public async Task GetStationsByLocation_ReturnsStationsForLocation()
     {
         // Location 1 has stations 1 and 2
-        var response = await _client.GetAsync("/api/station/station/1");
+        var response = await _client.GetAsync("/api/station/location/1");
         response.EnsureSuccessStatusCode();
         var stations = await response.Content.ReadFromJsonAsync<List<StationDto>>();
 
@@ -80,11 +80,11 @@ public class StationIntegrationTests : IDisposable
             Description = "A brand new test station",
         };
 
-        var response = await _client.PostAsJsonAsync("/api/station/station/1", newStation);
+        var response = await _client.PostAsJsonAsync("/api/station/location/1", newStation);
         response.EnsureSuccessStatusCode();
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
 
-        var getResponse = await _client.GetAsync("/api/station/station/1");
+        var getResponse = await _client.GetAsync("/api/station/location/1");
         var stations = await getResponse.Content.ReadFromJsonAsync<List<StationDto>>();
         Assert.NotNull(stations);
         Assert.Contains(stations, s => s.StationName == newStation.Name);

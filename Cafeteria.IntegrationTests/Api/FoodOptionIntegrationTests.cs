@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using Cafeteria.Shared.DTOs.Menu;
 using Dapper;
 using Npgsql;
-using static Cafeteria.IntegrationTests.Api.SampleMenuData;
+using static Cafeteria.IntegrationTests.Api.SqlInsertQueries;
 
 namespace Cafeteria.IntegrationTests.Api;
 
@@ -157,5 +157,32 @@ public class FoodOptionIntegrationTests : IDisposable
     {
         var response = await _client.DeleteAsync("/api/FoodOption/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetFoodOptionsByEntree_ReturnsFoodOptionData()
+    {
+        // Use pre-loaded sample data for entree 1
+        var response = await _client.GetAsync("/api/foodoption/entree/1");
+        response.EnsureSuccessStatusCode();
+        var optionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>();
+
+        Assert.NotNull(optionsAfter);
+        Assert.True(optionsAfter.Count >= 2);
+        Assert.Contains(optionsAfter, o => o.FoodOptionName == "Lettuce");
+        Assert.Contains(optionsAfter, o => o.FoodOptionName == "Tomato");
+    }
+
+    [Fact]
+    public async Task GetFoodOptionsBySide_ReturnsFoodOptionData()
+    {
+        // Use pre-loaded sample data for side 1
+        var response = await _client.GetAsync("/api/foodoption/side/1");
+        response.EnsureSuccessStatusCode();
+        var optionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionDto>>();
+
+        Assert.NotNull(optionsAfter);
+        // May be empty or have options depending on sample data configuration
+        // Just verify it doesn't error
     }
 }

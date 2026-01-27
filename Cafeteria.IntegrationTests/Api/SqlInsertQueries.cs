@@ -2,7 +2,7 @@ using Cafeteria.Shared.DTOs;
 
 namespace Cafeteria.IntegrationTests.Api;
 
-public static class SampleMenuData
+public static class SqlInsertQueries
 {
     // SQL Insert Queries
     public const string InsertLocationSql =

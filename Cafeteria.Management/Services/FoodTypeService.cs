@@ -46,11 +46,11 @@ public class FoodTypeService(IHttpClientAuth client) : IFoodTypeService
 
     public async Task<List<EntreeDto>> GetAllEntrees()
     {
-        return await client.GetAsync<List<EntreeDto>>("api/menu/entrees") ?? [];
+        return await client.GetAsync<List<EntreeDto>>("api/entree") ?? [];
     }
 
     public async Task<List<SideDto>> GetAllSides()
     {
-        return await client.GetAsync<List<SideDto>>("api/menu/sides") ?? [];
+        return await client.GetAsync<List<SideDto>>("api/side") ?? [];
     }
 }

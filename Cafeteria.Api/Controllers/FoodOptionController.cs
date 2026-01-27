@@ -36,6 +36,18 @@ public class FoodOptionController : ControllerBase
         return await _foodOptionService.GetAllFoodOptions();
     }
 
+    [HttpGet("entree/{entreeId}")]
+    public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
+    {
+        return await _foodOptionService.GetOptionsByEntree(entreeId);
+    }
+
+    [HttpGet("side/{sideId}")]
+    public async Task<List<FoodOptionDto>> GetOptionsBySide(int sideId)
+    {
+        return await _foodOptionService.GetOptionsBySide(sideId);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<FoodOptionDto>> UpdateFoodOption(
         int id,

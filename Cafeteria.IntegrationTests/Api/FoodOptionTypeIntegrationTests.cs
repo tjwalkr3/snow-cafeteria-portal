@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using Cafeteria.Shared.DTOs.Menu;
 using Dapper;
 using Npgsql;
-using static Cafeteria.IntegrationTests.Api.SampleMenuData;
+using static Cafeteria.IntegrationTests.Api.SqlInsertQueries;
 
 namespace Cafeteria.IntegrationTests.Api;
 
@@ -170,5 +170,31 @@ public class FoodOptionTypeIntegrationTests : IDisposable
     {
         var response = await _client.DeleteAsync("/api/FoodOptionType/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetFoodOptionTypesByEntree_ReturnsFoodOptionTypeData()
+    {
+        // Use pre-loaded sample data for entree 1
+        var response = await _client.GetAsync("/api/foodoptiontype/entree/1");
+        response.EnsureSuccessStatusCode();
+        var optionTypesAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionTypeDto>>();
+
+        Assert.NotNull(optionTypesAfter);
+        Assert.True(optionTypesAfter.Count >= 1);
+    }
+
+    [Fact]
+    public async Task GetFoodOptionTypesWithOptionsByEntree_ReturnsFoodOptionTypeWithOptionsData()
+    {
+        // Use pre-loaded sample data for entree 1
+        var response = await _client.GetAsync("/api/foodoptiontype/with-options/entree/1");
+        response.EnsureSuccessStatusCode();
+        var optionTypesWithOptionsAfter = await response.Content.ReadFromJsonAsync<List<FoodOptionTypeWithOptionsDto>>();
+
+        Assert.NotNull(optionTypesWithOptionsAfter);
+        Assert.True(optionTypesWithOptionsAfter.Count >= 1);
+        // Verify each option type has options list
+        Assert.All(optionTypesWithOptionsAfter, optionType => Assert.NotNull(optionType.Options));
     }
 }

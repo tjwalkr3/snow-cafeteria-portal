@@ -14,7 +14,7 @@ public class PrinterService(HttpClient client, IConfiguration configuration, ILo
         try
         {
             var apiBaseUrl = configuration["ApiBaseUrl"] ?? "http://api/api/";
-            var response = await client.GetAsync($"{apiBaseUrl}menu/locations");
+            var response = await client.GetAsync($"{apiBaseUrl}location");
             response.EnsureSuccessStatusCode();
             var locations = await response.Content.ReadFromJsonAsync<List<LocationDto>>() ?? new List<LocationDto>();
 
