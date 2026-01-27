@@ -17,6 +17,9 @@ Content-Type: application/json
 ### Get all drinks
 GET {{baseUrl}}
 
+### Get drinks by location
+GET {{baseUrl}}/location/1
+
 ### Get a specific drink by ID
 GET {{baseUrl}}/1
 

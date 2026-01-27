@@ -1,0 +1,42 @@
+### FoodOptionType API Tests
+
+@baseUrl = http://localhost:5132/api/foodoptiontype
+
+### Get all food option types
+GET {{baseUrl}}
+
+### Get a specific food option type by ID
+GET {{baseUrl}}/1
+
+### Get food option types by entree
+GET {{baseUrl}}/entree/1
+
+### Get food option types with options by entree
+GET {{baseUrl}}/with-options/entree/1
+
+### Create a new food option type
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "id": 0,
+  "name": "Toppings",
+  "description": "Choose your toppings",
+  "isMandatory": false,
+  "maxSelections": 3
+}
+
+### Update a food option type
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Toppings",
+  "description": "Choose your favorite toppings",
+  "isMandatory": true,
+  "maxSelections": 5
+}
+
+### Delete a food option type
+DELETE {{baseUrl}}/1

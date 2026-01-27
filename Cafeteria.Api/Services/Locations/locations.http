@@ -1,0 +1,59 @@
+### Location API Tests
+
+@baseUrl = http://localhost:5132/api/location
+
+### Get all locations
+GET {{baseUrl}}
+
+### Get a specific location by ID
+GET {{baseUrl}}/1
+
+### Create a new location
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "New Campus Cafe",
+  "description": "Pop-up cafe near the Noyes building"
+}
+
+### Update a location
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "name": "Badger Den",
+  "description": "Updated description for Badger Den"
+}
+
+### Delete a location
+DELETE {{baseUrl}}/1
+
+### Get all business hours for a location
+GET {{baseUrl}}/1/hours
+
+### Get specific business hours by ID
+GET {{baseUrl}}/hours/1
+
+### Add business hours for a location
+POST {{baseUrl}}/1/hours
+Content-Type: application/json
+
+{
+  "startTime": "2025-01-01T07:30:00",
+  "endTime": "2025-01-01T15:30:00",
+  "weekdayId": 1
+}
+
+### Update business hours
+PUT {{baseUrl}}/hours/1
+Content-Type: application/json
+
+{
+  "startTime": "2025-01-01T08:00:00",
+  "endTime": "2025-01-01T16:00:00",
+  "weekdayId": 2
+}
+
+### Delete business hours
+DELETE {{baseUrl}}/hours/1

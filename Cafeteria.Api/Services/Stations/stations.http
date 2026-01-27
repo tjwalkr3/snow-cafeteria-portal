@@ -1,0 +1,62 @@
+### Station API Tests
+
+@baseUrl = http://localhost:5132/api/station
+
+### Get all stations
+GET {{baseUrl}}
+
+### Get stations by location
+GET {{baseUrl}}/location/1
+
+### Get a specific station by ID
+GET {{baseUrl}}/1
+
+### Create a station for a location
+POST {{baseUrl}}/location/1
+Content-Type: application/json
+
+{
+  "name": "Salad Bar",
+  "description": "Fresh greens and toppings"
+}
+
+### Update a station
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "name": "Deli",
+  "description": "Updated deli station description"
+}
+
+### Delete a station
+DELETE {{baseUrl}}/1
+
+### Get all business hours for a station
+GET {{baseUrl}}/1/hours
+
+### Get specific business hours by ID
+GET {{baseUrl}}/hours/1
+
+### Add business hours for a station
+POST {{baseUrl}}/1/hours
+Content-Type: application/json
+
+{
+  "startTime": "2025-01-01T09:00:00",
+  "endTime": "2025-01-01T17:00:00",
+  "weekdayId": 3
+}
+
+### Update business hours
+PUT {{baseUrl}}/hours/1
+Content-Type: application/json
+
+{
+  "startTime": "2025-01-01T10:00:00",
+  "endTime": "2025-01-01T18:00:00",
+  "weekdayId": 4
+}
+
+### Delete business hours
+DELETE {{baseUrl}}/hours/1
