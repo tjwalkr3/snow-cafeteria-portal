@@ -32,7 +32,7 @@ public class PrinterService(HttpClient client, IConfiguration configuration, ILo
             throw new ArgumentOutOfRangeException(nameof(locationId));
 
         var location = await GetLocationById(locationId);
-        logger.LogInformation("Location {LocationId}: {LocationName}, PrinterUrl: {PrinterUrl}", 
+        logger.LogInformation("Location {LocationId}: {LocationName}, PrinterUrl: {PrinterUrl}",
             locationId, location?.LocationName ?? "NOT FOUND", location?.PrinterUrl ?? "NULL");
         return location?.PrinterUrl;
     }

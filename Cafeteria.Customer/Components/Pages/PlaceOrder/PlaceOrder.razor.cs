@@ -188,7 +188,7 @@ public partial class PlaceOrder : ComponentBase
             StateHasChanged();
             return;
         }
-        
+
         Navigation.NavigateTo("/", true);
     }
 
