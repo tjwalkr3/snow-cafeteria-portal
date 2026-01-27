@@ -1,6 +1,7 @@
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Management.Services.Auth;
 
-namespace Cafeteria.Management.Services;
+namespace Cafeteria.Management.Services.Sides;
 
 public class SideService : ISideService
 {

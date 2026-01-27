@@ -1,8 +1,9 @@
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Management.Services.Auth;
 
-namespace Cafeteria.Management.Services;
+namespace Cafeteria.Management.Services.FoodOptionTypes;
 
-public class FoodTypeService(IHttpClientAuth client) : IFoodTypeService
+public class FoodOptionTypeService(IHttpClientAuth client) : IFoodOptionTypeService
 {
     public async Task<FoodOptionTypeDto> CreateFoodType(FoodOptionTypeDto foodTypeDto)
     {

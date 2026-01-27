@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Management.Components.Pages.FoodType;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.OptionOptionTypes;
 using Cafeteria.Management.Components.Pages.FoodOption;
 using static Cafeteria.Management.Components.Shared.Toast;
+using Cafeteria.Management.Services.FoodOptionTypes;
 
 namespace Cafeteria.Management.Components.Pages.FoodOptionType;
 
@@ -19,10 +20,7 @@ public partial class FoodOptionType : ComponentBase
     private IOptionOptionTypeVM OptionOptionTypeVM { get; set; } = default!;
 
     [Inject]
-    private IOptionOptionTypeService OptionOptionTypeService { get; set; } = default!;
-
-    [Inject]
-    private IFoodTypeService FoodTypeService { get; set; } = default!;
+    private IFoodOptionTypeService FoodTypeService { get; set; } = default!;
 
     public bool IsInitialized { get; set; } = false;
 

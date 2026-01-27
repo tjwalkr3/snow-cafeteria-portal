@@ -1,8 +1,8 @@
 using Cafeteria.Shared.DTOs.Menu;
 
-namespace Cafeteria.Management.Services;
+namespace Cafeteria.Management.Services.FoodOptionTypes;
 
-public interface IFoodTypeService
+public interface IFoodOptionTypeService
 {
     Task<FoodOptionTypeDto> CreateFoodType(FoodOptionTypeDto foodTypeDto);
     Task<FoodOptionTypeDto?> GetFoodTypeByID(int id);

@@ -1,3 +1,5 @@
+namespace Cafeteria.Management.Services.Auth;
+
 public interface IHttpClientAuth
 {
     Task<HttpResponseMessage> DeleteAsync<T>(string requestUri);

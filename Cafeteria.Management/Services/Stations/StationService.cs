@@ -1,6 +1,7 @@
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Management.Services.Auth;
 
-namespace Cafeteria.Management.Services;
+namespace Cafeteria.Management.Services.Stations;
 
 public class StationService(IHttpClientAuth client) : IStationService
 {

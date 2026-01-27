@@ -1,6 +1,6 @@
 using Cafeteria.Shared.DTOs.Menu;
 
-namespace Cafeteria.Management.Services;
+namespace Cafeteria.Management.Services.FoodOptions;
 
 public interface IFoodOptionService
 {

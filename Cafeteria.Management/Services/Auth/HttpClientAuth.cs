@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
 
-namespace Cafeteria.Management.Services;
+namespace Cafeteria.Management.Services.Auth;
 
 public class HttpClientAuth : IHttpClientAuth
 {
