@@ -1,7 +1,7 @@
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Stations;
 
 public interface IStationService
 {

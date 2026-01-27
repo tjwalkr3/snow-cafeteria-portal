@@ -2,7 +2,7 @@ using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs.Menu;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.FoodOptions;
 
 public class FoodOptionService : IFoodOptionService
 {

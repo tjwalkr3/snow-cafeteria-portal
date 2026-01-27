@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.Entrees;
 
 namespace Cafeteria.Api.Controllers;
 

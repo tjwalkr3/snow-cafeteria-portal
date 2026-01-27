@@ -1,4 +1,6 @@
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.FoodOptions;
+using Cafeteria.Api.Services.FoodOptionTypes;
+using Cafeteria.Api.Services.OptionOptionTypes;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,12 +11,12 @@ namespace Cafeteria.Api.Controllers;
 public class ManagerController : ControllerBase
 {
     private readonly IFoodOptionService _foodOptionService;
-    private readonly IFoodTypeService _foodTypeService;
+    private readonly IFoodOptionTypeService _foodTypeService;
     private readonly IOptionOptionTypeService _optionOptionTypeService;
 
     public ManagerController(
         IFoodOptionService foodOptionService,
-        IFoodTypeService foodTypeService,
+        IFoodOptionTypeService foodTypeService,
         IOptionOptionTypeService optionOptionTypeService
     )
     {

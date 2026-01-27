@@ -7,7 +7,7 @@ using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
 using Dapper;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Stations;
 
 public class StationService : IStationService
 {

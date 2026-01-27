@@ -1,5 +1,5 @@
 using System.Data;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.FoodOptionTypes;
 using Cafeteria.Shared.DTOs.Menu;
 using Dapper;
 using Moq;
@@ -7,15 +7,15 @@ using Moq.Dapper;
 
 namespace Cafeteria.UnitTests.Api;
 
-public class FoodTypeServiceTests
+public class FoodOptionTypeServiceTests
 {
     private readonly Mock<IDbConnection> _mockDbConnection;
-    private readonly FoodTypeService _service;
+    private readonly FoodOptionTypeService _service;
 
-    public FoodTypeServiceTests()
+    public FoodOptionTypeServiceTests()
     {
         _mockDbConnection = new Mock<IDbConnection>();
-        _service = new FoodTypeService(_mockDbConnection.Object);
+        _service = new FoodOptionTypeService(_mockDbConnection.Object);
     }
 
     [Fact]
