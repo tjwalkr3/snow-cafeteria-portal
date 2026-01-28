@@ -33,21 +33,20 @@ var keycloakAuthority = $"http://localhost:{keycloakPort}/realms/{keycloakRealm}
 var api = builder.AddProject<Projects.Cafeteria_Api>("api")
     .WithEnvironment("ConnectionStrings__cafeteria", connectionString)
     .WithEnvironment("Keycloak__Authority", keycloakAuthority)
-    .WithEnvironment("Keycloak__Audience", "cafeteria");
+    .WithEnvironment("Keycloak__Audience", "management");
 
 builder.AddProject<Projects.Cafeteria_Customer>("customer")
     .WithReference(api)
     .WithEnvironment("ApiBaseUrl", "http://api/api/")
-    .WithEnvironment("Keycloak__Authority", keycloakAuthority)
-    .WithEnvironment("Keycloak__ClientId", "ham-exam")
+    .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
+    .WithEnvironment("OpenIDConnectSettings__ClientId", "customer")
     .WithExternalHttpEndpoints();
 
 builder.AddProject<Projects.Cafeteria_Management>("management")
     .WithReference(api)
+    .WithEnvironment("ApiBaseUrl", "http://api/")
     .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
     .WithEnvironment("OpenIDConnectSettings__ClientId", "management")
-    .WithEnvironment("OpenIDConnectSettings__ClientSecret", string.Empty)
-    .WithEnvironment("ApiBaseUrl", "http://api/")
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();
