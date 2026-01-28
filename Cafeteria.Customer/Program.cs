@@ -56,13 +56,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    app.UseHsts();
-}
-
-// Skip HTTPS redirection in Docker/containerized environments
-if (!app.Environment.IsProduction())
-{
-    app.UseHttpsRedirection();
 }
 
 app.MapDefaultEndpoints();

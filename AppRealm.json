@@ -9,8 +9,8 @@
   "userManagedAccessAllowed": false,
   "clients": [
     {
-      "clientId": "cafeteria",
-      "name": "cafeteria",
+      "clientId": "management",
+      "name": "management",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": true,
@@ -21,19 +21,48 @@
       "frontchannelLogout": false,
       "fullScopeAllowed": true,
       "redirectUris": [
-        "http://localhost:5087/*",
-        "https://localhost:7285/*",
-        "http://localhost:5248/*",
-        "https://localhost:7207/*"
+        "http://localhost:5248/*"
       ],
       "webOrigins": [
-        "http://localhost:5087",
-        "https://localhost:7285",
-        "http://localhost:5248",
-        "https://localhost:7207"
+        "http://localhost:5248"
       ],
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:5087/*##https://localhost:7285/*##http://localhost:5248/*##https://localhost:7207/*"
+        "post.logout.redirect.uris": "http://localhost:5248/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "cafeteria",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "customer",
+      "name": "customer",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "frontchannelLogout": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "http://localhost:5087/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5087"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:5087/*"
       },
       "protocolMappers": [
         {
@@ -52,16 +81,54 @@
   ],
   "users": [
     {
-      "username": "test-user",
+      "username": "test-1",
       "enabled": true,
       "emailVerified": true,
-      "email": "test-user@example.com",
-      "firstName": "Test",
+      "email": "test-1@example.com",
+      "firstName": "Test1",
       "lastName": "User",
       "credentials": [
         {
           "type": "password",
-          "value": "test123",
+          "value": "test-1",
+          "temporary": false
+        }
+      ],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-apprealm"
+      ]
+    },
+    {
+      "username": "test-2",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "test-2@example.com",
+      "firstName": "Test2",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "test-2",
+          "temporary": false
+        }
+      ],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-apprealm"
+      ]
+    },
+    {
+      "username": "test-3",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "test-3@example.com",
+      "firstName": "Test3",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "test-3",
           "temporary": false
         }
       ],
