@@ -70,7 +70,6 @@ builder.Services.AddAuthentication(options =>
 
         options.Authority = oidcConfig["Authority"];
         options.ClientId = oidcConfig["ClientId"];
-        options.ClientSecret = oidcConfig["ClientSecret"];
 
         // Take this out in prod
         options.RequireHttpsMetadata = false;
