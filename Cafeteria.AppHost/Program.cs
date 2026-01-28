@@ -10,7 +10,7 @@ const int keycloakPort = 8080;
 const string keycloakHost = "keycloak";
 const string keycloakRealm = "AppRealm";
 
-var postgres = builder.AddContainer("postgres", "postgres", "18-alpine")
+builder.AddContainer("postgres", "postgres", "18-alpine")
     .WithEnvironment("POSTGRES_PASSWORD", postgresPassword)
     .WithEnvironment("POSTGRES_USER", postgresUser)
     .WithEnvironment("POSTGRES_DB", postgresDb)
