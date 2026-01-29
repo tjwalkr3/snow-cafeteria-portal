@@ -1,5 +1,7 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Menu;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.Strategies;
 

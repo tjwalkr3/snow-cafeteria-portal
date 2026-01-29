@@ -6,8 +6,11 @@ using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
-using Cafeteria.Customer.Services;
-using Microsoft.Extensions.Hosting;
+using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Menu;
+using Cafeteria.Customer.Services.Order;
+using Cafeteria.Customer.Services.Printer;
+using Cafeteria.Customer.Services.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 

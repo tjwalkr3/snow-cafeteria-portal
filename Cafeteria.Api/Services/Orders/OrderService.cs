@@ -2,7 +2,7 @@ using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs.Order;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Orders;
 
 public class OrderService : IOrderService
 {

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services;
-using Cafeteria.Shared.Enums;
+using Cafeteria.Management.Services.Stations;
+using Cafeteria.Management.Services.Locations;
 
 namespace Cafeteria.Management.Components.Pages.LocationAndStation;
 

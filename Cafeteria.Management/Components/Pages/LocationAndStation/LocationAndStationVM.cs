@@ -1,4 +1,4 @@
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.Locations;
 using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Management.Components.Pages.LocationAndStation;

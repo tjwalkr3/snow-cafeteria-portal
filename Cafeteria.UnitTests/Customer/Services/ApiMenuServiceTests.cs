@@ -1,5 +1,6 @@
 using Cafeteria.Customer;
 using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 using Moq;
 using Moq.Protected;

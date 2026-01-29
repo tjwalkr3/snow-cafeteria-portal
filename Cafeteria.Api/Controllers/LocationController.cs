@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.Locations;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
 

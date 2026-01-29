@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.Sides;
+using Cafeteria.Management.Services.Stations;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 

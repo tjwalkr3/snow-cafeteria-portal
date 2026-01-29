@@ -1,5 +1,6 @@
 ﻿using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Menu;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
