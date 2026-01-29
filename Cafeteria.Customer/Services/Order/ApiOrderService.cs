@@ -1,13 +1,14 @@
+using Cafeteria.Customer.Services.Auth;
 using Cafeteria.Shared.DTOs.Order;
 
 
 namespace Cafeteria.Customer.Services.Order;
 
-public class ApiOrderService(HttpClient client) : IApiOrderService
+public class ApiOrderService(IHttpClientAuth client) : IApiOrderService
 {
     public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto)
     {
-        var response = await client.PostAsJsonAsync("order", createOrderDto);
+        var response = await client.PostAsync("order", createOrderDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<OrderDto>()
             ?? throw new InvalidOperationException("Failed to create order");
@@ -18,15 +19,11 @@ public class ApiOrderService(HttpClient client) : IApiOrderService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.GetAsync($"order/{id}");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<OrderDto>();
+        return await client.GetAsync<OrderDto>($"order/{id}");
     }
 
     public async Task<List<OrderDto>> GetAllOrders()
     {
-        var response = await client.GetAsync("order");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<OrderDto>>() ?? new List<OrderDto>();
+        return await client.GetAsync<List<OrderDto>>("order") ?? new List<OrderDto>();
     }
 }
