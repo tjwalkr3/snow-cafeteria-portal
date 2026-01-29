@@ -1,4 +1,5 @@
-using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Order;
+using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Order;
 
 namespace Cafeteria.Customer.Components.Pages.OrderHistory;
