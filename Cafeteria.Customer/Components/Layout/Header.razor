@@ -5,6 +5,12 @@
         </div>
         <nav class="d-flex align-items-center gap-3">
             <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
+                title="Order History"
+                @onclick="NavigateToOrderHistory">
+                <span class="bi bi-clock-history fs-5"></span>
+            </button>
+            <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
+                title="Cart"
                 @onclick="NavigateToCart">
                 <span class="bi bi-cart3 fs-5"></span>
                 @if (cartItemCount > 0)
@@ -81,6 +87,11 @@
     private void NavigateToCart()
     {
         NavigationManager.NavigateTo("/place-order");
+    }
+
+    private void NavigateToOrderHistory()
+    {
+        NavigationManager.NavigateTo("/order-history");
     }
 
     public void Dispose()
