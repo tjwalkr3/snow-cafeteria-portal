@@ -240,4 +240,50 @@ public partial class GenericSwipe : ComponentBase
             StateHasChanged();
         }
     }
+
+    private string GetTabIcon(string tabId)
+    {
+        return tabId switch
+        {
+            "entrees" => "bi-egg-fried",
+            "sandwich" => "bi-stack",
+            "toppings" => "bi-circle-fill",
+            "sides" => "bi-basket2-fill",
+            "drinks" => "bi-cup-straw",
+            _ => "bi-circle"
+        };
+    }
+
+    private bool HasSelectionForTab(string tabId)
+    {
+        return tabId switch
+        {
+            "entrees" => VM.State.SelectedEntree != null,
+            "sandwich" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
+            "toppings" => VM.State.SelectedToppings.Count > 0,
+            "sides" => VM.State.SelectedSide != null,
+            "drinks" => VM.State.SelectedDrink != null,
+            _ => false
+        };
+    }
+
+    private string GetSelectionTextForTab(string tabId)
+    {
+        return tabId switch
+        {
+            "entrees" => VM.State.SelectedEntree?.EntreeName ?? "",
+            "sandwich" => GetSandwichSummary(),
+            "toppings" => $"{VM.State.SelectedToppings.Count} topping(s)",
+            "sides" => VM.State.SelectedSide?.SideName ?? "",
+            "drinks" => VM.State.SelectedDrink?.DrinkName ?? "",
+            _ => ""
+        };
+    }
+
+    private string GetSandwichSummary()
+    {
+        var totalSelections = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
+        if (totalSelections == 0) return "";
+        return $"{totalSelections} option(s) selected";
+    }
 }
