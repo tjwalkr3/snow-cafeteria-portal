@@ -139,7 +139,7 @@ public static class DBSql
             CREATE TABLE
             cafeteria.customer(
                 email varchar(100) UNIQUE NOT NULL, 
-                badger_id int NOT NULL,
+                badger_id int UNIQUE NOT NULL,
                 first_name varchar(50) NOT NULL,
                 last_name varchar(50) NOT NULL,
                 primary key (email)
