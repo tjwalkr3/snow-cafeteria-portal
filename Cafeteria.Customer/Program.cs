@@ -1,5 +1,6 @@
 using Cafeteria.Customer.Components;
 using Cafeteria.Customer.Components.Pages.LocationSelect;
+using Cafeteria.Customer.Components.Pages.OrderHistory;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
@@ -39,6 +40,7 @@ builder.Services.AddHttpClient<IPrinterService, PrinterService>();
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
 builder.Services.AddScoped<IStationSelectVM, StationSelectVM>();
 builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
+builder.Services.AddScoped<IOrderHistoryVM, OrderHistoryVM>();
 
 // Register generic station services
 builder.Services.AddSingleton<IStationConfigurationProvider, StationConfigurationProvider>();
