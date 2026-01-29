@@ -72,13 +72,15 @@ builder.Services.AddAuthentication(options =>
 
         options.Authority = oidcConfig["Authority"];
         options.ClientId = oidcConfig["ClientId"];
-        options.ClientSecret = oidcConfig["ClientSecret"];
 
         // Take this out in prod
         options.RequireHttpsMetadata = false;
 
         options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.ResponseType = OpenIdConnectResponseType.Code;
+
+        // Disable PAR since we're using a public client
+        options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Disable;
 
         options.SaveTokens = true;
         options.GetClaimsFromUserInfoEndpoint = true;
@@ -94,11 +96,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
 }
-
-app.UseHttpsRedirection();
 
 app.MapDefaultEndpoints();
 

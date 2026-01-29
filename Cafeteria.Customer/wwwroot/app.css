@@ -30,28 +30,6 @@ body {
   letter-spacing: -0.025em;
 }
 
-.sign-in-btn {
-  background-color: transparent;
-  color: #ffffff;
-  border: 2px solid #ffffff;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.sign-in-btn:hover {
-  background-color: #ffffff;
-  color: #1e366c;
-  transform: translateY(-1px);
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.sign-in-btn:active {
-  transform: translateY(0);
-}
-
 .payment-title,
 .location-title,
 .station-title,

@@ -21,13 +21,12 @@
                     </span>
                 }
             </button>
-            <button class="sign-in-btn px-4 py-2 small fw-medium" @onclick="HandleSignIn">
-                <span>Sign In</span>
-            </button>
+            <SigninButton />
         </nav>
     </div>
 </header>
 
+@using Cafeteria.Customer.Components.Layout.SigninButton
 @using Cafeteria.Customer.Services
 @using Cafeteria.Customer.Services.Cart
 @using Microsoft.AspNetCore.Components.Routing
@@ -78,11 +77,6 @@
         {
             cartItemCount = 0;
         }
-    }
-
-    private void HandleSignIn()
-    {
-        // TODO: Implement sign-in logic
     }
 
     private void NavigateToCart()
