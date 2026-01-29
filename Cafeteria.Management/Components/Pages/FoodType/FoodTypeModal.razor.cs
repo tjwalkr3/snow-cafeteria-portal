@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.FoodOptionTypes;
 
 namespace Cafeteria.Management.Components.Pages.FoodType;
 
@@ -10,7 +10,7 @@ public partial class FoodTypeModal : ComponentBase
     private IFoodTypeModalVM FoodTypeModalVM { get; set; } = default!;
 
     [Inject]
-    private IFoodTypeService FoodTypeService { get; set; } = default!;
+    private IFoodOptionTypeService FoodTypeService { get; set; } = default!;
 
     [Parameter]
     public FoodOptionTypeDto FoodType { get; set; } = new();

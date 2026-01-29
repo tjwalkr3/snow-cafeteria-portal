@@ -1,0 +1,33 @@
+### Order API Tests
+
+@baseUrl = http://localhost:5132/api/order
+
+### Get all orders
+GET {{baseUrl}}
+
+### Get a specific order by ID
+GET {{baseUrl}}/1
+
+### Create a new order
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "locationId": 1,
+  "orderItems": [
+    {
+      "itemType": "entree",
+      "itemId": 1,
+      "quantity": 1,
+      "selectedOptions": [1, 2]
+    },
+    {
+      "itemType": "drink",
+      "itemId": 1,
+      "quantity": 2,
+      "selectedOptions": []
+    }
+  ],
+  "customerName": "John Doe",
+  "orderNotes": "Extra napkins please"
+}

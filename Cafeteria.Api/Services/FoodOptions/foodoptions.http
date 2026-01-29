@@ -1,0 +1,40 @@
+### FoodOption API Tests
+
+@baseUrl = http://localhost:5132/api/foodoption
+
+### Get all food options
+GET {{baseUrl}}
+
+### Get a specific food option by ID
+GET {{baseUrl}}/1
+
+### Get food options by entree
+GET {{baseUrl}}/entree/1
+
+### Get food options by side
+GET {{baseUrl}}/side/1
+
+### Create a new food option
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "id": 0,
+  "name": "Extra Cheese",
+  "description": "Add extra cheese to your meal",
+  "priceChange": 1.50
+}
+
+### Update a food option
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Extra Cheese",
+  "description": "Premium extra cheese",
+  "priceChange": 2.00
+}
+
+### Delete a food option
+DELETE {{baseUrl}}/1

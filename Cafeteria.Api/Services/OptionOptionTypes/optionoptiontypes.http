@@ -1,0 +1,32 @@
+### OptionOptionType API Tests
+
+@baseUrl = http://localhost:5132/api/optionoptiontype
+
+### Get all option-option-types
+GET {{baseUrl}}
+
+### Get a specific option-option-type by ID
+GET {{baseUrl}}/1
+
+### Create a new option-option-type
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "id": 0,
+  "foodOptionId": 1,
+  "foodOptionTypeId": 1
+}
+
+### Update an option-option-type
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "foodOptionId": 2,
+  "foodOptionTypeId": 2
+}
+
+### Delete an option-option-type
+DELETE {{baseUrl}}/1

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.Stations;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
 
@@ -22,7 +22,7 @@ public class StationController : ControllerBase
         return await _stationService.GetAllStations();
     }
 
-    [HttpGet("station/{locationId:int}")]
+    [HttpGet("location/{locationId:int}")]
     public async Task<List<StationDto>> GetStationsByLocation(int locationId)
     {
         return await _stationService.GetStationsByLocation(locationId);
@@ -41,7 +41,7 @@ public class StationController : ControllerBase
         return Ok(station);
     }
 
-    [HttpPost("station/{locationId:int}")]
+    [HttpPost("location/{locationId:int}")]
     public async Task<IActionResult> CreateStationForLocation(int locationId, [FromBody] StationUpsertRequest request)
     {
         await _stationService.CreateStationForLocation(locationId, request.Name, request.Description);

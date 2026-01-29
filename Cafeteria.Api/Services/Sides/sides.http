@@ -17,6 +17,9 @@ Content-Type: application/json
 ### Get all sides
 GET {{baseUrl}}
 
+### Get sides by station
+GET {{baseUrl}}/station/1
+
 ### Get a specific side by ID
 GET {{baseUrl}}/1
 

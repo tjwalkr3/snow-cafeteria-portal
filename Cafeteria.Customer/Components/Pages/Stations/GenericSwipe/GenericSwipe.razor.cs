@@ -77,6 +77,19 @@ public partial class GenericSwipe : ComponentBase
         };
     }
 
+    private string GetCategoryIcon(string categoryName)
+    {
+        return categoryName.ToLower() switch
+        {
+            "bread" => "bi-slash-square",
+            "meat" => "bi-egg-fill",
+            "cheese" => "bi-square-fill",
+            "toppings" => "bi-leaf",
+            "dressing" => "bi-droplet-fill",
+            _ => "bi-circle"
+        };
+    }
+
     public string CreateBackUrl()
     {
         Dictionary<string, string?> queryParameters = new() { };
@@ -145,6 +158,79 @@ public partial class GenericSwipe : ComponentBase
 
             string url = QueryHelpers.AddQueryString("/place-order", queryParameters);
             NavigationManager.NavigateTo(url);
+        }
+    }
+
+    private bool IsTabCompleted(string tabId)
+    {
+        return tabId switch
+        {
+            "entrees" => VM.State.SelectedEntree != null,
+            "sandwich" => IsSandwichComplete(),
+            "toppings" => VM.State.SelectedEntree != null &&
+                          VM.State.SelectedToppings.Count >= (VM.Configuration?.MinimumToppingsRequired ?? 0),
+            "sides" => VM.State.SelectedSide != null,
+            "drinks" => VM.State.SelectedDrink != null || !VM.Drinks.Any(),
+            _ => false
+        };
+    }
+
+    private bool IsSandwichComplete()
+    {
+        if (!VM.OptionTypes.Any())
+            return false;
+
+        foreach (var optionType in VM.OptionTypes)
+        {
+            var requiredCount = optionType.OptionType.NumIncluded;
+            var selectedCount = VM.State.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var selected)
+                ? selected.Count
+                : 0;
+
+            if (selectedCount < requiredCount)
+                return false;
+        }
+
+        return true;
+    }
+
+    private bool IsLastTab()
+    {
+        var tabs = VM.Configuration?.Tabs ?? new();
+        return tabs.Count == 0 || tabs.Last().Id == VM.ActiveTab;
+    }
+
+    private void GoToNextTab()
+    {
+        var tabs = VM.Configuration?.Tabs ?? new();
+        var currentIndex = tabs.FindIndex(t => t.Id == VM.ActiveTab);
+        if (currentIndex >= 0 && currentIndex < tabs.Count - 1)
+        {
+            VM.SetActiveTab(tabs[currentIndex + 1].Id);
+            StateHasChanged();
+        }
+    }
+
+    private bool AreAllTabsCompleted()
+    {
+        var tabs = VM.Configuration?.Tabs ?? new();
+        return tabs.All(tab => IsTabCompleted(tab.Id));
+    }
+
+    private bool IsFirstTab()
+    {
+        var tabs = VM.Configuration?.Tabs ?? new();
+        return tabs.Count == 0 || tabs.First().Id == VM.ActiveTab;
+    }
+
+    private void GoToPreviousTab()
+    {
+        var tabs = VM.Configuration?.Tabs ?? new();
+        var currentIndex = tabs.FindIndex(t => t.Id == VM.ActiveTab);
+        if (currentIndex > 0)
+        {
+            VM.SetActiveTab(tabs[currentIndex - 1].Id);
+            StateHasChanged();
         }
     }
 }

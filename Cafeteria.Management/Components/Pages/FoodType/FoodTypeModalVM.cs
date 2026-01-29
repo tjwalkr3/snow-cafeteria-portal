@@ -1,13 +1,13 @@
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.FoodOptionTypes;
 
 namespace Cafeteria.Management.Components.Pages.FoodType;
 
 public class FoodTypeModalVM : IFoodTypeModalVM
 {
-    private readonly IFoodTypeService _foodTypeService;
+    private readonly IFoodOptionTypeService _foodTypeService;
 
-    public FoodTypeModalVM(IFoodTypeService foodTypeService)
+    public FoodTypeModalVM(IFoodOptionTypeService foodTypeService)
     {
         _foodTypeService = foodTypeService;
     }
