@@ -45,13 +45,11 @@ public partial class GenericSwipe : ComponentBase
 
     private Configuration.StationType DetermineStationType()
     {
-        // First check route parameter
         if (!string.IsNullOrEmpty(StationType) && ConfigProvider.TryParseStationType(StationType, out var parsedType))
         {
             return parsedType;
         }
 
-        // Fall back to legacy route detection
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var path = uri.AbsolutePath.ToLowerInvariant().TrimStart('/');
 
@@ -61,7 +59,7 @@ public partial class GenericSwipe : ComponentBase
             "deli" => Configuration.StationType.Deli,
             "grill" => Configuration.StationType.Grill,
             "pizza" => Configuration.StationType.Pizza,
-            _ => Configuration.StationType.Grill // Default fallback
+            _ => Configuration.StationType.Grill 
         };
     }
 
@@ -215,6 +213,15 @@ public partial class GenericSwipe : ComponentBase
     {
         var tabs = VM.Configuration?.Tabs ?? new();
         return tabs.All(tab => IsTabCompleted(tab.Id));
+    }
+
+    private bool HasAnySelection()
+    {
+        return VM.State.SelectedEntree != null ||
+               VM.State.SelectedSide != null ||
+               VM.State.SelectedDrink != null ||
+               VM.State.SelectedToppings.Count > 0 ||
+               VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0);
     }
 
     private bool IsFirstTab()
