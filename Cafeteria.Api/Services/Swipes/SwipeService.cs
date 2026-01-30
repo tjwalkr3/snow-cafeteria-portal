@@ -28,6 +28,10 @@ public class SwipeService : ISwipeService
             WHERE badger_id = @UserId";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<SwipeDto>(sql, new { UserId = userId });
+        if (result == null)
+        {
+            throw new KeyNotFoundException($"No swipe data found for user ID {userId}.");
+        }
         return result;
     }
 }
