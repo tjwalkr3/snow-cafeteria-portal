@@ -301,6 +301,24 @@ public static class DBSql
                 (2, 1, 'Tomato'),
                 (3, 3, 'Extra Cheese');
 
+            -- Sample customer data
+            INSERT INTO cafeteria.customer (email, badger_id, first_name, last_name)
+            VALUES
+                ('john.doe@snow.edu', 1001234, 'John', 'Doe'),
+                ('jane.smith@snow.edu', 1005678, 'Jane', 'Smith'),
+                ('bob.johnson@snow.edu', 1009012, 'Bob', 'Johnson'),
+                ('alice.williams@snow.edu', 1003456, 'Alice', 'Williams'),
+                ('charlie.brown@snow.edu', 1007890, 'Charlie', 'Brown');
+
+            -- Sample customer swipe data
+            INSERT INTO cafeteria.customer_swipe (badger_id, swipe_balance)
+            VALUES
+                (1001234, 7),
+                (1005678, 21),
+                (1009012, 8),
+                (1003456, 9),
+                (1007890, 0);
+
             -- Set sequence start values to avoid conflicts with sample data
             SELECT setval('cafeteria.cafeteria_location_id_seq', 100, false);
             SELECT setval('cafeteria.station_id_seq', 100, false);

@@ -9,6 +9,7 @@ using Cafeteria.Api.Services.Stations;
 using Cafeteria.Api.Services.FoodOptions;
 using Cafeteria.Api.Services.Locations;
 using Cafeteria.Api.Services.OptionOptionTypes;
+using Cafeteria.Api.Services.Swipes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddScoped<IEntreeService, EntreeService>();
 builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ISwipeService, SwipeService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
