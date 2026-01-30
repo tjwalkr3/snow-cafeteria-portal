@@ -24,7 +24,7 @@ public class OptionOptionTypeService : IOptionOptionTypeService
         return result ?? throw new InvalidOperationException("Failed to create option-option-type mapping");
     }
 
-    public async Task<OptionOptionTypeDto?> GetOptionOptionTypeByID(int id)
+    public async Task<OptionOptionTypeDto?> GetOptionOptionTypeById(int id)
     {
         const string sql = @"
             SELECT 
