@@ -29,7 +29,7 @@ public class SwipeIntegrationTests : IDisposable
     public async Task GetSwipesByUserID_ReturnsCorrectSwipeBalance()
     {
         // Use pre-loaded customer with badge ID 1001234 (John Doe with 7 swipes)
-        var response = await _client.GetAsync("/api/swipes/1001234");
+        var response = await _client.GetAsync("/api/swipe/1001234");
         response.EnsureSuccessStatusCode();
         var swipe = await response.Content.ReadFromJsonAsync<SwipeDto>();
 
@@ -42,7 +42,7 @@ public class SwipeIntegrationTests : IDisposable
     public async Task GetSwipesByUserID_WithDifferentUser_ReturnsCorrectBalance()
     {
         // Use pre-loaded customer with badge ID 1005678 (Jane Smith with 21 swipes)
-        var response = await _client.GetAsync("/api/swipes/1005678");
+        var response = await _client.GetAsync("/api/swipe/1005678");
         response.EnsureSuccessStatusCode();
         var swipe = await response.Content.ReadFromJsonAsync<SwipeDto>();
 
@@ -55,7 +55,7 @@ public class SwipeIntegrationTests : IDisposable
     public async Task GetSwipesByUserID_WithZeroBalance_ReturnsZero()
     {
         // Use pre-loaded customer with badge ID 1007890 (Charlie Brown with 0 swipes)
-        var response = await _client.GetAsync("/api/swipes/1007890");
+        var response = await _client.GetAsync("/api/swipe/1007890");
         response.EnsureSuccessStatusCode();
         var swipe = await response.Content.ReadFromJsonAsync<SwipeDto>();
 
@@ -68,7 +68,7 @@ public class SwipeIntegrationTests : IDisposable
     public async Task GetSwipesByUserID_WithNonExistentUser_ReturnsNotFound()
     {
         // Use a badge ID that doesn't exist in the database
-        var response = await _client.GetAsync("/api/swipes/9999999");
+        var response = await _client.GetAsync("/api/swipe/9999999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
@@ -91,7 +91,7 @@ public class SwipeIntegrationTests : IDisposable
         Assert.Equal(8, dbSwipe.SwipeBalance);
 
         // Now verify the API returns the same data
-        var response = await _client.GetAsync("/api/swipes/1009012");
+        var response = await _client.GetAsync("/api/swipe/1009012");
         response.EnsureSuccessStatusCode();
         var apiSwipe = await response.Content.ReadFromJsonAsync<SwipeDto>();
 
