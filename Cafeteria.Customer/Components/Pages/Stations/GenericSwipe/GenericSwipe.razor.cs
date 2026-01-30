@@ -45,13 +45,11 @@ public partial class GenericSwipe : ComponentBase
 
     private Configuration.StationType DetermineStationType()
     {
-        // First check route parameter
         if (!string.IsNullOrEmpty(StationType) && ConfigProvider.TryParseStationType(StationType, out var parsedType))
         {
             return parsedType;
         }
 
-        // Fall back to legacy route detection
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var path = uri.AbsolutePath.ToLowerInvariant().TrimStart('/');
 
@@ -61,7 +59,7 @@ public partial class GenericSwipe : ComponentBase
             "deli" => Configuration.StationType.Deli,
             "grill" => Configuration.StationType.Grill,
             "pizza" => Configuration.StationType.Pizza,
-            _ => Configuration.StationType.Grill // Default fallback
+            _ => Configuration.StationType.Grill
         };
     }
 
@@ -217,6 +215,15 @@ public partial class GenericSwipe : ComponentBase
         return tabs.All(tab => IsTabCompleted(tab.Id));
     }
 
+    private bool HasAnySelection()
+    {
+        return VM.State.SelectedEntree != null ||
+               VM.State.SelectedSide != null ||
+               VM.State.SelectedDrink != null ||
+               VM.State.SelectedToppings.Count > 0 ||
+               VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0);
+    }
+
     private bool IsFirstTab()
     {
         var tabs = VM.Configuration?.Tabs ?? new();
@@ -232,5 +239,51 @@ public partial class GenericSwipe : ComponentBase
             VM.SetActiveTab(tabs[currentIndex - 1].Id);
             StateHasChanged();
         }
+    }
+
+    private string GetTabIcon(string tabId)
+    {
+        return tabId switch
+        {
+            "entrees" => "bi-egg-fried",
+            "sandwich" => "bi-stack",
+            "toppings" => "bi-circle-fill",
+            "sides" => "bi-basket2-fill",
+            "drinks" => "bi-cup-straw",
+            _ => "bi-circle"
+        };
+    }
+
+    private bool HasSelectionForTab(string tabId)
+    {
+        return tabId switch
+        {
+            "entrees" => VM.State.SelectedEntree != null,
+            "sandwich" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
+            "toppings" => VM.State.SelectedToppings.Count > 0,
+            "sides" => VM.State.SelectedSide != null,
+            "drinks" => VM.State.SelectedDrink != null,
+            _ => false
+        };
+    }
+
+    private string GetSelectionTextForTab(string tabId)
+    {
+        return tabId switch
+        {
+            "entrees" => VM.State.SelectedEntree?.EntreeName ?? "",
+            "sandwich" => GetSandwichSummary(),
+            "toppings" => $"{VM.State.SelectedToppings.Count} topping(s)",
+            "sides" => VM.State.SelectedSide?.SideName ?? "",
+            "drinks" => VM.State.SelectedDrink?.DrinkName ?? "",
+            _ => ""
+        };
+    }
+
+    private string GetSandwichSummary()
+    {
+        var totalSelections = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
+        if (totalSelections == 0) return "";
+        return $"{totalSelections} option(s) selected";
     }
 }
