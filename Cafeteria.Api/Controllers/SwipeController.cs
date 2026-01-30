@@ -18,9 +18,16 @@ public class SwipeController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<SwipeDto>> GetSwipesByUserID(int id)
     {
-        var result = await _swipeService.GetSwipesByUserID(id);
-        if (result == null)
-            return NotFound();
-        return Ok(result);
+        try
+        {
+            var result = await _swipeService.GetSwipesByUserID(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        } 
+        catch (KeyNotFoundException)
+        {
+            return NotFound("User not found.");
+        }
     }
 }
