@@ -59,7 +59,7 @@ public partial class GenericSwipe : ComponentBase
             "deli" => Configuration.StationType.Deli,
             "grill" => Configuration.StationType.Grill,
             "pizza" => Configuration.StationType.Pizza,
-            _ => Configuration.StationType.Grill 
+            _ => Configuration.StationType.Grill
         };
     }
 
