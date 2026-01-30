@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Swipe;
 using Cafeteria.Api.Services.Swipes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SwipeController : ControllerBase
