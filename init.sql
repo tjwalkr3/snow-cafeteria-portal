@@ -383,6 +383,13 @@ VALUES
         'A sandwich with your choice of meat, cheese, toppings, and dressing',
         6.79,
         'https://picsum.photos/id/431/150/150'
+    ),
+    (
+        5,
+        'Custom Wrap',
+        'Fresh wrap with your choice of fillings',
+        5.69,
+        'https://picsum.photos/id/365/150/150'
     );
 
 INSERT INTO
@@ -426,6 +433,20 @@ VALUES
         3,
         'Waffle Fries',
         'Crispy golden waffle fries',
+        2.29,
+        'https://picsum.photos/id/550/150/150'
+    ),
+    (
+        5,
+        'Side Salad',
+        'Fresh side salad with mixed greens and vegetables',
+        2.29,
+        'https://picsum.photos/id/550/150/150'
+    ),
+    (
+        5,
+        'Fruit Cup',
+        'Fresh fruit cup with a variety of seasonal fruits',
         2.29,
         'https://picsum.photos/id/550/150/150'
     ),
@@ -691,6 +712,69 @@ VALUES
         'Oil and Vinegar',
         true,
         'https://picsum.photos/id/513/150/150'
+    ),
+    -- Wrap Tortillas
+    (
+        'Flour Tortilla',
+        true,
+        'https://picsum.photos/id/514/150/150'
+    ),
+    (
+        'Wheat Tortilla',
+        true,
+        'https://picsum.photos/id/515/150/150'
+    ),
+    (
+        'Spinach Tortilla',
+        true,
+        'https://picsum.photos/id/516/150/150'
+    ),
+    -- Wrap Proteins
+    (
+        'Grilled Steak',
+        true,
+        'https://picsum.photos/id/517/150/150'
+    ),
+    (
+        'Carnitas',
+        true,
+        'https://picsum.photos/id/518/150/150'
+    ),
+    -- Wrap Fillings
+    (
+        'Rice',
+        true,
+        'https://picsum.photos/id/519/150/150'
+    ),
+    (
+        'Black Beans',
+        true,
+        'https://picsum.photos/id/520/150/150'
+    ),
+    (
+        'Corn',
+        true,
+        'https://picsum.photos/id/521/150/150'
+    ),
+    (
+        'Sour Cream',
+        true,
+        'https://picsum.photos/id/522/150/150'
+    ),
+    (
+        'Guacamole',
+        true,
+        'https://picsum.photos/id/523/150/150'
+    ),
+    (
+        'Salsa',
+        true,
+        'https://picsum.photos/id/524/150/150'
+    ),
+    (
+        'Jalapenos',
+        true,
+        'https://picsum.photos/id/525/150/150'
     );
 
 INSERT INTO
@@ -713,7 +797,11 @@ VALUES
     ('Meat', 1, 1, 0.75, 8, NULL),
     ('Cheese', 1, 1, 0.00, 8, NULL),
     ('Toppings', 3, 10, 0.50, 8, NULL),
-    ('Dressing', 1, 1, 0.00, 8, NULL);
+    ('Dressing', 1, 1, 0.00, 8, NULL),
+    -- Custom Wrap (entree_id 9)
+    ('Tortilla', 1, 1, 0.00, 9, NULL),
+    ('Protein', 1, 2, 1.50, 9, NULL),
+    ('Fillings', 3, 8, 0.50, 9, NULL);
 
 INSERT INTO
     cafeteria.option_option_type (food_option_id, food_option_type_id)
@@ -764,9 +852,24 @@ VALUES
     (42, 8), -- Ranch -> Dressing
     (43, 8), -- Italian Dressing -> Dressing
     (44, 8), -- Honey Mustard -> Dressing
-    (45, 8);
-
--- Oil and Vinegar -> Dressing
+    (45, 8), -- Oil and Vinegar -> Dressing
+    -- Custom Wrap options
+    (46, 9), -- Flour Tortilla -> Tortilla
+    (47, 9), -- Wheat Tortilla -> Tortilla
+    (48, 9), -- Spinach Tortilla -> Tortilla
+    (32, 10), -- Grilled Chicken -> Protein
+    (49, 10), -- Grilled Steak -> Protein
+    (50, 10), -- Carnitas -> Protein
+    (51, 11), -- Rice -> Fillings
+    (52, 11), -- Black Beans -> Fillings
+    (53, 11), -- Corn -> Fillings
+    (33, 11), -- Lettuce -> Fillings
+    (34, 11), -- Tomato -> Fillings
+    (24, 11), -- Cheddar -> Fillings
+    (54, 11), -- Sour Cream -> Fillings
+    (55, 11), -- Guacamole -> Fillings
+    (56, 11), -- Salsa -> Fillings
+    (57, 11); -- Jalapenos -> Fillings
 
 -- Sample customer data
 INSERT INTO

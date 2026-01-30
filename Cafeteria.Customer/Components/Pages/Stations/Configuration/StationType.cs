@@ -5,5 +5,6 @@ public enum StationType
     Grill,
     Breakfast,
     Pizza,
-    Deli
+    Deli,
+    Wraps
 }

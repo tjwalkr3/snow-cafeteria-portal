@@ -59,6 +59,7 @@ public partial class GenericSwipe : ComponentBase
             "deli" => Configuration.StationType.Deli,
             "grill" => Configuration.StationType.Grill,
             "pizza" => Configuration.StationType.Pizza,
+            "wrap" => Configuration.StationType.Wraps,
             _ => Configuration.StationType.Grill
         };
     }
@@ -71,6 +72,7 @@ public partial class GenericSwipe : ComponentBase
             Configuration.StationType.Breakfast => "bi-egg-fried",
             Configuration.StationType.Pizza => "bi-basket-fill",
             Configuration.StationType.Deli => "bi-cup-straw",
+            Configuration.StationType.Wraps => "bi-tornado",
             _ => "bi-shop"
         };
     }
@@ -165,6 +167,7 @@ public partial class GenericSwipe : ComponentBase
         {
             "entrees" => VM.State.SelectedEntree != null,
             "sandwich" => IsSandwichComplete(),
+            "wrap" => IsWrapComplete(),
             "toppings" => VM.State.SelectedEntree != null &&
                           VM.State.SelectedToppings.Count >= (VM.Configuration?.MinimumToppingsRequired ?? 0),
             "sides" => VM.State.SelectedSide != null,
@@ -174,6 +177,25 @@ public partial class GenericSwipe : ComponentBase
     }
 
     private bool IsSandwichComplete()
+    {
+        if (!VM.OptionTypes.Any())
+            return false;
+
+        foreach (var optionType in VM.OptionTypes)
+        {
+            var requiredCount = optionType.OptionType.NumIncluded;
+            var selectedCount = VM.State.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var selected)
+                ? selected.Count
+                : 0;
+
+            if (selectedCount < requiredCount)
+                return false;
+        }
+
+        return true;
+    }
+
+    private bool IsWrapComplete()
     {
         if (!VM.OptionTypes.Any())
             return false;
@@ -247,6 +269,7 @@ public partial class GenericSwipe : ComponentBase
         {
             "entrees" => "bi-egg-fried",
             "sandwich" => "bi-stack",
+            "wrap" => "bi-tornado",
             "toppings" => "bi-circle-fill",
             "sides" => "bi-basket2-fill",
             "drinks" => "bi-cup-straw",
@@ -260,6 +283,7 @@ public partial class GenericSwipe : ComponentBase
         {
             "entrees" => VM.State.SelectedEntree != null,
             "sandwich" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
+            "wrap" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
             "toppings" => VM.State.SelectedToppings.Count > 0,
             "sides" => VM.State.SelectedSide != null,
             "drinks" => VM.State.SelectedDrink != null,
@@ -273,6 +297,7 @@ public partial class GenericSwipe : ComponentBase
         {
             "entrees" => VM.State.SelectedEntree?.EntreeName ?? "",
             "sandwich" => GetSandwichSummary(),
+            "wrap" => GetWrapSummary(),
             "toppings" => $"{VM.State.SelectedToppings.Count} topping(s)",
             "sides" => VM.State.SelectedSide?.SideName ?? "",
             "drinks" => VM.State.SelectedDrink?.DrinkName ?? "",
@@ -285,5 +310,12 @@ public partial class GenericSwipe : ComponentBase
         var totalSelections = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
         if (totalSelections == 0) return "";
         return $"{totalSelections} option(s) selected";
+    }
+
+    private string GetWrapSummary()
+    {
+        var totalSelections = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
+        if (totalSelections == 0) return "";
+        return $"{totalSelections} filling(s) selected";
     }
 }
