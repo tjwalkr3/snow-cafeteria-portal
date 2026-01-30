@@ -24,7 +24,7 @@ public class SwipeController : ControllerBase
             if (result == null)
                 return NotFound();
             return Ok(result);
-        } 
+        }
         catch (KeyNotFoundException)
         {
             return NotFound("User not found.");
