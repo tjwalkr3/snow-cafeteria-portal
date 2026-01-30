@@ -8,21 +8,9 @@ namespace Cafeteria.Api.Controllers;
 
 [ApiController]
 [Route("api/location")]
-public class LocationController : ControllerBase
+public class LocationController(ILocationService locationService) : ControllerBase
 {
-    private readonly ILocationService _locationService;
-
-    public LocationController(ILocationService locationService)
-    {
-        _locationService = locationService;
-    }
-
-    [HttpGet("authenticated")]
-    [Authorize]
-    public IActionResult GetAuthenticatedLocation()
-    {
-        return Ok(new { username = User.Identity?.Name ?? User.FindFirst("preferred_username")?.Value });
-    }
+    private readonly ILocationService _locationService = locationService;
 
     [HttpGet]
     public async Task<List<LocationDto>> GetAllLocations()
@@ -43,31 +31,10 @@ public class LocationController : ControllerBase
         return Ok(location);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateLocation([FromBody] LocationUpsertRequest request)
-    {
-        await _locationService.CreateLocation(request.Name, request.Description);
-        return NoContent();
-    }
-
-    [HttpPut("{locationId:int}")]
-    public async Task<IActionResult> UpdateLocation(int locationId, [FromBody] LocationUpsertRequest request)
-    {
-        await _locationService.UpdateLocationByID(locationId, request.Name, request.Description);
-        return NoContent();
-    }
-
-    [HttpDelete("{locationId:int}")]
-    public async Task<IActionResult> DeleteLocation(int locationId)
-    {
-        await _locationService.DeleteLocationByID(locationId);
-        return NoContent();
-    }
-
     [HttpGet("{locationId:int}/hours")]
-    public async Task<List<LocationBusinessHoursDto>> GetLocationBusinessHours(int locationId)
+    public async Task<List<LocationBusinessHoursDto>> GetLocationBusinessHoursByLocationId(int locationId)
     {
-        return await _locationService.GetLocationBusinessHours(locationId);
+        return await _locationService.GetLocationBusinessHoursByLocationId(locationId);
     }
 
     [HttpGet("hours/{locationHrsId:int}")]
@@ -83,8 +50,40 @@ public class LocationController : ControllerBase
         return Ok(hours);
     }
 
+    [Authorize]
+    [HttpGet("authenticated")]
+    public IActionResult GetAuthenticatedLocation()
+    {
+        return Ok(new { username = User.Identity?.Name ?? User.FindFirst("preferred_username")?.Value });
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateLocation([FromBody] LocationUpsertRequest request)
+    {
+        await _locationService.CreateLocation(request.Name, request.Description);
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpPut("{locationId:int}")]
+    public async Task<IActionResult> UpdateLocationById(int locationId, [FromBody] LocationUpsertRequest request)
+    {
+        await _locationService.UpdateLocationById(locationId, request.Name, request.Description);
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpDelete("{locationId:int}")]
+    public async Task<IActionResult> DeleteLocationById(int locationId)
+    {
+        await _locationService.DeleteLocationById(locationId);
+        return NoContent();
+    }
+
+    [Authorize]
     [HttpPost("{locationId:int}/hours")]
-    public async Task<IActionResult> AddLocationHours(int locationId, [FromBody] LocationHoursRequest request)
+    public async Task<IActionResult> AddLocationHoursByLocationId(int locationId, [FromBody] LocationHoursRequest request)
     {
         if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
         {
@@ -92,12 +91,13 @@ public class LocationController : ControllerBase
         }
 
         var weekday = (WeekDay)request.WeekdayId;
-        await _locationService.AddLocationHours(locationId, request.StartTime, request.EndTime, weekday);
+        await _locationService.AddLocationHoursByLocationId(locationId, request.StartTime, request.EndTime, weekday);
         return NoContent();
     }
 
+    [Authorize]
     [HttpPut("hours/{locationHrsId:int}")]
-    public async Task<IActionResult> UpdateLocationHours(int locationHrsId, [FromBody] LocationHoursRequest request)
+    public async Task<IActionResult> UpdateLocationHoursById(int locationHrsId, [FromBody] LocationHoursRequest request)
     {
         if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
         {
@@ -109,10 +109,11 @@ public class LocationController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("hours/{locationHrsId:int}")]
-    public async Task<IActionResult> DeleteLocationHours(int locationHrsId)
+    public async Task<IActionResult> DeleteLocationHoursById(int locationHrsId)
     {
-        await _locationService.DeleteLocationHrsById(locationHrsId);
+        await _locationService.DeleteLocationHoursById(locationHrsId);
         return NoContent();
     }
 }

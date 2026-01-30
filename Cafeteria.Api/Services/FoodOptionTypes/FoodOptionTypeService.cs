@@ -13,7 +13,7 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         _dbConnection = dbConnection;
     }
 
-    public async Task<FoodOptionTypeDto> CreateFoodType(FoodOptionTypeDto foodTypeDto)
+    public async Task<FoodOptionTypeDto> CreateFoodOptionType(FoodOptionTypeDto foodTypeDto)
     {
         const string sql = @"
             INSERT INTO cafeteria.food_option_type (food_option_type_name, num_included, max_amount, food_option_price, entree_id, side_id)
@@ -24,7 +24,7 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         return result ?? throw new InvalidOperationException("Failed to create food type");
     }
 
-    public async Task<FoodOptionTypeDto?> GetFoodTypeByID(int id)
+    public async Task<FoodOptionTypeDto?> GetFoodOptionTypeByID(int id)
     {
         const string sql = @"
             SELECT 
@@ -42,7 +42,7 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         return result;
     }
 
-    public async Task<List<FoodOptionTypeDto>> GetAllFoodTypes()
+    public async Task<List<FoodOptionTypeDto>> GetAllFoodOptionTypes()
     {
         const string sql = @"
             SELECT 
@@ -60,7 +60,7 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         return result.ToList();
     }
 
-    public async Task<List<FoodOptionTypeDto>> GetOptionTypesByEntree(int entreeId)
+    public async Task<List<FoodOptionTypeDto>> GetFoodOptionTypesByEntreeId(int entreeId)
     {
         string sql = @"
         SELECT 
@@ -77,9 +77,9 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         return result.ToList();
     }
 
-    public async Task<List<FoodOptionTypeWithOptionsDto>> GetOptionTypesWithOptionsByEntree(int entreeId)
+    public async Task<List<FoodOptionTypeWithOptionsDto>> GetFoodOptionTypesWithOptionsByEntreeId(int entreeId)
     {
-        var optionTypes = await GetOptionTypesByEntree(entreeId);
+        var optionTypes = await GetFoodOptionTypesByEntreeId(entreeId);
         var result = new List<FoodOptionTypeWithOptionsDto>();
 
         foreach (var optionType in optionTypes)
@@ -106,7 +106,7 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         return result;
     }
 
-    public async Task<FoodOptionTypeDto?> UpdateFoodType(int id, FoodOptionTypeDto foodTypeDto)
+    public async Task<FoodOptionTypeDto?> UpdateFoodOptionTypeById(int id, FoodOptionTypeDto foodTypeDto)
     {
         const string sql = @"
             UPDATE cafeteria.food_option_type
@@ -134,7 +134,7 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         return result;
     }
 
-    public async Task<bool> DeleteFoodType(int id)
+    public async Task<bool> DeleteFoodOptionTypeById(int id)
     {
         const string sql = @"
             DELETE FROM cafeteria.food_option_type

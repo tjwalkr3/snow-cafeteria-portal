@@ -1,26 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Api.Services.Orders;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class OrderController : ControllerBase
+public class OrderController(IOrderService orderService) : ControllerBase
 {
-    private readonly IOrderService _orderService;
-
-    public OrderController(IOrderService orderService)
-    {
-        _orderService = orderService;
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
-    {
-        var result = await _orderService.CreateOrder(createOrderDto);
-        return CreatedAtAction(nameof(GetOrderById), new { id = result.Id }, result);
-    }
+    private readonly IOrderService _orderService = orderService;
 
     [HttpGet("{id}")]
     public async Task<ActionResult<OrderDto>> GetOrderById(int id)
@@ -36,5 +26,12 @@ public class OrderController : ControllerBase
     {
         var result = await _orderService.GetAllOrders();
         return Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
+    {
+        var result = await _orderService.CreateOrder(createOrderDto);
+        return CreatedAtAction(nameof(GetOrderById), new { id = result.Id }, result);
     }
 }

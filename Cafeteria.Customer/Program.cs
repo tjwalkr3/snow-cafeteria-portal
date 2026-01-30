@@ -6,6 +6,7 @@ using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
+using Cafeteria.Customer.Services.Auth;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
@@ -26,20 +27,16 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Api Data Service with service discovery
-builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
+// Add data services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
     client.BaseAddress = new Uri(apiBaseUrl);
 });
-
-builder.Services.AddHttpClient<IApiOrderService, ApiOrderService>(client =>
-{
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
-
-builder.Services.AddHttpClient<IPrinterService, PrinterService>();
+builder.Services.AddScoped<IApiMenuService, ApiMenuService>();
+builder.Services.AddScoped<IApiOrderService, ApiOrderService>();
+builder.Services.AddScoped<IPrinterService, PrinterService>();
 
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
