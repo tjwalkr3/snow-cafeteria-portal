@@ -30,11 +30,11 @@ public class CustomerService : ICustomerService
                 INSERT INTO cafeteria.customer (email, badger_id, cust_name)
                 VALUES (@Email, @BadgerId, @CustName)";
 
-            await _dbConnection.ExecuteAsync(insertSql, new 
-            { 
-                Email = email, 
-                BadgerId = badgerId, 
-                CustName = custName 
+            await _dbConnection.ExecuteAsync(insertSql, new
+            {
+                Email = email,
+                BadgerId = badgerId,
+                CustName = custName
             });
         }
     }

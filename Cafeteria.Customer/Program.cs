@@ -8,6 +8,7 @@ using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Customer.Services.Auth;
 using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Customer;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Printer;
@@ -37,6 +38,7 @@ builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
 builder.Services.AddScoped<IApiMenuService, ApiMenuService>();
 builder.Services.AddScoped<IApiOrderService, ApiOrderService>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();

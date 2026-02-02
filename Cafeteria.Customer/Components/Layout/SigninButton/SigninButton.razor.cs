@@ -1,12 +1,22 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
+using Cafeteria.Customer.Services.Customer;
 
 namespace Cafeteria.Customer.Components.Layout.SigninButton;
 
-public partial class SigninButton : ComponentBase
+public partial class SigninButton : ComponentBase, IDisposable
 {
     [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    public ICustomerService CustomerService { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    private bool _hasRegistered = false;
 
     protected override void OnInitialized()
     {
@@ -26,6 +36,36 @@ public partial class SigninButton : ComponentBase
 
             NavigationManager.NavigateTo(newUri);
         }
+
+        AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CheckAndRegisterCustomer();
+        }
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await CheckAndRegisterCustomer();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CheckAndRegisterCustomer()
+    {
+        if (_hasRegistered) return;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            _hasRegistered = true;
+            await CustomerService.RegisterOrUpdateCustomerAsync();
+        }
     }
 
     private void SignIn()
@@ -35,6 +75,12 @@ public partial class SigninButton : ComponentBase
 
     private void SignOut()
     {
+        _hasRegistered = false;
         NavigationManager.NavigateTo("logout", forceLoad: true);
+    }
+
+    public void Dispose()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
     }
 }
