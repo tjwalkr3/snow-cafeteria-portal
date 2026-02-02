@@ -136,8 +136,7 @@ CREATE TABLE
     cafeteria.customer(
         email varchar(100) UNIQUE NOT NULL, 
         badger_id int UNIQUE NOT NULL,
-        first_name varchar(50) NOT NULL,
-        last_name varchar(50) NOT NULL,
+        cust_name varchar(100) NOT NULL,
         primary key (email)
     );
 
@@ -770,13 +769,13 @@ VALUES
 
 -- Sample customer data
 INSERT INTO
-    cafeteria.customer (email, badger_id, first_name, last_name)
+    cafeteria.customer (email, badger_id, cust_name)
 VALUES
-    ('john.doe@snow.edu', 1001234, 'John', 'Doe'),
-    ('jane.smith@snow.edu', 1005678, 'Jane', 'Smith'),
-    ('bob.johnson@snow.edu', 1009012, 'Bob', 'Johnson'),
-    ('alice.williams@snow.edu', 1003456, 'Alice', 'Williams'),
-    ('charlie.brown@snow.edu', 1007890, 'Charlie', 'Brown');
+    ('john.doe@snow.edu', 1001234, 'John Doe'),
+    ('jane.smith@snow.edu', 1005678, 'Jane Smith'),
+    ('bob.johnson@snow.edu', 1009012, 'Bob Johnson'),
+    ('alice.williams@snow.edu', 1003456, 'Alice Williams'),
+    ('charlie.brown@snow.edu', 1007890, 'Charlie Brown');
 
 -- Sample customer swipe data
 INSERT INTO
