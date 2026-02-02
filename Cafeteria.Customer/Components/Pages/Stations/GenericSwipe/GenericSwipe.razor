@@ -3,6 +3,7 @@
 @page "/deli"
 @page "/grill"
 @page "/pizza"
+@page "/wrap"
 @rendermode InteractiveServer
 @using Cafeteria.Customer.Components.Pages.Stations.Configuration
 @using Cafeteria.Shared.DTOs
@@ -229,6 +230,91 @@ else
             }
 
             @if (VM.ActiveTab == "sandwich" && VM.CurrentStationType == Configuration.StationType.Deli)
+            {
+                @foreach (var optionTypeWithOptions in VM.OptionTypes)
+                {
+                    var optionType = optionTypeWithOptions.OptionType;
+                    var isMultiSelect = VM.IsMultiSelectOptionType(optionTypeWithOptions);
+                    var selectedCount = VM.GetSelectedOptionsForType(optionType.Id).Count;
+                    var extraCharge = selectedCount > optionType.NumIncluded ?
+                    (selectedCount - optionType.NumIncluded) * optionType.FoodOptionPrice : 0;
+                    var isComplete = selectedCount >= optionType.NumIncluded;
+
+                    <div class="category-card @(isComplete ? "complete" : "")">
+                        <div class="category-header">
+                            <div class="category-info">
+                                <h3 class="category-title">@optionType.FoodOptionTypeName</h3>
+                                <span class="category-requirement">
+                                    @if (isMultiSelect)
+                                    {
+                                        <text>Select @optionType.NumIncluded</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Select 1</text>
+                                    }
+                                    @if (optionType.FoodOptionPrice > 0 && optionType.MaxAmount > optionType.NumIncluded)
+                                    {
+                                        <span class="extra-price">+$@optionType.FoodOptionPrice.ToString("F2") each extra</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="category-status">
+                                @if (isComplete)
+                                {
+                                    <span class="status-badge complete"><i class="bi bi-check"></i></span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge pending">@selectedCount/@optionType.NumIncluded</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="category-options">
+                            @foreach (var option in optionTypeWithOptions.Options)
+                            {
+                                var isSelected = VM.IsOptionSelected(optionType.Id, option.FoodOptionName);
+
+                                @if (isMultiSelect)
+                                {
+                                    <button type="button" class="option-chip @(isSelected ? "selected" : "")"
+                                        @onclick="() => ToggleOptionForType(optionType.Id, option.FoodOptionName)">
+                                        @option.FoodOptionName
+                                        @if (isSelected)
+                                        {
+                                            <i class="bi bi-check-lg"></i>
+                                        }
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="option-chip @(isSelected ? "selected" : "")"
+                                        @onclick="() => SetOptionForType(optionType.Id, option.FoodOptionName)">
+                                        @option.FoodOptionName
+                                        @if (isSelected)
+                                        {
+                                            <i class="bi bi-check-lg"></i>
+                                        }
+                                    </button>
+                                }
+                            }
+                        </div>
+
+                        @if (extraCharge > 0)
+                        {
+                            <div class="info-banner warning mt-3">
+                                <div>
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Additional charge: $@extraCharge.ToString("F2") for @(selectedCount - optionType.NumIncluded)
+                                    extra @optionType.FoodOptionTypeName.ToLower()
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+
+            @if (VM.ActiveTab == "wrap" && VM.CurrentStationType == Configuration.StationType.Wraps)
             {
                 @foreach (var optionTypeWithOptions in VM.OptionTypes)
                 {

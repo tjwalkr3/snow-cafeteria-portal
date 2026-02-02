@@ -53,6 +53,7 @@ public partial class StationSelect : ComponentBase
             "deli" or "deli station" or "sandwich station" => "/deli",
             "pizza" or "pizza station" => "/pizza",
             "grill" or "grill station" => "/grill",
+            "wraps" or "wraps station" => "/wrap",
             _ => "/swipe-menu" // Default fallback
         };
     }
@@ -66,6 +67,7 @@ public partial class StationSelect : ComponentBase
             "deli" or "deli station" or "sandwich station" => "bi-cup-straw",
             "pizza" or "pizza station" => "bi-basket-fill",
             "grill" or "grill station" => "bi-fire",
+            "wraps" or "wraps station" => "bi-tornado",
             _ => "bi-shop" // Default fallback
         };
     }
