@@ -12,6 +12,7 @@ using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Storage;
+using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -36,6 +37,7 @@ builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
 });
 builder.Services.AddScoped<IApiMenuService, ApiMenuService>();
 builder.Services.AddScoped<IApiOrderService, ApiOrderService>();
+builder.Services.AddScoped<IApiSwipeService, ApiSwipeService>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();
 
 // Register view models
