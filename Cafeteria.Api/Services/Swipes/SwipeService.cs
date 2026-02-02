@@ -34,4 +34,23 @@ public class SwipeService : ISwipeService
         }
         return result;
     }
+
+    public async Task<SwipeDto> GetSwipesByEmail(string email)
+    {
+        if (_dbConnection.State != ConnectionState.Open)
+            _dbConnection.Open();
+
+        const string sql = @"
+            SELECT cs.badger_id AS BadgerId, cs.swipe_balance AS SwipeBalance
+            FROM cafeteria.customer_swipe cs
+            INNER JOIN cafeteria.customer c ON cs.badger_id = c.badger_id
+            WHERE c.email = @Email";
+
+        var result = await _dbConnection.QuerySingleOrDefaultAsync<SwipeDto>(sql, new { Email = email });
+        if (result == null)
+        {
+            throw new KeyNotFoundException($"No swipe data found for email {email}.");
+        }
+        return result;
+    }
 }
