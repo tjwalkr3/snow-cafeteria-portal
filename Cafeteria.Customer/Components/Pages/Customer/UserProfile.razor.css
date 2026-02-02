@@ -1,0 +1,36 @@
+.profile-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-item {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 12px;
+}
+
+.profile-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.profile-label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.profile-value {
+    margin: 0;
+    font-size: 1.125rem;
+    color: #212529;
+}

@@ -1,0 +1,49 @@
+@page "/user-profile"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>User Profile</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="container px-4 py-4">
+            <div class="mb-3">
+                <a href="/" class="back-link">
+                    <i class="bi bi-arrow-left"></i> Back to Menu
+                </a>
+            </div>
+
+            <div class="page-header mb-4">
+                <h1 class="page-title">User Profile</h1>
+            </div>
+
+            <div class="profile-card" style="max-width: 500px;">
+                <div class="profile-section">
+                    <div class="profile-item">
+                        <label class="profile-label">Name</label>
+                        <p class="profile-value">@UserName</p>
+                    </div>
+
+                    <div class="profile-item">
+                        <label class="profile-label">Email</label>
+                        <p class="profile-value">@UserEmail</p>
+                    </div>
+
+                    <div class="profile-item">
+                        <label class="profile-label">Swipe Balance</label>
+                        <p class="profile-value">@SwipeBalance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="container px-4 py-4">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> Please log in to view your profile.
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@inject NavigationManager Navigation
