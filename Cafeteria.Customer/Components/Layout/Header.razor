@@ -21,6 +21,11 @@
                     </span>
                 }
             </button>
+            <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
+                title="User Profile"
+                @onclick="NavigateToUserProfile">
+                <span class="bi bi-person-circle fs-5"></span>
+            </button>
             <SigninButton />
         </nav>
     </div>
@@ -87,6 +92,11 @@
     private void NavigateToOrderHistory()
     {
         NavigationManager.NavigateTo("/order-history");
+    }
+
+    private void NavigateToUserProfile()
+    {
+        NavigationManager.NavigateTo("/profile");
     }
 
     public void Dispose()

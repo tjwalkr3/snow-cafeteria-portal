@@ -1,4 +1,4 @@
-@page "/user-profile"
+@page "/profile"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -6,41 +6,72 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="container px-4 py-4">
-            <div class="mb-3">
-                <a href="/" class="back-link">
-                    <i class="bi bi-arrow-left"></i> Back to Menu
-                </a>
+        @if (!_isLoaded)
+        {
+            <div class="loading-container">
+                <Spinner Message="Loading your profile..." />
             </div>
+        }
+        else
+        {
+            <div class="container px-4 py-4">
+                <div class="mb-3">
+                    <a href="/" class="back-link">
+                        <i class="bi bi-arrow-left"></i> Back to Menu
+                    </a>
+                </div>
 
-            <div class="page-header mb-4">
-                <h1 class="page-title">User Profile</h1>
-            </div>
+                <div class="page-header mb-4">
+                    <h1 class="page-title">My Profile</h1>
+                    <p class="page-subtitle">View your account information</p>
+                </div>
 
-            <div class="profile-card" style="max-width: 500px;">
-                <div class="profile-section">
-                    <div class="profile-item">
-                        <label class="profile-label">Name</label>
-                        <p class="profile-value">@UserName</p>
-                    </div>
+                <div class="row">
+                    <div class="col-lg-6 col-xl-5">
+                        <div class="profile-card">
+                            <div class="profile-avatar-section">
+                                <div class="profile-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div class="profile-name-section">
+                                    <h2 class="profile-name">@UserName</h2>
+                                    <span class="profile-email">@UserEmail</span>
+                                </div>
+                            </div>
 
-                    <div class="profile-item">
-                        <label class="profile-label">Email</label>
-                        <p class="profile-value">@UserEmail</p>
-                    </div>
+                            <div class="profile-details">
+                                <div class="profile-detail-item">
+                                    <div class="detail-icon">
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Email Address</span>
+                                        <span class="detail-value">@UserEmail</span>
+                                    </div>
+                                </div>
 
-                    <div class="profile-item">
-                        <label class="profile-label">Swipe Balance</label>
-                        <p class="profile-value">@SwipeBalance</p>
+                                <div class="profile-detail-item">
+                                    <div class="detail-icon swipe-icon">
+                                        <i class="bi bi-wallet2"></i>
+                                    </div>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Swipe Balance</span>
+                                        <span class="detail-value swipe-balance">@SwipeBalance Swipes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        }
     </Authorized>
     <NotAuthorized>
         <div class="container px-4 py-4">
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-triangle"></i> Please log in to view your profile.
+            <div class="not-authorized-card">
+                <i class="bi bi-lock"></i>
+                <h3>Sign In Required</h3>
+                <p>Please sign in to view your profile information.</p>
             </div>
         </div>
     </NotAuthorized>
