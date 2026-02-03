@@ -8,15 +8,16 @@ using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Customer.Services.Auth;
 using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Customer;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Storage;
+using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,9 @@ builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
 });
 builder.Services.AddScoped<IApiMenuService, ApiMenuService>();
 builder.Services.AddScoped<IApiOrderService, ApiOrderService>();
+builder.Services.AddScoped<IApiSwipeService, ApiSwipeService>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
@@ -83,7 +86,7 @@ builder.Services.AddAuthentication(options =>
         options.GetClaimsFromUserInfoEndpoint = true;
 
         options.MapInboundClaims = false;
-        options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
+        options.TokenValidationParameters.NameClaimType = "name";
         options.TokenValidationParameters.RoleClaimType = "roles";
     });
 

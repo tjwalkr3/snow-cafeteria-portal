@@ -27,8 +27,11 @@ public class MockAuthenticationHandler : AuthenticationHandler<AuthenticationSch
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, "Test User"),
+            new Claim("name", "Test User"),
             new Claim(ClaimTypes.NameIdentifier, "test-user-id"),
             new Claim(ClaimTypes.Email, "test@example.com"),
+            new Claim("email", "test@example.com"),
+            new Claim("preferred_username", "test@example.com"),
             new Claim(ClaimTypes.Role, "admin")
         };
 

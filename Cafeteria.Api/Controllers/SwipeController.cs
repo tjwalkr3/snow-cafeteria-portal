@@ -32,4 +32,20 @@ public class SwipeController : ControllerBase
             return NotFound("User not found.");
         }
     }
+
+    [HttpGet("email/{email}")]
+    public async Task<ActionResult<SwipeDto>> GetSwipesByEmail(string email)
+    {
+        try
+        {
+            var result = await _swipeService.GetSwipesByEmail(email);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound($"No swipes found for email {email}.");
+        }
+    }
 }
