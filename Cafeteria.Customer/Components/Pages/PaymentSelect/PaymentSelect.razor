@@ -2,11 +2,14 @@
 @using System.Text.Json
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Text.Json.Nodes
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager Navigation
 
 <PageTitle>Select Payment Method</PageTitle>
 
-<div class="container py-5">
+<AuthorizeView>
+    <Authorized>
+        <div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="payment-title mb-3 fs-1 fw-bold">Choose Payment Method</h1>
         <p class="payment-subtitle fs-5 text-muted mb-0">Select how you'd like to pay for your order</p>
@@ -46,7 +49,16 @@
             </a>
         </div>
     </div>
-</div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="container px-4 py-4">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> Please log in to view this page.
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 <style>
     .payment-title:focus-visible {
