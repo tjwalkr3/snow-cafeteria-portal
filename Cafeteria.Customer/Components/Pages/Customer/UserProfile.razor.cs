@@ -15,6 +15,7 @@ public partial class UserProfile : ComponentBase
     public string UserName { get; set; } = "Unknown";
     public string UserEmail { get; set; } = "Unknown";
     public int SwipeBalance { get; set; } = 0;
+    private bool _isLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -28,7 +29,6 @@ public partial class UserProfile : ComponentBase
                 UserName = user.FindFirst("name")?.Value ?? user.FindFirst("preferred_username")?.Value ?? "Unknown";
                 UserEmail = user.FindFirst("email")?.Value ?? user.FindFirst("preferred_username")?.Value ?? "Unknown";
 
-                // Fetch swipe balance from API
                 if (!string.IsNullOrEmpty(UserEmail))
                 {
                     try
@@ -41,11 +41,11 @@ public partial class UserProfile : ComponentBase
                     }
                     catch (Exception)
                     {
-                        // If API call fails, keep the hardcoded value
                         SwipeBalance = 0;
                     }
                 }
             }
         }
+        _isLoaded = true;
     }
 }
