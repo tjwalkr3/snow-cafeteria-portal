@@ -12,7 +12,7 @@ public class CustomerService : ICustomerService
         _dbConnection = dbConnection;
     }
 
-    public async Task EnsureCustomerExists(string email, string custName, int badgerId = 0)
+    public async Task EnsureCustomerExists(string email, string custName)
     {
         if (_dbConnection.State != ConnectionState.Open)
             _dbConnection.Open();
@@ -33,7 +33,7 @@ public class CustomerService : ICustomerService
             await _dbConnection.ExecuteAsync(insertSql, new
             {
                 Email = email,
-                BadgerId = badgerId,
+                BadgerId = 0,
                 CustName = custName
             });
         }

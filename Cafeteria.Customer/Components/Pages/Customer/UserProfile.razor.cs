@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
 using Cafeteria.Customer.Services.Swipe;
 
 namespace Cafeteria.Customer.Components.Pages.Customer;
@@ -26,8 +25,8 @@ public partial class UserProfile : ComponentBase
 
             if (user.Identity?.IsAuthenticated ?? false)
             {
-                UserName = user.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown";
-                UserEmail = user.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown";
+                UserName = user.FindFirst("name")?.Value ?? user.FindFirst("preferred_username")?.Value ?? "Unknown";
+                UserEmail = user.FindFirst("email")?.Value ?? user.FindFirst("preferred_username")?.Value ?? "Unknown";
 
                 // Fetch swipe balance from API
                 if (!string.IsNullOrEmpty(UserEmail))

@@ -1,4 +1,4 @@
 public interface ICustomerService
 {
-    Task EnsureCustomerExists(string email, string custName, int badgerId = 0);
+    Task EnsureCustomerExists(string email, string custName);
 }
