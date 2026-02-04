@@ -28,6 +28,29 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("with-customer")]
+    public async Task<ActionResult<List<OrderWithCustomerDto>>> GetAllOrdersWithCustomer()
+    {
+        var result = await _orderService.GetAllOrdersWithCustomer();
+        return Ok(result);
+    }
+
+    [HttpGet("with-customer/{id}")]
+    public async Task<ActionResult<OrderWithCustomerDto>> GetOrderWithCustomerById(int id)
+    {
+        var result = await _orderService.GetOrderWithCustomerById(id);
+        if (result == null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("customer/{badgerId}")]
+    public async Task<ActionResult<List<OrderWithCustomerDto>>> GetOrdersByCustomer(int badgerId)
+    {
+        var result = await _orderService.GetOrdersByCustomer(badgerId);
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
     {
