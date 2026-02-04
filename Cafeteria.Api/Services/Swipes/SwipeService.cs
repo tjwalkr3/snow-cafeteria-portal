@@ -53,4 +53,23 @@ public class SwipeService : ISwipeService
         }
         return result;
     }
+
+    public async Task<List<CustomerSwipeDto>> GetAllCustomers()
+    {
+        if (_dbConnection.State != ConnectionState.Open)
+            _dbConnection.Open();
+
+        const string sql = @"
+            SELECT 
+                c.first_name + ' ' + c.last_name AS Name,
+                c.email AS Email,
+                c.badger_id AS BadgerId,
+                cs.swipe_balance AS SwipeCount
+            FROM cafeteria.customer c
+            INNER JOIN cafeteria.customer_swipe cs ON c.badger_id = cs.badger_id
+            ORDER BY c.first_name, c.last_name";
+
+        var result = await _dbConnection.QueryAsync<CustomerSwipeDto>(sql);
+        return result.ToList();
+    }
 }

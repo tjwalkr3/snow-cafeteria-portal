@@ -48,4 +48,18 @@ public class SwipeController : ControllerBase
             return NotFound($"No swipes found for email {email}.");
         }
     }
+
+    [HttpGet("all-customers")]
+    public async Task<ActionResult<List<CustomerSwipeDto>>> GetAllCustomers()
+    {
+        try
+        {
+            var result = await _swipeService.GetAllCustomers();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error retrieving customers: {ex.Message}");
+        }
+    }
 }
