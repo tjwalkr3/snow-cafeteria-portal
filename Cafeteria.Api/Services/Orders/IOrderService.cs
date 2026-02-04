@@ -8,4 +8,6 @@ public interface IOrderService
     Task<OrderDto?> GetOrderById(int id);
     Task<List<OrderDto>> GetAllOrders();
     Task<List<OrderWithCustomerDto>> GetAllOrdersWithCustomer();
+    Task<List<OrderWithCustomerDto>> GetOrdersByCustomer(int badgerId);
+    Task<OrderWithCustomerDto?> GetOrderWithCustomerById(int id);
 }
