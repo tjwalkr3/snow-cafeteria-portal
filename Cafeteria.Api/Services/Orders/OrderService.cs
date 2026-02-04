@@ -188,4 +188,20 @@ public class OrderService : IOrderService
 
         return orders;
     }
+
+    public async Task<List<OrderWithCustomerDto>> GetAllOrdersWithCustomer()
+    {
+        const string sql = @"
+            SELECT o.id AS Id, o.order_time AS OrderTime, o.total_price AS TotalPrice, o.tax AS Tax, o.total_swipe AS TotalSwipe,
+                   o.customer_badger_id AS CustomerBadgerId, c.cust_name AS CustomerName, c.email AS CustomerEmail,
+                   CASE WHEN sc.id IS NOT NULL THEN 'Card' ELSE 'Swipe' END AS PaymentType,
+                   (SELECT COUNT(*) FROM cafeteria.food_item fi WHERE fi.order_id = o.id) AS ItemCount
+            FROM cafeteria.order o
+            LEFT JOIN cafeteria.customer c ON o.customer_badger_id = c.badger_id
+            LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
+            ORDER BY o.order_time DESC";
+
+        var orders = await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql);
+        return orders.ToList();
+    }
 }

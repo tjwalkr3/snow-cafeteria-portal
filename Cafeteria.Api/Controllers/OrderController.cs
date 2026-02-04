@@ -28,6 +28,13 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("with-customer")]
+    public async Task<ActionResult<List<OrderWithCustomerDto>>> GetAllOrdersWithCustomer()
+    {
+        var result = await _orderService.GetAllOrdersWithCustomer();
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
     {
