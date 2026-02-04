@@ -1,0 +1,15 @@
+.payment-title:focus-visible {
+    outline: none !important;
+    border: none !important;
+}
+
+.disabled-card {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #f8f9fa;
+}
+
+.disabled-card .icon-circle,
+.disabled-card .payment-card-title {
+    color: #999;
+}

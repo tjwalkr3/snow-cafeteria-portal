@@ -4,6 +4,8 @@ using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Order;
+using Cafeteria.Customer.Services.Swipe;
+using System.Security.Claims;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
@@ -27,6 +29,12 @@ public partial class PlaceOrder : ComponentBase
     [Inject]
     private IApiOrderService OrderService { get; set; } = default!;
 
+    [Inject]
+    private IApiSwipeService SwipeService { get; set; } = default!;
+
+    [Inject]
+    private HttpContext? HttpContext { get; set; }
+
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
 
@@ -45,7 +53,11 @@ public partial class PlaceOrder : ComponentBase
     private List<SideGroup> SideGroups { get; set; } = new();
     private List<DrinkGroup> DrinkGroups { get; set; } = new();
 
+    private int AccountSwipeBalance { get; set; } = 0;
+
     public bool IsInitialized { get; set; } = false;
+
+    public bool CanPlaceOrder => !Order?.IsCardOrder ?? false ? GetTotalSwipeCount() <= AccountSwipeBalance : true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,6 +72,28 @@ public partial class PlaceOrder : ComponentBase
             await InvokeAsync(async () =>
             {
                 string userName = "order";
+
+                // Fetch account swipe balance if user is authenticated
+                if (HttpContext?.User?.Identity?.IsAuthenticated ?? false)
+                {
+                    var email = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        try
+                        {
+                            var swipeData = await SwipeService.GetSwipesByEmail(email);
+                            if (swipeData != null)
+                            {
+                                AccountSwipeBalance = swipeData.SwipeBalance;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // If API call fails, swipes remain at 0
+                            AccountSwipeBalance = 0;
+                        }
+                    }
+                }
 
                 await SavePaymentMethod(userName);
                 await SaveLocation(userName);
