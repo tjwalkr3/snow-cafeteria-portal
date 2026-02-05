@@ -8,18 +8,20 @@
 <PageTitle>Food Options & Types</PageTitle>
 
 <div class="px-3">
-    <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="text-center mb-2">
         <h1 class="page-title fw-bold mb-0">Food Options & Types</h1>
     </div>
 
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link @(activeTab == "types" ? "active" : "")" type="button" @onclick="@(() => activeTab = "types")">
+            <button class="nav-link @(activeTab == "types" ? "active" : "")" type="button"
+                @onclick="@(() => activeTab = "types")">
                 <i class="bi bi-grid-3x3 me-2"></i>Option Types
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link @(activeTab == "options" ? "active" : "")" type="button" @onclick="@(() => activeTab = "options")">
+            <button class="nav-link @(activeTab == "options" ? "active" : "")" type="button"
+                @onclick="@(() => activeTab = "options")">
                 <i class="bi bi-menu-button-wide me-2"></i>Food Options
             </button>
         </li>
@@ -28,129 +30,144 @@
     <div class="tab-content">
         @if (activeTab == "types")
         {
-        <div class="tab-pane fade show active" id="types" role="tabpanel">
-            <div class="row g-3 mb-4">
-                <div class="col-12 col-md-8">
+            <div class="tab-pane fade show active" id="types" role="tabpanel">
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-8">
                         <label class="form-label mb-0 me-2 text-nowrap fw-medium mt-4">Search:</label>
-                    <div class="d-flex align-items-center">
-                        <input type="text" class="form-control" placeholder="Search option types..." @bind="FilterText" @bind:event="oninput" />
+                        <div class="d-flex align-items-center">
+                            <input type="text" class="form-control" placeholder="Search option types..." @bind="FilterText"
+                                @bind:event="oninput" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 d-flex justify-content-end align-items-end">
+                        <button type="button" class="btn btn-primary d-inline-flex align-items-center"
+                            @onclick="ShowCreateTypeModal">
+                            <i class="bi bi-plus-circle me-2"></i>Add Type
+                        </button>
                     </div>
                 </div>
-                <div class="col-12 col-md-4 d-flex justify-content-end align-items-end">
-                    <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateTypeModal">
-                        <i class="bi bi-plus-circle me-2"></i>Add Type
-                    </button>
-                </div>
-            </div>
 
-            @if (FilteredFoodTypes != null && FilteredFoodTypes.Any())  
-            {
-                <div class="row g-4 mb-4">
-                    @foreach (var foodType in FilteredFoodTypes)
-                    {
-                        <div class="col-12 col-md-6 col-lg-4" @key="foodType.Id">
-                            <div class="type-card card h-100 border-1 rounded-3 shadow-sm">
-                                <div class="card-body p-4">
-                                    <div class="mb-3 pb-3 border-bottom">
-                                        <h5 class="type-name fw-semibold mb-2">@foodType.FoodOptionTypeName</h5>
-                                        <div class="type-price fs-5 fw-bold">$@foodType.FoodOptionPrice.ToString("F2")</div>
-                                    </div>
-
-                                    <div class="d-flex flex-column gap-2 mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span class="detail-label text-muted text-uppercase small fw-medium">Min Included:</span>
-                                            <span class="fw-semibold">@foodType.NumIncluded</span>
+                @if (FilteredFoodTypes != null && FilteredFoodTypes.Any())
+                {
+                    <div class="row g-4 mb-4">
+                        @foreach (var foodType in FilteredFoodTypes)
+                        {
+                            <div class="col-12 col-md-6 col-lg-4" @key="foodType.Id">
+                                <div class="type-card card h-100 border-1 rounded-3 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <div class="mb-3 pb-3 border-bottom">
+                                            <h5 class="type-name fw-semibold mb-2">@foodType.FoodOptionTypeName</h5>
+                                            <div class="type-price fs-5 fw-bold">$@foodType.FoodOptionPrice.ToString("F2")</div>
                                         </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span class="detail-label text-muted text-uppercase small fw-medium">Max Amount:</span>
-                                            <span class="fw-semibold">@foodType.MaxAmount</span>
-                                        </div>
-                                    </div>
 
-                                    <div class="d-flex gap-2 pt-3 border-top">
-                                        <button type="button" class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowEditTypeModal(foodType)">
-                                            <i class="bi bi-pencil me-1"></i>Edit
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowDeleteTypeConfirmation(foodType)">
-                                            <i class="bi bi-trash me-1"></i>Delete
-                                        </button>
+                                        <div class="d-flex flex-column gap-2 mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="detail-label text-muted text-uppercase small fw-medium">Min
+                                                    Included:</span>
+                                                <span class="fw-semibold">@foodType.NumIncluded</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="detail-label text-muted text-uppercase small fw-medium">Max
+                                                    Amount:</span>
+                                                <span class="fw-semibold">@foodType.MaxAmount</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex gap-2 pt-3 border-top">
+                                            <button type="button"
+                                                class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
+                                                @onclick="() => ShowEditTypeModal(foodType)">
+                                                <i class="bi bi-pencil me-1"></i>Edit
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
+                                                @onclick="() => ShowDeleteTypeConfirmation(foodType)">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
-                    <i class="bi bi-grid-3x3 fs-1 mb-3 text-muted d-block"></i>
-                    <p class="fs-5 mb-2">No food option types found.</p>
-                    <p class="text-muted small mb-0">Click "Add Type" to create your first type.</p>
-                </div>
-            }
-        </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
+                        <i class="bi bi-grid-3x3 fs-1 mb-3 text-muted d-block"></i>
+                        <p class="fs-5 mb-2">No food option types found.</p>
+                        <p class="text-muted small mb-0">Click "Add Type" to create your first type.</p>
+                    </div>
+                }
+            </div>
         }
 
         @if (activeTab == "options")
         {
-        <div class="tab-pane fade show active" id="options" role="tabpanel">
-            <div class="row g-3 mb-4">
-                <div class="col-12 col-md-8">
-                    <div class="d-flex align-items-center">
-                        <label class="form-label mb-0 me-2 text-nowrap fw-medium">Search:</label>
-                        <input type="text" class="form-control" placeholder="Search food options..." @bind="OptionFilterText" @bind:event="oninput" />
+            <div class="tab-pane fade show active" id="options" role="tabpanel">
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-8">
+                        <label class="form-label mb-0 me-2 text-nowrap fw-medium mt-4">Search:</label>
+                        <div class="d-flex align-items-center">
+
+                            <input type="text" class="form-control" placeholder="Search food options..."
+                                @bind="OptionFilterText" @bind:event="oninput" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 d-flex justify-content-end align-items-end">
+                        <button type="button" class="btn btn-primary d-inline-flex align-items-center"
+                            @onclick="ShowCreateStandaloneOptionModal">
+                            <i class="bi bi-plus-circle me-2"></i>Add Food Option
+                        </button>
                     </div>
                 </div>
-                <div class="col-12 col-md-4 d-flex justify-content-end align-items-center">
-                    <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="ShowCreateStandaloneOptionModal">
-                        <i class="bi bi-plus-circle me-2"></i>Add Food Option
-                    </button>
-                </div>
-            </div>
 
-            @if (FilteredFoodOptions != null && FilteredFoodOptions.Any())
-            {
-                <div class="row g-4 mb-4">
-                    @foreach (var option in FilteredFoodOptions)
-                    {
-                        <div class="col-12 col-md-6 col-lg-4" @key="option.Id">
-                            <div class="option-card card h-100 border-1 rounded-3 shadow-sm">
-                                <div class="card-body p-4">
-                                    <div class="mb-3 pb-3 border-bottom">
-                                        <h5 class="option-name fw-semibold mb-2">@option.FoodOptionName</h5>
-                                    </div>
+                @if (FilteredFoodOptions != null && FilteredFoodOptions.Any())
+                {
+                    <div class="row g-4 mb-4">
+                        @foreach (var option in FilteredFoodOptions)
+                        {
+                            <div class="col-12 col-md-6 col-lg-4" @key="option.Id">
+                                <div class="option-card card h-100 border-1 rounded-3 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <div class="mb-3 pb-3 border-bottom">
+                                            <h5 class="option-name fw-semibold mb-2">@option.FoodOptionName</h5>
+                                        </div>
 
-                                    <div class="d-flex justify-content-between align-items-center mb-3 py-2">
-                                        <span class="detail-label text-muted text-uppercase small fw-medium">Status:</span>
-                                        <span class="fw-semibold stock-status @(option.InStock ? "in-stock" : "out-of-stock")">
-                                            @(option.InStock ? "In Stock" : "Out of Stock")
-                                        </span>
-                                    </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-3 py-2">
+                                            <span class="detail-label text-muted text-uppercase small fw-medium">Status:</span>
+                                            <span class="fw-semibold stock-status @(option.InStock ? "in-stock" : "out-of-stock")">
+                                                @(option.InStock ? "In Stock" : "Out of Stock")
+                                            </span>
+                                        </div>
 
-                                    <div class="d-flex gap-2 pt-3 border-top">
-                                        <button type="button" class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowEditStandaloneOptionModal(option)">
-                                            <i class="bi bi-pencil me-1"></i>Edit
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center" @onclick="() => ShowDeleteOptionConfirmation(option)">
-                                            <i class="bi bi-trash me-1"></i>Delete
-                                        </button>
+                                        <div class="d-flex gap-2 pt-3 border-top">
+                                            <button type="button"
+                                                class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
+                                                @onclick="() => ShowEditStandaloneOptionModal(option)">
+                                                <i class="bi bi-pencil me-1"></i>Edit
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-outline-danger btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
+                                                @onclick="() => ShowDeleteOptionConfirmation(option)">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
-                    <i class="bi bi-menu-button-wide fs-1 mb-3 text-muted d-block"></i>
-                    <p class="fs-5 mb-2">No food options found.</p>
-                    <p class="text-muted small mb-0">Click "Add Food Option" to create your first option.</p>
-                </div>
-            }
-        </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
+                        <i class="bi bi-menu-button-wide fs-1 mb-3 text-muted d-block"></i>
+                        <p class="fs-5 mb-2">No food options found.</p>
+                        <p class="text-muted small mb-0">Click "Add Food Option" to create your first option.</p>
+                    </div>
+                }
+            </div>
         }
     </div>
 </div>
