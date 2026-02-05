@@ -24,7 +24,7 @@ public class FoodOptionService : IFoodOptionService
         return result ?? throw new InvalidOperationException("Failed to create food option");
     }
 
-    public async Task<FoodOptionDto?> GetFoodOptionByID(int id)
+    public async Task<FoodOptionDto?> GetFoodOptionById(int id)
     {
         const string sql = @"
             SELECT 
@@ -54,7 +54,7 @@ public class FoodOptionService : IFoodOptionService
         return result.ToList();
     }
 
-    public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)
+    public async Task<List<FoodOptionDto>> GetFoodOptionsByEntreeId(int entreeId)
     {
         string sql = @"
             SELECT 
@@ -70,7 +70,7 @@ public class FoodOptionService : IFoodOptionService
         return result.ToList();
     }
 
-    public async Task<List<FoodOptionDto>> GetOptionsBySide(int sideId)
+    public async Task<List<FoodOptionDto>> GetFoodOptionsBySideId(int sideId)
     {
         string sql = @"
         SELECT 
@@ -86,7 +86,7 @@ public class FoodOptionService : IFoodOptionService
         return result.ToList();
     }
 
-    public async Task<FoodOptionDto?> UpdateFoodOption(int id, FoodOptionDto foodOptionDto)
+    public async Task<FoodOptionDto?> UpdateFoodOptionById(int id, FoodOptionDto foodOptionDto)
     {
         const string sql = @"
             UPDATE cafeteria.food_option
@@ -108,7 +108,7 @@ public class FoodOptionService : IFoodOptionService
         return result;
     }
 
-    public async Task<bool> DeleteFoodOption(int id)
+    public async Task<bool> DeleteFoodOptionById(int id)
     {
         const string sql = @"
             DELETE FROM cafeteria.food_option

@@ -1,0 +1,17 @@
+### Get swipe balance for John Doe (badge ID 1001234)
+GET http://localhost:5000/api/swipes/1001234
+
+### Get swipe balance for Jane Smith (badge ID 1005678)
+GET http://localhost:5000/api/swipes/1005678
+
+### Get swipe balance for Bob Johnson (badge ID 1009012)
+GET http://localhost:5000/api/swipes/1009012
+
+### Get swipe balance for Alice Williams (badge ID 1003456)
+GET http://localhost:5000/api/swipes/1003456
+
+### Get swipe balance for Charlie Brown (badge ID 1007890)
+GET http://localhost:5000/api/swipes/1007890
+
+### Get swipe balance for non-existent user (should return 404)
+GET http://localhost:5000/api/swipes/9999999

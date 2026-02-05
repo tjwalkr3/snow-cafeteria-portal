@@ -6,16 +6,18 @@ using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
+using Cafeteria.Customer.Services.Auth;
 using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Customer;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Storage;
+using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,20 +28,18 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Api Data Service with service discovery
-builder.Services.AddHttpClient<IApiMenuService, ApiMenuService>(client =>
+// Add data services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
     client.BaseAddress = new Uri(apiBaseUrl);
 });
-
-builder.Services.AddHttpClient<IApiOrderService, ApiOrderService>(client =>
-{
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
-    client.BaseAddress = new Uri(apiBaseUrl);
-});
-
-builder.Services.AddHttpClient<IPrinterService, PrinterService>();
+builder.Services.AddScoped<IApiMenuService, ApiMenuService>();
+builder.Services.AddScoped<IApiOrderService, ApiOrderService>();
+builder.Services.AddScoped<IApiSwipeService, ApiSwipeService>();
+builder.Services.AddScoped<IPrinterService, PrinterService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();
@@ -86,7 +86,7 @@ builder.Services.AddAuthentication(options =>
         options.GetClaimsFromUserInfoEndpoint = true;
 
         options.MapInboundClaims = false;
-        options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
+        options.TokenValidationParameters.NameClaimType = "name";
         options.TokenValidationParameters.RoleClaimType = "roles";
     });
 

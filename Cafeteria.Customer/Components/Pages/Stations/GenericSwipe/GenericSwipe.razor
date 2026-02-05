@@ -3,6 +3,7 @@
 @page "/deli"
 @page "/grill"
 @page "/pizza"
+@page "/wrap"
 @rendermode InteractiveServer
 @using Cafeteria.Customer.Components.Pages.Stations.Configuration
 @using Cafeteria.Shared.DTOs
@@ -31,35 +32,79 @@ else
             </h1>
         </div>
 
-        <div class="progress-stepper">
-            @{
-                var tabs = VM.Configuration?.Tabs ?? new();
-                var tabCount = tabs.Count;
-            }
-            @for (int i = 0; i < tabCount; i++)
-            {
-                var tab = tabs[i];
-                var isActive = VM.ActiveTab == tab.Id;
-                var isCompleted = IsTabCompleted(tab.Id);
-                var tabIndex = i;
-
-                @if (i > 0)
-                {
-                    <div class="stepper-line @(IsTabCompleted(tabs[i - 1].Id) ? "completed" : "")"></div>
+        @if (VM.IsCardOrder)
+        {
+            @* Card order: Show category cards with selection status *@
+            <div class="category-nav">
+                @{
+                    var cardTabs = VM.Configuration?.Tabs ?? new();
                 }
+                @foreach (var tab in cardTabs)
+                {
+                    var isActive = VM.ActiveTab == tab.Id;
+                    var hasSelection = HasSelectionForTab(tab.Id);
+                    var selectionText = GetSelectionTextForTab(tab.Id);
 
-                <div class="stepper-step @(isActive ? "active" : "") @(isCompleted ? "completed" : "")"
-                    @onclick="@(() => SetActiveTab(tab.Id))">
-                    <div class="stepper-circle">
-                        @if (isCompleted)
+                    <div class="category-nav-card @(isActive ? "active" : "") @(hasSelection ? "has-selection" : "")"
+                        @onclick="@(() => SetActiveTab(tab.Id))">
+                        <div class="category-nav-icon">
+                            <i class="bi @GetTabIcon(tab.Id)"></i>
+                        </div>
+                        <div class="category-nav-content">
+                            <span class="category-nav-title">@tab.DisplayName</span>
+                            <span class="category-nav-selection">
+                                @if (hasSelection)
+                                {
+                                    <i class="bi bi-check-circle-fill me-1"></i>@selectionText
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Tap to browse</span>
+                                }
+                            </span>
+                        </div>
+                        @if (hasSelection)
                         {
-                            <i class="bi bi-check"></i>
+                            <div class="category-nav-badge">
+                                <i class="bi bi-check"></i>
+                            </div>
                         }
                     </div>
-                    <span class="stepper-label">@tab.DisplayName.ToUpper()</span>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="progress-stepper">
+                @{
+                    var tabs = VM.Configuration?.Tabs ?? new();
+                    var tabCount = tabs.Count;
+                }
+                @for (int i = 0; i < tabCount; i++)
+                {
+                    var tab = tabs[i];
+                    var isActive = VM.ActiveTab == tab.Id;
+                    var isCompleted = IsTabCompleted(tab.Id);
+                    var tabIndex = i;
+
+                    @if (i > 0)
+                    {
+                        <div class="stepper-line @(IsTabCompleted(tabs[i - 1].Id) ? "completed" : "")"></div>
+                    }
+
+                    <div class="stepper-step @(isActive ? "active" : "") @(isCompleted ? "completed" : "")"
+                        @onclick="@(() => SetActiveTab(tab.Id))">
+                        <div class="stepper-circle">
+                            @if (isCompleted)
+                            {
+                                <i class="bi bi-check"></i>
+                            }
+                        </div>
+                        <span class="stepper-label">@tab.DisplayName.ToUpper()</span>
+                    </div>
+                }
+            </div>
+        }
 
         <div class="content-area">
             @if (VM.ActiveTab == "entrees" && VM.Configuration?.ShowEntreeSelection == true)
@@ -269,6 +314,91 @@ else
                 }
             }
 
+            @if (VM.ActiveTab == "wrap" && VM.CurrentStationType == Configuration.StationType.Wraps)
+            {
+                @foreach (var optionTypeWithOptions in VM.OptionTypes)
+                {
+                    var optionType = optionTypeWithOptions.OptionType;
+                    var isMultiSelect = VM.IsMultiSelectOptionType(optionTypeWithOptions);
+                    var selectedCount = VM.GetSelectedOptionsForType(optionType.Id).Count;
+                    var extraCharge = selectedCount > optionType.NumIncluded ?
+                    (selectedCount - optionType.NumIncluded) * optionType.FoodOptionPrice : 0;
+                    var isComplete = selectedCount >= optionType.NumIncluded;
+
+                    <div class="category-card @(isComplete ? "complete" : "")">
+                        <div class="category-header">
+                            <div class="category-info">
+                                <h3 class="category-title">@optionType.FoodOptionTypeName</h3>
+                                <span class="category-requirement">
+                                    @if (isMultiSelect)
+                                    {
+                                        <text>Select @optionType.NumIncluded</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Select 1</text>
+                                    }
+                                    @if (optionType.FoodOptionPrice > 0 && optionType.MaxAmount > optionType.NumIncluded)
+                                    {
+                                        <span class="extra-price">+$@optionType.FoodOptionPrice.ToString("F2") each extra</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="category-status">
+                                @if (isComplete)
+                                {
+                                    <span class="status-badge complete"><i class="bi bi-check"></i></span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge pending">@selectedCount/@optionType.NumIncluded</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="category-options">
+                            @foreach (var option in optionTypeWithOptions.Options)
+                            {
+                                var isSelected = VM.IsOptionSelected(optionType.Id, option.FoodOptionName);
+
+                                @if (isMultiSelect)
+                                {
+                                    <button type="button" class="option-chip @(isSelected ? "selected" : "")"
+                                        @onclick="() => ToggleOptionForType(optionType.Id, option.FoodOptionName)">
+                                        @option.FoodOptionName
+                                        @if (isSelected)
+                                        {
+                                            <i class="bi bi-check-lg"></i>
+                                        }
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="option-chip @(isSelected ? "selected" : "")"
+                                        @onclick="() => SetOptionForType(optionType.Id, option.FoodOptionName)">
+                                        @option.FoodOptionName
+                                        @if (isSelected)
+                                        {
+                                            <i class="bi bi-check-lg"></i>
+                                        }
+                                    </button>
+                                }
+                            }
+                        </div>
+
+                        @if (extraCharge > 0)
+                        {
+                            <div class="info-banner warning mt-3">
+                                <div>
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Additional charge: $@extraCharge.ToString("F2") for @(selectedCount - optionType.NumIncluded)
+                                    extra @optionType.FoodOptionTypeName.ToLower()
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+
             @if (VM.ActiveTab == "sides")
             {
                 @foreach (var side in VM.Sides)
@@ -343,24 +473,33 @@ else
                     <span style="color: #6c757d; font-size: 0.95rem;">@VM.GetSelectionSummary()</span>
                 </div>
                 <div class="d-flex gap-2">
-                    @if (!IsFirstTab())
+                    @if (VM.IsCardOrder)
                     {
-                        <button type="button" class="back-btn" @onclick="GoToPreviousTab">
-                            Back
-                        </button>
-                    }
-                    @if (IsLastTab())
-                    {
-                        <button type="button" class="add-btn" disabled="@(!AreAllTabsCompleted())" @onclick="AddToOrder">
-                            Add to Order
+                        <button type="button" class="add-btn" disabled="@(!HasAnySelection())" @onclick="AddToOrder">
+                            Add to Cart
                         </button>
                     }
                     else
                     {
-                        <button type="button" class="add-btn" disabled="@(!IsTabCompleted(VM.ActiveTab))"
-                            @onclick="GoToNextTab">
-                            Next
-                        </button>
+                        @if (!IsFirstTab())
+                        {
+                            <button type="button" class="back-btn" @onclick="GoToPreviousTab">
+                                Back
+                            </button>
+                        }
+                        @if (IsLastTab())
+                        {
+                            <button type="button" class="add-btn" disabled="@(!AreAllTabsCompleted())" @onclick="AddToOrder">
+                                Add to Order
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="add-btn" disabled="@(!IsTabCompleted(VM.ActiveTab))"
+                                @onclick="GoToNextTab">
+                                Next
+                            </button>
+                        }
                     }
                 </div>
             </div>

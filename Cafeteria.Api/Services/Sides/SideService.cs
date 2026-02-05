@@ -24,7 +24,7 @@ public class SideService : ISideService
         return result ?? throw new InvalidOperationException("Failed to create side");
     }
 
-    public async Task<SideDto?> GetSideByID(int id)
+    public async Task<SideDto?> GetSideById(int id)
     {
         const string sql = @"
             SELECT 
@@ -60,7 +60,7 @@ public class SideService : ISideService
         return result.ToList();
     }
 
-    public async Task<List<SideDto>> GetSidesByStationID(int stationId)
+    public async Task<List<SideDto>> GetSidesByStationId(int stationId)
     {
         const string sql = @"
             SELECT 
@@ -79,7 +79,7 @@ public class SideService : ISideService
         return result.ToList();
     }
 
-    public async Task<SideDto?> UpdateSideByID(int id, SideDto sideDto)
+    public async Task<SideDto?> UpdateSideById(int id, SideDto sideDto)
     {
         const string sql = @"
             UPDATE cafeteria.side
@@ -107,7 +107,7 @@ public class SideService : ISideService
         return result;
     }
 
-    public async Task<bool> DeleteSideByID(int id)
+    public async Task<bool> DeleteSideById(int id)
     {
         const string sql = @"
             DELETE FROM cafeteria.side

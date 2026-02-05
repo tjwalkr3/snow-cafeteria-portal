@@ -33,7 +33,7 @@ public class StationService : IStationService
         return stations.ToList();
     }
 
-    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
+    public async Task<List<StationDto>> GetStationsByLocationId(int locationId)
     {
         const string sql = @"
             SELECT
@@ -64,7 +64,7 @@ public class StationService : IStationService
         return station;
     }
 
-    public async Task CreateStationForLocation(int locationId, string stationName, string? stationDescription = null)
+    public async Task CreateStationByLocationId(int locationId, string stationName, string? stationDescription = null)
     {
         const string sql = @"
             INSERT INTO cafeteria.station (location_id, station_name, station_description)
@@ -80,7 +80,7 @@ public class StationService : IStationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateStationByID(int stationId, string name, string? description)
+    public async Task UpdateStationById(int stationId, string name, string? description)
     {
         const string sql = @"
             UPDATE cafeteria.station
@@ -98,7 +98,7 @@ public class StationService : IStationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task DeleteStationByID(int id)
+    public async Task DeleteStationById(int id)
     {
         const string sql = @"
             DELETE FROM cafeteria.station
@@ -107,7 +107,7 @@ public class StationService : IStationService
         await _dbConnection.ExecuteAsync(sql, new { id });
     }
 
-    public async Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId)
+    public async Task<List<StationBusinessHoursDto>> GetStationBusinessHoursByStationId(int stationId)
     {
         const string sql = @"
             SELECT
@@ -169,7 +169,7 @@ public class StationService : IStationService
         public TimeOnly CloseTime { get; set; }
     }
 
-    public async Task AddStationHours(int stationId, DateTime startTime, DateTime endTime, WeekDay weekday)
+    public async Task AddStationHoursByStationId(int stationId, DateTime startTime, DateTime endTime, WeekDay weekday)
     {
         const string sql = @"
             INSERT INTO cafeteria.station_business_hours (station_id, weekday_id, open_time, close_time)
@@ -206,7 +206,7 @@ public class StationService : IStationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task DeleteStationHrsById(int stationHrsId)
+    public async Task DeleteStationHoursById(int stationHrsId)
     {
         const string sql = @"
             DELETE FROM cafeteria.station_business_hours

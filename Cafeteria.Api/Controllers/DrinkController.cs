@@ -1,31 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Api.Services.Drinks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class DrinkController : ControllerBase
+public class DrinkController(IDrinkService drinkService) : ControllerBase
 {
-    private readonly IDrinkService _drinkService;
-
-    public DrinkController(IDrinkService drinkService)
-    {
-        _drinkService = drinkService;
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<DrinkDto>> CreateDrink([FromBody] DrinkDto drinkDto)
-    {
-        var result = await _drinkService.CreateDrink(drinkDto);
-        return CreatedAtAction(nameof(GetDrinkByID), new { id = result.Id }, result);
-    }
+    private readonly IDrinkService _drinkService = drinkService;
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<DrinkDto>> GetDrinkByID(int id)
+    public async Task<ActionResult<DrinkDto>> GetDrinkById(int id)
     {
-        var result = await _drinkService.GetDrinkByID(id);
+        var result = await _drinkService.GetDrinkById(id);
         if (result == null)
             return NotFound();
         return Ok(result);
@@ -39,21 +28,31 @@ public class DrinkController : ControllerBase
     }
 
     [HttpGet("location/{locationId}")]
-    public async Task<ActionResult<List<DrinkDto>>> GetDrinksByLocationID(int locationId)
+    public async Task<ActionResult<List<DrinkDto>>> GetDrinksByLocationId(int locationId)
     {
-        var result = await _drinkService.GetDrinksByLocationID(locationId);
+        var result = await _drinkService.GetDrinksByLocationId(locationId);
         return Ok(result);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<DrinkDto>> UpdateDrinkByID(int id, [FromBody] DrinkDto drinkDto)
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<DrinkDto>> CreateDrink([FromBody] DrinkDto drinkDto)
     {
-        var result = await _drinkService.UpdateDrinkByID(id, drinkDto);
+        var result = await _drinkService.CreateDrink(drinkDto);
+        return CreatedAtAction(nameof(GetDrinkById), new { id = result.Id }, result);
+    }
+
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<DrinkDto>> UpdateDrinkById(int id, [FromBody] DrinkDto drinkDto)
+    {
+        var result = await _drinkService.UpdateDrinkById(id, drinkDto);
         if (result == null)
             return NotFound();
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPut("{id}/stock")]
     public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
@@ -63,10 +62,11 @@ public class DrinkController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDrinkByID(int id)
+    public async Task<IActionResult> DeleteDrinkById(int id)
     {
-        var result = await _drinkService.DeleteDrinkByID(id);
+        var result = await _drinkService.DeleteDrinkById(id);
         if (!result)
             return NotFound();
         return NoContent();

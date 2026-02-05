@@ -65,7 +65,7 @@ public class LocationService : ILocationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateLocationByID(int locationId, string name, string? description)
+    public async Task UpdateLocationById(int locationId, string name, string? description)
     {
         const string sql = @"
             UPDATE cafeteria.cafeteria_location
@@ -83,7 +83,7 @@ public class LocationService : ILocationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task DeleteLocationByID(int locationId)
+    public async Task DeleteLocationById(int locationId)
     {
         const string sql = @"
             DELETE FROM cafeteria.cafeteria_location
@@ -92,7 +92,7 @@ public class LocationService : ILocationService
         await _dbConnection.ExecuteAsync(sql, new { id = locationId });
     }
 
-    public async Task<List<LocationBusinessHoursDto>> GetLocationBusinessHours(int locationId)
+    public async Task<List<LocationBusinessHoursDto>> GetLocationBusinessHoursByLocationId(int locationId)
     {
         const string sql = @"
             SELECT
@@ -154,7 +154,7 @@ public class LocationService : ILocationService
         public TimeOnly CloseTime { get; set; }
     }
 
-    public async Task AddLocationHours(int locationId, DateTime startTime, DateTime endTime, WeekDay weekday)
+    public async Task AddLocationHoursByLocationId(int locationId, DateTime startTime, DateTime endTime, WeekDay weekday)
     {
         const string sql = @"
             INSERT INTO cafeteria.location_business_hours (location_id, weekday_id, open_time, close_time)
@@ -191,7 +191,7 @@ public class LocationService : ILocationService
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task DeleteLocationHrsById(int locationHrsId)
+    public async Task DeleteLocationHoursById(int locationHrsId)
     {
         const string sql = @"
             DELETE FROM cafeteria.location_business_hours

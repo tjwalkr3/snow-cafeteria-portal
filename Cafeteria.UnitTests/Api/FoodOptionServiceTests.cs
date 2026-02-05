@@ -74,7 +74,7 @@ public class FoodOptionServiceTests
                 It.IsAny<CommandType?>()))
             .ReturnsAsync(expectedResult);
 
-        var result = await _service.GetFoodOptionByID(1);
+        var result = await _service.GetFoodOptionById(1);
 
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
@@ -136,7 +136,7 @@ public class FoodOptionServiceTests
                 It.IsAny<CommandType?>()))
             .ReturnsAsync(expectedResult);
 
-        var result = await _service.UpdateFoodOption(1, foodOptionDto);
+        var result = await _service.UpdateFoodOptionById(1, foodOptionDto);
 
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
@@ -156,7 +156,7 @@ public class FoodOptionServiceTests
                 It.IsAny<CommandType?>()))
             .ReturnsAsync(1);
 
-        var result = await _service.DeleteFoodOption(1);
+        var result = await _service.DeleteFoodOptionById(1);
 
         Assert.True(result);
     }

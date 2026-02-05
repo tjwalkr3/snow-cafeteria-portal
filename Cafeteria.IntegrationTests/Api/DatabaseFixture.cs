@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Testcontainers.PostgreSql;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.TestHost;
 
 namespace Cafeteria.IntegrationTests.Api;
 
@@ -40,8 +42,9 @@ public class DatabaseFixture : IAsyncLifetime
         var connectionString = _postgresContainer.GetConnectionString();
         Factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
-            builder.ConfigureServices(services =>
+            builder.ConfigureTestServices(services =>
             {
+                // Replace database connection
                 var descriptor = services.SingleOrDefault(d =>
                     d.ServiceType == typeof(IDbConnection)
                 );
@@ -55,6 +58,12 @@ public class DatabaseFixture : IAsyncLifetime
                     conn.Open();
                     return conn;
                 });
+
+                // Add mock authentication
+                services.AddAuthentication(MockAuthenticationHandler.AuthenticationScheme)
+                    .AddScheme<AuthenticationSchemeOptions, MockAuthenticationHandler>(
+                        MockAuthenticationHandler.AuthenticationScheme,
+                        options => { });
             });
         });
 

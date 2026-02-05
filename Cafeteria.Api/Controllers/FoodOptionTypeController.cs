@@ -1,69 +1,65 @@
 using Cafeteria.Api.Services.FoodOptionTypes;
 using Cafeteria.Shared.DTOs.Menu;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cafeteria.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FoodOptionTypeController : ControllerBase
+public class FoodOptionTypeController(IFoodOptionTypeService foodTypeService) : ControllerBase
 {
-    private readonly IFoodOptionTypeService _foodTypeService;
-
-    public FoodOptionTypeController(IFoodOptionTypeService foodTypeService)
-    {
-        _foodTypeService = foodTypeService;
-    }
-
-    [HttpPost]
-    public async Task<FoodOptionTypeDto> CreateFoodType([FromBody] FoodOptionTypeDto foodTypeDto)
-    {
-        return await _foodTypeService.CreateFoodType(foodTypeDto);
-    }
+    private readonly IFoodOptionTypeService _foodTypeService = foodTypeService;
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<FoodOptionTypeDto>> GetFoodTypeByID(int id)
+    public async Task<ActionResult<FoodOptionTypeDto>> GetFoodOptionTypeByID(int id)
     {
-        var result = await _foodTypeService.GetFoodTypeByID(id);
+        var result = await _foodTypeService.GetFoodOptionTypeByID(id);
         if (result == null)
             return NotFound();
         return Ok(result);
     }
 
     [HttpGet]
-    public async Task<List<FoodOptionTypeDto>> GetAllFoodTypes()
+    public async Task<List<FoodOptionTypeDto>> GetAllFoodOptionTypes()
     {
-        return await _foodTypeService.GetAllFoodTypes();
+        return await _foodTypeService.GetAllFoodOptionTypes();
     }
 
     [HttpGet("entree/{entreeId}")]
-    public async Task<List<FoodOptionTypeDto>> GetOptionTypesByEntree(int entreeId)
+    public async Task<List<FoodOptionTypeDto>> GetFoodOptionTypesByEntreeId(int entreeId)
     {
-        return await _foodTypeService.GetOptionTypesByEntree(entreeId);
+        return await _foodTypeService.GetFoodOptionTypesByEntreeId(entreeId);
     }
 
     [HttpGet("with-options/entree/{entreeId}")]
-    public async Task<List<FoodOptionTypeWithOptionsDto>> GetOptionTypesWithOptionsByEntree(int entreeId)
+    public async Task<List<FoodOptionTypeWithOptionsDto>> GetFoodOptionTypesWithOptionsByEntreeId(int entreeId)
     {
-        return await _foodTypeService.GetOptionTypesWithOptionsByEntree(entreeId);
+        return await _foodTypeService.GetFoodOptionTypesWithOptionsByEntreeId(entreeId);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<FoodOptionTypeDto>> UpdateFoodType(
-        int id,
-        [FromBody] FoodOptionTypeDto foodTypeDto
-    )
+    [Authorize]
+    [HttpPost]
+    public async Task<FoodOptionTypeDto> CreateFoodOptionType([FromBody] FoodOptionTypeDto foodTypeDto)
     {
-        var result = await _foodTypeService.UpdateFoodType(id, foodTypeDto);
+        return await _foodTypeService.CreateFoodOptionType(foodTypeDto);
+    }
+
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<FoodOptionTypeDto>> UpdateFoodOptionTypeById(int id, [FromBody] FoodOptionTypeDto foodTypeDto)
+    {
+        var result = await _foodTypeService.UpdateFoodOptionTypeById(id, foodTypeDto);
         if (result == null)
             return NotFound();
         return Ok(result);
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteFoodType(int id)
+    public async Task<IActionResult> DeleteFoodOptionTypeById(int id)
     {
-        var result = await _foodTypeService.DeleteFoodType(id);
+        var result = await _foodTypeService.DeleteFoodOptionTypeById(id);
         if (!result)
             return NotFound();
         return NoContent();

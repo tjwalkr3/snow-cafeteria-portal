@@ -140,8 +140,7 @@ public static class DBSql
             cafeteria.customer(
                 email varchar(100) UNIQUE NOT NULL, 
                 badger_id int UNIQUE NOT NULL,
-                first_name varchar(50) NOT NULL,
-                last_name varchar(50) NOT NULL,
+                cust_name varchar(100) NOT NULL,
                 primary key (email)
             );
 
@@ -227,21 +226,25 @@ public static class DBSql
             VALUES
                 (1, 1, 'Sandwich Station', 'Fresh made-to-order sandwiches'),
                 (2, 1, 'Grill Station', 'Hot grilled items'),
-                (3, 2, 'Pizza Station', 'Fresh pizza by the slice');
+                (3, 2, 'Pizza Station', 'Fresh pizza by the slice'),
+                (4, 2, 'Wraps', 'Fresh made-to-order wraps');
 
             -- Entrees (IDs 1-20 reserved for sample data)
             INSERT INTO cafeteria.entree (id, station_id, entree_name, entree_description, entree_price, image_url)
             VALUES
                 (1, 1, 'Grilled Chicken', 'Juicy grilled chicken breast', 8.99, 'https://picsum.photos/id/1/300/200'),
                 (2, 1, 'Burger', 'Classic beef burger', 7.99, 'https://picsum.photos/id/2/300/200'),
-                (3, 2, 'Hot Dog', 'All-beef hot dog', 5.99, 'https://picsum.photos/id/10/300/200');
+                (3, 2, 'Hot Dog', 'All-beef hot dog', 5.99, 'https://picsum.photos/id/10/300/200'),
+                (4, 4, 'Custom Wrap', 'Build your own wrap with your choice of fillings', 7.49, 'https://picsum.photos/id/14/300/200');
 
             -- Sides (IDs 1-20 reserved for sample data)
             INSERT INTO cafeteria.side (id, station_id, side_name, side_description, side_price, image_url)
             VALUES
                 (1, 1, 'French Fries', 'Crispy golden fries', 2.99, 'https://picsum.photos/id/3/300/200'),
                 (2, 1, 'Coleslaw', 'Fresh cabbage slaw', 1.99, 'https://picsum.photos/id/4/300/200'),
-                (3, 2, 'Potato Salad', 'Creamy potato salad', 2.49, 'https://picsum.photos/id/11/300/200');
+                (3, 2, 'Potato Salad', 'Creamy potato salad', 2.49, 'https://picsum.photos/id/11/300/200'),
+                (4, 4, 'Chips', 'Crispy kettle chips', 1.99, 'https://picsum.photos/id/15/300/200'),
+                (5, 4, 'Side Salad', 'Fresh garden salad', 2.99, 'https://picsum.photos/id/16/300/200');
 
             -- Drinks (IDs 1-20 reserved for sample data)
             INSERT INTO cafeteria.drink (id, location_id, drink_name, drink_description, drink_price, image_url)
@@ -266,20 +269,50 @@ public static class DBSql
             VALUES
                 (1, 'Lettuce', true, 'https://picsum.photos/id/7/300/200'),
                 (2, 'Tomato', true, 'https://picsum.photos/id/8/300/200'),
-                (3, 'Onions', true, 'https://picsum.photos/id/13/300/200');
+                (3, 'Onions', true, 'https://picsum.photos/id/13/300/200'),
+                (4, 'Flour Tortilla', true, 'https://picsum.photos/id/17/300/200'),
+                (5, 'Wheat Tortilla', true, 'https://picsum.photos/id/18/300/200'),
+                (6, 'Spinach Tortilla', true, 'https://picsum.photos/id/19/300/200'),
+                (7, 'Grilled Chicken', true, 'https://picsum.photos/id/20/300/200'),
+                (8, 'Steak', true, 'https://picsum.photos/id/21/300/200'),
+                (9, 'Turkey', true, 'https://picsum.photos/id/22/300/200'),
+                (10, 'Rice', true, 'https://picsum.photos/id/23/300/200'),
+                (11, 'Black Beans', true, 'https://picsum.photos/id/24/300/200'),
+                (12, 'Cheese', true, 'https://picsum.photos/id/25/300/200'),
+                (13, 'Sour Cream', true, 'https://picsum.photos/id/26/300/200'),
+                (14, 'Guacamole', true, 'https://picsum.photos/id/27/300/200'),
+                (15, 'Salsa', true, 'https://picsum.photos/id/28/300/200');
 
             -- Food Option Types (IDs 1-20 reserved for sample data)
             INSERT INTO cafeteria.food_option_type (id, food_option_type_name, num_included, max_amount, food_option_price, entree_id, side_id)
             VALUES
                 (1, 'Toppings', 2, 5, 0.00, 1, NULL),
-                (2, 'Condiments', 2, 5, 0.00, NULL, 1);
+                (2, 'Condiments', 2, 5, 0.00, NULL, 1),
+                (3, 'Tortilla', 1, 1, 0.00, 4, NULL),
+                (4, 'Protein', 1, 2, 1.50, 4, NULL),
+                (5, 'Fillings', 2, 6, 0.50, 4, NULL);
 
             -- Option-Option Type relationships (IDs 1-50 reserved for sample data)
             INSERT INTO cafeteria.option_option_type (id, food_option_id, food_option_type_id)
             VALUES
                 (1, 1, 1),
                 (2, 2, 1),
-                (3, 3, 1);
+                (3, 3, 1),
+                (4, 4, 3),
+                (5, 5, 3),
+                (6, 6, 3),
+                (7, 7, 4),
+                (8, 8, 4),
+                (9, 9, 4),
+                (10, 10, 5),
+                (11, 11, 5),
+                (12, 12, 5),
+                (13, 13, 5),
+                (14, 14, 5),
+                (15, 15, 5),
+                (16, 1, 5),
+                (17, 2, 5),
+                (18, 3, 5);
 
             -- Orders (IDs 1-10 reserved for sample data)
             INSERT INTO cafeteria.order (id, total_price, tax, total_swipe)
@@ -300,6 +333,24 @@ public static class DBSql
                 (1, 1, 'Lettuce'),
                 (2, 1, 'Tomato'),
                 (3, 3, 'Extra Cheese');
+
+            -- Sample customer data
+            INSERT INTO cafeteria.customer (email, badger_id, cust_name)
+            VALUES
+                ('john.doe@snow.edu', 1001234, 'John Doe'),
+                ('jane.smith@snow.edu', 1005678, 'Jane Smith'),
+                ('bob.johnson@snow.edu', 1009012, 'Bob Johnson'),
+                ('alice.williams@snow.edu', 1003456, 'Alice Williams'),
+                ('charlie.brown@snow.edu', 1007890, 'Charlie Brown');
+
+            -- Sample customer swipe data
+            INSERT INTO cafeteria.customer_swipe (badger_id, swipe_balance)
+            VALUES
+                (1001234, 7),
+                (1005678, 21),
+                (1009012, 8),
+                (1003456, 9),
+                (1007890, 0);
 
             -- Set sequence start values to avoid conflicts with sample data
             SELECT setval('cafeteria.cafeteria_location_id_seq', 100, false);
