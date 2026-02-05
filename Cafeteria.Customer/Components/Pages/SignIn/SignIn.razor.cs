@@ -53,23 +53,30 @@ public partial class SignIn : ComponentBase
 
         var result = await AuthenticationService.ValidateCredentialsAsync(Username, Password);
 
-        StopLoading();
-
         if (result.Success && !string.IsNullOrEmpty(result.SessionToken))
         {
             await NavigateToSessionEndpoint(result.SessionToken);
+            return;
         }
-        else
-        {
-            ShowError(result.ErrorMessage ?? "Sign in failed");
-        }
+
+        StopLoading();
+        ShowError(result.ErrorMessage ?? "Sign in failed");
     }
 
     private async Task NavigateToSessionEndpoint(string sessionToken)
     {
-        var destination = string.IsNullOrWhiteSpace(ReturnUrl) ? "/" : ReturnUrl;
-        var url = $"/api/auth/signin?token={Uri.EscapeDataString(sessionToken)}&returnUrl={Uri.EscapeDataString(destination)}";
-        await JSRuntime.InvokeVoidAsync("window.location.assign", url);
+        try
+        {
+            var destination = string.IsNullOrWhiteSpace(ReturnUrl) ? "/" : ReturnUrl;
+            var url = $"/api/auth/signin?token={Uri.EscapeDataString(sessionToken)}&returnUrl={Uri.EscapeDataString(destination)}";
+            await JSRuntime.InvokeVoidAsync("window.location.assign", url);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (TaskCanceledException)
+        {
+        }
     }
 
     private void StartLoading()
