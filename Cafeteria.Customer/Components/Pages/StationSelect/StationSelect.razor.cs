@@ -51,7 +51,7 @@ public partial class StationSelect : ComponentBase
             "pizza" or "pizza station" => "/pizza",
             "grill" or "grill station" => "/grill",
             "wraps" or "wraps station" => "/wrap",
-            _ => "/swipe-menu" 
+            _ => "/swipe-menu"
         };
     }
 
@@ -64,7 +64,7 @@ public partial class StationSelect : ComponentBase
             "pizza" or "pizza station" => "bi-pie-chart",
             "grill" or "grill station" => "bi-fire",
             "wraps" or "wraps station" => "bi-tornado",
-            _ => "bi-shop" 
+            _ => "bi-shop"
         };
     }
 
