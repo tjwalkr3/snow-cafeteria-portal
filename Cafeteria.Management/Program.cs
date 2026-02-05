@@ -28,11 +28,21 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpContextAccessor();
+
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
+
 builder.Services.AddHttpClient<IHttpClientAuth, HttpClientAuth>(client =>
 {
-    var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
     client.BaseAddress = new Uri(apiBaseUrl);
 });
+
+// Add HttpClient with BaseAddress for Blazor components
+builder.Services.AddHttpClient("default")
+    .ConfigureHttpClient((serviceProvider, client) =>
+    {
+        client.BaseAddress = new Uri(apiBaseUrl);
+    });
+
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodOptionTypeService, FoodOptionTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
 using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 
 namespace Cafeteria.Customer.Components.Pages.PaymentSelect;
@@ -12,7 +13,7 @@ public partial class PaymentSelect : ComponentBase
     private IApiSwipeService SwipeService { get; set; } = default!;
 
     [Inject]
-    private HttpContext? HttpContext { get; set; }
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
@@ -22,9 +23,12 @@ public partial class PaymentSelect : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        if (HttpContext?.User?.Identity?.IsAuthenticated ?? false)
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity?.IsAuthenticated ?? false)
         {
-            var email = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+            var email = user.FindFirst(ClaimTypes.Email)?.Value;
             if (!string.IsNullOrEmpty(email))
             {
                 try

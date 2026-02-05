@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
@@ -33,7 +34,7 @@ public partial class PlaceOrder : ComponentBase
     private IApiSwipeService SwipeService { get; set; } = default!;
 
     [Inject]
-    private HttpContext? HttpContext { get; set; }
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
@@ -74,9 +75,12 @@ public partial class PlaceOrder : ComponentBase
                 string userName = "order";
 
                 // Fetch account swipe balance if user is authenticated
-                if (HttpContext?.User?.Identity?.IsAuthenticated ?? false)
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+
+                if (user?.Identity?.IsAuthenticated ?? false)
                 {
-                    var email = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+                    var email = user.FindFirst(ClaimTypes.Email)?.Value;
                     if (!string.IsNullOrEmpty(email))
                     {
                         try
