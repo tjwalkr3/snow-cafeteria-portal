@@ -35,13 +35,13 @@
 }
 
 .stepper-step.active .stepper-circle {
-  border-color: #1e8a4c;
+  border-color: #1f973b;
   background: white;
 }
 
 .stepper-step.completed .stepper-circle {
-  border-color: #1e8a4c;
-  background: #1e8a4c;
+  border-color: #1f973b;
+  background: #1f973b;
 }
 
 .stepper-step.completed .stepper-circle i {
