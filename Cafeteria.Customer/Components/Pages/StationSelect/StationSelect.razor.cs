@@ -61,7 +61,7 @@ public partial class StationSelect : ComponentBase
         {
             "breakfast" or "breakfast station" => "bi-egg-fried",
             "deli" or "deli station" or "sandwich station" => "bi-cup-straw",
-            "pizza" or "pizza station" => "bi-basket-fill",
+            "pizza" or "pizza station" => "bi-pie-chart",
             "grill" or "grill station" => "bi-fire",
             "wraps" or "wraps station" => "bi-tornado",
             _ => "bi-shop" 
