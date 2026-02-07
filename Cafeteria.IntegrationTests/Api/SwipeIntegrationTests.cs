@@ -99,4 +99,77 @@ public class SwipeIntegrationTests : IDisposable
         Assert.Equal(dbSwipe.BadgerId, apiSwipe.BadgerId);
         Assert.Equal(dbSwipe.SwipeBalance, apiSwipe.SwipeBalance);
     }
+
+    [Fact]
+    public async Task GetSwipesByEmail_ReturnsCorrectSwipeBalance()
+    {
+        // Use pre-loaded customer john.doe@snow.edu (badge ID 1001234 with 7 swipes)
+        var response = await _client.GetAsync("/api/swipe/email/john.doe@snow.edu");
+        response.EnsureSuccessStatusCode();
+        var swipe = await response.Content.ReadFromJsonAsync<SwipeDto>();
+
+        Assert.NotNull(swipe);
+        Assert.Equal(1001234, swipe.BadgerId);
+        Assert.Equal(7, swipe.SwipeBalance);
+    }
+
+    [Fact]
+    public async Task GetSwipesByEmail_WithDifferentEmail_ReturnsCorrectBalance()
+    {
+        // Use pre-loaded customer alice.williams@snow.edu (badge ID 1003456 with 9 swipes)
+        var response = await _client.GetAsync("/api/swipe/email/alice.williams@snow.edu");
+        response.EnsureSuccessStatusCode();
+        var swipe = await response.Content.ReadFromJsonAsync<SwipeDto>();
+
+        Assert.NotNull(swipe);
+        Assert.Equal(1003456, swipe.BadgerId);
+        Assert.Equal(9, swipe.SwipeBalance);
+    }
+
+    [Fact]
+    public async Task GetSwipesByEmail_WithNonExistentEmail_ReturnsNotFound()
+    {
+        // Use an email that doesn't exist in the database
+        var response = await _client.GetAsync("/api/swipe/email/nonexistent@snow.edu");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAllCustomers_ReturnsAllCustomers()
+    {
+        var response = await _client.GetAsync("/api/swipe/all-customers");
+        response.EnsureSuccessStatusCode();
+        var customers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
+
+        Assert.NotNull(customers);
+        Assert.Equal(5, customers.Count); // 5 pre-loaded customers
+
+        // Verify data structure and some sample data
+        var johnDoe = customers.FirstOrDefault(c => c.BadgerId == 1001234);
+        Assert.NotNull(johnDoe);
+        Assert.Equal("John Doe", johnDoe.CustName);
+        Assert.Equal("john.doe@snow.edu", johnDoe.Email);
+        Assert.Equal(7, johnDoe.SwipeCount);
+
+        var janeSmith = customers.FirstOrDefault(c => c.BadgerId == 1005678);
+        Assert.NotNull(janeSmith);
+        Assert.Equal("Jane Smith", janeSmith.CustName);
+        Assert.Equal(21, janeSmith.SwipeCount);
+    }
+
+    [Fact]
+    public async Task GetAllCustomers_IncludesCustomersWithZeroBalance()
+    {
+        var response = await _client.GetAsync("/api/swipe/all-customers");
+        response.EnsureSuccessStatusCode();
+        var customers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
+
+        Assert.NotNull(customers);
+        
+        // Verify Charlie Brown with 0 swipes is included
+        var charlieBrown = customers.FirstOrDefault(c => c.BadgerId == 1007890);
+        Assert.NotNull(charlieBrown);
+        Assert.Equal("Charlie Brown", charlieBrown.CustName);
+        Assert.Equal(0, charlieBrown.SwipeCount);
+    }
 }

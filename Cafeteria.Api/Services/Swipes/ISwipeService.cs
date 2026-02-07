@@ -6,4 +6,5 @@ public interface ISwipeService
 {
     Task<SwipeDto> GetSwipesByUserID(int userId);
     Task<SwipeDto> GetSwipesByEmail(string email);
+    Task<List<CustomerSwipeDto>> GetAllCustomers();
 }
