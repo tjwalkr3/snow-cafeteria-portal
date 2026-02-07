@@ -165,7 +165,7 @@ public class SwipeIntegrationTests : IDisposable
         var customers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
 
         Assert.NotNull(customers);
-        
+
         // Verify Charlie Brown with 0 swipes is included
         var charlieBrown = customers.FirstOrDefault(c => c.BadgerId == 1007890);
         Assert.NotNull(charlieBrown);
