@@ -8,28 +8,34 @@ namespace Cafeteria.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class SwipeController : ControllerBase
+public class SwipeController(ISwipeService swipeService, ILogger<SwipeController> logger) : ControllerBase
 {
-    private readonly ISwipeService _swipeService;
-
-    public SwipeController(ISwipeService swipeService)
-    {
-        _swipeService = swipeService;
-    }
+    private readonly ISwipeService _swipeService = swipeService;
+    private readonly ILogger<SwipeController> _logger = logger;
 
     [HttpGet("{id}")]
     public async Task<ActionResult<SwipeDto>> GetSwipesByUserID(int id)
     {
         try
         {
+            _logger.LogInformation("Fetching swipes for user ID: {BadgerId}", id);
             var result = await _swipeService.GetSwipesByUserID(id);
             if (result == null)
+            {
+                _logger.LogWarning("No swipes found for user ID: {BadgerId}", id);
                 return NotFound();
+            }
             return Ok(result);
         }
-        catch (KeyNotFoundException)
+        catch (KeyNotFoundException ex)
         {
+            _logger.LogWarning(ex, "User not found with ID: {BadgerId}", id);
             return NotFound("User not found.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error fetching swipes for user ID: {BadgerId}", id);
+            return StatusCode(500, "An error occurred while retrieving swipes.");
         }
     }
 
@@ -38,14 +44,24 @@ public class SwipeController : ControllerBase
     {
         try
         {
+            _logger.LogInformation("Fetching swipes for email: {Email}", email);
             var result = await _swipeService.GetSwipesByEmail(email);
             if (result == null)
+            {
+                _logger.LogWarning("No swipes found for email: {Email}", email);
                 return NotFound();
+            }
             return Ok(result);
         }
-        catch (KeyNotFoundException)
+        catch (KeyNotFoundException ex)
         {
+            _logger.LogWarning(ex, "No swipes found for email: {Email}", email);
             return NotFound($"No swipes found for email {email}.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error fetching swipes for email: {Email}", email);
+            return StatusCode(500, "An error occurred while retrieving swipes.");
         }
     }
 
@@ -54,12 +70,15 @@ public class SwipeController : ControllerBase
     {
         try
         {
+            _logger.LogInformation("Fetching all customers with swipe balances");
             var result = await _swipeService.GetAllCustomers();
+            _logger.LogInformation("Successfully retrieved {Count} customers", result.Count);
             return Ok(result);
         }
         catch (Exception ex)
         {
-            return BadRequest($"Error retrieving customers: {ex.Message}");
+            _logger.LogError(ex, "Error retrieving all customers: {ErrorMessage}", ex.Message);
+            return BadRequest($"Error retrieving customers. ");
         }
     }
 }
