@@ -14,6 +14,8 @@ using Cafeteria.Management.Services.Locations;
 using Cafeteria.Management.Services.OptionOptionTypes;
 using Cafeteria.Management.Services.Sides;
 using Cafeteria.Management.Services.Stations;
+using Cafeteria.Management.Services.Orders;
+using Cafeteria.Management.Components.Pages.Order;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -51,6 +53,7 @@ builder.Services.AddScoped<IStationService, StationService>();
 builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddScoped<IEntreeService, EntreeService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 // Register ViewModels
@@ -65,6 +68,7 @@ builder.Services.AddScoped<IFoodOptionModalVM, FoodOptionModalVM>();
 builder.Services.AddScoped<IFoodTypeVM, FoodTypeVM>();
 builder.Services.AddScoped<IFoodTypeModalVM, FoodTypeModalVM>();
 builder.Services.AddScoped<IOptionOptionTypeVM, OptionOptionTypeVM>();
+builder.Services.AddScoped<IOrderVM, OrderVM>();
 
 
 // Add authentication services

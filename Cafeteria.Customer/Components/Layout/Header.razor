@@ -3,16 +3,16 @@
         <div class="d-flex align-items-center">
             <a href="/" class="brand-text fs-2 fw-semibold text-decoration-none">Snow Cafeteria</a>
         </div>
-        <nav class="d-flex align-items-center gap-3">
+        <nav class="d-flex align-items-center gap-4">
             <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
                 title="Order History"
                 @onclick="NavigateToOrderHistory">
-                <span class="bi bi-clock-history fs-5"></span>
+                <span class="bi bi-clock-history fs-4"></span>
             </button>
             <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
                 title="Cart"
                 @onclick="NavigateToCart">
-                <span class="bi bi-cart3 fs-5"></span>
+                <span class="bi bi-cart3 fs-4"></span>
                 @if (cartItemCount > 0)
                 {
                     <span class="position-absolute translate-middle badge rounded-pill bg-danger"
@@ -32,7 +32,7 @@
                             title="User Menu"
                             @onclick="ToggleUserMenu"
                             @onclick:stopPropagation="true">
-                            <span class="bi bi-person-circle fs-5"></span>
+                            <span class="bi bi-person-circle fs-4"></span>
                         </button>
                         @if (showUserMenu)
                         {

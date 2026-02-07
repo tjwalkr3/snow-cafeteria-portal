@@ -37,7 +37,6 @@ else
 
         @if (VM.IsCardOrder)
         {
-            @* Card order: Show category cards with selection status *@
             <div class="category-nav">
                 @{
                     var cardTabs = VM.Configuration?.Tabs ?? new();
@@ -58,7 +57,7 @@ else
                             <span class="category-nav-selection">
                                 @if (hasSelection)
                                 {
-                                    <i class="bi bi-check-circle-fill me-1"></i>@selectionText
+                                <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>@selectionText
                                 }
                                 else
                                 {
@@ -69,7 +68,7 @@ else
                         @if (hasSelection)
                         {
                             <div class="category-nav-badge">
-                                <i class="bi bi-check"></i>
+                                    <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>
                             </div>
                         }
                     </div>
@@ -128,7 +127,7 @@ else
                                 <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
                                 @if (VM.State.SelectedEntree?.Id == entree.Id)
                                 {
-                                    <i class="bi bi-check-circle-fill fs-4" style="color: #28a745;"></i>
+                                    <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>
                                 }
                             </div>
                         </div>
@@ -191,7 +190,7 @@ else
                                     <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
                                     @if (VM.State.SelectedEntree?.Id == entree.Id)
                                     {
-                                        <i class="bi bi-check-circle-fill fs-4" style="color: #28a745;"></i>
+                                        <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>
                                     }
                                 </div>
                             </div>
@@ -265,7 +264,7 @@ else
                             <div class="category-status">
                                 @if (isComplete)
                                 {
-                                    <span class="status-badge complete"><i class="bi bi-check"></i></span>
+                                    <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
                                 }
                                 else
                                 {
@@ -350,7 +349,7 @@ else
                             <div class="category-status">
                                 @if (isComplete)
                                 {
-                                    <span class="status-badge complete"><i class="bi bi-check"></i></span>
+                                    <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
                                 }
                                 else
                                 {
@@ -419,7 +418,7 @@ else
                                 <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
                                 @if (VM.State.SelectedSide?.Id == side.Id)
                                 {
-                                    <span class="status-badge complete"><i class="bi bi-check"></i></span>
+                                    <span ><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
                                 }
                             </div>
                         </div>
@@ -446,7 +445,7 @@ else
                                     <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
                                     @if (VM.State.SelectedDrink?.Id == drink.Id)
                                     {
-                                        <span class="status-badge complete"><i class="bi bi-check"></i></span>
+                                        <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
                                     }
                                 </div>
                             </div>
