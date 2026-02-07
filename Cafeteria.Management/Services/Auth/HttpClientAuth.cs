@@ -25,7 +25,6 @@ public class HttpClientAuth : IHttpClientAuth
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             }
         }
-        }
     }
 
     public async Task<T?> GetAsync<T>(string requestUri)
