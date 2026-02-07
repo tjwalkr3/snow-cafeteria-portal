@@ -18,11 +18,27 @@ public partial class SignIn : ComponentBase
     [SupplyParameterFromQuery(Name = "returnUrl")]
     public string? ReturnUrl { get; set; }
 
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
+
     private string Username { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
     private bool IsLoading { get; set; }
     private bool HasError { get; set; }
     private string ErrorMessage { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(Error))
+        {
+            ShowError(Error switch
+            {
+                "registration_failed" => "Failed to register your account. Please try again.",
+                "invalid_session" => "Invalid session. Please sign in again.",
+                _ => "An error occurred during sign in."
+            });
+        }
+    }
 
     private async Task HandleSubmitAsync()
     {

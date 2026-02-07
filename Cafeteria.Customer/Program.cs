@@ -8,6 +8,7 @@ using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Customer.Services.Auth;
 using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Customer;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Printer;
@@ -41,6 +42,7 @@ builder.Services.AddScoped<IApiMenuService, ApiMenuService>();
 builder.Services.AddScoped<IApiOrderService, ApiOrderService>();
 builder.Services.AddScoped<IApiSwipeService, ApiSwipeService>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 
@@ -132,6 +134,17 @@ app.MapGet("/api/auth/signin", async (HttpContext httpContext, string token, str
             CookieAuthenticationDefaults.AuthenticationScheme,
             claimsPrincipal,
             authProperties);
+
+        var customerService = httpContext.RequestServices.GetRequiredService<ICustomerService>();
+        try
+        {
+            await customerService.RegisterOrUpdateCustomerAsync();
+        }
+        catch
+        {
+            await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Results.Redirect("/signin?error=registration_failed");
+        }
 
         return Results.Redirect(returnUrl ?? "/");
     }
