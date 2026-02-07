@@ -3,10 +3,13 @@
 @using System.Text.Json
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Text.Json.Nodes
+@using Microsoft.AspNetCore.Components.Authorization
 
 <PageTitle>Select Location</PageTitle>
 
-<div class="container py-4">
+<AuthorizeView>
+    <Authorized>
+        <div class="container py-4">
     @if (LocationSelectVM.Locations == null && IsInitialized == false)
     {
         <div class="text-center py-5">
@@ -54,7 +57,16 @@
             }
         </div>
     }
-</div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="container px-4 py-4">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> Please log in to view this page.
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 <style>
     .location-title:focus-visible {
