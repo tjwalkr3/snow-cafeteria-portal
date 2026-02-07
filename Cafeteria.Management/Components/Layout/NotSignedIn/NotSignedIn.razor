@@ -1,2 +1,17 @@
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override void OnInitialized()
+    {
+        var currentUri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        if (!currentUri.LocalPath.Equals("/signin", StringComparison.OrdinalIgnoreCase))
+        {
+            var returnUrl = Uri.EscapeDataString(currentUri.LocalPath);
+            NavigationManager.NavigateTo($"/signin?returnUrl={returnUrl}", forceLoad: true);
+        }
+    }
+}
+
 <h3>You are not signed in</h3>
 <p>Please sign in to continue using this app.</p>

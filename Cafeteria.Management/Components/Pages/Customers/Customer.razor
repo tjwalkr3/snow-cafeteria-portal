@@ -25,7 +25,7 @@
     else if (allCustomers?.Any() ?? false)
     {
         <div class="row g-4 mb-4">
-            @foreach (var customer in allCustomers)
+            @foreach (CustomerSwipeDto customer in allCustomers)
             {
                 <div class="col-12 col-md-6 col-lg-4" @key="customer.BadgerId">
                     <div class="customer-card card h-100 border-1 rounded-3 shadow-sm">
@@ -43,7 +43,7 @@
 
                             <div class="d-flex flex-column gap-2">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="detail-label text-muted text-uppercase small fw-medium">Badge ID:</span>
+                                    <span class="detail-label text-muted text-uppercase small fw-medium">Badger ID:</span>
                                     <span class="fw-semibold">@customer.BadgerId</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
