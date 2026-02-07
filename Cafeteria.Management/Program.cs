@@ -6,6 +6,7 @@ using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Management.Services.Auth;
+using Cafeteria.Management.Services.Customers;
 using Cafeteria.Management.Services.Drinks;
 using Cafeteria.Management.Services.Entrees;
 using Cafeteria.Management.Services.FoodOptions;
@@ -54,6 +55,7 @@ builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddScoped<IEntreeService, EntreeService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 
 // Register ViewModels

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Shared.DTOs.Swipe;
-using System.Net.Http.Json;
+using Cafeteria.Management.Services.Customers;
 using static Cafeteria.Management.Components.Shared.Toast;
 
 namespace Cafeteria.Management.Components.Pages.Customers;
@@ -8,7 +8,7 @@ namespace Cafeteria.Management.Components.Pages.Customers;
 public partial class Customer : ComponentBase
 {
     [Inject]
-    private HttpClient HttpClient { get; set; } = default!;
+    private ICustomerService CustomerService { get; set; } = default!;
 
     private List<CustomerSwipeDto>? allCustomers;
     private bool isLoading = true;
@@ -26,22 +26,12 @@ public partial class Customer : ComponentBase
         try
         {
             isLoading = true;
-            var response = await HttpClient.GetAsync("api/swipe/all-customers");
-
-            if (response.IsSuccessStatusCode)
-            {
-                allCustomers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
-            }
-            else
-            {
-                ShowToast("Failed to load customers", ToastType.Error);
-                allCustomers = new List<CustomerSwipeDto>();
-            }
+            allCustomers = await CustomerService.GetAllCustomers();
         }
         catch (Exception ex)
         {
             ShowToast($"Error loading customers: {ex.Message}", ToastType.Error);
-            allCustomers = new List<CustomerSwipeDto>();
+            allCustomers = [];
         }
         finally
         {
