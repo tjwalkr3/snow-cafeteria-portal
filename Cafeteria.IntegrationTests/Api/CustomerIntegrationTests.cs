@@ -52,22 +52,21 @@ public class CustomerIntegrationTests : IDisposable
         Assert.NotNull(customer);
         Assert.Equal("test@example.com", customer!.email);
         Assert.Equal("Test User", customer.custname);
-        Assert.Equal(0, customer.badgerid);
+        Assert.True(customer.badgerid > 0, "badger_id should be auto-generated and greater than 0");
     }
 
     [Fact]
     public async Task RegisterOrUpdate_DoesNotCreateDuplicate_WhenCustomerAlreadyExists()
     {
-        // Ensure the customer exists
+        // Ensure the customer exists (let badger_id auto-generate)
         const string insertSql = @"
-            INSERT INTO cafeteria.customer (email, badger_id, cust_name)
-            VALUES (@Email, @BadgerId, @CustName)
+            INSERT INTO cafeteria.customer (email, cust_name)
+            VALUES (@Email, @CustName)
             ON CONFLICT (email) DO NOTHING";
 
         await _connection.ExecuteAsync(insertSql, new
         {
             Email = "test@example.com",
-            BadgerId = 0,
             CustName = "Test User"
         });
 
@@ -118,7 +117,7 @@ public class CustomerIntegrationTests : IDisposable
         var response = await _client.PostAsync("/api/customer/check", null);
         response.EnsureSuccessStatusCode();
 
-        // Verify badger_id is 0 (default value)
+        // Verify badger_id is auto-generated (should be greater than 0)
         const string checkSql = @"
             SELECT badger_id AS BadgerId
             FROM cafeteria.customer
@@ -129,7 +128,7 @@ public class CustomerIntegrationTests : IDisposable
             new { Email = "test@example.com" }
         );
 
-        Assert.Equal(0, badgerId);
+        Assert.True(badgerId > 0, "badger_id should be auto-generated and greater than 0");
     }
 
     [Fact]
