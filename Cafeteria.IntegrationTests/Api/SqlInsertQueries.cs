@@ -47,8 +47,8 @@ public static class SqlInsertQueries
 
     public const string InsertOrderSql =
         @"
-        INSERT INTO cafeteria.order (total_price, tax, total_swipe)
-        VALUES (@TotalPrice, @Tax, @TotalSwipe)";
+        INSERT INTO cafeteria.order (customer_badger_id, total_price, tax, total_swipe)
+        VALUES (@CustomerBadgerId, @TotalPrice, @Tax, @TotalSwipe)";
 
     public const string InsertFoodItemSql =
         @"

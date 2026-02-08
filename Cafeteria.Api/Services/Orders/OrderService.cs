@@ -13,7 +13,7 @@ public class OrderService : IOrderService
         _dbConnection = dbConnection;
     }
 
-    public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto)
+    public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto, string customerEmail)
     {
         if (_dbConnection.State != ConnectionState.Open)
             _dbConnection.Open();
@@ -22,14 +22,30 @@ public class OrderService : IOrderService
 
         try
         {
+            // Get customer badger_id from email
+            const string getCustomerSql = @"
+                SELECT badger_id
+                FROM cafeteria.customer
+                WHERE email = @Email";
+
+            var customerBadgerId = await _dbConnection.QuerySingleOrDefaultAsync<int?>(
+                getCustomerSql,
+                new { Email = customerEmail },
+                transaction);
+
+            if (customerBadgerId == null)
+            {
+                throw new InvalidOperationException($"Customer with email {customerEmail} not found");
+            }
+
             const string insertOrderSql = @"
-                INSERT INTO cafeteria.order (total_price, tax, total_swipe)
-                VALUES (@TotalPrice, @Tax, @TotalSwipe)
+                INSERT INTO cafeteria.order (customer_badger_id, total_price, tax, total_swipe)
+                VALUES (@CustomerBadgerId, @TotalPrice, @Tax, @TotalSwipe)
                 RETURNING id AS Id, order_time AS OrderTime, total_price AS TotalPrice, tax AS Tax, total_swipe AS TotalSwipe;";
 
             var order = await _dbConnection.QuerySingleAsync<OrderDto>(
                 insertOrderSql,
-                new { createOrderDto.TotalPrice, createOrderDto.Tax, createOrderDto.TotalSwipe },
+                new { CustomerBadgerId = customerBadgerId.Value, createOrderDto.TotalPrice, createOrderDto.Tax, createOrderDto.TotalSwipe },
                 transaction);
 
             bool isCardOrder = createOrderDto.FoodItems.Any() && createOrderDto.FoodItems[0].CardCost.HasValue;

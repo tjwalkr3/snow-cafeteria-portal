@@ -78,6 +78,7 @@ public class OrderIntegrationTests : IDisposable
             InsertOrderSql + " RETURNING id",
             new
             {
+                CustomerBadgerId = 1000001,
                 TotalPrice = 12.98m,
                 Tax = 1.04m,
                 TotalSwipe = 1
@@ -149,6 +150,7 @@ public class OrderIntegrationTests : IDisposable
             InsertOrderSql + " RETURNING id",
             new
             {
+                CustomerBadgerId = 1000001,
                 TotalPrice = 10.99m,
                 Tax = 0.88m,
                 TotalSwipe = 0
@@ -159,6 +161,7 @@ public class OrderIntegrationTests : IDisposable
             InsertOrderSql + " RETURNING id",
             new
             {
+                CustomerBadgerId = 1000001,
                 TotalPrice = 15.49m,
                 Tax = 1.24m,
                 TotalSwipe = 1
