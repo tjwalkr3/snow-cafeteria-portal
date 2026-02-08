@@ -1,19 +1,14 @@
-using Cafeteria.Customer.Services.Auth;
+using System.Net.Http.Headers;
 
 namespace Cafeteria.Customer.Services.Customer;
 
-public class CustomerService(IHttpClientAuth client, ILogger<CustomerService> logger) : ICustomerService
+public class CustomerService(HttpClient httpClient) : ICustomerService
 {
-    public async Task RegisterOrUpdateCustomerAsync()
+    public async Task RegisterOrUpdateCustomerAsync(string accessToken)
     {
-        try
-        {
-            var response = await client.PostAsync<object>("customer/check", new { });
-            response.EnsureSuccessStatusCode();
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to register or update customer.");
-        }
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        var response = await httpClient.PostAsJsonAsync("customer/check", new { });
+        response.EnsureSuccessStatusCode();
+        httpClient.DefaultRequestHeaders.Authorization = null;
     }
 }

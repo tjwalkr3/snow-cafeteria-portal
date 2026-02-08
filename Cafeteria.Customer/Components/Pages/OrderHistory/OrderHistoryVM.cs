@@ -47,7 +47,7 @@ public class OrderHistoryVM : IOrderHistoryVM
 
         try
         {
-            _allOrders = await _orderService.GetAllOrders();
+            _allOrders = await _orderService.GetOrdersByCustomerEmail();
             _allOrders = _allOrders.OrderByDescending(o => o.OrderTime).ToList();
 
             // Load station names for all unique station IDs

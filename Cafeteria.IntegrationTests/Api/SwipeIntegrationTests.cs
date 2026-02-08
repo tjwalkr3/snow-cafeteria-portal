@@ -142,7 +142,7 @@ public class SwipeIntegrationTests : IDisposable
         var customers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
 
         Assert.NotNull(customers);
-        Assert.Equal(5, customers.Count); // 5 pre-loaded customers
+        Assert.Equal(6, customers.Count); // 6 pre-loaded customers
 
         // Verify data structure and some sample data
         var johnDoe = customers.FirstOrDefault(c => c.BadgerId == 1001234);

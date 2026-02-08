@@ -27,13 +27,12 @@ public class CustomerService : ICustomerService
         if (exists == 0)
         {
             const string insertSql = @"
-                INSERT INTO cafeteria.customer (email, badger_id, cust_name)
-                VALUES (@Email, @BadgerId, @CustName)";
+                INSERT INTO cafeteria.customer (email, cust_name)
+                VALUES (@Email, @CustName)";
 
             await _dbConnection.ExecuteAsync(insertSql, new
             {
                 Email = email,
-                BadgerId = 0,
                 CustName = custName
             });
         }

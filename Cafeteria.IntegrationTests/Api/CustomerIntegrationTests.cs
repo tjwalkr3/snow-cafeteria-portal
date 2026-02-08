@@ -23,13 +23,55 @@ public class CustomerIntegrationTests : IDisposable
         _connection?.Dispose();
     }
 
+    private async Task CleanupCustomerAndRelatedDataAsync(string email)
+    {
+        // Delete in reverse order of dependencies to respect foreign key constraints
+        const string deleteOptionsQuery = @"
+            DELETE FROM cafeteria.food_item_option 
+            WHERE food_item_order_id IN (
+                SELECT fi.id FROM cafeteria.food_item fi 
+                INNER JOIN cafeteria.order o ON fi.order_id = o.id 
+                WHERE o.customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
+            )";
+        await _connection.ExecuteAsync(deleteOptionsQuery, new { Email = email });
+
+        const string deleteFoodItemsQuery = @"
+            DELETE FROM cafeteria.food_item 
+            WHERE order_id IN (
+                SELECT id FROM cafeteria.order 
+                WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
+            )";
+        await _connection.ExecuteAsync(deleteFoodItemsQuery, new { Email = email });
+
+        const string deleteSaleCardQuery = @"
+            DELETE FROM cafeteria.sale_card 
+            WHERE order_id IN (
+                SELECT id FROM cafeteria.order 
+                WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
+            )";
+        await _connection.ExecuteAsync(deleteSaleCardQuery, new { Email = email });
+
+        const string deleteSaleSwipeQuery = @"
+            DELETE FROM cafeteria.sale_swipe 
+            WHERE order_id IN (
+                SELECT id FROM cafeteria.order 
+                WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
+            )";
+        await _connection.ExecuteAsync(deleteSaleSwipeQuery, new { Email = email });
+
+        const string deleteOrdersQuery = "DELETE FROM cafeteria.order WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)";
+        await _connection.ExecuteAsync(deleteOrdersQuery, new { Email = email });
+
+        const string deleteCustomerQuery = "DELETE FROM cafeteria.customer WHERE email = @Email";
+        await _connection.ExecuteAsync(deleteCustomerQuery, new { Email = email });
+    }
+
     [Fact]
     public async Task RegisterOrUpdate_CreatesNewCustomer_WhenCustomerDoesNotExist()
     {
         // The mock authentication handler provides email "test@example.com" and name "Test User"
         // First, ensure this customer doesn't exist
-        const string deleteSql = "DELETE FROM cafeteria.customer WHERE email = @Email";
-        await _connection.ExecuteAsync(deleteSql, new { Email = "test@example.com" });
+        await CleanupCustomerAndRelatedDataAsync("test@example.com");
 
         // Call the endpoint
         var response = await _client.PostAsync("/api/customer/check", null);
@@ -52,22 +94,21 @@ public class CustomerIntegrationTests : IDisposable
         Assert.NotNull(customer);
         Assert.Equal("test@example.com", customer!.email);
         Assert.Equal("Test User", customer.custname);
-        Assert.Equal(0, customer.badgerid);
+        Assert.True(customer.badgerid > 0, "badger_id should be auto-generated and greater than 0");
     }
 
     [Fact]
     public async Task RegisterOrUpdate_DoesNotCreateDuplicate_WhenCustomerAlreadyExists()
     {
-        // Ensure the customer exists
+        // Ensure the customer exists (let badger_id auto-generate)
         const string insertSql = @"
-            INSERT INTO cafeteria.customer (email, badger_id, cust_name)
-            VALUES (@Email, @BadgerId, @CustName)
+            INSERT INTO cafeteria.customer (email, cust_name)
+            VALUES (@Email, @CustName)
             ON CONFLICT (email) DO NOTHING";
 
         await _connection.ExecuteAsync(insertSql, new
         {
             Email = "test@example.com",
-            BadgerId = 0,
             CustName = "Test User"
         });
 
@@ -96,8 +137,7 @@ public class CustomerIntegrationTests : IDisposable
     public async Task RegisterOrUpdate_ReturnsOk_WithSuccessMessage()
     {
         // Clean up any existing customer
-        const string deleteSql = "DELETE FROM cafeteria.customer WHERE email = @Email";
-        await _connection.ExecuteAsync(deleteSql, new { Email = "test@example.com" });
+        await CleanupCustomerAndRelatedDataAsync("test@example.com");
 
         // Call the endpoint
         var response = await _client.PostAsync("/api/customer/check", null);
@@ -111,14 +151,13 @@ public class CustomerIntegrationTests : IDisposable
     public async Task RegisterOrUpdate_UsesDefaultBadgerId_WhenNotProvided()
     {
         // Clean up any existing customer
-        const string deleteSql = "DELETE FROM cafeteria.customer WHERE email = @Email";
-        await _connection.ExecuteAsync(deleteSql, new { Email = "test@example.com" });
+        await CleanupCustomerAndRelatedDataAsync("test@example.com");
 
         // Call the endpoint
         var response = await _client.PostAsync("/api/customer/check", null);
         response.EnsureSuccessStatusCode();
 
-        // Verify badger_id is 0 (default value)
+        // Verify badger_id is auto-generated (should be greater than 0)
         const string checkSql = @"
             SELECT badger_id AS BadgerId
             FROM cafeteria.customer
@@ -129,15 +168,14 @@ public class CustomerIntegrationTests : IDisposable
             new { Email = "test@example.com" }
         );
 
-        Assert.Equal(0, badgerId);
+        Assert.True(badgerId > 0, "badger_id should be auto-generated and greater than 0");
     }
 
     [Fact]
     public async Task RegisterOrUpdate_ExtractsCorrectClaimsFromToken()
     {
         // Clean up any existing customer
-        const string deleteSql = "DELETE FROM cafeteria.customer WHERE email = @Email";
-        await _connection.ExecuteAsync(deleteSql, new { Email = "test@example.com" });
+        await CleanupCustomerAndRelatedDataAsync("test@example.com");
 
         // Call the endpoint
         var response = await _client.PostAsync("/api/customer/check", null);

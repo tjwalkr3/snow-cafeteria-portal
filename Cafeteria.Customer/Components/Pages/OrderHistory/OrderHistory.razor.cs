@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Cafeteria.Shared.DTOs.Order;
 
 namespace Cafeteria.Customer.Components.Pages.OrderHistory;
@@ -11,11 +12,21 @@ public partial class OrderHistory : ComponentBase
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
     public bool IsInitialized { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await OrderHistoryVM.InitializeAsync();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity?.IsAuthenticated ?? false)
+        {
+            await OrderHistoryVM.InitializeAsync();
+        }
+
         IsInitialized = true;
     }
 
