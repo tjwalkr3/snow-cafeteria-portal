@@ -26,7 +26,7 @@ public partial class OrderHistory : ComponentBase
         {
             await OrderHistoryVM.InitializeAsync();
         }
-        
+
         IsInitialized = true;
     }
 

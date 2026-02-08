@@ -56,7 +56,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     public async Task<ActionResult<List<OrderDto>>> GetOrdersByCustomerEmail()
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("preferred_username")?.Value;
-        
+
         if (string.IsNullOrEmpty(email))
         {
             return BadRequest("Email not found in token claims");
@@ -70,7 +70,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("preferred_username")?.Value;
-        
+
         if (string.IsNullOrEmpty(email))
         {
             return BadRequest("Email not found in token claims");

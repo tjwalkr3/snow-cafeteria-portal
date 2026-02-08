@@ -34,7 +34,7 @@ public class CustomerIntegrationTests : IDisposable
                 WHERE o.customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
             )";
         await _connection.ExecuteAsync(deleteOptionsQuery, new { Email = email });
-        
+
         const string deleteFoodItemsQuery = @"
             DELETE FROM cafeteria.food_item 
             WHERE order_id IN (
@@ -42,7 +42,7 @@ public class CustomerIntegrationTests : IDisposable
                 WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
             )";
         await _connection.ExecuteAsync(deleteFoodItemsQuery, new { Email = email });
-        
+
         const string deleteSaleCardQuery = @"
             DELETE FROM cafeteria.sale_card 
             WHERE order_id IN (
@@ -50,7 +50,7 @@ public class CustomerIntegrationTests : IDisposable
                 WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
             )";
         await _connection.ExecuteAsync(deleteSaleCardQuery, new { Email = email });
-        
+
         const string deleteSaleSwipeQuery = @"
             DELETE FROM cafeteria.sale_swipe 
             WHERE order_id IN (
@@ -58,10 +58,10 @@ public class CustomerIntegrationTests : IDisposable
                 WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)
             )";
         await _connection.ExecuteAsync(deleteSaleSwipeQuery, new { Email = email });
-        
+
         const string deleteOrdersQuery = "DELETE FROM cafeteria.order WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)";
         await _connection.ExecuteAsync(deleteOrdersQuery, new { Email = email });
-        
+
         const string deleteCustomerQuery = "DELETE FROM cafeteria.customer WHERE email = @Email";
         await _connection.ExecuteAsync(deleteCustomerQuery, new { Email = email });
     }
