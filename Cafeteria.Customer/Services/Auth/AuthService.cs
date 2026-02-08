@@ -1,6 +1,8 @@
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text.Json;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Cafeteria.Customer.Services.Auth;
 
@@ -170,5 +172,77 @@ public class AuthService : IAuthService
         public string? TokenType { get; set; }
         public int ExpiresIn { get; set; }
         public string? ErrorMessage { get; set; }
+    }
+
+    public static List<Claim> BuildClaimsFromUserInfo(Dictionary<string, JsonElement> userInfo)
+    {
+        var claims = new List<Claim>();
+
+        foreach (var claim in userInfo)
+        {
+            if (claim.Value.ValueKind == JsonValueKind.String)
+            {
+                claims.Add(new Claim(claim.Key, claim.Value.GetString()!));
+            }
+            else if (claim.Value.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in claim.Value.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.String)
+                    {
+                        claims.Add(new Claim(claim.Key, item.GetString()!));
+                    }
+                }
+            }
+        }
+
+        return claims;
+    }
+
+    public static (ClaimsPrincipal, AuthenticationProperties)? ParseTokenAndCreateAuthData(
+        string token,
+        DateTimeOffset currentTime)
+    {
+        try
+        {
+            var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(token));
+            var sessionData = JsonSerializer.Deserialize<JsonElement>(json);
+
+            var userInfo = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+                sessionData.GetProperty("UserInfo").GetRawText());
+
+            if (userInfo == null)
+            {
+                return null;
+            }
+
+            var accessToken = sessionData.GetProperty("AccessToken").GetString();
+            var refreshToken = sessionData.TryGetProperty("RefreshToken", out var rt) ? rt.GetString() : string.Empty;
+            var tokenType = sessionData.TryGetProperty("TokenType", out var tt) ? tt.GetString() : "Bearer";
+            var expiresIn = sessionData.TryGetProperty("ExpiresIn", out var ei) ? ei.GetInt32() : 300;
+
+            var claims = BuildClaimsFromUserInfo(userInfo);
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = currentTime.AddSeconds(expiresIn)
+            };
+
+            authProperties.StoreTokens([
+                new AuthenticationToken { Name = "access_token", Value = accessToken! },
+                new AuthenticationToken { Name = "refresh_token", Value = refreshToken ?? string.Empty },
+                new AuthenticationToken { Name = "token_type", Value = tokenType ?? "Bearer" }
+            ]);
+
+            return (claimsPrincipal, authProperties);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

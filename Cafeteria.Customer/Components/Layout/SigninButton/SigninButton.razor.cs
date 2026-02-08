@@ -20,7 +20,7 @@ public partial class SigninButton : ComponentBase
     {
         try
         {
-            await JSRuntime.InvokeVoidAsync("window.location.assign", "/signout");
+            await JSRuntime.InvokeVoidAsync("window.location.assign", "/auth/signout");
         }
         catch (JSDisconnectedException)
         {

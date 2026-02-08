@@ -7,9 +7,6 @@ namespace Cafeteria.Customer.Components.Pages.SignIn;
 public partial class SignIn : ComponentBase
 {
     [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
     private IAuthService AuthenticationService { get; set; } = default!;
 
     [Inject]
@@ -84,7 +81,7 @@ public partial class SignIn : ComponentBase
         try
         {
             var destination = string.IsNullOrWhiteSpace(ReturnUrl) ? "/" : ReturnUrl;
-            var url = $"/api/auth/signin?token={Uri.EscapeDataString(sessionToken)}&returnUrl={Uri.EscapeDataString(destination)}";
+            var url = $"/auth/signin?token={Uri.EscapeDataString(sessionToken)}&returnUrl={Uri.EscapeDataString(destination)}";
             await JSRuntime.InvokeVoidAsync("window.location.assign", url);
         }
         catch (JSDisconnectedException)

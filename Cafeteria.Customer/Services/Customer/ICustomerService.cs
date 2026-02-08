@@ -2,5 +2,5 @@ namespace Cafeteria.Customer.Services.Customer;
 
 public interface ICustomerService
 {
-    Task RegisterOrUpdateCustomerAsync();
+    Task RegisterOrUpdateCustomerAsync(string accessToken);
 }
