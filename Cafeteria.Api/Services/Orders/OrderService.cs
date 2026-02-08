@@ -222,6 +222,44 @@ public class OrderService : IOrderService
         return orders.ToList();
     }
 
+    public async Task<List<OrderDto>> GetOrdersByCustomerEmail(string email)
+    {
+        const string sql = @"
+            SELECT o.id AS Id, o.order_time AS OrderTime, o.total_price AS TotalPrice, o.tax AS Tax, o.total_swipe AS TotalSwipe
+            FROM cafeteria.order o
+            INNER JOIN cafeteria.customer c ON o.customer_badger_id = c.badger_id
+            WHERE c.email = @Email
+            ORDER BY o.order_time DESC";
+
+        var orders = (await _dbConnection.QueryAsync<OrderDto>(sql, new { Email = email })).ToList();
+
+        foreach (var order in orders)
+        {
+            const string foodItemsSql = @"
+                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                    sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
+                    swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
+                FROM cafeteria.food_item
+                WHERE order_id = @orderId;";
+
+            var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = order.Id });
+            order.FoodItems = foodItems.ToList();
+
+            foreach (var foodItem in order.FoodItems)
+            {
+                const string optionsSql = @"
+                    SELECT id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName
+                    FROM cafeteria.food_item_option
+                    WHERE food_item_order_id = @foodItemId;";
+
+                var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemId = foodItem.Id });
+                foodItem.Options = options.ToList();
+            }
+        }
+
+        return orders;
+    }
+
     public async Task<OrderWithCustomerDto?> GetOrderWithCustomerById(int id)
     {
         const string sql = @"

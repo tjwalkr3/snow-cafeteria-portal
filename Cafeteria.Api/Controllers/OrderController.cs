@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Api.Services.Orders;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Cafeteria.Api.Controllers;
 
@@ -48,6 +49,20 @@ public class OrderController(IOrderService orderService) : ControllerBase
     public async Task<ActionResult<List<OrderWithCustomerDto>>> GetOrdersByCustomer(int badgerId)
     {
         var result = await _orderService.GetOrdersByCustomer(badgerId);
+        return Ok(result);
+    }
+
+    [HttpGet("customer-email")]
+    public async Task<ActionResult<List<OrderDto>>> GetOrdersByCustomerEmail()
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("preferred_username")?.Value;
+        
+        if (string.IsNullOrEmpty(email))
+        {
+            return BadRequest("Email not found in token claims");
+        }
+
+        var result = await _orderService.GetOrdersByCustomerEmail(email);
         return Ok(result);
     }
 

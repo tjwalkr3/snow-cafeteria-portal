@@ -9,5 +9,6 @@ public interface IOrderService
     Task<List<OrderDto>> GetAllOrders();
     Task<List<OrderWithCustomerDto>> GetAllOrdersWithCustomer();
     Task<List<OrderWithCustomerDto>> GetOrdersByCustomer(int badgerId);
+    Task<List<OrderDto>> GetOrdersByCustomerEmail(string email);
     Task<OrderWithCustomerDto?> GetOrderWithCustomerById(int id);
 }

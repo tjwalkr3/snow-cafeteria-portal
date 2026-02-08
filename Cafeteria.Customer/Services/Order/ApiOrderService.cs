@@ -26,4 +26,9 @@ public class ApiOrderService(IHttpClientAuth client) : IApiOrderService
     {
         return await client.GetAsync<List<OrderDto>>("order") ?? new List<OrderDto>();
     }
+
+    public async Task<List<OrderDto>> GetOrdersByCustomerEmail()
+    {
+        return await client.GetAsync<List<OrderDto>>("order/customer-email") ?? new List<OrderDto>();
+    }
 }

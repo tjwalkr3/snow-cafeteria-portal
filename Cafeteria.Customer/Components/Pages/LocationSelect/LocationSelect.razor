@@ -10,53 +10,53 @@
 <AuthorizeView>
     <Authorized>
         <div class="container py-4">
-    @if (LocationSelectVM.Locations == null && IsInitialized == false)
-    {
-        <div class="text-center py-5">
-            <Spinner Message="Loading locations..." />
-        </div>
-    }
-    else if (IsInitialized == true && LocationSelectVM.ErrorOccurred())
-    {
-        Navigation.NavigateTo("/error", false);
-    }
-    else if (LocationSelectVM.Locations != null)
-    {
-        <div class="row">
-            <div class="col-12">
-                <a href="/" class="btn text-decoration-none ps-0">
-                    ❮ Back to Payment Method
-                </a>
-            </div>
-        </div>
-
-        <div class="text-center mb-5">
-            <h1 class="location-title mb-3 fs-1 fw-bold">Select Your Location</h1>
-            <p class="location-subtitle fs-5 text-muted mb-0">Please choose your cafeteria location to continue</p>
-        </div>
-
-        <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
-            @foreach (var location in LocationSelectVM.Locations)
+            @if (LocationSelectVM.Locations == null && IsInitialized == false)
             {
-                <div class="col">
-                    <a href="@(CreateUrl(location.Id))" class="card-link text-decoration-none">
-                        <div class="card h-100 shadow-sm border-0 hover-card">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-4">
-                                    <div class="icon-circle">
-                                        <i class="bi @GetLocationIcon(location.LocationName) fs-2"></i>
-                                    </div>
-                                </div>
-                                <h3 class="card-title location-card-title mb-3 fs-4 fw-bold">@location.LocationName</h3>
-                                <p class="card-text location-card-description mb-0 fs-6 text-muted">
-                                    @location.LocationDescription</p>
-                            </div>
-                        </div>
-                    </a>
+                <div class="text-center py-5">
+                    <Spinner Message="Loading locations..." />
                 </div>
             }
-        </div>
-    }
+            else if (IsInitialized == true && LocationSelectVM.ErrorOccurred())
+            {
+                Navigation.NavigateTo("/error", false);
+            }
+            else if (LocationSelectVM.Locations != null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <a href="/" class="btn text-decoration-none ps-0">
+                            ❮ Back to Payment Method
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center mb-5">
+                    <h1 class="location-title mb-3 fs-1 fw-bold">Select Your Location</h1>
+                    <p class="location-subtitle fs-5 text-muted mb-0">Please choose your cafeteria location to continue</p>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
+                    @foreach (var location in LocationSelectVM.Locations)
+                    {
+                        <div class="col">
+                            <a href="@(CreateUrl(location.Id))" class="card-link text-decoration-none">
+                                <div class="card h-100 shadow-sm border-0 hover-card">
+                                    <div class="card-body text-center p-4">
+                                        <div class="mb-4">
+                                            <div class="icon-circle">
+                                                <i class="bi @GetLocationIcon(location.LocationName) fs-2"></i>
+                                            </div>
+                                        </div>
+                                        <h3 class="card-title location-card-title mb-3 fs-4 fw-bold">@location.LocationName</h3>
+                                        <p class="card-text location-card-description mb-0 fs-6 text-muted">
+                                            @location.LocationDescription</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
         </div>
     </Authorized>
     <NotAuthorized>
