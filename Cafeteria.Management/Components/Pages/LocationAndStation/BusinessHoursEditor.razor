@@ -60,12 +60,12 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Open Time</label>
-                        <input type="time" class="form-control" @bind="EditOpenTime" />
+                        <label class="form-label fw-semibold">Open Time</label>
+                        <TimePicker @bind-Value="EditOpenTime" />
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Close Time</label>
-                        <input type="time" class="form-control" @bind="EditCloseTime" />
+                        <label class="form-label fw-semibold">Close Time</label>
+                        <TimePicker @bind-Value="EditCloseTime" />
                     </div>
                 </div>
                 <div class="modal-footer">
