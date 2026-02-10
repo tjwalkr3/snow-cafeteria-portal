@@ -13,39 +13,7 @@
         <div class="card-body">
             <p>@Location.LocationDescription</p>
             
-            @if (LocationHours.Any())
-            {
-                <h6>Business Hours</h6>
-                <table class="table table-sm table-bordered mt-2 mb-3" style="width: auto;">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            @foreach (var day in Enum.GetValues<WeekDay>())
-                            {
-                                <th>@day</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>Open</th>
-                            @foreach (var day in Enum.GetValues<WeekDay>())
-                            {
-                                var hours = LocationHours.FirstOrDefault(h => h.WeekdayId == (int)day);
-                                <td>@(hours?.OpenTime.ToString() ?? "-")</td>
-                            }
-                        </tr>
-                        <tr>
-                            <th>Close</th>
-                            @foreach (var day in Enum.GetValues<WeekDay>())
-                            {
-                                var hours = LocationHours.FirstOrDefault(h => h.WeekdayId == (int)day);
-                                <td>@(hours?.CloseTime.ToString() ?? "-")</td>
-                            }
-                        </tr>
-                    </tbody>
-                </table>
-            }
+            <BusinessHoursEditor EntityId="@Location.Id" IsStation="false" OnHoursChanged="ReloadLocationHours" />
 
             <div class="station-container">
                 @if (Stations.Any())

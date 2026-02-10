@@ -1,0 +1,78 @@
+@using Cafeteria.Shared.Enums
+@using Cafeteria.Management.Components.Shared
+
+<Toast Message="@ToastMessage"
+       Type="@CurrentToastType"
+       IsVisible="@ShowToast"
+       OnClose="@(() => ShowToast = false)" />
+
+<ConfirmationModal Title="Delete Business Hours"
+                   Message="Are you sure you want to delete these business hours?"
+                   ConfirmText="Delete"
+                   IsVisible="@ShowDeleteConfirmation"
+                   OnConfirm="ConfirmDelete"
+                   OnCancel="CancelDelete" />
+
+<table class="table table-sm table-bordered hours-table">
+    <thead>
+        <tr>
+            <th>Day</th>
+            <th>Open</th>
+            <th>Close</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var day in Enum.GetValues<WeekDay>())
+        {
+            var hours = GetHoursForDay(day);
+            <tr>
+                <td class="fw-semibold">@day</td>
+                @if (hours is not null)
+                {
+                    <td>@hours.OpenTime.ToString("h:mm tt")</td>
+                    <td>@hours.CloseTime.ToString("h:mm tt")</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => HandleEdit(hours)">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => HandleDelete(hours)">Delete</button>
+                    </td>
+                }
+                else
+                {
+                    <td colspan="2" class="closed-label">Closed</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-success" @onclick="() => HandleAdd(day)">Add</button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ShowModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(IsEditing ? "Edit" : "Add") Business Hours — @((WeekDay)EditingWeekdayId)</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Open Time</label>
+                        <input type="time" class="form-control" @bind="EditOpenTime" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Close Time</label>
+                        <input type="time" class="form-control" @bind="EditCloseTime" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveHours">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

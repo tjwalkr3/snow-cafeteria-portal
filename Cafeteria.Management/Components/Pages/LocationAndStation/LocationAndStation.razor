@@ -1,15 +1,58 @@
 @page "/location-station"
-@using Cafeteria.Management.Components.Pages.LocationAndStation.Location
+@using Cafeteria.Shared.Enums
 @rendermode InteractiveServer
 
-<h1>Locations and Stations</h1>
+<h1>Locations & Stations</h1>
+<p>Manage business hours for locations and their stations.</p>
 
-<p>Manage locations/stations here.</p>
-
-@foreach (var location in ViewModel.Locations)
+@if (Locations.Any())
 {
-    <LocationCollapsible 
-        Location="location" 
-        IsExpanded="@(ExpandedLocationId == location.Id)" 
-        OnToggle="@(() => ToggleLocation(location.Id))" />
+    <ul class="nav nav-tabs">
+        @foreach (var location in Locations)
+        {
+            <li class="nav-item">
+                <button class="nav-link @(SelectedLocationId == location.Id ? "active" : "")"
+                        @onclick="() => SelectLocation(location.Id)">
+                    @location.LocationName
+                </button>
+            </li>
+        }
+    </ul>
+
+    <div class="tab-content-area">
+        @if (SelectedLocation is not null)
+        {
+            <p class="text-muted mb-3">@SelectedLocation.LocationDescription</p>
+
+            <h5>Location Hours</h5>
+            <BusinessHoursEditor @key="@($"loc-{SelectedLocation.Id}")"
+                                 EntityId="@SelectedLocation.Id"
+                                 IsStation="false" />
+
+            @if (Stations.Any())
+            {
+                <hr />
+                <h5>Station Hours</h5>
+
+                @foreach (var station in Stations)
+                {
+                    <div class="card mb-3 station-card">
+                        <div class="card-header station-card-header">
+                            <h6 class="mb-0">@station.StationName</h6>
+                        </div>
+                        <div class="card-body">
+                            <small class="text-muted d-block mb-2">@station.StationDescription</small>
+                            <BusinessHoursEditor @key="@($"sta-{station.Id}")"
+                                                 EntityId="@station.Id"
+                                                 IsStation="true" />
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted mt-3">No stations found for this location.</p>
+            }
+        }
+    </div>
 }

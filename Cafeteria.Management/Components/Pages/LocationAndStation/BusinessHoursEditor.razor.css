@@ -1,0 +1,36 @@
+.hours-table {
+    width: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.hours-table th {
+    background-color: #1e366c;
+    color: white;
+}
+
+.closed-label {
+    font-style: italic;
+    color: #6c757d;
+}
+
+.btn-outline-primary {
+    color: #1e366c;
+    border-color: #1e366c;
+}
+
+.btn-outline-primary:hover {
+    background-color: #1e366c;
+    border-color: #1e366c;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #1e366c;
+    border-color: #1e366c;
+}
+
+.btn-primary:hover {
+    background-color: #162a54;
+    border-color: #162a54;
+}
