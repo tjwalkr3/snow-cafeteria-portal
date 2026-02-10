@@ -27,7 +27,6 @@ public partial class BusinessHoursEditor : ComponentBase
 
     private List<HoursEntry> Hours { get; set; } = [];
 
-    // Modal state
     private bool ShowModal { get; set; }
     private bool IsEditing { get; set; }
     private int EditingHoursId { get; set; }
@@ -35,11 +34,9 @@ public partial class BusinessHoursEditor : ComponentBase
     private TimeOnly EditOpenTime { get; set; }
     private TimeOnly EditCloseTime { get; set; }
 
-    // Delete confirmation state
     private bool ShowDeleteConfirmation { get; set; }
     private HoursEntry? DeletingHours { get; set; }
 
-    // Toast state
     private bool ShowToast { get; set; }
     private string ToastMessage { get; set; } = string.Empty;
     private ToastType CurrentToastType { get; set; } = ToastType.Success;
