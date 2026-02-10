@@ -34,20 +34,24 @@
                 <hr />
                 <h5>Station Hours</h5>
 
-                @foreach (var station in Stations)
-                {
-                    <div class="card mb-3 station-card">
-                        <div class="card-header station-card-header">
-                            <h6 class="mb-0">@station.StationName</h6>
+                <div class="row">
+                    @foreach (var station in Stations)
+                    {
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100 station-card">
+                                <div class="card-header station-card-header">
+                                    <h6 class="mb-0">@station.StationName</h6>
+                                </div>
+                                <div class="card-body">
+                                    <small class="text-muted d-block mb-2">@station.StationDescription</small>
+                                    <BusinessHoursEditor @key="@($"sta-{station.Id}")"
+                                                         EntityId="@station.Id"
+                                                         IsStation="true" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <small class="text-muted d-block mb-2">@station.StationDescription</small>
-                            <BusinessHoursEditor @key="@($"sta-{station.Id}")"
-                                                 EntityId="@station.Id"
-                                                 IsStation="true" />
-                        </div>
-                    </div>
-                }
+                    }
+                </div>
             }
             else
             {

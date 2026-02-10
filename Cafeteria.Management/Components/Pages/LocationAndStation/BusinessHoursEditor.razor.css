@@ -1,12 +1,19 @@
 .hours-table {
-    width: auto;
+    width: 100%;
     margin-top: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+    font-size: 0.875rem;
 }
 
 .hours-table th {
     background-color: #1e366c;
     color: white;
+}
+
+.hours-table td,
+.hours-table th {
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
 .closed-label {
