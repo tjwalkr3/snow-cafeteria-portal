@@ -95,35 +95,28 @@ public partial class BusinessHoursEditor : ComponentBase
             return;
         }
 
-        try
+        if (IsEditing)
         {
-            if (IsEditing)
-            {
-                if (IsStation)
-                    await StationService.UpdateStationBusinessHours(EditingHoursId, EditOpenTime, EditCloseTime, EditingWeekdayId);
-                else
-                    await LocationService.UpdateLocationBusinessHours(EditingHoursId, EditOpenTime, EditCloseTime, EditingWeekdayId);
-
-                ShowToastMessage("Business hours updated successfully.", ToastType.Success);
-            }
+            if (IsStation)
+                await StationService.UpdateStationBusinessHours(EditingHoursId, EditOpenTime, EditCloseTime, EditingWeekdayId);
             else
-            {
-                if (IsStation)
-                    await StationService.AddStationBusinessHours(EntityId, EditOpenTime, EditCloseTime, EditingWeekdayId);
-                else
-                    await LocationService.AddLocationBusinessHours(EntityId, EditOpenTime, EditCloseTime, EditingWeekdayId);
+                await LocationService.UpdateLocationBusinessHours(EditingHoursId, EditOpenTime, EditCloseTime, EditingWeekdayId);
 
-                ShowToastMessage("Business hours added successfully.", ToastType.Success);
-            }
-
-            ShowModal = false;
-            await LoadHours();
-            await OnHoursChanged.InvokeAsync();
+            ShowToastMessage("Business hours updated successfully.", ToastType.Success);
         }
-        catch (Exception)
+        else
         {
-            ShowToastMessage("Failed to save business hours.", ToastType.Error);
+            if (IsStation)
+                await StationService.AddStationBusinessHours(EntityId, EditOpenTime, EditCloseTime, EditingWeekdayId);
+            else
+                await LocationService.AddLocationBusinessHours(EntityId, EditOpenTime, EditCloseTime, EditingWeekdayId);
+
+            ShowToastMessage("Business hours added successfully.", ToastType.Success);
         }
+
+        ShowModal = false;
+        await LoadHours();
+        await OnHoursChanged.InvokeAsync();
     }
 
     private void HandleDelete(HoursEntry entry)
@@ -136,29 +129,14 @@ public partial class BusinessHoursEditor : ComponentBase
     {
         if (DeletingHours is null) return;
 
-        try
-        {
-            bool success;
-            if (IsStation)
-                success = await StationService.DeleteStationBusinessHours(DeletingHours.Id);
-            else
-                success = await LocationService.DeleteLocationBusinessHours(DeletingHours.Id);
+        if (IsStation)
+            await StationService.DeleteStationBusinessHours(DeletingHours.Id);
+        else
+            await LocationService.DeleteLocationBusinessHours(DeletingHours.Id);
 
-            if (success)
-            {
-                ShowToastMessage("Business hours deleted.", ToastType.Success);
-                await LoadHours();
-                await OnHoursChanged.InvokeAsync();
-            }
-            else
-            {
-                ShowToastMessage("Failed to delete business hours.", ToastType.Error);
-            }
-        }
-        catch (Exception)
-        {
-            ShowToastMessage("Failed to delete business hours.", ToastType.Error);
-        }
+        ShowToastMessage("Business hours deleted.", ToastType.Success);
+        await LoadHours();
+        await OnHoursChanged.InvokeAsync();
 
         ShowDeleteConfirmation = false;
         DeletingHours = null;
