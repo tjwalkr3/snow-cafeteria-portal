@@ -33,15 +33,15 @@
                     <td>@hours.OpenTime.ToString("h:mm tt")</td>
                     <td>@hours.CloseTime.ToString("h:mm tt")</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => HandleEdit(hours)">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger" @onclick="() => HandleDelete(hours)">Delete</button>
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => HandleEdit(hours)"><i class="bi bi-pencil me-1"></i>Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => HandleDelete(hours)"><i class="bi bi-trash me-1"></i>Delete</button>
                     </td>
                 }
                 else
                 {
                     <td colspan="2" class="closed-label">Closed</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-success" @onclick="() => HandleAdd(day)">Add</button>
+                        <button class="btn btn-sm btn-outline-success" @onclick="() => HandleAdd(day)"><i class="bi bi-plus-circle me-1"></i>Add</button>
                     </td>
                 }
             </tr>
@@ -55,7 +55,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@(IsEditing ? "Edit" : "Add") Business Hours — @((WeekDay)EditingWeekdayId)</h5>
+                    <h5 class="modal-title"><i class="bi @(IsEditing ? "bi-pencil" : "bi-plus-circle") me-2"></i>@(IsEditing ? "Edit" : "Add") Business Hours — @((WeekDay)EditingWeekdayId)</h5>
                     <button type="button" class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
