@@ -18,6 +18,9 @@ public partial class PaymentSelect : ComponentBase
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
 
+    [Inject]
+    private ILogger<PaymentSelect> Logger { get; set; } = default!;
+
     public int SwipeBalance { get; set; } = 0;
     public bool HasSwipes => SwipeBalance > 0;
 
@@ -42,6 +45,7 @@ public partial class PaymentSelect : ComponentBase
                 catch (Exception)
                 {
                     // If API call fails, swipes remain at 0
+                    Logger.LogError("Failed to retrieve swipe data for email: {Email}", email);
                     SwipeBalance = 0;
                 }
             }
