@@ -878,7 +878,9 @@ VALUES
     ('jane.smith@snow.edu', 1005678, 'Jane Smith'),
     ('bob.johnson@snow.edu', 1009012, 'Bob Johnson'),
     ('alice.williams@snow.edu', 1003456, 'Alice Williams'),
-    ('charlie.brown@snow.edu', 1007890, 'Charlie Brown');
+    ('charlie.brown@snow.edu', 1007890, 'Charlie Brown'),
+    ('test-1@example.com', 1000001, 'Test1 User'),
+    ('test-2@example.com', 1000002, 'Test2 User');
 
 -- Sample customer swipe data
 INSERT INTO
@@ -888,4 +890,6 @@ VALUES
     (1005678, 21),
     (1009012, 8),
     (1003456, 9),
-    (1007890, 0);
+    (1007890, 0),
+    (1000001, 5),
+    (1000002, 2);
