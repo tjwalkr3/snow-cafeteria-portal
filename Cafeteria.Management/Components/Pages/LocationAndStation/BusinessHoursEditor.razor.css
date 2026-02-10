@@ -8,36 +8,18 @@
 .hours-table th {
     background-color: #1e366c;
     color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .hours-table td,
 .hours-table th {
     white-space: nowrap;
     vertical-align: middle;
+    padding: 0.5rem;
 }
 
 .closed-label {
     font-style: italic;
     color: #6c757d;
-}
-
-.btn-outline-primary {
-    color: #1e366c;
-    border-color: #1e366c;
-}
-
-.btn-outline-primary:hover {
-    background-color: #1e366c;
-    border-color: #1e366c;
-    color: white;
-}
-
-.btn-primary {
-    background-color: #1e366c;
-    border-color: #1e366c;
-}
-
-.btn-primary:hover {
-    background-color: #162a54;
-    border-color: #162a54;
 }

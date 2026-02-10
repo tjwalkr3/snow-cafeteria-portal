@@ -1,5 +1,6 @@
 .nav-tabs .nav-link {
     color: #1e366c;
+    transition: all 0.2s ease;
 }
 
 .nav-tabs .nav-link.active {
@@ -16,7 +17,17 @@
     background-color: white;
 }
 
+.station-card {
+    transition: all 0.2s ease;
+}
+
+.station-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+}
+
 .station-card-header {
     background-color: #1e366c;
     color: white;
+    font-weight: 600;
 }
