@@ -33,7 +33,7 @@ public partial class PaymentSelect : ComponentBase
         {
             // Try mapped claim type first, then fall back to raw OIDC claim name
             var email = user.FindFirst(ClaimTypes.Email)?.Value ?? user.FindFirst("email")?.Value;
-            
+
             if (!string.IsNullOrEmpty(email))
             {
                 try
