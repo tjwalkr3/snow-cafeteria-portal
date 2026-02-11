@@ -27,7 +27,7 @@ public class AuthServiceTests
         var result = AuthService.BuildClaimsFromUserInfo(userInfo);
 
         Assert.Single(result);
-        Assert.Equal("email", result[0].Type);
+        Assert.Equal(System.Security.Claims.ClaimTypes.Email, result[0].Type);
         Assert.Equal("user@example.com", result[0].Value);
     }
 
@@ -44,9 +44,9 @@ public class AuthServiceTests
         var result = AuthService.BuildClaimsFromUserInfo(userInfo);
 
         Assert.Equal(3, result.Count);
-        Assert.Contains(result, c => c.Type == "email" && c.Value == "user@example.com");
-        Assert.Contains(result, c => c.Type == "name" && c.Value == "John Doe");
-        Assert.Contains(result, c => c.Type == "sub" && c.Value == "12345");
+        Assert.Contains(result, c => c.Type == System.Security.Claims.ClaimTypes.Email && c.Value == "user@example.com");
+        Assert.Contains(result, c => c.Type == System.Security.Claims.ClaimTypes.Name && c.Value == "John Doe");
+        Assert.Contains(result, c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier && c.Value == "12345");
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class AuthServiceTests
         var result = AuthService.BuildClaimsFromUserInfo(userInfo);
 
         Assert.Single(result);
-        Assert.Equal("email", result[0].Type);
+        Assert.Equal(System.Security.Claims.ClaimTypes.Email, result[0].Type);
         Assert.Equal("user@example.com", result[0].Value);
     }
 
@@ -112,8 +112,8 @@ public class AuthServiceTests
         var result = AuthService.BuildClaimsFromUserInfo(userInfo);
 
         Assert.Equal(4, result.Count);
-        Assert.Contains(result, c => c.Type == "email" && c.Value == "user@example.com");
-        Assert.Contains(result, c => c.Type == "name" && c.Value == "John Doe");
+        Assert.Contains(result, c => c.Type == System.Security.Claims.ClaimTypes.Email && c.Value == "user@example.com");
+        Assert.Contains(result, c => c.Type == System.Security.Claims.ClaimTypes.Name && c.Value == "John Doe");
         Assert.Contains(result, c => c.Type == "roles" && c.Value == "admin");
         Assert.Contains(result, c => c.Type == "roles" && c.Value == "user");
     }
@@ -161,8 +161,8 @@ public class AuthServiceTests
 
         Assert.NotNull(claimsPrincipal);
         Assert.Equal(2, claimsPrincipal.Claims.Count());
-        Assert.Contains(claimsPrincipal.Claims, c => c.Type == "email" && c.Value == "user@example.com");
-        Assert.Contains(claimsPrincipal.Claims, c => c.Type == "name" && c.Value == "John Doe");
+        Assert.Contains(claimsPrincipal.Claims, c => c.Type == System.Security.Claims.ClaimTypes.Email && c.Value == "user@example.com");
+        Assert.Contains(claimsPrincipal.Claims, c => c.Type == System.Security.Claims.ClaimTypes.Name && c.Value == "John Doe");
 
         Assert.NotNull(authProperties);
         Assert.True(authProperties.IsPersistent);
@@ -336,7 +336,7 @@ public class AuthServiceTests
         var (claimsPrincipal, _) = result.Value;
 
         Assert.Equal(3, claimsPrincipal.Claims.Count());
-        Assert.Contains(claimsPrincipal.Claims, c => c.Type == "email" && c.Value == "user@example.com");
+        Assert.Contains(claimsPrincipal.Claims, c => c.Type == System.Security.Claims.ClaimTypes.Email && c.Value == "user@example.com");
         Assert.Contains(claimsPrincipal.Claims, c => c.Type == "roles" && c.Value == "admin");
         Assert.Contains(claimsPrincipal.Claims, c => c.Type == "roles" && c.Value == "user");
     }

@@ -80,7 +80,7 @@ public partial class PlaceOrder : ComponentBase
 
                 if (user?.Identity?.IsAuthenticated ?? false)
                 {
-                    var email = user.FindFirst(ClaimTypes.Email)?.Value;
+                    var email = user.FindFirst(ClaimTypes.Email)?.Value ?? user.FindFirst("email")?.Value;
                     if (!string.IsNullOrEmpty(email))
                     {
                         try

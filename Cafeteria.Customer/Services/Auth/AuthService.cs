@@ -178,11 +178,23 @@ public class AuthService : IAuthService
     {
         var claims = new List<Claim>();
 
+        // Map OIDC standard claim names to ClaimTypes
+        var claimTypeMap = new Dictionary<string, string>
+        {
+            { "sub", ClaimTypes.NameIdentifier },
+            { "email", ClaimTypes.Email },
+            { "name", ClaimTypes.Name },
+            { "preferred_username", ClaimTypes.Name }
+        };
+
         foreach (var claim in userInfo)
         {
+            // Map OIDC claim name to ClaimTypes if a mapping exists
+            var claimType = claimTypeMap.ContainsKey(claim.Key) ? claimTypeMap[claim.Key] : claim.Key;
+
             if (claim.Value.ValueKind == JsonValueKind.String)
             {
-                claims.Add(new Claim(claim.Key, claim.Value.GetString()!));
+                claims.Add(new Claim(claimType, claim.Value.GetString()!));
             }
             else if (claim.Value.ValueKind == JsonValueKind.Array)
             {
@@ -190,7 +202,7 @@ public class AuthService : IAuthService
                 {
                     if (item.ValueKind == JsonValueKind.String)
                     {
-                        claims.Add(new Claim(claim.Key, item.GetString()!));
+                        claims.Add(new Claim(claimType, item.GetString()!));
                     }
                 }
             }
