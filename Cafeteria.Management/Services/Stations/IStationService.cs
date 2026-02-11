@@ -8,4 +8,7 @@ public interface IStationService
     Task<List<StationDto>> GetStationsByLocation(int locationId);
     Task<StationDto?> GetStationById(int stationId);
     Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId);
+    Task AddStationBusinessHours(int stationId, TimeOnly openTime, TimeOnly closeTime, int weekdayId);
+    Task UpdateStationBusinessHours(int stationHrsId, TimeOnly openTime, TimeOnly closeTime, int weekdayId);
+    Task<bool> DeleteStationBusinessHours(int stationHrsId);
 }

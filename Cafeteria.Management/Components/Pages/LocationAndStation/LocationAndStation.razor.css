@@ -1,0 +1,33 @@
+.nav-tabs .nav-link {
+    color: #1e366c;
+    transition: all 0.2s ease;
+}
+
+.nav-tabs .nav-link.active {
+    color: #1e366c;
+    font-weight: 600;
+    border-bottom-color: white;
+}
+
+.tab-content-area {
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+    padding: 1.5rem;
+    background-color: white;
+}
+
+.station-card {
+    transition: all 0.2s ease;
+}
+
+.station-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+}
+
+.station-card-header {
+    background-color: #1e366c;
+    color: white;
+    font-weight: 600;
+}

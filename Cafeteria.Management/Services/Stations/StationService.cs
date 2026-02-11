@@ -24,4 +24,34 @@ public class StationService(IHttpClientAuth client) : IStationService
     {
         return await client.GetAsync<List<StationBusinessHoursDto>>($"api/station/{stationId}/hours") ?? [];
     }
+
+    public async Task AddStationBusinessHours(int stationId, TimeOnly openTime, TimeOnly closeTime, int weekdayId)
+    {
+        var body = new
+        {
+            StartTime = DateTime.Today.Add(openTime.ToTimeSpan()),
+            EndTime = DateTime.Today.Add(closeTime.ToTimeSpan()),
+            WeekdayId = weekdayId
+        };
+        var response = await client.PostAsync($"api/station/{stationId}/hours", body);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateStationBusinessHours(int stationHrsId, TimeOnly openTime, TimeOnly closeTime, int weekdayId)
+    {
+        var body = new
+        {
+            StartTime = DateTime.Today.Add(openTime.ToTimeSpan()),
+            EndTime = DateTime.Today.Add(closeTime.ToTimeSpan()),
+            WeekdayId = weekdayId
+        };
+        var response = await client.PutAsync($"api/station/hours/{stationHrsId}", body);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<bool> DeleteStationBusinessHours(int stationHrsId)
+    {
+        var response = await client.DeleteAsync<object>($"api/station/hours/{stationHrsId}");
+        return response.IsSuccessStatusCode;
+    }
 }

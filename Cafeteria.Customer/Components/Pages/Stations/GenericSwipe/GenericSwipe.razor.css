@@ -114,10 +114,6 @@
   box-shadow: 0 4px 16px rgba(30, 54, 108, 0.15);
 }
 
-.category-nav-card.has-selection {
-  border-color: #1e8a4c;
-}
-
 .category-nav-card.has-selection.active {
   border-color: #1e366c;
 }
@@ -139,11 +135,6 @@
 .category-nav-card.active .category-nav-icon {
   background: #1e366c;
   color: white;
-}
-
-.category-nav-card.has-selection .category-nav-icon {
-  background: #e8f5ed;
-  color: #1e8a4c;
 }
 
 .category-nav-card.has-selection.active .category-nav-icon {
@@ -176,7 +167,6 @@
 }
 
 .category-nav-card.has-selection .category-nav-selection {
-  color: #1e8a4c;
   font-weight: 500;
 }
 

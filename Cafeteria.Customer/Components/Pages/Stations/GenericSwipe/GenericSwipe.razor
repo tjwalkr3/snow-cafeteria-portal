@@ -57,7 +57,7 @@ else
                             <span class="category-nav-selection">
                                 @if (hasSelection)
                                 {
-                                <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>@selectionText
+                                    @selectionText
                                 }
                                 else
                                 {
@@ -65,12 +65,6 @@ else
                                 }
                             </span>
                         </div>
-                        @if (hasSelection)
-                        {
-                            <div class="category-nav-badge">
-                                    <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>
-                            </div>
-                        }
                     </div>
                 }
             </div>

@@ -49,6 +49,11 @@ public partial class LocationCollapsible : ComponentBase
         }
     }
 
+    private async Task ReloadLocationHours()
+    {
+        LocationHours = await LocationService.GetLocationBusinessHours(Location.Id);
+    }
+
     private bool AreHoursDifferent(List<LocationBusinessHoursDto> locationHours, List<StationBusinessHoursDto> stationHours)
     {
         if (locationHours.Count != stationHours.Count)
