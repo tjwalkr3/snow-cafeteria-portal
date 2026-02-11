@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 
 namespace Cafeteria.Management.Services.FoodOptionTypes;
 

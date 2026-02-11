@@ -1,6 +1,8 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
+﻿@using Cafeteria.Shared
+
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Cafeteria.Shared.Components.Pages.SignIn.SignIn).Assembly }">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Components.Layout.MainLayout.MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>

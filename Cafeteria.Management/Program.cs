@@ -5,7 +5,7 @@ using Cafeteria.Management.Components.Pages.FoodOption;
 using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Management.Services.Customers;
 using Cafeteria.Management.Services.Drinks;
 using Cafeteria.Management.Services.Entrees;
@@ -103,7 +103,8 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(typeof(Cafeteria.Shared.Components.Pages.SignIn.SignIn).Assembly);
 
 app.MapGet("/api/auth/signin", async (HttpContext httpContext, string token, string? returnUrl) =>
 {

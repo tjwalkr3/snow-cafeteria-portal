@@ -1,8 +1,8 @@
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace Cafeteria.Management.Components.Pages.SignIn;
+namespace Cafeteria.Shared.Components.Pages.SignIn;
 
 public partial class SignIn : ComponentBase
 {

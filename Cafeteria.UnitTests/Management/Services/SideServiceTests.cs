@@ -1,4 +1,4 @@
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Management.Services.Sides;
 using Cafeteria.Shared.DTOs.Menu;
 using Moq;

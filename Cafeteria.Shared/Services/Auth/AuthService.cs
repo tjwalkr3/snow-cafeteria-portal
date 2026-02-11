@@ -1,7 +1,8 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
-namespace Cafeteria.Management.Services.Auth;
+namespace Cafeteria.Shared.Services.Auth;
 
 public class AuthService : IAuthService
 {

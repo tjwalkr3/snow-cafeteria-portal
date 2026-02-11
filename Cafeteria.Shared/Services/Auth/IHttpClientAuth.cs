@@ -1,4 +1,4 @@
-namespace Cafeteria.Management.Services.Auth;
+namespace Cafeteria.Shared.Services.Auth;
 
 public interface IHttpClientAuth
 {
