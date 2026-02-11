@@ -31,7 +31,9 @@ public partial class PaymentSelect : ComponentBase
 
         if (user?.Identity?.IsAuthenticated ?? false)
         {
-            var email = user.FindFirst(ClaimTypes.Email)?.Value;
+            // Try mapped claim type first, then fall back to raw OIDC claim name
+            var email = user.FindFirst(ClaimTypes.Email)?.Value ?? user.FindFirst("email")?.Value;
+            
             if (!string.IsNullOrEmpty(email))
             {
                 try
@@ -42,12 +44,16 @@ public partial class PaymentSelect : ComponentBase
                         SwipeBalance = swipeData.SwipeBalance;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // If API call fails, swipes remain at 0
-                    Logger.LogError("Failed to retrieve swipe data for email: {Email}", email);
+                    Logger.LogError(ex, "Failed to retrieve swipe data for email: {Email}", email);
                     SwipeBalance = 0;
                 }
+            }
+            else
+            {
+                Logger.LogWarning("Email claim is missing for authenticated user");
             }
         }
     }
