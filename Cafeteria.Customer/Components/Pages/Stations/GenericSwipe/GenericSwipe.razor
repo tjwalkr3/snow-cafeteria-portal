@@ -183,11 +183,15 @@ else
                                 {
                                     <span></span>
                                 }
-                                @if (VM.State.SelectedEntree?.Id == entree.Id)
+                                @if (VM.State.SelectedEntree?.Id == entree.Id && VM.State.SelectedToppings.Count >= (VM.Configuration?.MinimumToppingsRequired ?? 0))
                                 {
                                     <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
                                         <i class="bi bi-check-circle-fill"></i> Added
                                     </button>
+                                }
+                                else if (VM.State.SelectedEntree?.Id == entree.Id)
+                                {
+                                    <span class="status-badge pending d-inline-flex align-items-center justify-content-center">@VM.State.SelectedToppings.Count/@(VM.Configuration?.MinimumToppingsRequired ?? 0)</span>
                                 }
                                 else
                                 {
