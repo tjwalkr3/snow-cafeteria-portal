@@ -114,14 +114,22 @@ else
                                         <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
                                     }
                                 </div>
-                                <div class="ms-3 d-flex align-items-center gap-3">
+                                <div class="ms-2 d-flex align-items-center gap-3">
                                     @if (VM.IsCardOrder)
                                     {
                                         <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
                                     }
                                     @if (VM.State.SelectedEntree?.Id == entree.Id)
                                     {
-                                        <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>
+                                        <button type="button" class="select-btn added" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                            <i class="bi bi-check-circle-fill"></i> Added
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="select-btn" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                            <i class="bi bi-plus-circle"></i> Add
+                                        </button>
                                     }
                                 </div>
                             </div>
@@ -191,7 +199,15 @@ else
                                         }
                                         @if (VM.State.SelectedEntree?.Id == entree.Id)
                                         {
-                                            <i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i>
+                                            <button type="button" class="select-btn added" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                                <i class="bi bi-check-circle-fill"></i> Added
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="select-btn" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                                <i class="bi bi-plus-circle"></i> Add
+                                            </button>
                                         }
                                     </div>
                                 </div>

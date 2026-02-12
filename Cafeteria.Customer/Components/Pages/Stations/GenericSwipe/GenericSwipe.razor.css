@@ -228,13 +228,33 @@
   background: white;
   border: 2px solid #e9ecef;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1rem;
   margin-bottom: 4px;
   cursor: pointer;
 }
 
 .meal-card.selected {
   box-shadow: 0 2px 8px rgba(30, 54, 108, 0.1);
+}
+
+.select-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid #1e366c;
+  background: white;
+  border-radius: 10px;
+  color: #1e366c;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.select-btn.added {
+  border-color: #1f973b;
+  background: #1f973b;
+  color: white;
 }
 
 .info-banner {
