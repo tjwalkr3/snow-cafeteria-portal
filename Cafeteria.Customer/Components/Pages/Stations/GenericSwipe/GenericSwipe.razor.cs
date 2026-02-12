@@ -32,6 +32,7 @@ public partial class GenericSwipe : ComponentBase
     private bool _showOptionsModal;
     private bool _showDeliOptionsModal;
     private int _activeDeliOptionTypeId;
+    private bool _showPizzaToppingsModal;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -119,6 +120,11 @@ public partial class GenericSwipe : ComponentBase
             _showOptionsModal = true;
         }
 
+        if (VM.CurrentStationType == Configuration.StationType.Pizza)
+        {
+            _showPizzaToppingsModal = true;
+        }
+
         StateHasChanged();
     }
 
@@ -136,6 +142,16 @@ public partial class GenericSwipe : ComponentBase
     private void CloseDeliOptionsModal()
     {
         _showDeliOptionsModal = false;
+    }
+
+    private void OpenPizzaToppingsModal()
+    {
+        _showPizzaToppingsModal = true;
+    }
+
+    private void ClosePizzaToppingsModal()
+    {
+        _showPizzaToppingsModal = false;
     }
 
     private void SelectSide(SideDto side)
