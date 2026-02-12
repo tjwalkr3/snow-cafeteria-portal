@@ -22,7 +22,7 @@
         }
         else if (Order == null || (!Order.Entrees.Any() && !Order.Sides.Any() && !Order.Drinks.Any()))
         {
-            <div class="container px-3 py-4">
+            <div class="container px-3 py-2">
                 <div class="empty-state text-center mx-auto my-5">
                     <h4>Your Order is Empty</h4>
                     <p>You haven't added any items yet. Start building your order!</p>
@@ -32,16 +32,16 @@
         }
         else
         {
-            <div class="container px-3 py-4">
-                <div class="mb-3">
-                    <a href="@GetStationSelectUrl()" class="btn text-decoration-none ps-0 back-button">
-                        ❮ Continue Shopping
+            <div class="container px-3 py-2">
+                <div class="mb-1">
+                    <a href="@GetStationSelectUrl()" class="btn text-decoration-none ps-0">
+                        <i class="bi bi-chevron-left"></i> Continue Shopping
                     </a>
                 </div>
 
-                <div class="order-header text-center mb-4">
+                <div class="text-center mb-4">
                     <h1 class="order-title">Your Order</h1>
-                    <p class="order-subtitle">Review your items before placing your order</p>
+                    <p class="order-subtitle mb-0">Review your items before placing your order</p>
                 </div>
 
                 <div class="row g-4">
@@ -66,7 +66,7 @@
                         {
                             @foreach (var entreeGroup in EntreeGroups)
                             {
-                                <div class="card mb-3 shadow-sm">
+                                <div class="card mb-3 border-0 shadow-sm">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <h5 class="card-title fw-bold mb-2">@entreeGroup.Entree.Entree.EntreeName</h5>
@@ -95,7 +95,7 @@
 
                             @foreach (var sideGroup in SideGroups)
                             {
-                                <div class="card mb-3 shadow-sm">
+                                <div class="card mb-3 border-0 shadow-sm">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <h5 class="card-title fw-bold mb-2">@sideGroup.Side.Side.SideName</h5>
@@ -124,7 +124,7 @@
 
                             @foreach (var drinkGroup in DrinkGroups)
                             {
-                                <div class="card mb-3 shadow-sm">
+                                <div class="card mb-3 border-0 shadow-sm">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <h5 class="card-title fw-bold mb-2">@drinkGroup.Drink.DrinkName</h5>
@@ -146,7 +146,7 @@
                         {
                             @foreach (var swipe in SwipeGroups)
                             {
-                                <div class="card mb-3 shadow-sm">
+                                <div class="card mb-3 border-0 shadow-sm">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold mb-2">@swipe.Entree.Entree.EntreeName</h5>
                                         @if (swipe.Entree.SelectedOptions.Any())
@@ -218,7 +218,7 @@
                                     </div>
                                 }
                                 <button @onclick="HandlePlaceOrder" class="place-order-btn" disabled="@(!CanPlaceOrder)">Place Order</button>
-                                <a href="@GetStationSelectUrl()" class="continue-shopping-btn d-block text-center">❮ Continue Shopping</a>
+                                <a href="@GetStationSelectUrl()" class="continue-shopping-btn d-block text-center"><i class="bi bi-chevron-left me-1"></i> Continue Shopping</a>
                             </div>
                         </div>
                     </div>
