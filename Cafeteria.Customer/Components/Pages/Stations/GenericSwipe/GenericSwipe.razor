@@ -198,11 +198,25 @@ else
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="d-block mb-2 text-uppercase"
-                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
-                        Choose Your Toppings (@VM.Configuration?.MinimumToppingsRequired minimum)
-                    </label>
+                <div class="meal-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="mb-0 fw-bold" style="color: #1e366c;">Toppings</h5>
+                            <span class="text-muted" style="font-size: 0.8rem;">Select @(VM.Configuration?.MinimumToppingsRequired ?? 0) minimum</span>
+                        </div>
+                        <div>
+                            @if (VM.State.SelectedToppings.Count >= (VM.Configuration?.MinimumToppingsRequired ?? 0))
+                            {
+                                <span class="select-btn added d-inline-flex align-items-center gap-1">
+                                    <i class="bi bi-check-circle-fill"></i> Done
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge pending d-inline-flex align-items-center justify-content-center">@VM.State.SelectedToppings.Count/@(VM.Configuration?.MinimumToppingsRequired ?? 0)</span>
+                            }
+                        </div>
+                    </div>
                     <div class="d-flex flex-wrap gap-2">
                         @foreach (var topping in VM.AvailableToppings)
                         {
@@ -242,11 +256,11 @@ else
                     (selectedCount - optionType.NumIncluded) * optionType.FoodOptionPrice : 0;
                     var isComplete = selectedCount >= optionType.NumIncluded;
 
-                    <div class="category-card @(isComplete ? "complete" : "")">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="flex-grow-1">
-                                <h3 class="category-title">@optionType.FoodOptionTypeName</h3>
-                                <span class="category-requirement">
+                    <div class="meal-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="mb-0 fw-bold" style="color: #1e366c;">@optionType.FoodOptionTypeName</h5>
+                                <span class="text-muted" style="font-size: 0.8rem;">
                                     @if (isMultiSelect)
                                     {
                                         <text>Select @optionType.NumIncluded</text>
@@ -257,14 +271,16 @@ else
                                     }
                                     @if (optionType.FoodOptionPrice > 0 && optionType.MaxAmount > optionType.NumIncluded)
                                     {
-                                        <span class="extra-price">+$@optionType.FoodOptionPrice.ToString("F2") each extra</span>
+                                        <span class="text-danger ms-2">+$@optionType.FoodOptionPrice.ToString("F2") each extra</span>
                                     }
                                 </span>
                             </div>
-                            <div class="flex-shrink-0">
+                            <div>
                                 @if (isComplete)
                                 {
-                                    <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
+                                    <span class="select-btn added d-inline-flex align-items-center gap-1">
+                                        <i class="bi bi-check-circle-fill"></i> Done
+                                    </span>
                                 }
                                 else
                                 {
@@ -327,11 +343,11 @@ else
                     (selectedCount - optionType.NumIncluded) * optionType.FoodOptionPrice : 0;
                     var isComplete = selectedCount >= optionType.NumIncluded;
 
-                    <div class="category-card @(isComplete ? "complete" : "")">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="flex-grow-1">
-                                <h3 class="category-title">@optionType.FoodOptionTypeName</h3>
-                                <span class="category-requirement">
+                    <div class="meal-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="mb-0 fw-bold" style="color: #1e366c;">@optionType.FoodOptionTypeName</h5>
+                                <span class="text-muted" style="font-size: 0.8rem;">
                                     @if (isMultiSelect)
                                     {
                                         <text>Select @optionType.NumIncluded</text>
@@ -342,14 +358,16 @@ else
                                     }
                                     @if (optionType.FoodOptionPrice > 0 && optionType.MaxAmount > optionType.NumIncluded)
                                     {
-                                        <span class="extra-price">+$@optionType.FoodOptionPrice.ToString("F2") each extra</span>
+                                        <span class="text-danger ms-2">+$@optionType.FoodOptionPrice.ToString("F2") each extra</span>
                                     }
                                 </span>
                             </div>
-                            <div class="flex-shrink-0">
+                            <div>
                                 @if (isComplete)
                                 {
-                                    <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
+                                    <span class="select-btn added d-inline-flex align-items-center gap-1">
+                                        <i class="bi bi-check-circle-fill"></i> Done
+                                    </span>
                                 }
                                 else
                                 {
