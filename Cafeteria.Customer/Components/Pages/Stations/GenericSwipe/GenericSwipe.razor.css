@@ -169,7 +169,7 @@
     padding: 0.5rem 1rem;
     border: 2px solid #e9ecef;
     background: white;
-    border-radius: 24px;
+    border-radius: 8px;
     color: #495057;
     font-size: 0.9rem;
     font-weight: 500;
@@ -224,3 +224,28 @@
     border-radius: 8px;
     margin-bottom: 1.5rem;
 }
+
+.footer-bar {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    z-index: 1030;
+    border-radius: 12px;
+}
+
+    .footer-bar .btn-primary {
+        background: #1e366c;
+        border-color: #1e366c;
+    }
+
+    .footer-bar .btn-primary:hover {
+        background: #162a54;
+        border-color: #162a54;
+    }
+
+    .footer-bar .btn-primary:disabled {
+        background: #1e366c;
+        border-color: #1e366c;
+        opacity: 0.5;
+    }
