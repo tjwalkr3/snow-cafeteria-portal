@@ -249,3 +249,17 @@
         border-color: #1e366c;
         opacity: 0.5;
     }
+
+.swipe-info-banner {
+    background: #eef4fb;
+    color: #1e366c;
+    font-size: 0.85rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 8px;
+    border-left: 3px solid #1e366c;
+}
+
+.step-hint {
+    font-size: 0.88rem;
+    font-weight: 500;
+}

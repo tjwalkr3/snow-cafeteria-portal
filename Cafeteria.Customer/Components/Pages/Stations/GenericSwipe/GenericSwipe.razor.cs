@@ -443,4 +443,20 @@ public partial class GenericSwipe : ComponentBase
         if (totalSelections == 0) return "";
         return $"{totalSelections} filling(s) selected";
     }
+
+    private string GetStepHint()
+    {
+        return VM.ActiveTab switch
+        {
+            "entrees" => "Pick one entree to start your meal.",
+            "toppings" => "Select your pizza and choose your toppings.",
+            "sandwich" => "Build your sandwich by selecting from each category.",
+            "wrap" => "Build your wrap by selecting your fillings.",
+            "sides" => "Pick a side to go with your meal.",
+            "drinks" => VM.Drinks.Any()
+                ? "Choose a drink to complete your meal."
+                : "A fountain drink is included with your meal.",
+            _ => ""
+        };
+    }
 }

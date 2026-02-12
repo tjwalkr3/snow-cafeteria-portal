@@ -30,6 +30,14 @@ else
             </a>
         </div>
 
+        @if (!VM.IsCardOrder)
+        {
+            <div class="swipe-info-banner d-flex align-items-start gap-2 my-3">
+                <i class="bi bi-info-circle flex-shrink-0" style="margin-top: 2px;"></i>
+                <span>Your meal swipe includes one entree, one side, and a drink. Follow the steps below to build your meal.</span>
+            </div>
+        }
+
         @if (VM.IsCardOrder)
         {
             <div class="category-nav d-flex flex-column flex-sm-row flex-wrap gap-3 mb-4">
@@ -66,7 +74,7 @@ else
         }
         else
         {
-            <div class="progress-stepper d-flex align-items-start justify-content-center mb-4">
+            <div class="progress-stepper d-flex align-items-start justify-content-center mb-2">
                 @{
                     var tabs = VM.Configuration?.Tabs ?? new();
                     var tabCount = tabs.Count;
@@ -98,6 +106,11 @@ else
         }
 
         <div class="content-area">
+            @if (!VM.IsCardOrder)
+            {
+                <p class="2">@GetStepHint()</p>
+            }
+
             @if (VM.ActiveTab == "entrees" && VM.Configuration?.ShowEntreeSelection == true)
             {
                 <div class="row row-cols-1 row-cols-lg-3 g-3">
