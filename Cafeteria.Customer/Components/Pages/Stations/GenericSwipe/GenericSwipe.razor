@@ -104,34 +104,36 @@ else
                 @foreach (var entree in VM.Entrees)
                 {
                     <div class="col">
-                        <div class="meal-card @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
+                        <div class="meal-card h-100 d-flex flex-column @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
                             @onclick="() => SelectEntree(entree)">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
-                                    @if (!string.IsNullOrEmpty(entree.EntreeDescription))
-                                    {
-                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
-                                    }
-                                </div>
-                                <div class="ms-2 d-flex align-items-center gap-3">
-                                    @if (VM.IsCardOrder)
-                                    {
-                                        <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
-                                    }
-                                    @if (VM.State.SelectedEntree?.Id == entree.Id)
-                                    {
-                                        <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                            <i class="bi bi-check-circle-fill"></i> Added
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                            <i class="bi bi-plus-circle"></i> Add
-                                        </button>
-                                    }
-                                </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
+                                @if (!string.IsNullOrEmpty(entree.EntreeDescription))
+                                {
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
+                                }
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                @if (VM.IsCardOrder)
+                                {
+                                    <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
+                                }
+                                else
+                                {
+                                    <span></span>
+                                }
+                                @if (VM.State.SelectedEntree?.Id == entree.Id)
+                                {
+                                    <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                        <i class="bi bi-check-circle-fill"></i> Added
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                        <i class="bi bi-plus-circle"></i> Add
+                                    </button>
+                                }
                             </div>
 
                             @if (VM.State.SelectedEntree?.Id == entree.Id &&
@@ -182,34 +184,36 @@ else
                     @foreach (var entree in VM.Entrees)
                     {
                         <div class="col">
-                            <div class="meal-card h-100 @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
+                            <div class="meal-card h-100 d-flex flex-column @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
                                 @onclick="() => SelectEntree(entree)">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
-                                        @if (!string.IsNullOrEmpty(entree.EntreeDescription))
-                                        {
-                                            <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
-                                        }
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3">
-                                        @if (VM.IsCardOrder)
-                                        {
-                                            <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
-                                        }
-                                        @if (VM.State.SelectedEntree?.Id == entree.Id)
-                                        {
-                                            <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                                <i class="bi bi-check-circle-fill"></i> Added
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                                <i class="bi bi-plus-circle"></i> Add
-                                            </button>
-                                        }
-                                    </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
+                                    @if (!string.IsNullOrEmpty(entree.EntreeDescription))
+                                    {
+                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
+                                    }
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    @if (VM.IsCardOrder)
+                                    {
+                                        <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+                                    @if (VM.State.SelectedEntree?.Id == entree.Id)
+                                    {
+                                        <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                            <i class="bi bi-check-circle-fill"></i> Added
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
+                                            <i class="bi bi-plus-circle"></i> Add
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -426,25 +430,35 @@ else
                 @foreach (var side in VM.Sides)
                 {
                     <div class="col">
-                        <div class="meal-card h-100" @onclick="() => SelectSide(side)">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1 fw-600">@side.SideName</h5>
-                                    @if (!string.IsNullOrEmpty(side.SideDescription))
-                                    {
-                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
-                                    }
-                                </div>
-                                <div class="d-flex align-items-center gap-3">
-                                    @if (VM.IsCardOrder)
-                                    {
-                                        <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
-                                    }
-                                    @if (VM.State.SelectedSide?.Id == side.Id)
-                                    {
-                                        <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
-                                    }
-                                </div>
+                        <div class="meal-card h-100 d-flex flex-column" @onclick="() => SelectSide(side)">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1 fw-600">@side.SideName</h5>
+                                @if (!string.IsNullOrEmpty(side.SideDescription))
+                                {
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
+                                }
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                @if (VM.IsCardOrder)
+                                {
+                                    <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
+                                }
+                                else
+                                {
+                                    <span></span>
+                                }
+                                @if (VM.State.SelectedSide?.Id == side.Id)
+                                {
+                                    <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectSide(side)" @onclick:stopPropagation="true">
+                                        <i class="bi bi-check-circle-fill"></i> Added
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectSide(side)" @onclick:stopPropagation="true">
+                                        <i class="bi bi-plus-circle"></i> Add
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -460,25 +474,35 @@ else
                     @foreach (var drink in VM.Drinks)
                     {
                         <div class="col">
-                            <div class="meal-card h-100" @onclick="() => SelectDrink(drink)">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5 class="mb-1 fw-600">@drink.DrinkName</h5>
-                                        @if (!string.IsNullOrEmpty(drink.DrinkDescription))
-                                        {
-                                            <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
-                                        }
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3">
-                                        @if (VM.IsCardOrder)
-                                        {
-                                            <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
-                                        }
-                                        @if (VM.State.SelectedDrink?.Id == drink.Id)
-                                        {
-                                            <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
-                                        }
-                                    </div>
+                            <div class="meal-card h-100 d-flex flex-column" @onclick="() => SelectDrink(drink)">
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1 fw-600">@drink.DrinkName</h5>
+                                    @if (!string.IsNullOrEmpty(drink.DrinkDescription))
+                                    {
+                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
+                                    }
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    @if (VM.IsCardOrder)
+                                    {
+                                        <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+                                    @if (VM.State.SelectedDrink?.Id == drink.Id)
+                                    {
+                                        <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectDrink(drink)" @onclick:stopPropagation="true">
+                                            <i class="bi bi-check-circle-fill"></i> Added
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectDrink(drink)" @onclick:stopPropagation="true">
+                                            <i class="bi bi-plus-circle"></i> Add
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -502,10 +526,8 @@ else
             }
         </div>
 
-        <div class="container footer-bar bg-white border-top shadow-sm d-flex justify-content-between align-items-center px-4 py-3">
-            <div>
-                <span class="text-muted small">@VM.GetSelectionSummary()</span>
-            </div>
+        <div class="container footer-bar bg-white border-top shadow-sm d-flex justify-content-end align-items-center px-4 py-3">
+           
             <div class="d-flex gap-2">
                 @if (VM.IsCardOrder)
                 {
