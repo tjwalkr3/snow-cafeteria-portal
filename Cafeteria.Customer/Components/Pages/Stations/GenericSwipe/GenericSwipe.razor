@@ -104,7 +104,7 @@ else
                 @foreach (var entree in VM.Entrees)
                 {
                     <div class="col">
-                        <div class="meal-card h-100 d-flex flex-column @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
+                        <div class="meal-card d-flex flex-column @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
                             @onclick="() => SelectEntree(entree)">
                             <div class="flex-grow-1">
                                 <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
