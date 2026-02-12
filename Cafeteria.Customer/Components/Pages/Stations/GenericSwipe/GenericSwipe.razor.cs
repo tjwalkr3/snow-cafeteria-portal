@@ -34,6 +34,8 @@ public partial class GenericSwipe : ComponentBase
     private int _activeDeliOptionTypeId;
     private bool _showPizzaToppingsModal;
     private HashSet<string> _stagedToppings = new();
+    private Dictionary<int, string> _stagedBreakfastOptions = new();
+    private HashSet<string> _stagedDeliSelections = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -118,6 +120,7 @@ public partial class GenericSwipe : ComponentBase
 
         if (VM.Configuration?.EntreeSelectionLoadsOptions == true && VM.OptionTypes.Any())
         {
+            _stagedBreakfastOptions = new Dictionary<int, string>(VM.State.SingleSelectOptions);
             _showOptionsModal = true;
         }
 
@@ -138,12 +141,69 @@ public partial class GenericSwipe : ComponentBase
     private void OpenDeliOptionsModal(int optionTypeId)
     {
         _activeDeliOptionTypeId = optionTypeId;
+        _stagedDeliSelections = new HashSet<string>(VM.GetSelectedOptionsForType(optionTypeId));
         _showDeliOptionsModal = true;
     }
 
     private void CloseDeliOptionsModal()
     {
         _showDeliOptionsModal = false;
+    }
+
+    private void ToggleStagedDeliOption(string name)
+    {
+        if (!_stagedDeliSelections.Remove(name))
+            _stagedDeliSelections.Add(name);
+        StateHasChanged();
+    }
+
+    private void SetStagedDeliOption(string name)
+    {
+        _stagedDeliSelections.Clear();
+        _stagedDeliSelections.Add(name);
+        StateHasChanged();
+    }
+
+    private void ConfirmDeliOptions()
+    {
+        var currentSelections = VM.GetSelectedOptionsForType(_activeDeliOptionTypeId);
+        var activeOptionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == _activeDeliOptionTypeId);
+        var isMulti = activeOptionType != null && VM.IsMultiSelectOptionType(activeOptionType);
+
+        if (isMulti)
+        {
+            var toRemove = currentSelections.Except(_stagedDeliSelections).ToList();
+            var toAdd = _stagedDeliSelections.Except(currentSelections).ToList();
+            foreach (var opt in toRemove)
+                VM.ToggleOptionForType(_activeDeliOptionTypeId, opt);
+            foreach (var opt in toAdd)
+                VM.ToggleOptionForType(_activeDeliOptionTypeId, opt);
+        }
+        else
+        {
+            var selected = _stagedDeliSelections.FirstOrDefault();
+            if (selected != null)
+                VM.SetOptionForType(_activeDeliOptionTypeId, selected);
+        }
+
+        _showDeliOptionsModal = false;
+        StateHasChanged();
+    }
+
+    private void SetStagedBreakfastOption(int optionTypeId, string optionName)
+    {
+        _stagedBreakfastOptions[optionTypeId] = optionName;
+        StateHasChanged();
+    }
+
+    private void ConfirmBreakfastOptions()
+    {
+        foreach (var kvp in _stagedBreakfastOptions)
+        {
+            VM.SetOptionForType(kvp.Key, kvp.Value);
+        }
+        _showOptionsModal = false;
+        StateHasChanged();
     }
 
     private void OpenPizzaToppingsModal()
