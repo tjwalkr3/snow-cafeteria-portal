@@ -112,6 +112,15 @@ else
                                 {
                                     <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
                                 }
+                                @if (VM.State.SelectedEntree?.Id == entree.Id && VM.State.SingleSelectOptions.Any())
+                                {
+                                    <div class="d-flex flex-wrap gap-1 mt-2">
+                                        @foreach (var option in VM.State.SingleSelectOptions.Values)
+                                        {
+                                            <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@option</span>
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 @if (VM.IsCardOrder)
