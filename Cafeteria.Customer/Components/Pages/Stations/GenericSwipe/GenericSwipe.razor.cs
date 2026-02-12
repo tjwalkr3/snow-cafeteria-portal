@@ -29,6 +29,7 @@ public partial class GenericSwipe : ComponentBase
     public int Station { get; set; }
 
     private bool _isLoading = true;
+    private bool _showOptionsModal;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -110,7 +111,18 @@ public partial class GenericSwipe : ComponentBase
     private async Task SelectEntree(EntreeDto entree)
     {
         await VM.SelectEntreeAsync(entree);
+
+        if (VM.Configuration?.EntreeSelectionLoadsOptions == true && VM.OptionTypes.Any())
+        {
+            _showOptionsModal = true;
+        }
+
         StateHasChanged();
+    }
+
+    private void CloseOptionsModal()
+    {
+        _showOptionsModal = false;
     }
 
     private void SelectSide(SideDto side)
