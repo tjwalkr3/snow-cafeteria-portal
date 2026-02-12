@@ -23,14 +23,14 @@
 }
 else
 {
-    <div class="container px-3 py-4">
-        <div class="mb-3">
+    <div class="container py-2 px-0">
+        <div class="mb-2">
             <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
                 &#10094; Back to Station Selection
             </a>
         </div>
         <div class="mb-4">
-            <h1 class="station-page-title mb-1 fs-1 fw-bold d-flex align-items-center">
+            <h1 class="station-page-title mb-1 fs-2 fw-bold d-flex align-items-center">
                 <i class="bi @GetStationIcon() me-3"></i>@VM.Configuration?.PageTitle
             </h1>
         </div>
@@ -138,7 +138,7 @@ else
                                             style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
                                             @optionTypeWithOptions.OptionType.FoodOptionTypeName
                                         </label>
-                                        <div class="option-group">
+                                        <div class="d-flex flex-wrap gap-2">
                                             @foreach (var option in optionTypeWithOptions.Options)
                                             {
                                                 <button type="button"
@@ -197,7 +197,7 @@ else
                         style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
                         Choose Your Toppings (@VM.Configuration?.MinimumToppingsRequired minimum)
                     </label>
-                    <div class="option-group">
+                    <div class="d-flex flex-wrap gap-2">
                         @foreach (var topping in VM.AvailableToppings)
                         {
                             <button type="button"
@@ -237,8 +237,8 @@ else
                     var isComplete = selectedCount >= optionType.NumIncluded;
 
                     <div class="category-card @(isComplete ? "complete" : "")">
-                        <div class="category-header">
-                            <div class="category-info">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="flex-grow-1">
                                 <h3 class="category-title">@optionType.FoodOptionTypeName</h3>
                                 <span class="category-requirement">
                                     @if (isMultiSelect)
@@ -255,7 +255,7 @@ else
                                     }
                                 </span>
                             </div>
-                            <div class="category-status">
+                            <div class="flex-shrink-0">
                                 @if (isComplete)
                                 {
                                     <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
@@ -266,7 +266,7 @@ else
                                 }
                             </div>
                         </div>
-                        <div class="category-options">
+                        <div class="d-flex flex-wrap gap-2">
                             @foreach (var option in optionTypeWithOptions.Options)
                             {
                                 var isSelected = VM.IsOptionSelected(optionType.Id, option.FoodOptionName);
@@ -322,8 +322,8 @@ else
                     var isComplete = selectedCount >= optionType.NumIncluded;
 
                     <div class="category-card @(isComplete ? "complete" : "")">
-                        <div class="category-header">
-                            <div class="category-info">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="flex-grow-1">
                                 <h3 class="category-title">@optionType.FoodOptionTypeName</h3>
                                 <span class="category-requirement">
                                     @if (isMultiSelect)
@@ -340,7 +340,7 @@ else
                                     }
                                 </span>
                             </div>
-                            <div class="category-status">
+                            <div class="flex-shrink-0">
                                 @if (isComplete)
                                 {
                                     <span><i class="bi bi-check-circle-fill fs-4" style="color: #1f973b;"></i></span>
@@ -351,7 +351,7 @@ else
                                 }
                             </div>
                         </div>
-                        <div class="category-options">
+                        <div class="d-flex flex-wrap gap-2">
                             @foreach (var option in optionTypeWithOptions.Options)
                             {
                                 var isSelected = VM.IsOptionSelected(optionType.Id, option.FoodOptionName);
