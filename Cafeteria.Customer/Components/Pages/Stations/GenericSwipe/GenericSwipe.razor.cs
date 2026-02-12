@@ -459,4 +459,20 @@ public partial class GenericSwipe : ComponentBase
             _ => ""
         };
     }
+
+    private string GetCardStepHint()
+    {
+        return VM.ActiveTab switch
+        {
+            "entrees" => "Browse entrees and add any you'd like.",
+            "toppings" => "Pick your pizza, prices shown per item.",
+            "sandwich" => "Build your sandwich, extras may have an additional charge.",
+            "wrap" => "Build your wrap, extras may have an additional charge.",
+            "sides" => "Add a side, prices shown per item.",
+            "drinks" => VM.Drinks.Any()
+                ? "Add a drink, prices shown per item."
+                : "A fountain drink is available at the station.",
+            _ => ""
+        };
+    }
 }

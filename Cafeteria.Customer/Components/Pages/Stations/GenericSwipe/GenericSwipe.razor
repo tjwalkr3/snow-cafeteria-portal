@@ -40,6 +40,11 @@ else
 
         @if (VM.IsCardOrder)
         {
+            <div class="card-info-banner d-flex align-items-start gap-2 my-3">
+                <i class="bi bi-credit-card flex-shrink-0" style="margin-top: 2px;"></i>
+                <span>Pay per item. Browse the categories below and add what you'd like to your cart.</span>
+            </div>
+
             <div class="category-nav d-flex flex-column flex-sm-row flex-wrap gap-3 mb-4">
                 @{
                     var cardTabs = VM.Configuration?.Tabs ?? new();
@@ -108,7 +113,11 @@ else
         <div class="content-area">
             @if (!VM.IsCardOrder)
             {
-                <p class="2">@GetStepHint()</p>
+                <p class="step-hint text-muted mb-3">@GetStepHint()</p>
+            }
+            else
+            {
+                <p class="step-hint text-muted mb-3">@GetCardStepHint()</p>
             }
 
             @if (VM.ActiveTab == "entrees" && VM.Configuration?.ShowEntreeSelection == true)
