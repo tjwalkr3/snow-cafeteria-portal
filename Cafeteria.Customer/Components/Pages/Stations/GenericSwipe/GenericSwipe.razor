@@ -538,30 +538,29 @@ else
                                 @foreach (var topping in VM.AvailableToppings)
                                 {
                                     <button type="button"
-                                        class="option-chip @(VM.State.SelectedToppings.Contains(topping) ? "selected" : "") d-inline-flex align-items-center"
-                                        @onclick="() => ToggleTopping(topping)">
+                                        class="option-chip @(_stagedToppings.Contains(topping) ? "selected" : "") d-inline-flex align-items-center"
+                                        @onclick="() => ToggleStagedTopping(topping)">
                                         @topping
-                                        @if (VM.State.SelectedToppings.Contains(topping))
+                                        @if (_stagedToppings.Contains(topping))
                                         {
                                             <i class="bi bi-check-lg"></i>
                                         }
                                     </button>
                                 }
                             </div>
-                            @if (VM.HasExtraToppingCharge())
+                            @if (_stagedToppings.Count > (VM.Configuration?.IncludedToppingsCount ?? 0))
                             {
                                 <div class="info-banner warning mt-3">
                                     <div>
                                         <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Additional charge: $@VM.GetExtraToppingCharge().ToString("F2") for @(VM.State.SelectedToppings.Count
-                                                            - VM.Configuration?.IncludedToppingsCount)
+                                        Additional charge: $@((_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0)) * (VM.Configuration?.ExtraToppingPrice ?? 0m)).ToString("F2") for @(_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0))
                                         extra topping(s)
                                     </div>
                                 </div>
                             }
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-primary w-100" style="background: #1e366c; border-color: #1e366c; border-radius: 10px; padding: 0.75rem;" @onclick="ClosePizzaToppingsModal">
+                            <button type="button" class="btn btn-primary w-100" style="background: #1e366c; border-color: #1e366c; border-radius: 10px; padding: 0.75rem;" @onclick="ConfirmPizzaToppings">
                                 Done
                             </button>
                         </div>

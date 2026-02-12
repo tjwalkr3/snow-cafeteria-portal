@@ -33,6 +33,7 @@ public partial class GenericSwipe : ComponentBase
     private bool _showDeliOptionsModal;
     private int _activeDeliOptionTypeId;
     private bool _showPizzaToppingsModal;
+    private HashSet<string> _stagedToppings = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -122,6 +123,7 @@ public partial class GenericSwipe : ComponentBase
 
         if (VM.CurrentStationType == Configuration.StationType.Pizza)
         {
+            _stagedToppings = new HashSet<string>(VM.State.SelectedToppings);
             _showPizzaToppingsModal = true;
         }
 
@@ -146,12 +148,34 @@ public partial class GenericSwipe : ComponentBase
 
     private void OpenPizzaToppingsModal()
     {
+        _stagedToppings = new HashSet<string>(VM.State.SelectedToppings);
         _showPizzaToppingsModal = true;
     }
 
     private void ClosePizzaToppingsModal()
     {
         _showPizzaToppingsModal = false;
+    }
+
+    private void ToggleStagedTopping(string topping)
+    {
+        if (!_stagedToppings.Remove(topping))
+            _stagedToppings.Add(topping);
+        StateHasChanged();
+    }
+
+    private void ConfirmPizzaToppings()
+    {
+        var toRemove = VM.State.SelectedToppings.Except(_stagedToppings).ToList();
+        var toAdd = _stagedToppings.Except(VM.State.SelectedToppings).ToList();
+
+        foreach (var topping in toRemove)
+            VM.ToggleTopping(topping);
+        foreach (var topping in toAdd)
+            VM.ToggleTopping(topping);
+
+        _showPizzaToppingsModal = false;
+        StateHasChanged();
     }
 
     private void SelectSide(SideDto side)
