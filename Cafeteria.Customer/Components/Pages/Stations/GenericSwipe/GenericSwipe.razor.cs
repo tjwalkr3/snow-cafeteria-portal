@@ -30,6 +30,8 @@ public partial class GenericSwipe : ComponentBase
 
     private bool _isLoading = true;
     private bool _showOptionsModal;
+    private bool _showDeliOptionsModal;
+    private int _activeDeliOptionTypeId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -123,6 +125,17 @@ public partial class GenericSwipe : ComponentBase
     private void CloseOptionsModal()
     {
         _showOptionsModal = false;
+    }
+
+    private void OpenDeliOptionsModal(int optionTypeId)
+    {
+        _activeDeliOptionTypeId = optionTypeId;
+        _showDeliOptionsModal = true;
+    }
+
+    private void CloseDeliOptionsModal()
+    {
+        _showDeliOptionsModal = false;
     }
 
     private void SelectSide(SideDto side)
