@@ -1,4 +1,4 @@
-namespace Cafeteria.Management.Services.Customers;
+namespace Cafeteria.Shared.Services.Customer;
 
 public interface ICustomerRegistrationService
 {

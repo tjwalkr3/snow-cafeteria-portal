@@ -1,8 +1,9 @@
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
-namespace Cafeteria.Customer.Services.Customer;
+namespace Cafeteria.Shared.Services.Customer;
 
-public class CustomerService(HttpClient httpClient) : ICustomerService
+public class CustomerRegistrationService(HttpClient httpClient) : ICustomerRegistrationService
 {
     public async Task RegisterOrUpdateCustomerAsync(string accessToken)
     {

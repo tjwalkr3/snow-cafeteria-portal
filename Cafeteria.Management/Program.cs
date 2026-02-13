@@ -6,6 +6,7 @@ using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Shared.Services.Auth;
+using Cafeteria.Shared.Services.Customer;
 using Cafeteria.Management.Services.Customers;
 using Cafeteria.Management.Services.Drinks;
 using Cafeteria.Management.Services.Entrees;
@@ -26,7 +27,8 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(Cafeteria.Shared.Controllers.AuthController).Assembly);
 
 builder.Services.AddHttpContextAccessor();
 
