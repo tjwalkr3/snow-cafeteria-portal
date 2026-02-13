@@ -281,12 +281,33 @@ public partial class PlaceOrder : ComponentBase
 
     private decimal GetItemPrice(OrderEntreeItem item)
     {
-        return item.Entree.EntreePrice + item.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice);
+        return item.Entree.EntreePrice + CalculateOptionsCost(item.SelectedOptions);
     }
 
     private decimal GetItemPrice(OrderSideItem item)
     {
-        return item.Side.SidePrice + item.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice);
+        return item.Side.SidePrice + CalculateOptionsCost(item.SelectedOptions);
+    }
+
+    private decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
+    {
+        if (selectedOptions == null || selectedOptions.Count == 0)
+            return 0m;
+
+        decimal cost = 0m;
+
+        // Group options by their type ID
+        var optionsByType = selectedOptions.GroupBy(opt => opt.OptionType.Id);
+
+        foreach (var group in optionsByType)
+        {
+            var optionType = group.First().OptionType;
+            var selectedCount = group.Count();
+            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
+            cost += chargeableCount * optionType.FoodOptionPrice;
+        }
+
+        return cost;
     }
 
     private async Task IncreaseSwipeQuantity(SwipeGroup swipe)
