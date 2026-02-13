@@ -27,7 +27,7 @@ public class SideServiceTests
             new SideDto { Id = 2, SideName = "Salad", SidePrice = 3.00m }
         };
 
-        _mockHttpClient.Setup(x => x.GetAsync<List<SideDto>>("api/side"))
+        _mockHttpClient.Setup(x => x.GetAsync<List<SideDto>>("side"))
             .ReturnsAsync(expectedSides);
 
         var result = await _sideService.GetAllSides();
@@ -35,7 +35,7 @@ public class SideServiceTests
         Assert.NotNull(result);
         Assert.Equal(2, result.Count);
         Assert.Equal("Fries", result[0].SideName);
-        _mockHttpClient.Verify(x => x.GetAsync<List<SideDto>>("api/side"), Times.Once);
+        _mockHttpClient.Verify(x => x.GetAsync<List<SideDto>>("side"), Times.Once);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class SideServiceTests
             Content = JsonContent.Create(expectedSide)
         };
 
-        _mockHttpClient.Setup(x => x.PostAsync<SideDto>("api/Side", It.IsAny<SideDto>()))
+        _mockHttpClient.Setup(x => x.PostAsync<SideDto>("Side", It.IsAny<SideDto>()))
             .ReturnsAsync(responseMessage);
 
         // Act
@@ -59,7 +59,7 @@ public class SideServiceTests
         Assert.NotNull(result);
         Assert.Equal(expectedSide.Id, result.Id);
         Assert.Equal(expectedSide.SideName, result.SideName);
-        _mockHttpClient.Verify(x => x.PostAsync<SideDto>("api/Side", It.IsAny<SideDto>()), Times.Once);
+        _mockHttpClient.Verify(x => x.PostAsync<SideDto>("Side", It.IsAny<SideDto>()), Times.Once);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class SideServiceTests
             Content = JsonContent.Create(expectedSide)
         };
 
-        _mockHttpClient.Setup(x => x.PutAsync<SideDto>($"api/Side/{updateDto.Id}", It.IsAny<SideDto>()))
+        _mockHttpClient.Setup(x => x.PutAsync<SideDto>($"Side/{updateDto.Id}", It.IsAny<SideDto>()))
             .ReturnsAsync(responseMessage);
 
         // Act
@@ -82,7 +82,7 @@ public class SideServiceTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(expectedSide.SideName, result.SideName);
-        _mockHttpClient.Verify(x => x.PutAsync<SideDto>($"api/Side/{updateDto.Id}", It.IsAny<SideDto>()), Times.Once);
+        _mockHttpClient.Verify(x => x.PutAsync<SideDto>($"Side/{updateDto.Id}", It.IsAny<SideDto>()), Times.Once);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class SideServiceTests
             Content = new StringContent("Error message")
         };
 
-        _mockHttpClient.Setup(x => x.PostAsync<SideDto>("api/Side", It.IsAny<SideDto>()))
+        _mockHttpClient.Setup(x => x.PostAsync<SideDto>("Side", It.IsAny<SideDto>()))
             .ReturnsAsync(responseMessage);
 
         // Act & Assert
@@ -109,13 +109,13 @@ public class SideServiceTests
         int sideId = 1;
         var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
 
-        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"api/side/{sideId}"))
+        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"side/{sideId}"))
             .ReturnsAsync(responseMessage);
 
         var result = await _sideService.DeleteSide(sideId);
 
         Assert.True(result);
-        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"api/side/{sideId}"), Times.Once);
+        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"side/{sideId}"), Times.Once);
     }
 
     [Fact]
@@ -124,12 +124,12 @@ public class SideServiceTests
         int sideId = 1;
         var responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
 
-        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"api/side/{sideId}"))
+        _mockHttpClient.Setup(x => x.DeleteAsync<object>($"side/{sideId}"))
             .ReturnsAsync(responseMessage);
 
         var result = await _sideService.DeleteSide(sideId);
 
         Assert.False(result);
-        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"api/side/{sideId}"), Times.Once);
+        _mockHttpClient.Verify(x => x.DeleteAsync<object>($"side/{sideId}"), Times.Once);
     }
 }

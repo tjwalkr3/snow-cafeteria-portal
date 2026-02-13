@@ -7,7 +7,7 @@ public class EntreeService(IHttpClientAuth client) : IEntreeService
 {
     public async Task<List<EntreeDto>> GetAllEntrees()
     {
-        return await client.GetAsync<List<EntreeDto>>("api/entree") ?? [];
+        return await client.GetAsync<List<EntreeDto>>("entree") ?? [];
     }
 
     public async Task<EntreeDto?> GetEntreeById(int id)
@@ -15,12 +15,12 @@ public class EntreeService(IHttpClientAuth client) : IEntreeService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        return await client.GetAsync<EntreeDto>($"api/entree/{id}");
+        return await client.GetAsync<EntreeDto>($"entree/{id}");
     }
 
     public async Task<EntreeDto> CreateEntree(EntreeDto entreeDto)
     {
-        var response = await client.PostAsync("api/entree", entreeDto);
+        var response = await client.PostAsync("entree", entreeDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<EntreeDto>() ?? throw new InvalidOperationException("Failed to create entree");
     }
@@ -30,7 +30,7 @@ public class EntreeService(IHttpClientAuth client) : IEntreeService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.PutAsync($"api/entree/{id}", entreeDto);
+        var response = await client.PutAsync($"entree/{id}", entreeDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<EntreeDto>();
     }
@@ -40,7 +40,7 @@ public class EntreeService(IHttpClientAuth client) : IEntreeService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.DeleteAsync<object>($"api/entree/{id}");
+        var response = await client.DeleteAsync<object>($"entree/{id}");
         return response.IsSuccessStatusCode;
     }
 
@@ -49,7 +49,7 @@ public class EntreeService(IHttpClientAuth client) : IEntreeService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.PutAsync($"api/entree/{id}/stock", inStock);
+        var response = await client.PutAsync($"entree/{id}/stock", inStock);
         return response.IsSuccessStatusCode;
     }
 }

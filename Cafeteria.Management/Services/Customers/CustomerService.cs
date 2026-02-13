@@ -14,6 +14,6 @@ public class CustomerService : ICustomerService
 
     public async Task<List<CustomerSwipeDto>> GetAllCustomers()
     {
-        return await _client.GetAsync<List<CustomerSwipeDto>>("api/swipe/all-customers") ?? [];
+        return await _client.GetAsync<List<CustomerSwipeDto>>("swipe/all-customers") ?? [];
     }
 }
