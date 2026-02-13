@@ -4,8 +4,15 @@
 
 <div class="page">
     <main>
-        <article class="content">
-            @Body
+        <article class="content px-4">
+            <AuthorizeView>
+                <Authorized>
+                    @Body
+                </Authorized>
+                <NotAuthorized>
+                    <NotSignedIn />
+                </NotAuthorized>
+            </AuthorizeView>
         </article>
     </main>
 </div>

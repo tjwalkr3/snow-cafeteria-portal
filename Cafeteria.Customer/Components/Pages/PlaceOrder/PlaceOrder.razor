@@ -8,9 +8,7 @@
 
 <ConfirmationToast IsVisible="@_showToast" Title="Order Placed!" Message="@_toastMessage" OnHidden="@OnToastHidden" />
 
-<AuthorizeView>
-    <Authorized>
-        @if (!IsInitialized || _isLoading)
+@if (!IsInitialized || _isLoading)
 {
     <div class="loading-container">
         <Spinner Message="Loading your order..." />
@@ -225,12 +223,3 @@ else
         </div>
     </div>
 }
-    </Authorized>
-    <NotAuthorized>
-        <div class="container px-4 py-4">
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-triangle"></i> Please log in to view this page.
-            </div>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>

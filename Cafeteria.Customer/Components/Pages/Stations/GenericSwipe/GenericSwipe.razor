@@ -11,9 +11,7 @@
 
 <PageTitle>@(VM.Configuration?.PageTitle ?? "Station")</PageTitle>
 
-<AuthorizeView>
-    <Authorized>
-        @if (_isLoading)
+@if (_isLoading)
 {
     <div class="container px-3 py-4">
         <div class="text-center py-5">
@@ -502,12 +500,3 @@ else
         </div>
     </div>
 }
-    </Authorized>
-    <NotAuthorized>
-        <div class="container px-4 py-4">
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-triangle"></i> Please log in to view this page.
-            </div>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>
