@@ -3,10 +3,17 @@ using Cafeteria.Shared.Services.Auth;
 
 namespace Cafeteria.Management.Services.Customers;
 
-public class CustomerService(IHttpClientAuth client) : ICustomerService
+public class CustomerService : ICustomerService
 {
+    private readonly IHttpClientAuth _client;
+
+    public CustomerService(IHttpClientAuth client)
+    {
+        _client = client;
+    }
+
     public async Task<List<CustomerSwipeDto>> GetAllCustomers()
     {
-        return await client.GetAsync<List<CustomerSwipeDto>>("api/swipe/all-customers") ?? [];
+        return await _client.GetAsync<List<CustomerSwipeDto>>("api/swipe/all-customers") ?? [];
     }
 }
