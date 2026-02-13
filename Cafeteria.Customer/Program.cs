@@ -96,7 +96,8 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(typeof(Cafeteria.Shared.Components.Pages.SignIn.SignIn).Assembly);
 
 app.MapControllers();
 
