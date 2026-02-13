@@ -8,7 +8,7 @@
     <Authorized>
         @if (!_isLoaded)
         {
-            <div class="loading-container">
+            <div class="loading-container d-flex justify-content-center align-items-center">
                 <Spinner Message="Loading your profile..." />
             </div>
         }
@@ -16,44 +16,44 @@
         {
             <div class="container px-4 py-4">
                 <div class="mb-3">
-                    <a href="/" class="back-link">
+                    <a href="/" class="back-link d-inline-flex align-items-center gap-2">
                         <i class="bi bi-arrow-left"></i> Back to Menu
                     </a>
                 </div>
 
-                <div class="page-header text-center mb-4">
+                <div class="page-header text-center mb-3">
                     <h1 class="page-title">My Profile</h1>
                 </div>
 
                 <div class="row justify-content-center">
                     <div class="col-lg-6 col-xl-5">
-                        <div class="profile-card">
-                            <div class="profile-avatar-section">
-                                <div class="profile-avatar">
+                        <div class="profile-card p-3">
+                            <div class="profile-avatar-section d-flex flex-column flex-sm-row align-items-center text-center text-sm-start gap-3 pb-3 mb-3 border-bottom">
+                                <div class="profile-avatar rounded-circle d-flex align-items-center justify-content-center">
                                     <i class="bi bi-person-fill"></i>
                                 </div>
-                                <div class="profile-name-section">
+                                <div class="profile-name-section d-flex flex-column align-items-center align-items-sm-start gap-1">
                                     <h2 class="profile-name">@UserName</h2>
                                     <span class="profile-email">@UserEmail</span>
                                 </div>
                             </div>
 
-                            <div class="profile-details">
-                                <div class="profile-detail-item">
-                                    <div class="detail-icon">
+                            <div class="profile-details d-flex flex-column gap-3">
+                                <div class="profile-detail-item d-flex align-items-center gap-3 p-3">
+                                    <div class="detail-icon d-flex align-items-center justify-content-center">
                                         <i class="bi bi-envelope"></i>
                                     </div>
-                                    <div class="detail-content">
+                                    <div class="detail-content d-flex flex-column">
                                         <span class="detail-label">Email Address</span>
                                         <span class="detail-value">@UserEmail</span>
                                     </div>
                                 </div>
 
-                                <div class="profile-detail-item">
-                                    <div class="detail-icon swipe-icon">
+                                <div class="profile-detail-item d-flex align-items-center gap-3 p-3">
+                                    <div class="detail-icon swipe-icon d-flex align-items-center justify-content-center">
                                         <i class="bi bi-wallet2"></i>
                                     </div>
-                                    <div class="detail-content">
+                                    <div class="detail-content d-flex flex-column">
                                         <span class="detail-label">Swipe Balance</span>
                                         <span class="detail-value swipe-balance">@SwipeBalance Swipes</span>
                                     </div>
@@ -67,8 +67,8 @@
     </Authorized>
     <NotAuthorized>
         <div class="container px-4 py-4">
-            <div class="not-authorized-card">
-                <i class="bi bi-lock"></i>
+            <div class="not-authorized-card p-5 text-center mx-auto my-4">
+                <i class="bi bi-lock d-block mb-3"></i>
                 <h3>Sign In Required</h3>
                 <p>Please sign in to view your profile information.</p>
             </div>
