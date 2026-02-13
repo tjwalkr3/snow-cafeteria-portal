@@ -3,8 +3,6 @@
 
 <PageTitle>Select Station</PageTitle>
 
-<AuthorizeView>
-    <Authorized>
         <div class="container py-2 px-1">
     @if (StationSelectVM.Stations == null && IsInitialized == false)
     {
@@ -50,12 +48,3 @@
         </div>
     }
         </div>
-    </Authorized>
-    <NotAuthorized>
-        <div class="container px-4 py-4">
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-triangle"></i> Please log in to view this page.
-            </div>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>

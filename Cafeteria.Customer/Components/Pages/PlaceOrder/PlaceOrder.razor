@@ -8,8 +8,6 @@
 
 <ConfirmationToast IsVisible="@_showToast" Title="Order Placed!" Message="@_toastMessage" OnHidden="@OnToastHidden" />
 
-<AuthorizeView>
-    <Authorized>
         @if (!IsInitialized || _isLoading)
         {
             <div class="loading-container text-center p-5">
@@ -225,12 +223,3 @@
                 </div>
             </div>
         }
-    </Authorized>
-    <NotAuthorized>
-        <div class="container px-4 py-4">
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-triangle"></i> Please log in to view this page.
-            </div>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>

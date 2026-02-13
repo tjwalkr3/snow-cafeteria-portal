@@ -1,8 +1,8 @@
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace Cafeteria.Management.Components.Pages.SignIn;
+namespace Cafeteria.Shared.Components.Pages.SignIn;
 
 public partial class SignIn : ComponentBase
 {
@@ -68,7 +68,7 @@ public partial class SignIn : ComponentBase
         try
         {
             var destination = string.IsNullOrWhiteSpace(ReturnUrl) ? "/" : ReturnUrl;
-            var url = $"/api/auth/signin?token={Uri.EscapeDataString(sessionToken)}&returnUrl={Uri.EscapeDataString(destination)}";
+            var url = $"/auth/signin?token={Uri.EscapeDataString(sessionToken)}&returnUrl={Uri.EscapeDataString(destination)}";
             await JSRuntime.InvokeVoidAsync("window.location.assign", url);
         }
         catch (JSDisconnectedException)

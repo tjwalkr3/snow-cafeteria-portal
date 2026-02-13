@@ -1,4 +1,4 @@
-using Cafeteria.Customer.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Shared.DTOs.Order;
 using Moq;

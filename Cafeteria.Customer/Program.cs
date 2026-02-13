@@ -6,9 +6,9 @@ using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
-using Cafeteria.Customer.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
+using Cafeteria.Shared.Services.Customer;
 using Cafeteria.Customer.Services.Cart;
-using Cafeteria.Customer.Services.Customer;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Printer;
@@ -25,7 +25,8 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(Cafeteria.Shared.Controllers.AuthController).Assembly);
 
 builder.Services.AddHttpContextAccessor();
 
@@ -42,7 +43,7 @@ builder.Services.AddScoped<IApiOrderService, ApiOrderService>();
 builder.Services.AddScoped<IApiSwipeService, ApiSwipeService>();
 builder.Services.AddScoped<IPrinterService, PrinterService>();
 
-builder.Services.AddHttpClient<ICustomerService, CustomerService>(client =>
+builder.Services.AddHttpClient<ICustomerRegistrationService, CustomerRegistrationService>(client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://api/api/";
     client.BaseAddress = new Uri(apiBaseUrl);
@@ -96,7 +97,8 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(typeof(Cafeteria.Shared.Components.Pages.SignIn.SignIn).Assembly);
 
 app.MapControllers();
 

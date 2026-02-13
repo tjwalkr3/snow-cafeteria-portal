@@ -1,4 +1,4 @@
-using Cafeteria.Customer.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Moq.Protected;

@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 
 namespace Cafeteria.Management.Services.Sides;
 
@@ -14,18 +14,18 @@ public class SideService : ISideService
 
     public async Task<List<SideDto>> GetAllSides()
     {
-        var result = await _httpClient.GetAsync<List<SideDto>>("api/side");
+        var result = await _httpClient.GetAsync<List<SideDto>>("side");
         return result ?? new List<SideDto>();
     }
 
     public async Task<SideDto?> GetSideById(int id)
     {
-        return await _httpClient.GetAsync<SideDto>($"api/side/{id}");
+        return await _httpClient.GetAsync<SideDto>($"side/{id}");
     }
 
     public async Task<SideDto?> CreateSide(SideDto side)
     {
-        var response = await _httpClient.PostAsync("api/Side", side);
+        var response = await _httpClient.PostAsync("Side", side);
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadFromJsonAsync<SideDto>();
@@ -37,7 +37,7 @@ public class SideService : ISideService
 
     public async Task<SideDto?> UpdateSide(SideDto side)
     {
-        var response = await _httpClient.PutAsync($"api/Side/{side.Id}", side);
+        var response = await _httpClient.PutAsync($"Side/{side.Id}", side);
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadFromJsonAsync<SideDto>();
@@ -49,13 +49,13 @@ public class SideService : ISideService
 
     public async Task<bool> DeleteSide(int id)
     {
-        var response = await _httpClient.DeleteAsync<object>($"api/side/{id}");
+        var response = await _httpClient.DeleteAsync<object>($"side/{id}");
         return response?.IsSuccessStatusCode ?? false;
     }
 
     public async Task<bool> SetStockStatusById(int id, bool inStock)
     {
-        var response = await _httpClient.PutAsync($"api/side/{id}/stock", inStock);
+        var response = await _httpClient.PutAsync($"side/{id}/stock", inStock);
         return response.IsSuccessStatusCode;
     }
 }

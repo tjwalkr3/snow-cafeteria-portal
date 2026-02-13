@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 
 namespace Cafeteria.Management.Services.FoodOptionTypes;
 
@@ -7,7 +7,7 @@ public class FoodOptionTypeService(IHttpClientAuth client) : IFoodOptionTypeServ
 {
     public async Task<FoodOptionTypeDto> CreateFoodType(FoodOptionTypeDto foodTypeDto)
     {
-        var response = await client.PostAsync("api/FoodOptionType", foodTypeDto);
+        var response = await client.PostAsync("FoodOptionType", foodTypeDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<FoodOptionTypeDto>() ?? throw new InvalidOperationException("Failed to create food type");
     }
@@ -17,12 +17,12 @@ public class FoodOptionTypeService(IHttpClientAuth client) : IFoodOptionTypeServ
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        return await client.GetAsync<FoodOptionTypeDto>($"api/FoodOptionType/{id}");
+        return await client.GetAsync<FoodOptionTypeDto>($"FoodOptionType/{id}");
     }
 
     public async Task<List<FoodOptionTypeDto>> GetAllFoodTypes()
     {
-        return await client.GetAsync<List<FoodOptionTypeDto>>("api/FoodOptionType") ?? [];
+        return await client.GetAsync<List<FoodOptionTypeDto>>("FoodOptionType") ?? [];
     }
 
     public async Task<FoodOptionTypeDto?> UpdateFoodTypeById(int id, FoodOptionTypeDto foodTypeDto)
@@ -30,7 +30,7 @@ public class FoodOptionTypeService(IHttpClientAuth client) : IFoodOptionTypeServ
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.PutAsync($"api/FoodOptionType/{id}", foodTypeDto);
+        var response = await client.PutAsync($"FoodOptionType/{id}", foodTypeDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<FoodOptionTypeDto>();
     }
@@ -40,18 +40,18 @@ public class FoodOptionTypeService(IHttpClientAuth client) : IFoodOptionTypeServ
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.DeleteAsync<object>($"api/FoodOptionType/{id}");
+        var response = await client.DeleteAsync<object>($"FoodOptionType/{id}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<bool>();
     }
 
     public async Task<List<EntreeDto>> GetAllEntrees()
     {
-        return await client.GetAsync<List<EntreeDto>>("api/entree") ?? [];
+        return await client.GetAsync<List<EntreeDto>>("entree") ?? [];
     }
 
     public async Task<List<SideDto>> GetAllSides()
     {
-        return await client.GetAsync<List<SideDto>>("api/side") ?? [];
+        return await client.GetAsync<List<SideDto>>("side") ?? [];
     }
 }

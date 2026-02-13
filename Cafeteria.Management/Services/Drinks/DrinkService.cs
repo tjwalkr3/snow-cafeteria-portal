@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 
 namespace Cafeteria.Management.Services.Drinks;
 
@@ -7,7 +7,7 @@ public class DrinkService(IHttpClientAuth client) : IDrinkService
 {
     public async Task<List<DrinkDto>> GetAllDrinks()
     {
-        return await client.GetAsync<List<DrinkDto>>("api/drink") ?? [];
+        return await client.GetAsync<List<DrinkDto>>("drink") ?? [];
     }
 
     public async Task<DrinkDto?> GetDrinkById(int id)
@@ -15,12 +15,12 @@ public class DrinkService(IHttpClientAuth client) : IDrinkService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        return await client.GetAsync<DrinkDto>($"api/drink/{id}");
+        return await client.GetAsync<DrinkDto>($"drink/{id}");
     }
 
     public async Task<DrinkDto> CreateDrink(DrinkDto drinkDto)
     {
-        var response = await client.PostAsync("api/drink", drinkDto);
+        var response = await client.PostAsync("drink", drinkDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<DrinkDto>() ?? throw new InvalidOperationException("Failed to create drink");
     }
@@ -30,7 +30,7 @@ public class DrinkService(IHttpClientAuth client) : IDrinkService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.PutAsync($"api/drink/{id}", drinkDto);
+        var response = await client.PutAsync($"drink/{id}", drinkDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<DrinkDto>();
     }
@@ -40,7 +40,7 @@ public class DrinkService(IHttpClientAuth client) : IDrinkService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.DeleteAsync<object>($"api/drink/{id}");
+        var response = await client.DeleteAsync<object>($"drink/{id}");
         return response.IsSuccessStatusCode;
     }
 
@@ -49,7 +49,7 @@ public class DrinkService(IHttpClientAuth client) : IDrinkService
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.PutAsync($"api/drink/{id}/stock", inStock);
+        var response = await client.PutAsync($"drink/{id}/stock", inStock);
         return response.IsSuccessStatusCode;
     }
 }

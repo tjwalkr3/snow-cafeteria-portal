@@ -5,8 +5,6 @@
 
 <PageTitle>My Order History</PageTitle>
 
-<AuthorizeView>
-    <Authorized>
         @if (!IsInitialized || OrderHistoryVM.IsLoading)
         {
             <div class="loading-container d-flex justify-content-center align-items-center">
@@ -27,20 +25,11 @@
                     <p class="page-subtitle">View your past cafeteria orders</p>
                 </div>
 
-                <div class="row g-4">
-                    <div class="col-lg-5 col-xl-4">
-                        <div class="orders-list-header d-flex justify-content-between align-items-center mb-3">
-                            <span class="orders-count">Orders (@OrderHistoryVM.TotalOrderCount)</span>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-funnel"></i> Filter
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item @(string.IsNullOrEmpty(OrderHistoryVM.FilterType) ? "active" : "")" href="#" @onclick="@(() => ApplyFilter(null))" @onclick:preventDefault>All Orders</a></li>
-                                    <li><a class="dropdown-item @(OrderHistoryVM.FilterType == "card" ? "active" : "")" href="#" @onclick="@(() => ApplyFilter("card"))" @onclick:preventDefault>Card Payments</a></li>
-                                    <li><a class="dropdown-item @(OrderHistoryVM.FilterType == "swipe" ? "active" : "")" href="#" @onclick="@(() => ApplyFilter("swipe"))" @onclick:preventDefault>Meal Swipes</a></li>
-                                </ul>
-                            </div>
+                <div class="orders-list">
+                    @if (OrderHistoryVM.Orders == null || !OrderHistoryVM.Orders.Any())
+                    {
+                        <div class="empty-orders">
+                            <p>No orders found.</p>
                         </div>
 
                         <div class="orders-list d-flex flex-column gap-3">
@@ -125,11 +114,64 @@
                                         </span>
                                     }
                                 </div>
+                            </div>
+                        }
+                    }
 
-                                <div class="order-items-section">
-                                    <h3 class="items-heading">ITEMS</h3>
+                    @if (OrderHistoryVM.HasMoreOrders)
+                    {
+                        <div class="load-more-container">
+                            <button class="btn btn-link load-more-btn" @onclick="LoadMore">
+                                <i class="bi bi-clock-history"></i> Load More Orders
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
 
-                                    @foreach (var item in selectedOrder.FoodItems)
+            <div class="col-lg-7 col-xl-8">
+                @if (OrderHistoryVM.SelectedOrder != null)
+                {
+                    var selectedOrder = OrderHistoryVM.SelectedOrder;
+                    <div class="order-details-card">
+                        <div class="order-details-header">
+                            <div>
+                                <h2 class="order-details-title">Order #@selectedOrder.Id</h2>
+                                <span class="order-details-date">@selectedOrder.OrderTime.ToString("MMMM dd, yyyy") · @selectedOrder.OrderTime.ToString("h:mm tt")</span>
+                            </div>
+                            @if (OrderHistoryVM.IsCardPayment(selectedOrder))
+                            {
+                                <span class="badge payment-badge-lg card-badge-lg">
+                                    <i class="bi bi-credit-card"></i> Card Payment
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge payment-badge-lg swipe-badge-lg">
+                                    <i class="bi bi-wallet2"></i> Meal Swipe
+                                </span>
+                            }
+                        </div>
+
+                        <div class="order-items-section">
+                            <h3 class="items-heading">ITEMS</h3>
+
+                            @foreach (var item in selectedOrder.FoodItems)
+                            {
+                                <div class="order-item-card">
+                                    <div class="order-item-header">
+                                        <div class="order-item-info">
+                                            <h4 class="order-item-name">@item.Name</h4>
+                                            <span class="order-item-station">
+                                                <i class="bi bi-geo-alt"></i> @OrderHistoryVM.GetStationName(item.StationId)
+                                            </span>
+                                        </div>
+                                        @if (OrderHistoryVM.IsCardPayment(selectedOrder) && item.CardCost.HasValue)
+                                        {
+                                            <span class="order-item-price">$@item.CardCost.Value.ToString("F2")</span>
+                                        }
+                                    </div>
+                                    @if (item.Options.Any())
                                     {
                                         <div class="order-item-card">
                                             <div class="order-item-header d-flex justify-content-between align-items-start">
@@ -156,7 +198,8 @@
                                         </div>
                                     }
                                 </div>
-
+                            }
+                        </div>
                                 <div class="order-totals-section">
                                     @if (OrderHistoryVM.IsCardPayment(selectedOrder))
                                     {
@@ -200,15 +243,15 @@
                             </div>
                         }
                     </div>
-                </div>
-            </div>
-        }
-    </Authorized>
-    <NotAuthorized>
-        <div class="container px-4 py-4">
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-triangle"></i> Please log in to view this page.
+                }
+                else
+                {
+                    <div class="no-order-selected">
+                        <i class="bi bi-receipt"></i>
+                        <p>Select an order to view details</p>
+                    </div>
+                }
             </div>
         </div>
-    </NotAuthorized>
-</AuthorizeView>
+    </div>
+}

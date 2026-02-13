@@ -1,10 +1,10 @@
-using Cafeteria.Customer.Services.Auth;
-using Cafeteria.Customer.Services.Customer;
+using Cafeteria.Shared.Services.Customer;
+using Cafeteria.Shared.Services.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cafeteria.Customer.Controllers;
+namespace Cafeteria.Shared.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -14,7 +14,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> SignInCustomer(
         [FromQuery] string token,
         [FromQuery] string? returnUrl,
-        [FromServices] ICustomerService customerService)
+        [FromServices] ICustomerRegistrationService customerAuthService)
     {
         try
         {
@@ -41,7 +41,7 @@ public class AuthController : ControllerBase
 
             try
             {
-                await customerService.RegisterOrUpdateCustomerAsync(accessToken);
+                await customerAuthService.RegisterOrUpdateCustomerAsync(accessToken);
             }
             catch
             {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Cafeteria.Management.Components.Layout.SigninButton;
 
@@ -7,15 +8,25 @@ public partial class SigninButton : ComponentBase
     [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;
 
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+
     private void SignIn()
     {
-        var currentUri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        var returnUrl = Uri.EscapeDataString(currentUri.LocalPath);
-        NavigationManager.NavigateTo($"/signin?returnUrl={returnUrl}", forceLoad: true);
+        NavigationManager.NavigateTo("/signin?returnUrl=/");
     }
 
-    private void SignOut()
+    private async Task SignOut()
     {
-        NavigationManager.NavigateTo("/signout", forceLoad: true);
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("window.location.assign", "/auth/signout");
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (TaskCanceledException)
+        {
+        }
     }
 }

@@ -1,5 +1,5 @@
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Management.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 
 namespace Cafeteria.Management.Services.OptionOptionTypes;
 
@@ -7,7 +7,7 @@ public class OptionOptionTypeService(IHttpClientAuth client) : IOptionOptionType
 {
     public async Task<List<OptionOptionTypeDto>> GetAllOptionOptionTypes()
     {
-        return await client.GetAsync<List<OptionOptionTypeDto>>("api/OptionOptionType") ?? [];
+        return await client.GetAsync<List<OptionOptionTypeDto>>("OptionOptionType") ?? [];
     }
 
     public async Task<OptionOptionTypeDto?> GetOptionOptionTypeById(int id)
@@ -15,7 +15,7 @@ public class OptionOptionTypeService(IHttpClientAuth client) : IOptionOptionType
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        return await client.GetAsync<OptionOptionTypeDto>($"api/OptionOptionType/{id}");
+        return await client.GetAsync<OptionOptionTypeDto>($"OptionOptionType/{id}");
     }
 
     public async Task<bool> DeleteOptionOptionTypeById(int id)
@@ -23,14 +23,14 @@ public class OptionOptionTypeService(IHttpClientAuth client) : IOptionOptionType
         if (id < 1)
             throw new ArgumentOutOfRangeException(nameof(id));
 
-        var response = await client.DeleteAsync<object>($"api/OptionOptionType/{id}");
+        var response = await client.DeleteAsync<object>($"OptionOptionType/{id}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<bool>();
     }
 
     public async Task<OptionOptionTypeDto> CreateOptionOptionType(OptionOptionTypeDto optionOptionTypeDto)
     {
-        var response = await client.PostAsync("api/OptionOptionType", optionOptionTypeDto);
+        var response = await client.PostAsync("OptionOptionType", optionOptionTypeDto);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<OptionOptionTypeDto>() ?? throw new InvalidOperationException("Failed to create option-option-type mapping");
     }
