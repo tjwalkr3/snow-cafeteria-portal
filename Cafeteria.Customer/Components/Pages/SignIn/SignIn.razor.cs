@@ -1,4 +1,4 @@
-using Cafeteria.Customer.Services.Auth;
+using Cafeteria.Shared.Services.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
