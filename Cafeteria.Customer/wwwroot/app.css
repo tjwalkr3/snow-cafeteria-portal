@@ -43,17 +43,6 @@ body {
   color: #6b7280;
 }
 
-.hover-card {
-  transition: all 0.3s ease;
-  border: 2px solid transparent !important;
-  border-radius: 12px !important;
-}
-
-.hover-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
-}
-
 .card-link {
   color: inherit;
 }
