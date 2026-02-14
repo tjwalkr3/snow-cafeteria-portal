@@ -428,27 +428,30 @@ else
                             <button type="button" class="btn-close" @onclick="CloseSandwichBuilderModal"></button>
                         </div>
                         <div class="modal-body pt-2">
-                            @foreach (var optionTypeWithOptions in VM.OptionTypes)
+                            @{ var optTypeList = VM.OptionTypes.ToList(); }
+                            @for (int oi = 0; oi < optTypeList.Count; oi++)
                             {
+                                var optionTypeWithOptions = optTypeList[oi];
                                 var optType = optionTypeWithOptions.OptionType;
                                 var isMulti = VM.IsMultiSelectOptionType(optionTypeWithOptions);
                                 var stagedForType = _stagedSandwichSelections.GetValueOrDefault(optType.Id) ?? new HashSet<string>();
                                 var stagedCount = stagedForType.Count;
                                 var extraCost = stagedCount > optType.NumIncluded ?
                                     (stagedCount - optType.NumIncluded) * optType.FoodOptionPrice : 0;
+                                var isLast = oi == optTypeList.Count - 1;
 
-                                <div class="mb-4">
-                                    <label class="d-block mb-2 text-uppercase"
-                                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
-                                        @optType.FoodOptionTypeName
-                                        <span class="text-muted" style="text-transform: none; letter-spacing: 0;">
+                                <div class="@(isLast ? "mb-2" : "mb-4 pb-3")" style="@(isLast ? "" : "border-bottom: 1px solid #e9ecef;")">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi @GetCategoryIcon(optType.FoodOptionTypeName)" style="font-size: 1.1rem; color: #1e366c;"></i>
+                                        <span style="font-size: 1rem; font-weight: 700; color: #1e366c;">@optType.FoodOptionTypeName</span>
+                                        <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
                                             — @(isMulti ? $"Select {optType.NumIncluded}" : "Select 1")
                                         </span>
                                         @if (optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
                                         {
-                                            <span class="text-danger ms-1" style="text-transform: none; letter-spacing: 0;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
+                                            <span class="text-danger" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
                                         }
-                                    </label>
+                                    </div>
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach (var option in optionTypeWithOptions.Options)
                                         {
