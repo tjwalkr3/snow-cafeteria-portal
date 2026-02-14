@@ -259,7 +259,11 @@ else
                             }
                         </div>
                     </div>
-                    <div class="ms-3">
+                    <div class="ms-3 d-flex flex-column align-items-end gap-1">
+                        @if (VM.IsCardOrder && deliEntree != null)
+                        {
+                            <span class="price-badge">$@deliEntree.EntreePrice.ToString("F2")</span>
+                        }
                         @if (sandwichComplete)
                         {
                             <span class="select-btn added d-inline-flex align-items-center gap-1">
