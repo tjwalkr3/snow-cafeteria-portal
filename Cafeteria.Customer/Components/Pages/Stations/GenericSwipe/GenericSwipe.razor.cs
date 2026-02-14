@@ -32,6 +32,8 @@ public partial class GenericSwipe : ComponentBase
     private bool _showOptionsModal;
     private bool _showSandwichBuilderModal;
     private Dictionary<int, HashSet<string>> _stagedSandwichSelections = new();
+    private bool _showWrapBuilderModal;
+    private Dictionary<int, HashSet<string>> _stagedWrapSelections = new();
     private bool _showDeliOptionsModal;
     private int _activeDeliOptionTypeId;
     private HashSet<string> _stagedDeliSelections = new();
@@ -92,9 +94,15 @@ public partial class GenericSwipe : ComponentBase
         {
             "bread" => "bi-slash-square",
             "meat" => "bi-egg-fill",
+            "meat choice" => "bi-egg-fill",
             "cheese" => "bi-square-fill",
             "toppings" => "bi-leaf",
             "dressing" => "bi-droplet-fill",
+            "plate base" => "bi-basket2-fill",
+            "side" or "sides" => "bi-basket2-fill",
+            "tortilla" => "bi-circle",
+            "protein" => "bi-egg-fried",
+            "sauce" => "bi-droplet-fill",
             _ => "bi-circle"
         };
     }
@@ -199,6 +207,68 @@ public partial class GenericSwipe : ComponentBase
         }
 
         _showSandwichBuilderModal = false;
+        StateHasChanged();
+    }
+
+    private void OpenWrapBuilderModal()
+    {
+        _stagedWrapSelections = new Dictionary<int, HashSet<string>>();
+        foreach (var optionTypeWithOptions in VM.OptionTypes)
+        {
+            var id = optionTypeWithOptions.OptionType.Id;
+            _stagedWrapSelections[id] = new HashSet<string>(VM.GetSelectedOptionsForType(id));
+        }
+        _showWrapBuilderModal = true;
+    }
+
+    private void CloseWrapBuilderModal()
+    {
+        _showWrapBuilderModal = false;
+    }
+
+    private void ToggleStagedWrapOption(int optionTypeId, string name)
+    {
+        if (!_stagedWrapSelections.ContainsKey(optionTypeId))
+            _stagedWrapSelections[optionTypeId] = new HashSet<string>();
+
+        if (!_stagedWrapSelections[optionTypeId].Remove(name))
+            _stagedWrapSelections[optionTypeId].Add(name);
+        StateHasChanged();
+    }
+
+    private void SetStagedWrapOption(int optionTypeId, string name)
+    {
+        _stagedWrapSelections[optionTypeId] = new HashSet<string> { name };
+        StateHasChanged();
+    }
+
+    private void ConfirmWrapBuilder()
+    {
+        foreach (var optionTypeWithOptions in VM.OptionTypes)
+        {
+            var optTypeId = optionTypeWithOptions.OptionType.Id;
+            var isMulti = VM.IsMultiSelectOptionType(optionTypeWithOptions);
+            var currentSelections = VM.GetSelectedOptionsForType(optTypeId);
+            var staged = _stagedWrapSelections.GetValueOrDefault(optTypeId) ?? new HashSet<string>();
+
+            if (isMulti)
+            {
+                var toRemove = currentSelections.Except(staged).ToList();
+                var toAdd = staged.Except(currentSelections).ToList();
+                foreach (var opt in toRemove)
+                    VM.ToggleOptionForType(optTypeId, opt);
+                foreach (var opt in toAdd)
+                    VM.ToggleOptionForType(optTypeId, opt);
+            }
+            else
+            {
+                var selected = staged.FirstOrDefault();
+                if (selected != null)
+                    VM.SetOptionForType(optTypeId, selected);
+            }
+        }
+
+        _showWrapBuilderModal = false;
         StateHasChanged();
     }
 

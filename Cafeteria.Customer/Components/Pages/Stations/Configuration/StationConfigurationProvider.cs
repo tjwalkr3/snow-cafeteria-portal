@@ -157,7 +157,7 @@ public class StationConfigurationProvider : IStationConfigurationProvider
             PageTitle = "Wraps Station",
             Tabs = new List<TabDefinition>
             {
-                new("wrap", "Wrap", isDefault: true),
+                new("wrap", "Entree", isDefault: true),
                 new("sides", "Sides"),
                 new("drinks", "Drinks")
             },
