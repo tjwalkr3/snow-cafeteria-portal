@@ -20,13 +20,11 @@ public class DeliSelectionStrategy : BaseSelectionStrategy
     {
         if (isCardOrder)
         {
-            // Card orders: allow complete sandwich, or just side, or just drink
             if (IsSandwichComplete(state))
                 return true;
             return state.SelectedSide != null || state.SelectedDrink != null;
         }
 
-        // Swipe orders: require complete sandwich + side + drink
         if (state.SelectedSide == null || state.SelectedDrink == null)
             return false;
 
@@ -90,7 +88,6 @@ public class DeliSelectionStrategy : BaseSelectionStrategy
 
     public override void SetOptionForType(int optionTypeId, string optionName, SelectionState state)
     {
-        // For Deli, single-select options are stored in MultiSelectOptions with a single item
         state.MultiSelectOptions[optionTypeId] = new List<string> { optionName };
     }
 
@@ -124,7 +121,6 @@ public class DeliSelectionStrategy : BaseSelectionStrategy
 
         if (isCardOrder)
         {
-            // Add only selected items
             if (IsSandwichComplete(state))
             {
                 await AddSandwichToCart(state);
@@ -136,7 +132,6 @@ public class DeliSelectionStrategy : BaseSelectionStrategy
         }
         else
         {
-            // Swipe: add all three
             await AddSandwichToCart(state);
             await CartService.AddSide(CART_KEY, state.SelectedSide!);
             await CartService.AddDrink(CART_KEY, state.SelectedDrink!);
