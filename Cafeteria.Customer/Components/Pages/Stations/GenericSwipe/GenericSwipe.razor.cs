@@ -30,12 +30,14 @@ public partial class GenericSwipe : ComponentBase
 
     private bool _isLoading = true;
     private bool _showOptionsModal;
+    private bool _showSandwichBuilderModal;
+    private Dictionary<int, HashSet<string>> _stagedSandwichSelections = new();
     private bool _showDeliOptionsModal;
     private int _activeDeliOptionTypeId;
+    private HashSet<string> _stagedDeliSelections = new();
     private bool _showPizzaToppingsModal;
     private HashSet<string> _stagedToppings = new();
     private Dictionary<int, string> _stagedBreakfastOptions = new();
-    private HashSet<string> _stagedDeliSelections = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -136,6 +138,68 @@ public partial class GenericSwipe : ComponentBase
     private void CloseOptionsModal()
     {
         _showOptionsModal = false;
+    }
+
+    private void OpenSandwichBuilderModal()
+    {
+        _stagedSandwichSelections = new Dictionary<int, HashSet<string>>();
+        foreach (var optionTypeWithOptions in VM.OptionTypes)
+        {
+            var id = optionTypeWithOptions.OptionType.Id;
+            _stagedSandwichSelections[id] = new HashSet<string>(VM.GetSelectedOptionsForType(id));
+        }
+        _showSandwichBuilderModal = true;
+    }
+
+    private void CloseSandwichBuilderModal()
+    {
+        _showSandwichBuilderModal = false;
+    }
+
+    private void ToggleStagedSandwichOption(int optionTypeId, string name)
+    {
+        if (!_stagedSandwichSelections.ContainsKey(optionTypeId))
+            _stagedSandwichSelections[optionTypeId] = new HashSet<string>();
+
+        if (!_stagedSandwichSelections[optionTypeId].Remove(name))
+            _stagedSandwichSelections[optionTypeId].Add(name);
+        StateHasChanged();
+    }
+
+    private void SetStagedSandwichOption(int optionTypeId, string name)
+    {
+        _stagedSandwichSelections[optionTypeId] = new HashSet<string> { name };
+        StateHasChanged();
+    }
+
+    private void ConfirmSandwichBuilder()
+    {
+        foreach (var optionTypeWithOptions in VM.OptionTypes)
+        {
+            var optTypeId = optionTypeWithOptions.OptionType.Id;
+            var isMulti = VM.IsMultiSelectOptionType(optionTypeWithOptions);
+            var currentSelections = VM.GetSelectedOptionsForType(optTypeId);
+            var staged = _stagedSandwichSelections.GetValueOrDefault(optTypeId) ?? new HashSet<string>();
+
+            if (isMulti)
+            {
+                var toRemove = currentSelections.Except(staged).ToList();
+                var toAdd = staged.Except(currentSelections).ToList();
+                foreach (var opt in toRemove)
+                    VM.ToggleOptionForType(optTypeId, opt);
+                foreach (var opt in toAdd)
+                    VM.ToggleOptionForType(optTypeId, opt);
+            }
+            else
+            {
+                var selected = staged.FirstOrDefault();
+                if (selected != null)
+                    VM.SetOptionForType(optTypeId, selected);
+            }
+        }
+
+        _showSandwichBuilderModal = false;
+        StateHasChanged();
     }
 
     private void OpenDeliOptionsModal(int optionTypeId)
@@ -450,7 +514,7 @@ public partial class GenericSwipe : ComponentBase
         {
             "entrees" => "Pick one entree to start your meal.",
             "toppings" => "Select your pizza and choose your toppings.",
-            "sandwich" => "Build your sandwich by selecting from each category.",
+            "sandwich" => "Tap the sandwich card to build your custom sandwich.",
             "wrap" => "Build your wrap by selecting your fillings.",
             "sides" => "Pick a side to go with your meal.",
             "drinks" => VM.Drinks.Any()

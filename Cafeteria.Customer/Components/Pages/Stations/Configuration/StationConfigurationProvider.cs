@@ -133,7 +133,7 @@ public class StationConfigurationProvider : IStationConfigurationProvider
             PageTitle = "Deli Station",
             Tabs = new List<TabDefinition>
             {
-                new("sandwich", "Sandwich", isDefault: true),
+                new("sandwich", "Entree", isDefault: true),
                 new("sides", "Sides"),
                 new("drinks", "Drinks")
             },
