@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-namespace Cafeteria.Management.Components.Layout.NotSignedIn;
+namespace Cafeteria.Shared.Components.Layout.NotSignedIn;
 
 public partial class NotSignedIn : ComponentBase
 {
