@@ -528,7 +528,7 @@ else
                                 <div class="info-banner warning mt-3">
                                     <div>
                                         <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Additional charge: $@((_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0)) * (VM.Configuration?.ExtraToppingPrice ?? 0m)).ToString("F2") for @(_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0))
+                                        Additional charge: $@VM.GetExtraToppingCharge().ToString("F2") for @(_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0))
                                         extra topping(s)
                                     </div>
                                 </div>
