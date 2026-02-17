@@ -40,6 +40,7 @@ public partial class GenericSwipe : ComponentBase
     private bool _showPizzaToppingsModal;
     private HashSet<string> _stagedToppings = new();
     private Dictionary<int, string> _stagedBreakfastOptions = new();
+    private EntreeDto? _stagedBreakfastEntree;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -130,7 +131,11 @@ public partial class GenericSwipe : ComponentBase
 
         if (VM.Configuration?.EntreeSelectionLoadsOptions == true && VM.OptionTypes.Any())
         {
+            // Stage the entree — don't commit until the user clicks "Done"
+            _stagedBreakfastEntree = entree;
+            VM.State.SelectedEntree = null;
             _stagedBreakfastOptions = new Dictionary<int, string>(VM.State.SingleSelectOptions);
+            VM.State.SingleSelectOptions.Clear();
             _showOptionsModal = true;
         }
 
@@ -145,7 +150,11 @@ public partial class GenericSwipe : ComponentBase
 
     private void CloseOptionsModal()
     {
+        // Discard the staged entree — user closed without clicking "Done"
+        _stagedBreakfastEntree = null;
+        _stagedBreakfastOptions.Clear();
         _showOptionsModal = false;
+        StateHasChanged();
     }
 
     private void OpenSandwichBuilderModal()
@@ -332,6 +341,13 @@ public partial class GenericSwipe : ComponentBase
 
     private void ConfirmBreakfastOptions()
     {
+        // Commit the staged entree now that the user clicked "Done"
+        if (_stagedBreakfastEntree != null)
+        {
+            VM.State.SelectedEntree = _stagedBreakfastEntree;
+            _stagedBreakfastEntree = null;
+        }
+
         foreach (var kvp in _stagedBreakfastOptions)
         {
             VM.SetOptionForType(kvp.Key, kvp.Value);
