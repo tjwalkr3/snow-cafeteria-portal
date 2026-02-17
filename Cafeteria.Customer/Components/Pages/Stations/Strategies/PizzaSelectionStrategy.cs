@@ -69,6 +69,9 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
             {
                 AvailableToppings = new List<string>(FallbackToppings);
             }
+
+            // Load option types with pricing information
+            OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(pizzaEntree.Id);
         }
 
         // Auto-select first entree
@@ -118,17 +121,16 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
 
         await CartService.AddEntree(CART_KEY, state.SelectedEntree);
 
+        // Get the toppings option type (should be the first/only option type for pizza)
+        var toppingsOptionType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Pizza Toppings" || ot.Options.Any(o => state.SelectedToppings.Contains(o.FoodOptionName)));
+
         foreach (var topping in state.SelectedToppings)
         {
             var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
-            if (toppingOption != null)
+            if (toppingOption != null && toppingsOptionType != null)
             {
-                var optionType = new FoodOptionTypeDto
-                {
-                    FoodOptionTypeName = "Pizza Toppings",
-                    EntreeId = state.SelectedEntree.Id
-                };
-                await CartService.AddEntreeOption(CART_KEY, state.SelectedEntree.Id, toppingOption, optionType);
+                // Use the actual option type with pricing information from the database
+                await CartService.AddEntreeOption(CART_KEY, state.SelectedEntree.Id, toppingOption, toppingsOptionType.OptionType);
             }
         }
     }
@@ -159,7 +161,12 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
     public override decimal GetExtraToppingCharge(SelectionState state)
     {
         int extraToppings = Math.Max(0, state.SelectedToppings.Count - INCLUDED_TOPPINGS);
-        return extraToppings * EXTRA_TOPPING_PRICE;
+
+        // Get the actual topping price from the database (via OptionTypes)
+        var toppingsOptionType = OptionTypes.FirstOrDefault();
+        var toppingPrice = toppingsOptionType?.OptionType.FoodOptionPrice ?? EXTRA_TOPPING_PRICE;
+
+        return extraToppings * toppingPrice;
     }
 
     public override bool HasExtraToppingCharge(SelectionState state)
