@@ -8,6 +8,7 @@ using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Shared.Services.Customer;
+using Cafeteria.Shared.Services.Portal;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Customer.Services.Order;
@@ -50,6 +51,12 @@ builder.Services.AddHttpClient<ICustomerRegistrationService, CustomerRegistratio
 });
 
 builder.Services.AddHttpClient<IAuthService, AuthService>();
+
+builder.Services.AddSingleton<IPortalSettings>(new PortalSettings
+{
+    PortalName = "Customer Portal",
+    SignInSubtitle = "Sign in to access the customer system"
+});
 
 // Register view models
 builder.Services.AddScoped<ILocationSelectVM, LocationSelectVM>();

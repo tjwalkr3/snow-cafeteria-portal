@@ -7,6 +7,7 @@ using Cafeteria.Management.Components.Pages.LocationAndStation;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Shared.Services.Customer;
+using Cafeteria.Shared.Services.Portal;
 using Cafeteria.Management.Services.Customers;
 using Cafeteria.Management.Services.Drinks;
 using Cafeteria.Management.Services.Entrees;
@@ -47,6 +48,12 @@ builder.Services.AddHttpClient("default")
     });
 
 builder.Services.AddHttpClient<IAuthService, AuthService>();
+
+builder.Services.AddSingleton<IPortalSettings>(new PortalSettings
+{
+    PortalName = "Management Portal",
+    SignInSubtitle = "Sign in to access the management system"
+});
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodOptionTypeService, FoodOptionTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
