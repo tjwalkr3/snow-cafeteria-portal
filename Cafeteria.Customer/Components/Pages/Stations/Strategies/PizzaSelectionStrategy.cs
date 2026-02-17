@@ -161,7 +161,12 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
     public override decimal GetExtraToppingCharge(SelectionState state)
     {
         int extraToppings = Math.Max(0, state.SelectedToppings.Count - INCLUDED_TOPPINGS);
-        return extraToppings * EXTRA_TOPPING_PRICE;
+        
+        // Get the actual topping price from the database (via OptionTypes)
+        var toppingsOptionType = OptionTypes.FirstOrDefault();
+        var toppingPrice = toppingsOptionType?.OptionType.FoodOptionPrice ?? EXTRA_TOPPING_PRICE;
+        
+        return extraToppings * toppingPrice;
     }
 
     public override bool HasExtraToppingCharge(SelectionState state)
