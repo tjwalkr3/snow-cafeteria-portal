@@ -1,0 +1,24 @@
+﻿@inherits LayoutComponentBase
+
+<Header />
+
+<div class="page">
+    <main>
+        <article class="content px-4">
+            <AuthorizeView>
+                <Authorized>
+                    @Body
+                </Authorized>
+                <NotAuthorized>
+                    <NotSignedIn />
+                </NotAuthorized>
+            </AuthorizeView>
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>

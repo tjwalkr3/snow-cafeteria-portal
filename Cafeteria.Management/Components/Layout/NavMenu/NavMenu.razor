@@ -1,0 +1,78 @@
+@using Cafeteria.Management.Components.Layout.SigninButton
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="Expand sidebar" class="sidebar-expander" id="sidebarExpander" />
+
+<div class="nav-scrollable">
+    <div class="sidebar-header">
+        <h1 class="sidebar-title">Snow Cafeteria</h1>
+        <label for="sidebarExpander" class="expand-btn" title="Expand sidebar">
+            <span class="bi bi-chevron-right expand-icon"></span>
+        </label>
+    </div>
+    <nav class="nav flex-column">
+        <div class="nav-item">
+            <NavLink class="nav-link" href="entrees" title="Entrees">
+                <span class="bi bi-egg-fried" aria-hidden="true"></span>
+                <span class="nav-label">Entrees</span>
+            </NavLink>
+        </div>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="sides" title="Sides">
+                <span class="bi bi-collection" aria-hidden="true"></span>
+                <span class="nav-label">Sides</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="food-option-type" title="Food Option & Type">
+                <span class="bi bi-basket" aria-hidden="true"></span>
+                <span class="nav-label">Food Option & Type</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="drinks" title="Drinks">
+                <span class="bi bi-cup-straw" aria-hidden="true"></span>
+                <span class="nav-label">Drinks</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="location-station" title="Location & Station">
+                <span class="bi bi-geo-alt" aria-hidden="true"></span>
+                <span class="nav-label">Location & Station</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="customers" title="Customers">
+                <span class="bi bi-people" aria-hidden="true"></span>
+                <span class="nav-label">Customers</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="orders" title="Orders">
+                <span class="bi bi-receipt" aria-hidden="true"></span>
+                <span class="nav-label">Orders</span>
+            </NavLink>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="signin-container">
+            <SigninButton />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("sidebarManager.init");
+    }
+}

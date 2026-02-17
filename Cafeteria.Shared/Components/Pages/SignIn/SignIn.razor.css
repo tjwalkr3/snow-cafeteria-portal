@@ -1,0 +1,20 @@
+.page-title {
+    color: #1e366c;
+}
+
+.btn-signin {
+    background-color: #1e366c;
+    border-color: #1e366c;
+    color: white;
+}
+
+.btn-signin:hover {
+    background-color: #152849;
+    border-color: #152849;
+}
+
+.btn-signin:disabled {
+    background-color: #1e366c;
+    border-color: #1e366c;
+    opacity: 0.65;
+}

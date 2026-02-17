@@ -10,7 +10,7 @@ const int keycloakPort = 8080;
 const string keycloakHost = "keycloak";
 const string keycloakRealm = "AppRealm";
 
-var postgres = builder.AddContainer("postgres", "postgres", "18-alpine")
+builder.AddContainer("postgres", "postgres", "18-alpine")
     .WithEnvironment("POSTGRES_PASSWORD", postgresPassword)
     .WithEnvironment("POSTGRES_USER", postgresUser)
     .WithEnvironment("POSTGRES_DB", postgresDb)
@@ -38,16 +38,15 @@ var api = builder.AddProject<Projects.Cafeteria_Api>("api")
 builder.AddProject<Projects.Cafeteria_Customer>("customer")
     .WithReference(api)
     .WithEnvironment("ApiBaseUrl", "http://api/api/")
-    .WithEnvironment("Keycloak__Authority", keycloakAuthority)
-    .WithEnvironment("Keycloak__ClientId", "ham-exam")
+    .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
+    .WithEnvironment("OpenIDConnectSettings__ClientId", "customer")
     .WithExternalHttpEndpoints();
 
 builder.AddProject<Projects.Cafeteria_Management>("management")
     .WithReference(api)
+    .WithEnvironment("ApiBaseUrl", "http://api/api/")
     .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
-    .WithEnvironment("OpenIDConnectSettings__ClientId", "cafeteria")
-    .WithEnvironment("OpenIDConnectSettings__ClientSecret", string.Empty)
-    .WithEnvironment("ApiBaseUrl", "http://api/")
+    .WithEnvironment("OpenIDConnectSettings__ClientId", "management")
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

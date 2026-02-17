@@ -30,7 +30,6 @@ public partial class StationSelect : ComponentBase
         queryParameters.Add("location", Location.ToString());
         queryParameters.Add("station", stationId.ToString());
 
-        // Map station to the appropriate page route
         var station = StationSelectVM.Stations?.FirstOrDefault(s => s.Id == stationId);
         if (station != null)
         {
@@ -38,7 +37,6 @@ public partial class StationSelect : ComponentBase
             return QueryHelpers.AddQueryString(route, queryParameters);
         }
 
-        // Fallback to the original routes if station not found
         if (Payment == "card")
             return QueryHelpers.AddQueryString("/card-menu", queryParameters);
         return QueryHelpers.AddQueryString("/swipe-menu", queryParameters);
@@ -46,27 +44,27 @@ public partial class StationSelect : ComponentBase
 
     private string GetStationRoute(string stationName)
     {
-        // Map station names to their corresponding routes
         return stationName.ToLower() switch
         {
             "breakfast" or "breakfast station" => "/breakfast",
             "deli" or "deli station" or "sandwich station" => "/deli",
             "pizza" or "pizza station" => "/pizza",
             "grill" or "grill station" => "/grill",
-            _ => "/swipe-menu" // Default fallback
+            "wraps" or "wraps station" => "/wrap",
+            _ => "/swipe-menu"
         };
     }
 
     private string GetStationIcon(string stationName)
     {
-        // Map station names to their corresponding Bootstrap Icons
         return stationName.ToLower() switch
         {
             "breakfast" or "breakfast station" => "bi-egg-fried",
             "deli" or "deli station" or "sandwich station" => "bi-cup-straw",
-            "pizza" or "pizza station" => "bi-basket-fill",
+            "pizza" or "pizza station" => "bi-pie-chart",
             "grill" or "grill station" => "bi-fire",
-            _ => "bi-shop" // Default fallback
+            "wraps" or "wraps station" => "bi-tornado",
+            _ => "bi-shop"
         };
     }
 

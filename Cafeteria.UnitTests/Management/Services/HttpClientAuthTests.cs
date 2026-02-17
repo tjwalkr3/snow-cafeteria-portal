@@ -1,12 +1,11 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using Cafeteria.Management.Services;
+using Cafeteria.Shared.Services.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Moq.Protected;
-using Xunit;
 
 namespace Cafeteria.UnitTests.Management.Services;
 

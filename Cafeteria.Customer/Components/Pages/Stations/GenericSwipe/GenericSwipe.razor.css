@@ -1,166 +1,274 @@
-.modern-tabs {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  margin-bottom: 2rem;
+.progress-stepper {
+    padding: 0rem 0.5rem;
+    border-radius: 8px;
 }
 
-.modern-tab {
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  color: #6c757d;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  cursor: pointer;
+.stepper-step {
+    cursor: pointer;
 }
 
-.modern-tab:hover {
-  background: rgba(30, 54, 108, 0.1);
-  color: #1e366c;
+.stepper-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    background: white;
+    font-size: 0.7rem;
+    color: white;
 }
 
-.modern-tab.active {
-  background: #1e366c;
-  color: white;
-  box-shadow: 0 2px 8px rgba(30, 54, 108, 0.25);
+.stepper-step.active .stepper-circle {
+    border-color: #1f973b;
+    background: white;
 }
+
+.stepper-step.completed .stepper-circle {
+    border-color: #1f973b;
+    background: #1f973b;
+}
+
+    .stepper-step.completed .stepper-circle i {
+        color: white;
+        font-weight: bold;
+    }
+
+.stepper-label {
+    margin-top: 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #6c757d;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.stepper-step.active .stepper-label,
+.stepper-step.completed .stepper-label {
+    color: #1e8a4c;
+}
+
+.stepper-line {
+    height: 2px;
+    background: #d1d5db;
+    margin: 16px 0.5rem 0;
+    max-width: 60px;
+    min-width: 30px;
+}
+
+    .stepper-line.completed {
+        background: #1e8a4c;
+    }
+
+.category-nav-card {
+    flex: 1;
+    min-width: 140px;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+    .category-nav-card.active {
+        border-color: #1e366c;
+        background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        box-shadow: 0 4px 16px rgba(30, 54, 108, 0.15);
+    }
+
+.category-nav-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #f0f4f8;
+    font-size: 1.25rem;
+    color: #6c757d;
+    flex-shrink: 0;
+}
+
+.category-nav-card.active .category-nav-icon {
+    background: #1e366c;
+    color: white;
+}
+
+.category-nav-content {
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.category-nav-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e366c;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.category-nav-selection {
+    font-size: 0.8rem;
+    color: #6c757d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.category-nav-card.has-selection .category-nav-selection {
+    font-weight: 500;
+}
+
+@media (max-width: 576px) {
+    .category-nav-card {
+        min-width: 100%;
+    }
+}
+
+.category-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.category-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e366c;
+    margin: 0 0 0.15rem 0;
+}
+
+.category-requirement {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+    .category-requirement .extra-price {
+        color: #dc3545;
+        margin-left: 0.5rem;
+    }
+
+.status-badge {
+    min-width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+    .status-badge.pending {
+        background: #f0f4f8;
+        color: #6c757d;
+        border-radius: 18px;
+        padding: 0 0.75rem;
+    }
+
+    .status-badge.complete {
+        background: #1e8a4c;
+        color: white;
+    }
+
+.option-chip {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e9ecef;
+    background: white;
+    border-radius: 8px;
+    color: #495057;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    gap: 0.35rem;
+}
+
+    .option-chip.selected {
+        border-color: #1e366c;
+        background: #1e366c;
+        color: white;
+    }
+
+        .option-chip.selected i {
+            font-size: 0.85rem;
+        }
 
 .meal-card {
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 4px;
+    cursor: pointer;
 }
 
-.meal-card:hover {
-  border-color: #1e366c;
-  box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15);
-  transform: translateY(-2px);
+    .meal-card.selected {
+        box-shadow: 0 2px 8px rgba(30, 54, 108, 0.1);
+    }
+
+.select-btn {
+    padding: 0.3rem 0.75rem;
+    border: 1px solid #1e366c;
+    background: white;
+    border-radius: 10px;
+    color: #1e366c;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
 }
 
-.meal-card.selected {
-  border-color: #1e366c;
-  background: rgba(30, 54, 108, 0.05);
-  box-shadow: 0 2px 8px rgba(30, 54, 108, 0.1);
-}
+    .select-btn.added {
+        border-color: #1f973b;
+        background: #1f973b;
+        color: white;
+    }
 
 .info-banner {
-  background: #f8f9fa;
-  color: #495057;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  font-size: 0.875rem;
-  border-left: 3px solid #6c757d;
-}
-
-.info-banner.warning {
-  background: #fff5f5;
-  border-left-color: #dc3545;
-  color: #721c24;
-}
-
-.info-banner.info {
-  background: #f0f9ff;
-  border-left-color: #0dcaf0;
-  color: #055160;
-}
-
-.option-group {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.option-btn {
-  flex: 1;
-  min-width: 100px;
-  padding: 0.5rem 1rem;
-  border: 2px solid #dee2e6;
-  background: white;
-  border-radius: 8px;
-  color: #495057;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.option-btn:hover {
-  border-color: #adb5bd;
-}
-
-.option-btn.selected {
-  border-color: #1e366c;
-  background: #1e366c;
-  color: white;
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
 }
 
 .footer-bar {
-  position: sticky;
-  bottom: 0;
-  background: white;
-  border-top: 2px solid #e9ecef;
-  padding: 1.5rem;
-  margin: 2rem -1rem -1rem;
-  border-radius: 0 0 12px 12px;
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    z-index: 1030;
+    border-radius: 12px;
 }
 
-.price-badge {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e366c;
+    .footer-bar .btn-primary {
+        background: #1e366c;
+        border-color: #1e366c;
+    }
+
+    .footer-bar .btn-primary:hover {
+        background: #162a54;
+        border-color: #162a54;
+    }
+
+    .footer-bar .btn-primary:disabled {
+        background: #1e366c;
+        border-color: #1e366c;
+        opacity: 0.5;
+    }
+
+.swipe-info-banner {
+    background: #eef4fb;
+    color: #1e366c;
+    font-size: 0.85rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 8px;
+    border-left: 3px solid #1e366c;
 }
 
-.add-btn {
-  padding: 0.75rem 2rem;
-  background: #1e366c;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  cursor: pointer;
+.card-info-banner {
+    background: #fef9ee;
+    color: #7a5d1e;
+    font-size: 0.85rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 8px;
+    border-left: 3px solid #d4a843;
 }
 
-.add-btn:hover:not(:disabled) {
-  background: #2d4a8f;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(30, 54, 108, 0.3);
-}
-
-.add-btn:disabled {
-  background: #dee2e6;
-  color: #adb5bd;
-  cursor: not-allowed;
-}
-
-.selection-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background: #1e366c;
-  color: white;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-left: 0.5rem;
-}
-
-.success-alert {
-  background: #198754;
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  margin-top: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.step-hint {
+    font-size: 0.88rem;
+    font-weight: 500;
 }

@@ -1,5 +1,7 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Menu;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.Strategies;
 
@@ -22,6 +24,7 @@ public class SelectionStrategyFactory : ISelectionStrategyFactory
             StationType.Breakfast => new BreakfastSelectionStrategy(_cartService, _menuService),
             StationType.Pizza => new PizzaSelectionStrategy(_cartService, _menuService),
             StationType.Deli => new DeliSelectionStrategy(_cartService, _menuService),
+            StationType.Wraps => new WrapsSelectionStrategy(_cartService, _menuService),
             _ => throw new ArgumentException($"Unknown station type: {stationType}")
         };
     }

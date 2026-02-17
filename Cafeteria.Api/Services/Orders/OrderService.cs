@@ -2,7 +2,7 @@ using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs.Order;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Orders;
 
 public class OrderService : IOrderService
 {
@@ -13,7 +13,7 @@ public class OrderService : IOrderService
         _dbConnection = dbConnection;
     }
 
-    public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto)
+    public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto, string customerEmail)
     {
         if (_dbConnection.State != ConnectionState.Open)
             _dbConnection.Open();
@@ -22,14 +22,30 @@ public class OrderService : IOrderService
 
         try
         {
+            // Get customer badger_id from email
+            const string getCustomerSql = @"
+                SELECT badger_id
+                FROM cafeteria.customer
+                WHERE email = @Email";
+
+            var customerBadgerId = await _dbConnection.QuerySingleOrDefaultAsync<int?>(
+                getCustomerSql,
+                new { Email = customerEmail },
+                transaction);
+
+            if (customerBadgerId == null)
+            {
+                throw new InvalidOperationException($"Customer with email {customerEmail} not found");
+            }
+
             const string insertOrderSql = @"
-                INSERT INTO cafeteria.order (total_price, tax, total_swipe)
-                VALUES (@TotalPrice, @Tax, @TotalSwipe)
+                INSERT INTO cafeteria.order (customer_badger_id, total_price, tax, total_swipe)
+                VALUES (@CustomerBadgerId, @TotalPrice, @Tax, @TotalSwipe)
                 RETURNING id AS Id, order_time AS OrderTime, total_price AS TotalPrice, tax AS Tax, total_swipe AS TotalSwipe;";
 
             var order = await _dbConnection.QuerySingleAsync<OrderDto>(
                 insertOrderSql,
-                new { createOrderDto.TotalPrice, createOrderDto.Tax, createOrderDto.TotalSwipe },
+                new { CustomerBadgerId = customerBadgerId.Value, createOrderDto.TotalPrice, createOrderDto.Tax, createOrderDto.TotalSwipe },
                 transaction);
 
             bool isCardOrder = createOrderDto.FoodItems.Any() && createOrderDto.FoodItems[0].CardCost.HasValue;
@@ -187,5 +203,91 @@ public class OrderService : IOrderService
         }
 
         return orders;
+    }
+
+    public async Task<List<OrderWithCustomerDto>> GetAllOrdersWithCustomer()
+    {
+        const string sql = @"
+            SELECT o.id AS Id, o.order_time AS OrderTime, o.total_price AS TotalPrice, o.tax AS Tax, o.total_swipe AS TotalSwipe,
+                   o.customer_badger_id AS CustomerBadgerId, c.cust_name AS CustomerName, c.email AS CustomerEmail,
+                   CASE WHEN sc.id IS NOT NULL THEN 'Card' ELSE 'Swipe' END AS PaymentType,
+                   (SELECT COUNT(*) FROM cafeteria.food_item fi WHERE fi.order_id = o.id) AS ItemCount
+            FROM cafeteria.order o
+            LEFT JOIN cafeteria.customer c ON o.customer_badger_id = c.badger_id
+            LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
+            ORDER BY o.order_time DESC";
+
+        var orders = await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql);
+        return orders.ToList();
+    }
+
+    public async Task<List<OrderWithCustomerDto>> GetOrdersByCustomer(int badgerId)
+    {
+        const string sql = @"
+            SELECT o.id AS Id, o.order_time AS OrderTime, o.total_price AS TotalPrice, o.tax AS Tax, o.total_swipe AS TotalSwipe,
+                   o.customer_badger_id AS CustomerBadgerId, c.cust_name AS CustomerName, c.email AS CustomerEmail,
+                   CASE WHEN sc.id IS NOT NULL THEN 'Card' ELSE 'Swipe' END AS PaymentType,
+                   (SELECT COUNT(*) FROM cafeteria.food_item fi WHERE fi.order_id = o.id) AS ItemCount
+            FROM cafeteria.order o
+            LEFT JOIN cafeteria.customer c ON o.customer_badger_id = c.badger_id
+            LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
+            WHERE o.customer_badger_id = @BadgerId
+            ORDER BY o.order_time DESC";
+
+        var orders = await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql, new { BadgerId = badgerId });
+        return orders.ToList();
+    }
+
+    public async Task<List<OrderDto>> GetOrdersByCustomerEmail(string email)
+    {
+        const string sql = @"
+            SELECT o.id AS Id, o.order_time AS OrderTime, o.total_price AS TotalPrice, o.tax AS Tax, o.total_swipe AS TotalSwipe
+            FROM cafeteria.order o
+            INNER JOIN cafeteria.customer c ON o.customer_badger_id = c.badger_id
+            WHERE c.email = @Email
+            ORDER BY o.order_time DESC";
+
+        var orders = (await _dbConnection.QueryAsync<OrderDto>(sql, new { Email = email })).ToList();
+
+        foreach (var order in orders)
+        {
+            const string foodItemsSql = @"
+                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                    sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
+                    swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
+                FROM cafeteria.food_item
+                WHERE order_id = @orderId;";
+
+            var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = order.Id });
+            order.FoodItems = foodItems.ToList();
+
+            foreach (var foodItem in order.FoodItems)
+            {
+                const string optionsSql = @"
+                    SELECT id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName
+                    FROM cafeteria.food_item_option
+                    WHERE food_item_order_id = @foodItemId;";
+
+                var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemId = foodItem.Id });
+                foodItem.Options = options.ToList();
+            }
+        }
+
+        return orders;
+    }
+
+    public async Task<OrderWithCustomerDto?> GetOrderWithCustomerById(int id)
+    {
+        const string sql = @"
+            SELECT o.id AS Id, o.order_time AS OrderTime, o.total_price AS TotalPrice, o.tax AS Tax, o.total_swipe AS TotalSwipe,
+                   o.customer_badger_id AS CustomerBadgerId, c.cust_name AS CustomerName, c.email AS CustomerEmail,
+                   CASE WHEN sc.id IS NOT NULL THEN 'Card' ELSE 'Swipe' END AS PaymentType,
+                   (SELECT COUNT(*) FROM cafeteria.food_item fi WHERE fi.order_id = o.id) AS ItemCount
+            FROM cafeteria.order o
+            LEFT JOIN cafeteria.customer c ON o.customer_badger_id = c.badger_id
+            LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
+            WHERE o.id = @Id";
+
+        return await _dbConnection.QuerySingleOrDefaultAsync<OrderWithCustomerDto>(sql, new { Id = id });
     }
 }

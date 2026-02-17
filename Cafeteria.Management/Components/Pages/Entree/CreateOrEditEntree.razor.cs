@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.Entrees;
+using Cafeteria.Management.Services.Stations;
 
 namespace Cafeteria.Management.Components.Pages.Entree;
 

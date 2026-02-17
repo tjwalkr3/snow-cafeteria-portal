@@ -13,7 +13,8 @@ public class StationConfigurationProvider : IStationConfigurationProvider
             [StationType.Grill] = CreateGrillConfiguration(),
             [StationType.Breakfast] = CreateBreakfastConfiguration(),
             [StationType.Pizza] = CreatePizzaConfiguration(),
-            [StationType.Deli] = CreateDeliConfiguration()
+            [StationType.Deli] = CreateDeliConfiguration(),
+            [StationType.Wraps] = CreateWrapsConfiguration()
         };
     }
 
@@ -41,10 +42,11 @@ public class StationConfigurationProvider : IStationConfigurationProvider
             "breakfast" => StationType.Breakfast,
             "pizza" => StationType.Pizza,
             "deli" => StationType.Deli,
+            "wraps" => StationType.Wraps,
             _ => default
         };
 
-        return stationName?.ToLowerInvariant() is "grill" or "breakfast" or "pizza" or "deli";
+        return stationName?.ToLowerInvariant() is "grill" or "breakfast" or "pizza" or "deli" or "wraps";
     }
 
     private static StationConfiguration CreateGrillConfiguration()
@@ -131,7 +133,7 @@ public class StationConfigurationProvider : IStationConfigurationProvider
             PageTitle = "Deli Station",
             Tabs = new List<TabDefinition>
             {
-                new("sandwich", "Sandwich", isDefault: true),
+                new("sandwich", "Entree", isDefault: true),
                 new("sides", "Sides"),
                 new("drinks", "Drinks")
             },
@@ -142,6 +144,30 @@ public class StationConfigurationProvider : IStationConfigurationProvider
             FooterDisplayMode = FooterDisplayMode.DeliSummary,
             CreateVirtualEntree = true,
             VirtualEntreeName = "Custom Deli Sandwich"
+        };
+    }
+
+    private static StationConfiguration CreateWrapsConfiguration()
+    {
+        return new StationConfiguration
+        {
+            StationType = StationType.Wraps,
+            DisplayName = "Wraps",
+            IconClass = "bi-tornado",
+            PageTitle = "Wraps Station",
+            Tabs = new List<TabDefinition>
+            {
+                new("wrap", "Entree", isDefault: true),
+                new("sides", "Sides"),
+                new("drinks", "Drinks")
+            },
+            ShowEntreeSelection = false,
+            AutoSelectFirstEntree = false,
+            EntreeSelectionLoadsOptions = false,
+            OptionSelectionMode = OptionSelectionMode.Mixed,
+            FooterDisplayMode = FooterDisplayMode.DeliSummary,
+            CreateVirtualEntree = true,
+            VirtualEntreeName = "Custom Wrap"
         };
     }
 }

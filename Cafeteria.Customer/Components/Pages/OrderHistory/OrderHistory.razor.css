@@ -1,0 +1,265 @@
+.loading-container {
+    min-height: 60vh;
+}
+
+.back-link {
+    color: #1e366c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e366c;
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: #6b7280;
+    margin: 0;
+}
+
+.orders-count {
+    font-weight: 600;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.order-card {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.order-card:hover {
+    border-color: #1e366c;
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.1);
+}
+
+.order-card.selected {
+    border-color: #1e366c;
+    background: #f8fafc;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: #22c55e;
+    border-radius: 50%;
+}
+
+.order-number {
+    font-weight: 600;
+    color: #1e366c;
+}
+
+.order-card-header i {
+    color: #9ca3af;
+}
+
+.order-date {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.order-summary {
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.payment-badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.card-badge {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #7dd3fc;
+}
+
+.swipe-badge {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.load-more-btn {
+    color: #1e366c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.load-more-btn:hover {
+    text-decoration: underline;
+}
+
+.order-details-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.order-details-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e366c;
+    margin: 0 0 0.25rem 0;
+}
+
+.order-details-date {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.payment-badge-lg {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+}
+
+.card-badge-lg {
+    background-color: white;
+    color: #1e366c;
+    border: 2px solid #1e366c;
+}
+
+.swipe-badge-lg {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.items-heading {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.order-items-section {
+    margin-bottom: 1.5rem;
+}
+
+.order-item-card {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.order-item-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.25rem 0;
+}
+
+.order-item-station {
+    font-size: 0.8125rem;
+    color: #6b7280;
+}
+
+.order-item-price {
+    font-weight: 600;
+    color: #1e366c;
+    font-size: 1rem;
+}
+
+.option-badge {
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+}
+
+.order-totals-section {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.totals-label {
+    color: #6b7280;
+}
+
+.totals-value {
+    color: #374151;
+}
+
+.total-final {
+    border-top: 1px solid #e5e7eb;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+}
+
+.total-final .totals-label {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.total-amount {
+    font-weight: 700;
+    color: #1e366c;
+    font-size: 1.125rem;
+}
+
+.action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.reorder-btn {
+    background-color: #1e366c;
+    border-color: #1e366c;
+}
+
+.reorder-btn:hover {
+    background-color: #152a54;
+    border-color: #152a54;
+}
+
+.empty-orders {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+}
+
+.no-order-selected {
+    background: #f9fafb;
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #9ca3af;
+}
+
+.no-order-selected i {
+    font-size: 3rem;
+}
+
+.no-order-selected p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+@media (max-width: 991.98px) {
+    .order-details-card {
+        margin-top: 1.5rem;
+    }
+}

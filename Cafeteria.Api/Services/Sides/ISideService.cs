@@ -1,14 +1,14 @@
 using Cafeteria.Shared.DTOs.Menu;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Sides;
 
 public interface ISideService
 {
     Task<SideDto> CreateSide(SideDto sideDto);
-    Task<SideDto?> GetSideByID(int id);
+    Task<SideDto?> GetSideById(int id);
     Task<List<SideDto>> GetAllSides();
-    Task<List<SideDto>> GetSidesByStationID(int stationId);
-    Task<SideDto?> UpdateSideByID(int id, SideDto sideDto);
-    Task<bool> DeleteSideByID(int id);
+    Task<List<SideDto>> GetSidesByStationId(int stationId);
+    Task<SideDto?> UpdateSideById(int id, SideDto sideDto);
+    Task<bool> DeleteSideById(int id);
     Task<bool> SetStockStatusById(int id, bool inStock);
 }

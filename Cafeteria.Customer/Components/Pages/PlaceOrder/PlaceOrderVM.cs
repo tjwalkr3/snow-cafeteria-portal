@@ -1,4 +1,5 @@
 using Cafeteria.Customer.Services;
+using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
 
@@ -27,18 +28,39 @@ public class PlaceOrderVM : IPlaceOrderVM
         foreach (var entreeItem in order.Entrees)
         {
             total += entreeItem.Entree.EntreePrice;
-            total += entreeItem.SelectedOptions.Sum(opt => opt.OptionType.FoodOptionPrice);
+            total += CalculateOptionsCost(entreeItem.SelectedOptions);
         }
 
         foreach (var sideItem in order.Sides)
         {
             total += sideItem.Side.SidePrice;
-            total += sideItem.SelectedOptions.Sum(opt => opt.OptionType.FoodOptionPrice);
+            total += CalculateOptionsCost(sideItem.SelectedOptions);
         }
 
         total += order.Drinks.Sum(drink => drink.DrinkPrice);
 
         return total;
+    }
+
+    private decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
+    {
+        if (selectedOptions == null || selectedOptions.Count == 0)
+            return 0m;
+
+        decimal cost = 0m;
+
+        // Group options by their type ID
+        var optionsByType = selectedOptions.GroupBy(opt => opt.OptionType.Id);
+
+        foreach (var group in optionsByType)
+        {
+            var optionType = group.First().OptionType;
+            var selectedCount = group.Count();
+            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
+            cost += chargeableCount * optionType.FoodOptionPrice;
+        }
+
+        return cost;
     }
 
     public void ValidateParameters(int location, string? payment)
@@ -215,7 +237,7 @@ public class PlaceOrderVM : IPlaceOrderVM
                 {
                     Name = entreeItem.Entree.EntreeName,
                     StationId = entreeItem.Entree.StationId,
-                    CardCost = entreeItem.Entree.EntreePrice + entreeItem.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice),
+                    CardCost = entreeItem.Entree.EntreePrice + CalculateOptionsCost(entreeItem.SelectedOptions),
                     SwipeCost = null,
                     Special = false,
                     Options = entreeItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
@@ -232,7 +254,7 @@ public class PlaceOrderVM : IPlaceOrderVM
                 {
                     Name = sideItem.Side.SideName,
                     StationId = sideItem.Side.StationId,
-                    CardCost = sideItem.Side.SidePrice + sideItem.SelectedOptions.Sum(o => o.OptionType.FoodOptionPrice),
+                    CardCost = sideItem.Side.SidePrice + CalculateOptionsCost(sideItem.SelectedOptions),
                     SwipeCost = null,
                     Special = false,
                     Options = sideItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto

@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.Stations;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Api.Controllers;
 
@@ -22,10 +23,10 @@ public class StationController : ControllerBase
         return await _stationService.GetAllStations();
     }
 
-    [HttpGet("station/{locationId:int}")]
-    public async Task<List<StationDto>> GetStationsByLocation(int locationId)
+    [HttpGet("location/{locationId:int}")]
+    public async Task<List<StationDto>> GetStationsByLocationId(int locationId)
     {
-        return await _stationService.GetStationsByLocation(locationId);
+        return await _stationService.GetStationsByLocationId(locationId);
     }
 
     [HttpGet("{stationId:int}")]
@@ -41,31 +42,10 @@ public class StationController : ControllerBase
         return Ok(station);
     }
 
-    [HttpPost("station/{locationId:int}")]
-    public async Task<IActionResult> CreateStationForLocation(int locationId, [FromBody] StationUpsertRequest request)
-    {
-        await _stationService.CreateStationForLocation(locationId, request.Name, request.Description);
-        return NoContent();
-    }
-
-    [HttpPut("{stationId:int}")]
-    public async Task<IActionResult> UpdateStation(int stationId, [FromBody] StationUpsertRequest request)
-    {
-        await _stationService.UpdateStationByID(stationId, request.Name, request.Description);
-        return NoContent();
-    }
-
-    [HttpDelete("{stationId:int}")]
-    public async Task<IActionResult> DeleteStation(int stationId)
-    {
-        await _stationService.DeleteStationByID(stationId);
-        return NoContent();
-    }
-
     [HttpGet("{stationId:int}/hours")]
-    public async Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId)
+    public async Task<List<StationBusinessHoursDto>> GetStationBusinessHoursByStationId(int stationId)
     {
-        return await _stationService.GetStationBusinessHours(stationId);
+        return await _stationService.GetStationBusinessHoursByStationId(stationId);
     }
 
     [HttpGet("hours/{stationHrsId:int}")]
@@ -81,8 +61,33 @@ public class StationController : ControllerBase
         return Ok(stationHours);
     }
 
+    [Authorize]
+    [HttpPost("location/{locationId:int}")]
+    public async Task<IActionResult> CreateStationByLocationId(int locationId, [FromBody] StationUpsertRequest request)
+    {
+        await _stationService.CreateStationByLocationId(locationId, request.Name, request.Description);
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpPut("{stationId:int}")]
+    public async Task<IActionResult> UpdateStationById(int stationId, [FromBody] StationUpsertRequest request)
+    {
+        await _stationService.UpdateStationById(stationId, request.Name, request.Description);
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpDelete("{stationId:int}")]
+    public async Task<IActionResult> DeleteStationById(int stationId)
+    {
+        await _stationService.DeleteStationById(stationId);
+        return NoContent();
+    }
+
+    [Authorize]
     [HttpPost("{stationId:int}/hours")]
-    public async Task<IActionResult> AddStationHours(int stationId, [FromBody] StationHoursRequest request)
+    public async Task<IActionResult> AddStationHoursByStationId(int stationId, [FromBody] StationHoursRequest request)
     {
         if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
         {
@@ -90,12 +95,13 @@ public class StationController : ControllerBase
         }
 
         var weekday = (WeekDay)request.WeekdayId;
-        await _stationService.AddStationHours(stationId, request.StartTime, request.EndTime, weekday);
+        await _stationService.AddStationHoursByStationId(stationId, request.StartTime, request.EndTime, weekday);
         return NoContent();
     }
 
+    [Authorize]
     [HttpPut("hours/{stationHrsId:int}")]
-    public async Task<IActionResult> UpdateStationHours(int stationHrsId, [FromBody] StationHoursRequest request)
+    public async Task<IActionResult> UpdateStationHoursById(int stationHrsId, [FromBody] StationHoursRequest request)
     {
         if (!Enum.IsDefined(typeof(WeekDay), request.WeekdayId))
         {
@@ -107,10 +113,11 @@ public class StationController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("hours/{stationHrsId:int}")]
-    public async Task<IActionResult> DeleteStationHours(int stationHrsId)
+    public async Task<IActionResult> DeleteStationHoursById(int stationHrsId)
     {
-        await _stationService.DeleteStationHrsById(stationHrsId);
+        await _stationService.DeleteStationHoursById(stationHrsId);
         return NoContent();
     }
 }

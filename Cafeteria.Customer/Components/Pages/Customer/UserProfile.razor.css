@@ -1,0 +1,133 @@
+.loading-container {
+    min-height: 60vh;
+}
+
+.back-link {
+    color: #1e366c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e366c;
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: #6b7280;
+    margin: 0;
+}
+
+.profile-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.profile-avatar-section {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.profile-avatar {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #1e366c 0%, #2d4a8c 100%);
+    flex-shrink: 0;
+}
+
+.profile-avatar i {
+    font-size: 2rem;
+    color: white;
+}
+
+.profile-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e366c;
+    margin: 0;
+}
+
+.profile-email {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.profile-detail-item {
+    background: #f9fafb;
+    border-radius: 12px;
+}
+
+.detail-icon {
+    width: 44px;
+    height: 44px;
+    background: #e0e7ff;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.detail-icon i {
+    font-size: 1.25rem;
+    color: #1e366c;
+}
+
+.detail-icon.swipe-icon {
+    background: #fef3c7;
+}
+
+.detail-icon.swipe-icon i {
+    color: #92400e;
+}
+
+.detail-content {
+    gap: 0.125rem;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.swipe-balance {
+    color: #1e366c;
+    font-weight: 600;
+}
+
+.not-authorized-card {
+    background: #f9fafb;
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    max-width: 400px;
+}
+
+.not-authorized-card i {
+    font-size: 3rem;
+    color: #9ca3af;
+}
+
+.not-authorized-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.5rem 0;
+}
+
+.not-authorized-card p {
+    margin: 0;
+    color: #6b7280;
+}

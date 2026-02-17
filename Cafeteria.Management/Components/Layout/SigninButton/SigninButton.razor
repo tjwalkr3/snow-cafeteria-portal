@@ -3,9 +3,33 @@
 
 <AuthorizeView>
     <Authorized>
-        <button class="btn btn-primary" @onclick="SignOut">Sign Out @context.User.Identity?.Name</button>
+        <button class="user-card" @onclick="SignOut">
+            <div class="avatar">@GetInitials(context.User.Identity?.Name)</div>
+            <div class="user-info">
+                <span class="action-text">Sign Out</span>
+                <span class="user-name">@context.User.Identity?.Name</span>
+            </div>
+        </button>
     </Authorized>
     <NotAuthorized>
-        <button class="btn btn-primary" @onclick="SignIn">Sign In</button>
+        <button class="user-card sign-in" @onclick="SignIn">
+            <div class="avatar">
+                <span class="bi bi-person"></span>
+            </div>
+            <div class="user-info">
+                <span class="action-text">Sign In</span>
+            </div>
+        </button>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "?";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        return parts[0][0].ToString().ToUpper();
+    }
+}

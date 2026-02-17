@@ -1,0 +1,149 @@
+<header class="header py-3">
+    <div class="header-content px-4">
+        <div class="d-flex align-items-center">
+            <a href="/" class="brand-text fs-2 fw-semibold text-decoration-none">Snow Cafeteria</a>
+        </div>
+        <nav class="d-flex align-items-center gap-4">
+            <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
+                title="Order History"
+                @onclick="NavigateToOrderHistory">
+                <span class="bi bi-clock-history fs-4"></span>
+            </button>
+            <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
+                title="Cart"
+                @onclick="NavigateToCart">
+                <span class="bi bi-cart3 fs-4"></span>
+                @if (cartItemCount > 0)
+                {
+                    <span class="position-absolute translate-middle badge rounded-pill bg-danger"
+                        style="top: 5px; left: 85%;">
+                        @cartItemCount
+                    </span>
+                }
+            </button>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="user-menu-container">
+                        @if (showUserMenu)
+                        {
+                            <div class="dropdown-backdrop" @onclick="CloseUserMenu"></div>
+                        }
+                        <button class="btn btn-link text-white position-relative p-1 text-decoration-none"
+                            title="User Menu"
+                            @onclick="ToggleUserMenu"
+                            @onclick:stopPropagation="true">
+                            <span class="bi bi-person-circle fs-4"></span>
+                        </button>
+                        @if (showUserMenu)
+                        {
+                            <ul class="dropdown-menu dropdown-menu-start show">
+                                <li>
+                                    <a class="dropdown-item" href="/profile" @onclick="CloseUserMenu">
+                                        <i class="bi bi-person me-2"></i>My Profile
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <button class="dropdown-item text-danger" @onclick="SignOut">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                                    </button>
+                                </li>
+                            </ul>
+                        }
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <SigninButton />
+                </NotAuthorized>
+            </AuthorizeView>
+        </nav>
+    </div>
+</header>
+
+@using Cafeteria.Customer.Components.Layout.SigninButton
+@using Cafeteria.Customer.Services
+@using Cafeteria.Customer.Services.Cart
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+@implements IDisposable
+@rendermode InteractiveServer
+@inject ICartService CartService
+@inject NavigationManager NavigationManager
+@inject CartNotificationService CartNotification
+
+@code {
+    private int cartItemCount = 0;
+    private bool showUserMenu = false;
+
+    private void ToggleUserMenu()
+    {
+        showUserMenu = !showUserMenu;
+    }
+
+    private void CloseUserMenu()
+    {
+        showUserMenu = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCartCount();
+        NavigationManager.LocationChanged += OnLocationChanged;
+        CartNotification.OnCartChanged += OnCartChanged;
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        showUserMenu = false;
+        await LoadCartCount();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnCartChanged()
+    {
+        await LoadCartCount();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadCartCount()
+    {
+        var order = await CartService.GetOrder("order");
+        if (order != null)
+        {
+            if (!order.IsCardOrder)
+            {
+                cartItemCount = Math.Min(order.Entrees.Count,
+                Math.Min(order.Sides.Count, order.Drinks.Count));
+            }
+            else
+            {
+                cartItemCount = order.Entrees.Count + order.Sides.Count + order.Drinks.Count;
+            }
+        }
+        else
+        {
+            cartItemCount = 0;
+        }
+    }
+
+    private void NavigateToCart()
+    {
+        NavigationManager.NavigateTo("/place-order");
+    }
+
+    private void NavigateToOrderHistory()
+    {
+        NavigationManager.NavigateTo("/order-history");
+    }
+
+    private void SignOut()
+    {
+        NavigationManager.NavigateTo("/auth/signout", forceLoad: true);
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+        CartNotification.OnCartChanged -= OnCartChanged;
+    }
+}

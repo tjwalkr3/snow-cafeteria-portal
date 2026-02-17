@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
 using Cafeteria.Shared.DTOs.Order;
+using Dapper;
 using Npgsql;
+using static Cafeteria.IntegrationTests.Api.SqlInsertQueries;
 
 namespace Cafeteria.IntegrationTests.Api;
 
@@ -71,13 +73,63 @@ public class OrderIntegrationTests : IDisposable
     [Fact]
     public async Task GetOrderById_ReturnsCorrectOrder()
     {
-        // Use pre-loaded order with ID 1
-        var response = await _client.GetAsync("/api/order/1");
+        // Create a test order with food items and options
+        var orderId = _connection.ExecuteScalar<int>(
+            InsertOrderSql + " RETURNING id",
+            new
+            {
+                CustomerBadgerId = 1000001,
+                TotalPrice = 12.98m,
+                Tax = 1.04m,
+                TotalSwipe = 1
+            }
+        );
+
+        var foodItem1Id = _connection.ExecuteScalar<int>(
+            InsertFoodItemSql + " RETURNING id",
+            new
+            {
+                Name = "Test Burger",
+                OrderId = orderId,
+                StationId = 1,
+                SaleCardId = (int?)null,
+                SaleSwipeId = (int?)null,
+                SwipeCost = 0,
+                CardCost = 8.99m,
+                Special = false
+            }
+        );
+
+        _connection.Execute(
+            InsertFoodItemOptionSql,
+            new[]
+            {
+                new { FoodItemId = foodItem1Id, FoodOptionName = "Lettuce" },
+                new { FoodItemId = foodItem1Id, FoodOptionName = "Tomato" }
+            }
+        );
+
+        var foodItem2Id = _connection.ExecuteScalar<int>(
+            InsertFoodItemSql + " RETURNING id",
+            new
+            {
+                Name = "French Fries",
+                OrderId = orderId,
+                StationId = 1,
+                SaleCardId = (int?)null,
+                SaleSwipeId = (int?)null,
+                SwipeCost = 1,
+                CardCost = 0m,
+                Special = false
+            }
+        );
+
+        var response = await _client.GetAsync($"/api/order/{orderId}");
         response.EnsureSuccessStatusCode();
         var order = await response.Content.ReadFromJsonAsync<OrderDto>();
 
         Assert.NotNull(order);
-        Assert.Equal(1, order.Id);
+        Assert.Equal(orderId, order.Id);
         Assert.Equal(12.98m, order.TotalPrice);
         Assert.Equal(2, order.FoodItems.Count);
         Assert.Equal(2, order.FoodItems[0].Options.Count);
@@ -93,13 +145,36 @@ public class OrderIntegrationTests : IDisposable
     [Fact]
     public async Task GetAllOrders_ReturnsAllOrders()
     {
+        // Create a couple of test orders
+        var orderId1 = _connection.ExecuteScalar<int>(
+            InsertOrderSql + " RETURNING id",
+            new
+            {
+                CustomerBadgerId = 1000001,
+                TotalPrice = 10.99m,
+                Tax = 0.88m,
+                TotalSwipe = 0
+            }
+        );
+
+        var orderId2 = _connection.ExecuteScalar<int>(
+            InsertOrderSql + " RETURNING id",
+            new
+            {
+                CustomerBadgerId = 1000001,
+                TotalPrice = 15.49m,
+                Tax = 1.24m,
+                TotalSwipe = 1
+            }
+        );
+
         var response = await _client.GetAsync("/api/order");
         response.EnsureSuccessStatusCode();
         var orders = await response.Content.ReadFromJsonAsync<List<OrderDto>>();
 
         Assert.NotNull(orders);
         Assert.True(orders.Count >= 2);
-        Assert.Contains(orders, o => o.Id == 1);
-        Assert.Contains(orders, o => o.Id == 2);
+        Assert.Contains(orders, o => o.Id == orderId1);
+        Assert.Contains(orders, o => o.Id == orderId2);
     }
 }

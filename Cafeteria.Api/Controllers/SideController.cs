@@ -1,31 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.Sides;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SideController : ControllerBase
+public class SideController(ISideService sideService) : ControllerBase
 {
-    private readonly ISideService _sideService;
-
-    public SideController(ISideService sideService)
-    {
-        _sideService = sideService;
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<SideDto>> CreateSide([FromBody] SideDto sideDto)
-    {
-        var result = await _sideService.CreateSide(sideDto);
-        return CreatedAtAction(nameof(GetSideByID), new { id = result.Id }, result);
-    }
+    private readonly ISideService _sideService = sideService;
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<SideDto>> GetSideByID(int id)
+    public async Task<ActionResult<SideDto>> GetSideById(int id)
     {
-        var result = await _sideService.GetSideByID(id);
+        var result = await _sideService.GetSideById(id);
         if (result == null)
             return NotFound();
         return Ok(result);
@@ -39,21 +28,31 @@ public class SideController : ControllerBase
     }
 
     [HttpGet("station/{stationId}")]
-    public async Task<ActionResult<List<SideDto>>> GetSidesByStationID(int stationId)
+    public async Task<ActionResult<List<SideDto>>> GetSidesByStationId(int stationId)
     {
-        var result = await _sideService.GetSidesByStationID(stationId);
+        var result = await _sideService.GetSidesByStationId(stationId);
         return Ok(result);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<SideDto>> UpdateSideByID(int id, [FromBody] SideDto sideDto)
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<SideDto>> CreateSide([FromBody] SideDto sideDto)
     {
-        var result = await _sideService.UpdateSideByID(id, sideDto);
+        var result = await _sideService.CreateSide(sideDto);
+        return CreatedAtAction(nameof(GetSideById), new { id = result.Id }, result);
+    }
+
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<SideDto>> UpdateSideById(int id, [FromBody] SideDto sideDto)
+    {
+        var result = await _sideService.UpdateSideById(id, sideDto);
         if (result == null)
             return NotFound();
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPut("{id}/stock")]
     public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
@@ -63,10 +62,11 @@ public class SideController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteSideByID(int id)
+    public async Task<IActionResult> DeleteSideById(int id)
     {
-        var result = await _sideService.DeleteSideByID(id);
+        var result = await _sideService.DeleteSideById(id);
         if (!result)
             return NotFound();
         return NoContent();

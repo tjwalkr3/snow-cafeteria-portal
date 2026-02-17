@@ -1,0 +1,96 @@
+<div class="time-picker">
+    <div class="time-picker-group">
+        <label class="time-picker-label">Hr</label>
+        <select class="form-select form-select-sm" value="@Hour" @onchange="OnHourChanged">
+            @for (int h = 1; h <= 12; h++)
+            {
+                <option value="@h">@h.ToString("D2")</option>
+            }
+        </select>
+    </div>
+
+    <span class="time-picker-separator">:</span>
+
+    <div class="time-picker-group">
+        <label class="time-picker-label">Min</label>
+        <select class="form-select form-select-sm" value="@Minute" @onchange="OnMinuteChanged">
+            @for (int m = 0; m < 60; m++)
+            {
+                <option value="@m">@m.ToString("D2")</option>
+            }
+        </select>
+    </div>
+
+    <span class="time-picker-separator">:</span>
+
+    <div class="time-picker-group">
+        <label class="time-picker-label">Sec</label>
+        <select class="form-select form-select-sm" value="@Second" @onchange="OnSecondChanged">
+            @for (int s = 0; s < 60; s++)
+            {
+                <option value="@s">@s.ToString("D2")</option>
+            }
+        </select>
+    </div>
+
+    <div class="time-picker-group">
+        <label class="time-picker-label">&nbsp;</label>
+        <select class="form-select form-select-sm" value="@Period" @onchange="OnPeriodChanged">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public TimeOnly Value { get; set; }
+
+    [Parameter]
+    public EventCallback<TimeOnly> ValueChanged { get; set; }
+
+    private int Hour => Value.Hour % 12 == 0 ? 12 : Value.Hour % 12;
+    private int Minute => Value.Minute;
+    private int Second => Value.Second;
+    private string Period => Value.Hour >= 12 ? "PM" : "AM";
+
+    private async Task OnHourChanged(ChangeEventArgs e)
+    {
+        var h = int.Parse(e.Value!.ToString()!);
+        var hour24 = To24Hour(h, Period);
+        await UpdateValue(hour24, Minute, Second);
+    }
+
+    private async Task OnMinuteChanged(ChangeEventArgs e)
+    {
+        var m = int.Parse(e.Value!.ToString()!);
+        await UpdateValue(Value.Hour, m, Second);
+    }
+
+    private async Task OnSecondChanged(ChangeEventArgs e)
+    {
+        var s = int.Parse(e.Value!.ToString()!);
+        await UpdateValue(Value.Hour, Minute, s);
+    }
+
+    private async Task OnPeriodChanged(ChangeEventArgs e)
+    {
+        var newPeriod = e.Value!.ToString()!;
+        var hour24 = To24Hour(Hour, newPeriod);
+        await UpdateValue(hour24, Minute, Second);
+    }
+
+    private async Task UpdateValue(int hour, int minute, int second)
+    {
+        Value = new TimeOnly(hour, minute, second);
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private static int To24Hour(int hour12, string period)
+    {
+        if (period == "AM")
+            return hour12 == 12 ? 0 : hour12;
+        else
+            return hour12 == 12 ? 12 : hour12 + 12;
+    }
+}

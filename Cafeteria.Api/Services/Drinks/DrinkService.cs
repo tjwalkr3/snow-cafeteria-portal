@@ -2,7 +2,7 @@ using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs.Menu;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Drinks;
 
 public class DrinkService : IDrinkService
 {
@@ -24,7 +24,7 @@ public class DrinkService : IDrinkService
         return result ?? throw new InvalidOperationException("Failed to create drink");
     }
 
-    public async Task<DrinkDto?> GetDrinkByID(int id)
+    public async Task<DrinkDto?> GetDrinkById(int id)
     {
         const string sql = @"
             SELECT 
@@ -60,7 +60,7 @@ public class DrinkService : IDrinkService
         return result.ToList();
     }
 
-    public async Task<List<DrinkDto>> GetDrinksByLocationID(int locationId)
+    public async Task<List<DrinkDto>> GetDrinksByLocationId(int locationId)
     {
         const string sql = @"
             SELECT 
@@ -79,7 +79,7 @@ public class DrinkService : IDrinkService
         return result.ToList();
     }
 
-    public async Task<DrinkDto?> UpdateDrinkByID(int id, DrinkDto drinkDto)
+    public async Task<DrinkDto?> UpdateDrinkById(int id, DrinkDto drinkDto)
     {
         const string sql = @"
             UPDATE cafeteria.drink
@@ -107,7 +107,7 @@ public class DrinkService : IDrinkService
         return result;
     }
 
-    public async Task<bool> DeleteDrinkByID(int id)
+    public async Task<bool> DeleteDrinkById(int id)
     {
         const string sql = @"
             DELETE FROM cafeteria.drink

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Cafeteria.Management.Components.Shared;
-using Cafeteria.Management.Services;
+using Cafeteria.Management.Services.Stations;
+using Cafeteria.Management.Services.Locations;
 using Cafeteria.Shared.DTOs.Menu;
 using static Cafeteria.Management.Components.Shared.Toast;
 

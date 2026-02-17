@@ -1,31 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Menu;
-using Cafeteria.Api.Services;
+using Cafeteria.Api.Services.Entrees;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EntreeController : ControllerBase
+public class EntreeController(IEntreeService entreeService) : ControllerBase
 {
-    private readonly IEntreeService _entreeService;
-
-    public EntreeController(IEntreeService entreeService)
-    {
-        _entreeService = entreeService;
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<EntreeDto>> CreateEntree([FromBody] EntreeDto entreeDto)
-    {
-        var result = await _entreeService.CreateEntree(entreeDto);
-        return CreatedAtAction(nameof(GetEntreeByID), new { id = result.Id }, result);
-    }
+    private readonly IEntreeService _entreeService = entreeService;
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<EntreeDto>> GetEntreeByID(int id)
+    public async Task<ActionResult<EntreeDto>> GetEntreeById(int id)
     {
-        var result = await _entreeService.GetEntreeByID(id);
+        var result = await _entreeService.GetEntreeById(id);
         if (result == null)
             return NotFound();
         return Ok(result);
@@ -39,21 +28,31 @@ public class EntreeController : ControllerBase
     }
 
     [HttpGet("station/{stationId}")]
-    public async Task<ActionResult<List<EntreeDto>>> GetEntreesByStationID(int stationId)
+    public async Task<ActionResult<List<EntreeDto>>> GetEntreesByStationId(int stationId)
     {
-        var result = await _entreeService.GetEntreesByStationID(stationId);
+        var result = await _entreeService.GetEntreesByStationId(stationId);
         return Ok(result);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<EntreeDto>> UpdateEntreeByID(int id, [FromBody] EntreeDto entreeDto)
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<EntreeDto>> CreateEntree([FromBody] EntreeDto entreeDto)
     {
-        var result = await _entreeService.UpdateEntreeByID(id, entreeDto);
+        var result = await _entreeService.CreateEntree(entreeDto);
+        return CreatedAtAction(nameof(GetEntreeById), new { id = result.Id }, result);
+    }
+
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<EntreeDto>> UpdateEntreeById(int id, [FromBody] EntreeDto entreeDto)
+    {
+        var result = await _entreeService.UpdateEntreeById(id, entreeDto);
         if (result == null)
             return NotFound();
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPut("{id}/stock")]
     public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
@@ -63,10 +62,11 @@ public class EntreeController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEntreeByID(int id)
+    public async Task<IActionResult> DeleteEntreeById(int id)
     {
-        var result = await _entreeService.DeleteEntreeByID(id);
+        var result = await _entreeService.DeleteEntreeById(id);
         if (!result)
             return NotFound();
         return NoContent();

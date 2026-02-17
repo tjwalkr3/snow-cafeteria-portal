@@ -2,7 +2,7 @@ using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs.Menu;
 
-namespace Cafeteria.Api.Services;
+namespace Cafeteria.Api.Services.Entrees;
 
 public class EntreeService : IEntreeService
 {
@@ -24,7 +24,7 @@ public class EntreeService : IEntreeService
         return result ?? throw new InvalidOperationException("Failed to create entree");
     }
 
-    public async Task<EntreeDto?> GetEntreeByID(int id)
+    public async Task<EntreeDto?> GetEntreeById(int id)
     {
         const string sql = @"
             SELECT 
@@ -60,7 +60,7 @@ public class EntreeService : IEntreeService
         return result.ToList();
     }
 
-    public async Task<List<EntreeDto>> GetEntreesByStationID(int stationId)
+    public async Task<List<EntreeDto>> GetEntreesByStationId(int stationId)
     {
         const string sql = @"
             SELECT 
@@ -79,7 +79,7 @@ public class EntreeService : IEntreeService
         return result.ToList();
     }
 
-    public async Task<EntreeDto?> UpdateEntreeByID(int id, EntreeDto entreeDto)
+    public async Task<EntreeDto?> UpdateEntreeById(int id, EntreeDto entreeDto)
     {
         const string sql = @"
             UPDATE cafeteria.entree
@@ -107,7 +107,7 @@ public class EntreeService : IEntreeService
         return result;
     }
 
-    public async Task<bool> DeleteEntreeByID(int id)
+    public async Task<bool> DeleteEntreeById(int id)
     {
         const string sql = @"
             DELETE FROM cafeteria.entree

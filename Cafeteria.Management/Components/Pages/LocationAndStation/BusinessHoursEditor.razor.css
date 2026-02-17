@@ -1,0 +1,25 @@
+.hours-table {
+    width: 100%;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+.hours-table th {
+    background-color: #e9ecef;
+    color: #1e366c;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.hours-table td,
+.hours-table th {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0.5rem;
+}
+
+.closed-label {
+    font-style: italic;
+    color: #6c757d;
+}

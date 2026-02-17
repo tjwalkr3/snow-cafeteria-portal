@@ -1,0 +1,57 @@
+.customer-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.customer-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.customer-name {
+    color: #212529;
+    font-size: 1.1rem;
+    word-break: break-word;
+}
+
+.detail-label {
+    color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.swipe-balance {
+    font-size: 1.25rem;
+}
+
+.swipe-balance.text-success {
+    color: #198754 !important;
+}
+
+.swipe-balance.text-danger {
+    color: #dc3545 !important;
+}
+
+.customer-count {
+    color: #6c757d;
+}
+
+.empty-state {
+    background: #f8f9fa;
+}
+
+.empty-state i {
+    color: #adb5bd;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    color: #212529;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.4em;
+}
