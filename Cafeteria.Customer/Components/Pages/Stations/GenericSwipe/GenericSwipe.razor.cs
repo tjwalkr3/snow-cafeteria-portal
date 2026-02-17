@@ -40,7 +40,7 @@ public partial class GenericSwipe : ComponentBase
     private bool _showPizzaToppingsModal;
     private HashSet<string> _stagedToppings = new();
     private Dictionary<int, string> _stagedBreakfastOptions = new();
-    private EntreeDto? _stagedBreakfastEntree;
+    private EntreeDto? _stagedEntree;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -131,8 +131,7 @@ public partial class GenericSwipe : ComponentBase
 
         if (VM.Configuration?.EntreeSelectionLoadsOptions == true && VM.OptionTypes.Any())
         {
-            // Stage the entree — don't commit until the user clicks "Done"
-            _stagedBreakfastEntree = entree;
+            _stagedEntree = entree;
             VM.State.SelectedEntree = null;
             _stagedBreakfastOptions = new Dictionary<int, string>(VM.State.SingleSelectOptions);
             VM.State.SingleSelectOptions.Clear();
@@ -141,7 +140,10 @@ public partial class GenericSwipe : ComponentBase
 
         if (VM.CurrentStationType == Configuration.StationType.Pizza)
         {
+            _stagedEntree = entree;
+            VM.State.SelectedEntree = null;
             _stagedToppings = new HashSet<string>(VM.State.SelectedToppings);
+            VM.State.SelectedToppings.Clear();
             _showPizzaToppingsModal = true;
         }
 
@@ -151,7 +153,7 @@ public partial class GenericSwipe : ComponentBase
     private void CloseOptionsModal()
     {
         // Discard the staged entree — user closed without clicking "Done"
-        _stagedBreakfastEntree = null;
+        _stagedEntree = null;
         _stagedBreakfastOptions.Clear();
         _showOptionsModal = false;
         StateHasChanged();
@@ -341,11 +343,10 @@ public partial class GenericSwipe : ComponentBase
 
     private void ConfirmBreakfastOptions()
     {
-        // Commit the staged entree now that the user clicked "Done"
-        if (_stagedBreakfastEntree != null)
+        if (_stagedEntree != null)
         {
-            VM.State.SelectedEntree = _stagedBreakfastEntree;
-            _stagedBreakfastEntree = null;
+            VM.State.SelectedEntree = _stagedEntree;
+            _stagedEntree = null;
         }
 
         foreach (var kvp in _stagedBreakfastOptions)
@@ -364,7 +365,10 @@ public partial class GenericSwipe : ComponentBase
 
     private void ClosePizzaToppingsModal()
     {
+        _stagedEntree = null;
+        _stagedToppings.Clear();
         _showPizzaToppingsModal = false;
+        StateHasChanged();
     }
 
     private void ToggleStagedTopping(string topping)
@@ -376,6 +380,12 @@ public partial class GenericSwipe : ComponentBase
 
     private void ConfirmPizzaToppings()
     {
+        if (_stagedEntree != null)
+        {
+            VM.State.SelectedEntree = _stagedEntree;
+            _stagedEntree = null;
+        }
+
         var toRemove = VM.State.SelectedToppings.Except(_stagedToppings).ToList();
         var toAdd = _stagedToppings.Except(VM.State.SelectedToppings).ToList();
 

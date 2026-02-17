@@ -751,13 +751,13 @@ else
             </div>
         }
 
-        @if (_showOptionsModal && _stagedBreakfastEntree != null && VM.OptionTypes.Any())
+        @if (_showOptionsModal && _stagedEntree != null && VM.OptionTypes.Any())
         {
             <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content border-0 shadow" style="border-radius: 16px;">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@_stagedBreakfastEntree.EntreeName</h5>
+                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@_stagedEntree.EntreeName</h5>
                             <button type="button" class="btn-close" @onclick="CloseOptionsModal"></button>
                         </div>
                         <div class="modal-body pt-2">
