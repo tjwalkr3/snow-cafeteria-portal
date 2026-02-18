@@ -469,7 +469,7 @@ else
                                         <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
                                             — @(isMulti ? $"Select {optType.NumIncluded}" : "Select 1")
                                         </span>
-                                        @if (optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
+                                        @if (VM.IsCardOrder && optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
                                         {
                                             <span class="text-danger" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
                                         }
@@ -504,7 +504,7 @@ else
                                             }
                                         }
                                     </div>
-                                    @if (extraCost > 0)
+                                    @if (VM.IsCardOrder && extraCost > 0)
                                     {
                                         <div class="info-banner warning mt-2">
                                             <div>
@@ -560,7 +560,7 @@ else
                                         <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
                                             — @(isMulti ? $"Select {optType.NumIncluded}" : "Select 1")
                                         </span>
-                                        @if (optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
+                                        @if (VM.IsCardOrder && optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
                                         {
                                             <span class="text-danger" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
                                         }
@@ -595,7 +595,7 @@ else
                                             }
                                         }
                                     </div>
-                                    @if (extraCost > 0)
+                                    @if (VM.IsCardOrder && extraCost > 0)
                                     {
                                         <div class="info-banner warning mt-2">
                                             <div>
@@ -732,7 +732,7 @@ else
                             </div>
                             @{
                                 var toppingsOptionType = VM.OptionTypes.FirstOrDefault();
-                                if (toppingsOptionType != null)
+                                if (VM.IsCardOrder && toppingsOptionType != null)
                                 {
                                     var includedCount = toppingsOptionType.OptionType.NumIncluded;
                                     var extraToppings = Math.Max(0, _stagedToppings.Count - includedCount);
