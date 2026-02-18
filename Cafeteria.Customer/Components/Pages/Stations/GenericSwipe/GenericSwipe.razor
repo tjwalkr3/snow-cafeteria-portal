@@ -730,15 +730,23 @@ else
                                     </button>
                                 }
                             </div>
-                            @if (_stagedToppings.Count > (VM.Configuration?.IncludedToppingsCount ?? 0))
-                            {
-                                <div class="info-banner warning mt-3">
-                                    <div>
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Additional charge: $@((_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0)) * (VM.Configuration?.ExtraToppingPrice ?? 0m)).ToString("F2") for @(_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0))
-                                        extra topping(s)
-                                    </div>
-                                </div>
+                            @{
+                                var toppingsOptionType = VM.OptionTypes.FirstOrDefault();
+                                if (toppingsOptionType != null)
+                                {
+                                    var includedCount = toppingsOptionType.OptionType.NumIncluded;
+                                    var extraToppings = Math.Max(0, _stagedToppings.Count - includedCount);
+                                    if (extraToppings > 0 && toppingsOptionType.OptionType.FoodOptionPrice > 0)
+                                    {
+                                        var extraCost = extraToppings * toppingsOptionType.OptionType.FoodOptionPrice;
+                                        <div class="info-banner warning mt-3">
+                                            <div>
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                Additional charge: $@extraCost.ToString("F2") for @extraToppings extra topping(s)
+                                            </div>
+                                        </div>
+                                    }
+                                }
                             }
                         </div>
                         <div class="modal-footer border-0 pt-0">
