@@ -47,8 +47,6 @@ public partial class PlaceOrder : ComponentBase
     private decimal Price { get; set; } = 0.0m;
 
     private bool _isLoading = true;
-    private bool _showToast = false;
-    private string _toastMessage = "";
     private List<SwipeGroup> SwipeGroups { get; set; } = new();
     private List<EntreeGroup> EntreeGroups { get; set; } = new();
     private List<SideGroup> SideGroups { get; set; } = new();
@@ -194,9 +192,6 @@ public partial class PlaceOrder : ComponentBase
     {
         if (Order == null)
         {
-            _toastMessage = "No order to place!";
-            _showToast = true;
-            StateHasChanged();
             return;
         }
 
@@ -205,14 +200,6 @@ public partial class PlaceOrder : ComponentBase
             var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
             var createdOrder = await OrderService.CreateOrder(createOrderDto);
 
-            var totalWithTax = Price + PlaceOrderVM.CalculateTax(Order);
-            _toastMessage = Order.IsCardOrder
-                ? $"Your order of ${totalWithTax:F2} has been placed successfully! Order #{createdOrder.Id}"
-                : $"Your order has been placed successfully! Order #{createdOrder.Id}";
-            _showToast = true;
-            StateHasChanged();
-
-            await Task.Delay(3000);
             await Cart.ClearOrder("order");
 
             if (Order?.Location != null)
@@ -222,13 +209,10 @@ public partial class PlaceOrder : ComponentBase
         }
         catch (Exception ex)
         {
-            _toastMessage = $"Failed to place order: {ex.Message}";
-            _showToast = true;
-            StateHasChanged();
             return;
         }
 
-        Navigation.NavigateTo("/", true);
+        Navigation.NavigateTo("/thank-you", true);
     }
 
     private async Task PrintPlacedOrder(int locationId, int orderId)
@@ -244,27 +228,13 @@ public partial class PlaceOrder : ComponentBase
                     OrderTime = DateTime.Now,
                     FoodItems = ConvertOrderToFoodItems()
                 };
-                var printSuccess = await PrinterService.PrintOrder(printerUrl, printOrderData);
-                if (!printSuccess)
-                {
-                    _toastMessage = "Order placed successfully, but receipt printing failed";
-                    _showToast = true;
-                    StateHasChanged();
-                }
+                await PrinterService.PrintOrder(printerUrl, printOrderData);
             }
         }
         catch (Exception ex)
         {
-            _toastMessage = $"Order placed successfully, but receipt printing failed: {ex.Message}";
-            _showToast = true;
-            StateHasChanged();
+            // Silently fail, order is already placed
         }
-    }
-
-    private void OnToastHidden()
-    {
-        _showToast = false;
-        StateHasChanged();
     }
 
     private int GetTotalItemCount()
