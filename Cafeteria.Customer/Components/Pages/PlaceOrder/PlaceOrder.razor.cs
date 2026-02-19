@@ -187,7 +187,7 @@ public partial class PlaceOrder : ComponentBase
             queryParameters.Add("location", locationId.Value.ToString());
         }
 
-        return QueryHelpers.AddQueryString("/station-select", queryParameters);
+        return QueryHelpers.AddQueryString("/location-select", queryParameters);
     }
 
     private async Task HandlePlaceOrder()
