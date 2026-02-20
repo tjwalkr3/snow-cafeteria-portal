@@ -37,7 +37,6 @@ public class StationConfiguration
 
     // For multi-select stations (Pizza, Deli)
     public int MinimumToppingsRequired { get; init; }
-    public decimal ExtraToppingPrice { get; init; }
     public int IncludedToppingsCount { get; init; }
 
     // Footer display
