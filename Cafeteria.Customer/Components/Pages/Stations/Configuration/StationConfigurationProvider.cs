@@ -112,7 +112,6 @@ public class StationConfigurationProvider : IStationConfigurationProvider
             EntreeSelectionLoadsOptions = false,
             OptionSelectionMode = OptionSelectionMode.MultiSelect,
             MinimumToppingsRequired = 2,
-            ExtraToppingPrice = 0.50m,
             IncludedToppingsCount = 2,
             FooterDisplayMode = FooterDisplayMode.PizzaSummary,
             FallbackToppings = new List<string>

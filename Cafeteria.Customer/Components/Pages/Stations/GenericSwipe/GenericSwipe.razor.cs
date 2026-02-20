@@ -181,7 +181,15 @@ public partial class GenericSwipe : ComponentBase
             _stagedSandwichSelections[optionTypeId] = new HashSet<string>();
 
         if (!_stagedSandwichSelections[optionTypeId].Remove(name))
+        {
+            if (!VM.IsCardOrder)
+            {
+                var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == optionTypeId);
+                if (optionType != null && _stagedSandwichSelections[optionTypeId].Count >= optionType.OptionType.NumIncluded)
+                    return;
+            }
             _stagedSandwichSelections[optionTypeId].Add(name);
+        }
         StateHasChanged();
     }
 
@@ -243,7 +251,15 @@ public partial class GenericSwipe : ComponentBase
             _stagedWrapSelections[optionTypeId] = new HashSet<string>();
 
         if (!_stagedWrapSelections[optionTypeId].Remove(name))
+        {
+            if (!VM.IsCardOrder)
+            {
+                var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == optionTypeId);
+                if (optionType != null && _stagedWrapSelections[optionTypeId].Count >= optionType.OptionType.NumIncluded)
+                    return;
+            }
             _stagedWrapSelections[optionTypeId].Add(name);
+        }
         StateHasChanged();
     }
 
@@ -298,7 +314,15 @@ public partial class GenericSwipe : ComponentBase
     private void ToggleStagedDeliOption(string name)
     {
         if (!_stagedDeliSelections.Remove(name))
+        {
+            if (!VM.IsCardOrder)
+            {
+                var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == _activeDeliOptionTypeId);
+                if (optionType != null && _stagedDeliSelections.Count >= optionType.OptionType.NumIncluded)
+                    return;
+            }
             _stagedDeliSelections.Add(name);
+        }
         StateHasChanged();
     }
 
@@ -374,7 +398,15 @@ public partial class GenericSwipe : ComponentBase
     private void ToggleStagedTopping(string topping)
     {
         if (!_stagedToppings.Remove(topping))
+        {
+            if (!VM.IsCardOrder)
+            {
+                var toppingsOptionType = VM.OptionTypes.FirstOrDefault();
+                if (toppingsOptionType != null && _stagedToppings.Count >= toppingsOptionType.OptionType.NumIncluded)
+                    return;
+            }
             _stagedToppings.Add(topping);
+        }
         StateHasChanged();
     }
 

@@ -11,7 +11,6 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
 {
     private const int MINIMUM_TOPPINGS = 2;
     private const int INCLUDED_TOPPINGS = 2;
-    private const decimal EXTRA_TOPPING_PRICE = 0.50m;
 
     private static readonly List<string> FallbackToppings = new()
     {
@@ -160,17 +159,20 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
 
     public override decimal GetExtraToppingCharge(SelectionState state)
     {
-        int extraToppings = Math.Max(0, state.SelectedToppings.Count - INCLUDED_TOPPINGS);
-
-        // Get the actual topping price from the database (via OptionTypes)
         var toppingsOptionType = OptionTypes.FirstOrDefault();
-        var toppingPrice = toppingsOptionType?.OptionType.FoodOptionPrice ?? EXTRA_TOPPING_PRICE;
+        if (toppingsOptionType == null)
+            return 0m;
 
-        return extraToppings * toppingPrice;
+        int extraToppings = Math.Max(0, state.SelectedToppings.Count - toppingsOptionType.OptionType.NumIncluded);
+        return extraToppings * toppingsOptionType.OptionType.FoodOptionPrice;
     }
 
     public override bool HasExtraToppingCharge(SelectionState state)
     {
-        return state.SelectedToppings.Count > INCLUDED_TOPPINGS;
+        var toppingsOptionType = OptionTypes.FirstOrDefault();
+        if (toppingsOptionType == null)
+            return false;
+
+        return state.SelectedToppings.Count > toppingsOptionType.OptionType.NumIncluded;
     }
 }
