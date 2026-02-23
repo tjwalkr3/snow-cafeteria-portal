@@ -12,4 +12,5 @@ public class OrderWithCustomerDto
     public string? CustomerEmail { get; set; }
     public string PaymentType { get; set; } = string.Empty;
     public int ItemCount { get; set; }
+    public List<FoodItemDto> FoodItems { get; set; } = new();
 }
