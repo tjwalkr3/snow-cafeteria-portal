@@ -79,31 +79,44 @@ public class FoodOptionTypeService : IFoodOptionTypeService
 
     public async Task<List<FoodOptionTypeWithOptionsDto>> GetFoodOptionTypesWithOptionsByEntreeId(int entreeId)
     {
-        var optionTypes = await GetFoodOptionTypesByEntreeId(entreeId);
-        var result = new List<FoodOptionTypeWithOptionsDto>();
-
-        foreach (var optionType in optionTypes)
-        {
-            string sql = @"
-            SELECT 
+        const string sql = @"
+            SELECT
+                fot.id AS Id,
+                fot.food_option_type_name AS FoodOptionTypeName,
+                fot.num_included AS NumIncluded,
+                fot.max_amount AS MaxAmount,
+                fot.food_option_price AS FoodOptionPrice,
+                fot.entree_id AS EntreeId,
+                fot.side_id AS SideId,
                 fo.id AS Id,
-                fo.food_option_name AS FoodOptionName, 
-                fo.in_stock AS InStock, 
+                fo.food_option_name AS FoodOptionName,
+                fo.in_stock AS InStock,
                 fo.image_url AS ImageUrl
-            FROM cafeteria.food_option fo
-            INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
-            WHERE oot.food_option_type_id = @optionTypeId;";
+            FROM cafeteria.food_option_type fot
+            LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id
+            LEFT JOIN cafeteria.food_option fo ON oot.food_option_id = fo.id
+            WHERE fot.entree_id = @entreeId
+            ORDER BY fot.id;";
 
-            var options = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { optionTypeId = optionType.Id });
+        var lookup = new Dictionary<int, FoodOptionTypeWithOptionsDto>();
 
-            result.Add(new FoodOptionTypeWithOptionsDto
+        await _dbConnection.QueryAsync<FoodOptionTypeDto, FoodOptionDto, FoodOptionTypeWithOptionsDto>(
+            sql,
+            (optionType, option) =>
             {
-                OptionType = optionType,
-                Options = options.ToList()
-            });
-        }
+                if (!lookup.TryGetValue(optionType.Id, out var withOptions))
+                {
+                    withOptions = new FoodOptionTypeWithOptionsDto { OptionType = optionType };
+                    lookup[optionType.Id] = withOptions;
+                }
+                if (option?.Id > 0)
+                    withOptions.Options.Add(option);
+                return withOptions;
+            },
+            new { entreeId },
+            splitOn: "Id");
 
-        return result;
+        return lookup.Values.ToList();
     }
 
     public async Task<FoodOptionTypeDto?> UpdateFoodOptionTypeById(int id, FoodOptionTypeDto foodTypeDto)
