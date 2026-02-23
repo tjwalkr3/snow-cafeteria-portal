@@ -208,23 +208,16 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task PrintPlacedOrder(int locationId, int orderId)
     {
-        try
+        var printerUrl = await PrinterService.GetPrinterUrl(locationId);
+        if (!string.IsNullOrWhiteSpace(printerUrl))
         {
-            var printerUrl = await PrinterService.GetPrinterUrl(locationId);
-            if (!string.IsNullOrWhiteSpace(printerUrl))
+            var printOrderData = new PrintOrderDto
             {
-                var printOrderData = new PrintOrderDto
-                {
-                    Id = orderId,
-                    OrderTime = DateTime.Now,
-                    FoodItems = ConvertOrderToFoodItems()
-                };
-                await PrinterService.PrintOrder(printerUrl, printOrderData);
-            }
-        }
-        catch (Exception ex)
-        {
-            // Silently fail, order is already placed
+                Id = orderId,
+                OrderTime = DateTime.Now,
+                FoodItems = ConvertOrderToFoodItems()
+            };
+            await PrinterService.PrintOrder(printerUrl, printOrderData);
         }
     }
 
