@@ -3,5 +3,8 @@
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true
   },
-  "python.defaultInterpreterPath": "${workspaceFolder}/ReceiptPrinter/.venv/bin/python"
+  "python.defaultInterpreterPath": "${workspaceFolder}/ReceiptPrinter/.venv/bin/python",
+  "cSpell.words": [
+    "rendermode"
+  ]
 }
