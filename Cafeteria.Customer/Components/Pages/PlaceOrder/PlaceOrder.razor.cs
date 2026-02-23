@@ -72,7 +72,6 @@ public partial class PlaceOrder : ComponentBase
             {
                 string userName = "order";
 
-                // Fetch account swipe balance if user is authenticated
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var user = authState.User;
 
@@ -91,7 +90,6 @@ public partial class PlaceOrder : ComponentBase
                         }
                         catch (Exception)
                         {
-                            // If API call fails, swipes remain at 0
                             AccountSwipeBalance = 0;
                         }
                     }
@@ -185,7 +183,7 @@ public partial class PlaceOrder : ComponentBase
             queryParameters.Add("location", locationId.Value.ToString());
         }
 
-        return QueryHelpers.AddQueryString("/station-select", queryParameters);
+        return QueryHelpers.AddQueryString("/location-select", queryParameters);
     }
 
     private async Task HandlePlaceOrder()
@@ -338,7 +336,6 @@ public partial class PlaceOrder : ComponentBase
         return SwipeGroups.Sum(s => s.Quantity);
     }
 
-    // Card order item management methods
     private async Task AddEntreeItem(EntreeGroup group)
     {
         await Cart.AddEntree("order", group.Entree.Entree);
@@ -353,6 +350,16 @@ public partial class PlaceOrder : ComponentBase
     {
         if (Order == null) return;
         await Cart.RemoveEntree("order", group.Entree.Entree.Id);
+        await RefreshCardOrder();
+    }
+
+    private async Task RemoveAllEntreeItems(EntreeGroup group)
+    {
+        if (Order == null) return;
+        for (int i = 0; i < group.Quantity; i++)
+        {
+            await Cart.RemoveEntree("order", group.Entree.Entree.Id);
+        }
         await RefreshCardOrder();
     }
 
@@ -373,6 +380,16 @@ public partial class PlaceOrder : ComponentBase
         await RefreshCardOrder();
     }
 
+    private async Task RemoveAllSideItems(SideGroup group)
+    {
+        if (Order == null) return;
+        for (int i = 0; i < group.Quantity; i++)
+        {
+            await Cart.RemoveSide("order", group.Side.Side.Id);
+        }
+        await RefreshCardOrder();
+    }
+
     private async Task AddDrinkItem(DrinkGroup group)
     {
         await Cart.AddDrink("order", group.Drink);
@@ -383,6 +400,16 @@ public partial class PlaceOrder : ComponentBase
     {
         if (Order == null) return;
         await Cart.RemoveDrink("order", group.Drink.Id);
+        await RefreshCardOrder();
+    }
+
+    private async Task RemoveAllDrinkItems(DrinkGroup group)
+    {
+        if (Order == null) return;
+        for (int i = 0; i < group.Quantity; i++)
+        {
+            await Cart.RemoveDrink("order", group.Drink.Id);
+        }
         await RefreshCardOrder();
     }
 
@@ -409,7 +436,6 @@ public partial class PlaceOrder : ComponentBase
 
         var foodItems = new List<FoodItemDto>();
 
-        // Add entrees with their options
         foreach (var entreeItem in Order.Entrees)
         {
             foodItems.Add(new FoodItemDto
@@ -422,7 +448,6 @@ public partial class PlaceOrder : ComponentBase
             });
         }
 
-        // Add sides with their options
         foreach (var sideItem in Order.Sides)
         {
             foodItems.Add(new FoodItemDto
@@ -435,7 +460,6 @@ public partial class PlaceOrder : ComponentBase
             });
         }
 
-        // Add drinks (no options)
         foreach (var drink in Order.Drinks)
         {
             foodItems.Add(new FoodItemDto

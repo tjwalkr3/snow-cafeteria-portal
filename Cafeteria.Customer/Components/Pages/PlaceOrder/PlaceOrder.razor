@@ -81,7 +81,7 @@
                                                 <span class="fw-semibold">Qty: @entreeGroup.Quantity</span>
                                                 <button class="qty-btn d-flex align-items-center justify-content-center" @onclick="() => AddEntreeItem(entreeGroup)"><i class="bi bi-plus"></i></button>
                                             </div>
-                                            <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveEntreeItem(entreeGroup)">Remove</button>
+                                            <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveAllEntreeItems(entreeGroup)">Remove</button>
                                         </div>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@
                                                 <span class="fw-semibold">Qty: @sideGroup.Quantity</span>
                                                 <button class="qty-btn d-flex align-items-center justify-content-center" @onclick="() => AddSideItem(sideGroup)"><i class="bi bi-plus"></i></button>
                                             </div>
-                                            <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveSideItem(sideGroup)">Remove</button>
+                                            <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveAllSideItems(sideGroup)">Remove</button>
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@
                                                 <span class="fw-semibold">Qty: @drinkGroup.Quantity</span>
                                                 <button class="qty-btn d-flex align-items-center justify-content-center" @onclick="() => AddDrinkItem(drinkGroup)"><i class="bi bi-plus"></i></button>
                                             </div>
-                                            <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveDrinkItem(drinkGroup)">Remove</button>
+                                            <button class="btn btn-link text-danger text-decoration-none p-0" @onclick="() => RemoveAllDrinkItems(drinkGroup)">Remove</button>
                                         </div>
                                     </div>
                                 </div>

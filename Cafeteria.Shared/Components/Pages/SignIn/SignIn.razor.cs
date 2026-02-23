@@ -1,4 +1,5 @@
 using Cafeteria.Shared.Services.Auth;
+using Cafeteria.Shared.Services.Portal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -14,6 +15,9 @@ public partial class SignIn : ComponentBase
 
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject]
+    private IPortalSettings PortalSettings { get; set; } = default!;
 
     [SupplyParameterFromQuery(Name = "returnUrl")]
     public string? ReturnUrl { get; set; }

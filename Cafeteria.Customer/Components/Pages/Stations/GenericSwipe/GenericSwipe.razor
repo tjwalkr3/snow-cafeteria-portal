@@ -228,86 +228,110 @@ else
 
             @if (VM.ActiveTab == "sandwich" && VM.CurrentStationType == Configuration.StationType.Deli)
             {
-                @foreach (var optionTypeWithOptions in VM.OptionTypes)
-                {
-                    var optionType = optionTypeWithOptions.OptionType;
-                    var selectedOptions = VM.GetSelectedOptionsForType(optionType.Id);
-                    var isComplete = selectedOptions.Count >= optionType.NumIncluded;
-
-                    <div class="meal-card mb-3 d-flex justify-content-between align-items-center"
-                         @onclick="() => OpenDeliOptionsModal(optionType.Id)" style="cursor: pointer;">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-0 fw-bold" style="color: #1e366c;">@optionType.FoodOptionTypeName</h5>
-                            @if (selectedOptions.Any())
+                var sandwichSelectionCount = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
+                var sandwichComplete = IsSandwichComplete();
+                var deliEntree = VM.Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
+                var deliEntreeName = deliEntree?.EntreeName ?? "Sandwich";
+                <div class="meal-card mb-3 d-flex justify-content-between align-items-center"
+                     @onclick="OpenSandwichBuilderModal" style="cursor: pointer;">
+                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                        <div class="d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: #eef1f6; border-radius: 10px;">
+                            <i class="bi bi-stack" style="font-size: 1.3rem; color: #1e366c;"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold" style="color: #1e366c;">@deliEntreeName</h5>
+                            @if (sandwichSelectionCount > 0)
                             {
                                 <div class="d-flex flex-wrap gap-1 mt-1">
-                                    @foreach (var opt in selectedOptions)
+                                    @foreach (var optionTypeWithOptions in VM.OptionTypes)
                                     {
-                                        <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@opt</span>
+                                        var selected = VM.GetSelectedOptionsForType(optionTypeWithOptions.OptionType.Id);
+                                        @foreach (var opt in selected)
+                                        {
+                                            <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@opt</span>
+                                        }
                                     }
                                 </div>
                             }
                             else
                             {
-                                <span class="text-muted" style="font-size: 0.85rem;">Tap to select</span>
-                            }
-                        </div>
-                        <div class="ms-3">
-                            @if (isComplete)
-                            {
-                                <span class="select-btn added d-inline-flex align-items-center gap-1">
-                                    <i class="bi bi-check-circle-fill"></i> Added
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="status-badge pending d-inline-flex align-items-center justify-content-center">@selectedOptions.Count/@optionType.NumIncluded</span>
+                                <span class="text-muted" style="font-size: 0.85rem;">Tap to build your sandwich</span>
                             }
                         </div>
                     </div>
-                }
+                    <div class="ms-3 d-flex flex-column align-items-end gap-1">
+                        @if (VM.IsCardOrder && deliEntree != null)
+                        {
+                            <span class="price-badge">$@deliEntree.EntreePrice.ToString("F2")</span>
+                        }
+                        @if (sandwichComplete)
+                        {
+                            <span class="select-btn added d-inline-flex align-items-center gap-1">
+                                <i class="bi bi-check-circle-fill"></i> Added
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge pending d-inline-flex align-items-center justify-content-center">
+                                @sandwichSelectionCount/@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)
+                            </span>
+                        }
+                    </div>
+                </div>
             }
 
             @if (VM.ActiveTab == "wrap" && VM.CurrentStationType == Configuration.StationType.Wraps)
             {
-                @foreach (var optionTypeWithOptions in VM.OptionTypes)
-                {
-                    var optionType = optionTypeWithOptions.OptionType;
-                    var selectedOptions = VM.GetSelectedOptionsForType(optionType.Id);
-                    var isComplete = selectedOptions.Count >= optionType.NumIncluded;
-
-                    <div class="meal-card mb-3 d-flex justify-content-between align-items-center"
-                         @onclick="() => OpenDeliOptionsModal(optionType.Id)" style="cursor: pointer;">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-0 fw-bold" style="color: #1e366c;">@optionType.FoodOptionTypeName</h5>
-                            @if (selectedOptions.Any())
+                var wrapSelectionCount = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
+                var wrapComplete = IsWrapComplete();
+                var wrapEntree = VM.Entrees.FirstOrDefault(e => e.EntreeName.Contains("Wrap", StringComparison.OrdinalIgnoreCase));
+                var wrapEntreeName = wrapEntree?.EntreeName ?? "Wrap";
+                <div class="meal-card mb-3 d-flex justify-content-between align-items-center"
+                     @onclick="OpenWrapBuilderModal" style="cursor: pointer;">
+                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                        <div class="d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: #eef1f6; border-radius: 10px;">
+                            <i class="bi bi-tornado" style="font-size: 1.3rem; color: #1e366c;"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold" style="color: #1e366c;">@wrapEntreeName</h5>
+                            @if (wrapSelectionCount > 0)
                             {
                                 <div class="d-flex flex-wrap gap-1 mt-1">
-                                    @foreach (var opt in selectedOptions)
+                                    @foreach (var optionTypeWithOptions in VM.OptionTypes)
                                     {
-                                        <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@opt</span>
+                                        var selected = VM.GetSelectedOptionsForType(optionTypeWithOptions.OptionType.Id);
+                                        @foreach (var opt in selected)
+                                        {
+                                            <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@opt</span>
+                                        }
                                     }
                                 </div>
                             }
                             else
                             {
-                                <span class="text-muted" style="font-size: 0.85rem;">Tap to select</span>
-                            }
-                        </div>
-                        <div class="ms-3">
-                            @if (isComplete)
-                            {
-                                <span class="select-btn added d-inline-flex align-items-center gap-1">
-                                    <i class="bi bi-check-circle-fill"></i> Added
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="status-badge pending d-inline-flex align-items-center justify-content-center">@selectedOptions.Count/@optionType.NumIncluded</span>
+                                <span class="text-muted" style="font-size: 0.85rem;">Tap to build your wrap</span>
                             }
                         </div>
                     </div>
-                }
+                    <div class="ms-3 d-flex flex-column align-items-end gap-1">
+                        @if (VM.IsCardOrder && wrapEntree != null)
+                        {
+                            <span class="price-badge">$@wrapEntree.EntreePrice.ToString("F2")</span>
+                        }
+                        @if (wrapComplete)
+                        {
+                            <span class="select-btn added d-inline-flex align-items-center gap-1">
+                                <i class="bi bi-check-circle-fill"></i> Added
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge pending d-inline-flex align-items-center justify-content-center">
+                                @wrapSelectionCount/@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)
+                            </span>
+                        }
+                    </div>
+                </div>
             }
 
             @if (VM.ActiveTab == "sides")
@@ -412,6 +436,188 @@ else
             }
         </div>
 
+        @if (_showSandwichBuilderModal && VM.OptionTypes.Any())
+        {
+            <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                    <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+                        <div class="modal-header border-0 pb-0">
+                            @{
+                                var modalEntree = VM.Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
+                                var modalEntreeName = modalEntree?.EntreeName ?? "Sandwich";
+                            }
+                            <h5 class="modal-title fw-bold" style="color: #1e366c;">Build Your @modalEntreeName</h5>
+                            <button type="button" class="btn-close" @onclick="CloseSandwichBuilderModal"></button>
+                        </div>
+                        <div class="modal-body pt-2">
+                            @{ var optTypeList = VM.OptionTypes.ToList(); }
+                            @for (int oi = 0; oi < optTypeList.Count; oi++)
+                            {
+                                var optionTypeWithOptions = optTypeList[oi];
+                                var optType = optionTypeWithOptions.OptionType;
+                                var isMulti = VM.IsMultiSelectOptionType(optionTypeWithOptions);
+                                var stagedForType = _stagedSandwichSelections.GetValueOrDefault(optType.Id) ?? new HashSet<string>();
+                                var stagedCount = stagedForType.Count;
+                                var extraCost = stagedCount > optType.NumIncluded ?
+                                    (stagedCount - optType.NumIncluded) * optType.FoodOptionPrice : 0;
+                                var isLast = oi == optTypeList.Count - 1;
+
+                                <div class="@(isLast ? "mb-2" : "mb-4 pb-3")" style="@(isLast ? "" : "border-bottom: 1px solid #e9ecef;")">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi @GetCategoryIcon(optType.FoodOptionTypeName)" style="font-size: 1.1rem; color: #1e366c;"></i>
+                                        <span style="font-size: 1rem; font-weight: 700; color: #1e366c;">@optType.FoodOptionTypeName</span>
+                                        <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
+                                            — @(isMulti ? $"Select {optType.NumIncluded}" : "Select 1")
+                                        </span>
+                                        @if (VM.IsCardOrder && optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
+                                        {
+                                            <span class="text-danger" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
+                                        }
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var option in optionTypeWithOptions.Options)
+                                        {
+                                            var optTypeId = optType.Id;
+                                            var isStaged = stagedForType.Contains(option.FoodOptionName);
+
+                                            @if (isMulti)
+                                            {
+                                                <button type="button" class="option-chip @(isStaged ? "selected" : "") d-inline-flex align-items-center"
+                                                    @onclick="() => ToggleStagedSandwichOption(optTypeId, option.FoodOptionName)">
+                                                    @option.FoodOptionName
+                                                    @if (isStaged)
+                                                    {
+                                                        <i class="bi bi-check-lg"></i>
+                                                    }
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="option-chip @(isStaged ? "selected" : "") d-inline-flex align-items-center"
+                                                    @onclick="() => SetStagedSandwichOption(optTypeId, option.FoodOptionName)">
+                                                    @option.FoodOptionName
+                                                    @if (isStaged)
+                                                    {
+                                                        <i class="bi bi-check-lg"></i>
+                                                    }
+                                                </button>
+                                            }
+                                        }
+                                    </div>
+                                    @if (VM.IsCardOrder && extraCost > 0)
+                                    {
+                                        <div class="info-banner warning mt-2">
+                                            <div>
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                +$@extraCost.ToString("F2") for @(stagedCount - optType.NumIncluded)
+                                                extra @optType.FoodOptionTypeName.ToLower()
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-primary w-100" style="background: #1e366c; border-color: #1e366c; border-radius: 10px; padding: 0.75rem;" @onclick="ConfirmSandwichBuilder">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_showWrapBuilderModal && VM.OptionTypes.Any())
+        {
+            <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                    <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+                        <div class="modal-header border-0 pb-0">
+                            @{
+                                var wrapModalEntree = VM.Entrees.FirstOrDefault(e => e.EntreeName.Contains("Wrap", StringComparison.OrdinalIgnoreCase));
+                                var wrapModalEntreeName = wrapModalEntree?.EntreeName ?? "Wrap";
+                            }
+                            <h5 class="modal-title fw-bold" style="color: #1e366c;">Build Your @wrapModalEntreeName</h5>
+                            <button type="button" class="btn-close" @onclick="CloseWrapBuilderModal"></button>
+                        </div>
+                        <div class="modal-body pt-2">
+                            @{ var wrapOptTypeList = VM.OptionTypes.ToList(); }
+                            @for (int wi = 0; wi < wrapOptTypeList.Count; wi++)
+                            {
+                                var optionTypeWithOptions = wrapOptTypeList[wi];
+                                var optType = optionTypeWithOptions.OptionType;
+                                var isMulti = VM.IsMultiSelectOptionType(optionTypeWithOptions);
+                                var stagedForType = _stagedWrapSelections.GetValueOrDefault(optType.Id) ?? new HashSet<string>();
+                                var stagedCount = stagedForType.Count;
+                                var extraCost = stagedCount > optType.NumIncluded ?
+                                    (stagedCount - optType.NumIncluded) * optType.FoodOptionPrice : 0;
+                                var isLast = wi == wrapOptTypeList.Count - 1;
+
+                                <div class="@(isLast ? "mb-2" : "mb-4 pb-3")" style="@(isLast ? "" : "border-bottom: 1px solid #e9ecef;")">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi @GetCategoryIcon(optType.FoodOptionTypeName)" style="font-size: 1.1rem; color: #1e366c;"></i>
+                                        <span style="font-size: 1rem; font-weight: 700; color: #1e366c;">@optType.FoodOptionTypeName</span>
+                                        <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
+                                            — @(isMulti ? $"Select {optType.NumIncluded}" : "Select 1")
+                                        </span>
+                                        @if (VM.IsCardOrder && optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
+                                        {
+                                            <span class="text-danger" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
+                                        }
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var option in optionTypeWithOptions.Options)
+                                        {
+                                            var optTypeId = optType.Id;
+                                            var isStaged = stagedForType.Contains(option.FoodOptionName);
+
+                                            @if (isMulti)
+                                            {
+                                                <button type="button" class="option-chip @(isStaged ? "selected" : "") d-inline-flex align-items-center"
+                                                    @onclick="() => ToggleStagedWrapOption(optTypeId, option.FoodOptionName)">
+                                                    @option.FoodOptionName
+                                                    @if (isStaged)
+                                                    {
+                                                        <i class="bi bi-check-lg"></i>
+                                                    }
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="option-chip @(isStaged ? "selected" : "") d-inline-flex align-items-center"
+                                                    @onclick="() => SetStagedWrapOption(optTypeId, option.FoodOptionName)">
+                                                    @option.FoodOptionName
+                                                    @if (isStaged)
+                                                    {
+                                                        <i class="bi bi-check-lg"></i>
+                                                    }
+                                                </button>
+                                            }
+                                        }
+                                    </div>
+                                    @if (VM.IsCardOrder && extraCost > 0)
+                                    {
+                                        <div class="info-banner warning mt-2">
+                                            <div>
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                +$@extraCost.ToString("F2") for @(stagedCount - optType.NumIncluded)
+                                                extra @optType.FoodOptionTypeName.ToLower()
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-primary w-100" style="background: #1e366c; border-color: #1e366c; border-radius: 10px; padding: 0.75rem;" @onclick="ConfirmWrapBuilder">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         @if (_showDeliOptionsModal && VM.OptionTypes.Any())
         {
             var activeOptionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == _activeDeliOptionTypeId);
@@ -424,27 +630,24 @@ else
                     (stagedCount - optType.NumIncluded) * optType.FoodOptionPrice : 0;
 
                 <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content border-0 shadow" style="border-radius: 16px;">
                             <div class="modal-header border-0 pb-0">
                                 <h5 class="modal-title fw-bold" style="color: #1e366c;">@optType.FoodOptionTypeName</h5>
                                 <button type="button" class="btn-close" @onclick="CloseDeliOptionsModal"></button>
                             </div>
                             <div class="modal-body pt-2">
-                                <p class="text-muted mb-3" style="font-size: 0.85rem;">
-                                    @if (isMulti)
-                                    {
-                                        <text>Select @optType.NumIncluded</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Select 1</text>
-                                    }
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <i class="bi @GetCategoryIcon(optType.FoodOptionTypeName)" style="font-size: 1.1rem; color: #1e366c;"></i>
+                                    <span style="font-size: 1rem; font-weight: 700; color: #1e366c;">@optType.FoodOptionTypeName</span>
+                                    <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
+                                        — @(isMulti ? $"Select {optType.NumIncluded}" : "Select 1")
+                                    </span>
                                     @if (optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.NumIncluded)
                                     {
-                                        <span class="text-danger ms-2">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
+                                        <span class="text-danger" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
                                     }
-                                </p>
+                                </div>
                                 <div class="d-flex flex-wrap gap-2">
                                     @foreach (var option in activeOptionType.Options)
                                     {
@@ -499,16 +702,20 @@ else
         @if (_showPizzaToppingsModal)
         {
             <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content border-0 shadow" style="border-radius: 16px;">
                         <div class="modal-header border-0 pb-0">
                             <h5 class="modal-title fw-bold" style="color: #1e366c;">Toppings</h5>
                             <button type="button" class="btn-close" @onclick="ClosePizzaToppingsModal"></button>
                         </div>
                         <div class="modal-body pt-2">
-                            <p class="text-muted mb-3" style="font-size: 0.85rem;">
-                                Select @(VM.Configuration?.MinimumToppingsRequired ?? 0) minimum
-                            </p>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-leaf" style="font-size: 1.1rem; color: #1e366c;"></i>
+                                <span style="font-size: 1rem; font-weight: 700; color: #1e366c;">Toppings</span>
+                                <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
+                                    — Select @(VM.Configuration?.MinimumToppingsRequired ?? 0) minimum
+                                </span>
+                            </div>
                             <div class="d-flex flex-wrap gap-2">
                                 @foreach (var topping in VM.AvailableToppings)
                                 {
@@ -523,17 +730,23 @@ else
                                     </button>
                                 }
                             </div>
-                            @if (_stagedToppings.Count > (VM.Configuration?.IncludedToppingsCount ?? 0))
-                            {
-                                var toppingOptionType = VM.OptionTypes.FirstOrDefault();
-                                var extraChargeAmount = (_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0)) * (toppingOptionType?.OptionType.FoodOptionPrice ?? 0m);
-                                <div class="info-banner warning mt-3">
-                                    <div>
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Additional charge: $@extraChargeAmount.ToString("F2") for @(_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0))
-                                        extra topping(s)
-                                    </div>
-                                </div>
+                            @{
+                                var toppingsOptionType = VM.OptionTypes.FirstOrDefault();
+                                if (VM.IsCardOrder && toppingsOptionType != null)
+                                {
+                                    var includedCount = toppingsOptionType.OptionType.NumIncluded;
+                                    var extraToppings = Math.Max(0, _stagedToppings.Count - includedCount);
+                                    if (extraToppings > 0 && toppingsOptionType.OptionType.FoodOptionPrice > 0)
+                                    {
+                                        var extraCost = extraToppings * toppingsOptionType.OptionType.FoodOptionPrice;
+                                        <div class="info-banner warning mt-3">
+                                            <div>
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                Additional charge: $@extraCost.ToString("F2") for @extraToppings extra topping(s)
+                                            </div>
+                                        </div>
+                                    }
+                                }
                             }
                         </div>
                         <div class="modal-footer border-0 pt-0">
@@ -546,24 +759,28 @@ else
             </div>
         }
 
-        @if (_showOptionsModal && VM.State.SelectedEntree != null && VM.OptionTypes.Any())
+        @if (_showOptionsModal && _stagedEntree != null && VM.OptionTypes.Any())
         {
             <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content border-0 shadow" style="border-radius: 16px;">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@VM.State.SelectedEntree.EntreeName</h5>
+                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@_stagedEntree.EntreeName</h5>
                             <button type="button" class="btn-close" @onclick="CloseOptionsModal"></button>
                         </div>
                         <div class="modal-body pt-2">
-                            @foreach (var optionTypeWithOptions in VM.OptionTypes)
+                            @{ var bfOptTypeList = VM.OptionTypes.ToList(); }
+                            @for (int bi = 0; bi < bfOptTypeList.Count; bi++)
                             {
+                                var optionTypeWithOptions = bfOptTypeList[bi];
                                 var otId = optionTypeWithOptions.OptionType.Id;
-                                <div class="mb-3">
-                                    <label class="d-block mb-2 text-uppercase"
-                                        style="font-size: 0.75rem; font-weight: 600; color: #6c757d; letter-spacing: 0.5px;">
-                                        @optionTypeWithOptions.OptionType.FoodOptionTypeName
-                                    </label>
+                                var bfIsLast = bi == bfOptTypeList.Count - 1;
+                                <div class="@(bfIsLast ? "mb-2" : "mb-4 pb-3")" style="@(bfIsLast ? "" : "border-bottom: 1px solid #e9ecef;")">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi @GetCategoryIcon(optionTypeWithOptions.OptionType.FoodOptionTypeName)" style="font-size: 1.1rem; color: #1e366c;"></i>
+                                        <span style="font-size: 1rem; font-weight: 700; color: #1e366c;">@optionTypeWithOptions.OptionType.FoodOptionTypeName</span>
+                                        <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">— Select 1</span>
+                                    </div>
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach (var option in optionTypeWithOptions.Options)
                                         {
