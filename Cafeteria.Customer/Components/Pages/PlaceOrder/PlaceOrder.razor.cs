@@ -195,21 +195,14 @@ public partial class PlaceOrder : ComponentBase
             return;
         }
 
-        try
-        {
-            var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
-            var createdOrder = await OrderService.CreateOrder(createOrderDto);
+        var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
+        var createdOrder = await OrderService.CreateOrder(createOrderDto);
 
-            await Cart.ClearOrder("order");
+        await Cart.ClearOrder("order");
 
-            if (Order?.Location != null)
-            {
-                await PrintPlacedOrder(Order.Location.Id, createdOrder.Id);
-            }
-        }
-        catch (Exception ex)
+        if (Order?.Location != null)
         {
-            return;
+            _ = PrintPlacedOrder(Order.Location.Id, createdOrder.Id);
         }
 
         Navigation.NavigateTo("/thank-you", true);
