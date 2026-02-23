@@ -62,6 +62,9 @@ public class CustomerIntegrationTests : IDisposable
         const string deleteOrdersQuery = "DELETE FROM cafeteria.order WHERE customer_badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)";
         await _connection.ExecuteAsync(deleteOrdersQuery, new { Email = email });
 
+        const string deleteSwipesQuery = "DELETE FROM cafeteria.customer_swipe WHERE badger_id = (SELECT badger_id FROM cafeteria.customer WHERE email = @Email)";
+        await _connection.ExecuteAsync(deleteSwipesQuery, new { Email = email });
+
         const string deleteCustomerQuery = "DELETE FROM cafeteria.customer WHERE email = @Email";
         await _connection.ExecuteAsync(deleteCustomerQuery, new { Email = email });
     }
