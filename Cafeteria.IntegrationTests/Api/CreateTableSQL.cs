@@ -151,8 +151,7 @@ public static class DBSql
         CREATE TABLE
             cafeteria.customer_swipe (
                 badger_id int NOT NULL,
-                swipe_balance int4 NOT NULL,
-                FOREIGN KEY (badger_id) REFERENCES cafeteria.customer (badger_id)
+                swipe_balance int4 NOT NULL
             );
 
         CREATE TABLE
