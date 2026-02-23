@@ -288,6 +288,30 @@ public class OrderService : IOrderService
             LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
             WHERE o.id = @Id";
 
-        return await _dbConnection.QuerySingleOrDefaultAsync<OrderWithCustomerDto>(sql, new { Id = id });
+        var order = await _dbConnection.QuerySingleOrDefaultAsync<OrderWithCustomerDto>(sql, new { Id = id });
+        if (order == null) return null;
+
+        const string foodItemsSql = @"
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
+                swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
+            FROM cafeteria.food_item
+            WHERE order_id = @orderId;";
+
+        var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = id });
+        order.FoodItems = foodItems.ToList();
+
+        foreach (var foodItem in order.FoodItems)
+        {
+            const string optionsSql = @"
+                SELECT id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName
+                FROM cafeteria.food_item_option
+                WHERE food_item_order_id = @foodItemId;";
+
+            var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemId = foodItem.Id });
+            foodItem.Options = options.ToList();
+        }
+
+        return order;
     }
 }

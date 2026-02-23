@@ -102,6 +102,85 @@
                     </div>
                 </div>
 
+                @if (Order.FoodItems.Any())
+                {
+                    <div class="mt-2">
+                        <h5 class="fw-semibold mb-3 text-muted text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.05em;">Items Ordered</h5>
+                        <div class="bg-light rounded-3 p-3">
+                            @if (Order.PaymentType == "Swipe")
+                            {
+                                @for (int i = 0; i + 2 < Order.FoodItems.Count; i += 3)
+                                {
+                                    var entree = Order.FoodItems[i];
+                                    var side = Order.FoodItems[i + 1];
+                                    var drink = Order.FoodItems[i + 2];
+                                    var swipeNum = i / 3 + 1;
+                                    <div class="mb-3 @(i + 3 < Order.FoodItems.Count ? "pb-3 border-bottom" : "")">
+                                        @if (Order.FoodItems.Count > 3)
+                                        {
+                                            <div class="fw-semibold small text-muted mb-2">Swipe @swipeNum</div>
+                                        }
+                                        <div class="mb-1">
+                                            <span class="text-muted small">Entree:</span>
+                                            <span class="ms-2 fw-medium">@entree.Name</span>
+                                            @if (entree.Options.Any())
+                                            {
+                                                <ul class="mb-0 mt-1 ps-4 small text-muted">
+                                                    @foreach (var opt in entree.Options)
+                                                    {
+                                                        <li>@opt.FoodOptionName</li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                        <div class="mb-1">
+                                            <span class="text-muted small">Side:</span>
+                                            <span class="ms-2 fw-medium">@side.Name</span>
+                                            @if (side.Options.Any())
+                                            {
+                                                <ul class="mb-0 mt-1 ps-4 small text-muted">
+                                                    @foreach (var opt in side.Options)
+                                                    {
+                                                        <li>@opt.FoodOptionName</li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                        <div>
+                                            <span class="text-muted small">Drink:</span>
+                                            <span class="ms-2 fw-medium">@drink.Name</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var item in Order.FoodItems)
+                                {
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-medium">@item.Name</span>
+                                            @if (item.CardCost.HasValue)
+                                            {
+                                                <span class="text-muted small">$@item.CardCost.Value.ToString("F2")</span>
+                                            }
+                                        </div>
+                                        @if (item.Options.Any())
+                                        {
+                                            <ul class="mb-0 mt-1 ps-4 small text-muted">
+                                                @foreach (var opt in item.Options)
+                                                {
+                                                    <li>@opt.FoodOptionName</li>
+                                                }
+                                            </ul>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+
                 @if (Order.CustomerBadgerId.HasValue)
                 {
                     <div class="mt-3">
