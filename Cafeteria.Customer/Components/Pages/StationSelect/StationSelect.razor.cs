@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
-using Cafeteria.Shared.DTOs;
-using System.Text.Json;
+using Cafeteria.Customer.Services.Cart;
 
 namespace Cafeteria.Customer.Components.Pages.StationSelect;
 
@@ -13,6 +12,9 @@ public partial class StationSelect : ComponentBase
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
+    [Inject]
+    private ICartService Cart { get; set; } = default!;
+
     [SupplyParameterFromQuery(Name = "location")]
     public int Location { get; set; }
 
@@ -21,25 +23,20 @@ public partial class StationSelect : ComponentBase
 
     public bool IsInitialized { get; set; } = false;
 
-    public string CreateUrl(int stationId)
+    public async Task HandleStationSelected(int stationId)
     {
-        Dictionary<string, string?> queryParameters = new() { };
+        var station = StationSelectVM.Stations?.FirstOrDefault(s => s.Id == stationId);
+        if (station == null) return;
 
+        await Cart.SetStation("order", station.Id, station.StationName);
+
+        Dictionary<string, string?> queryParameters = new();
         if (!string.IsNullOrEmpty(Payment))
             queryParameters.Add("payment", Payment);
         queryParameters.Add("location", Location.ToString());
-        queryParameters.Add("station", stationId.ToString());
 
-        var station = StationSelectVM.Stations?.FirstOrDefault(s => s.Id == stationId);
-        if (station != null)
-        {
-            string route = GetStationRoute(station.StationName);
-            return QueryHelpers.AddQueryString(route, queryParameters);
-        }
-
-        if (Payment == "card")
-            return QueryHelpers.AddQueryString("/card-menu", queryParameters);
-        return QueryHelpers.AddQueryString("/swipe-menu", queryParameters);
+        string route = GetStationRoute(station.StationName);
+        Navigation.NavigateTo(QueryHelpers.AddQueryString(route, queryParameters));
     }
 
     private string GetStationRoute(string stationName)
@@ -70,11 +67,9 @@ public partial class StationSelect : ComponentBase
 
     public string CreateBackUrl()
     {
-        Dictionary<string, string?> queryParameters = new() { };
-
+        Dictionary<string, string?> queryParameters = new();
         if (!string.IsNullOrEmpty(Payment))
             queryParameters.Add("payment", Payment);
-
         return QueryHelpers.AddQueryString("/location-select", queryParameters);
     }
 

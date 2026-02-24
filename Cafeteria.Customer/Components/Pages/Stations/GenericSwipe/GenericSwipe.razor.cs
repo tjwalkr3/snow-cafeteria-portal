@@ -1,4 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
+using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
@@ -16,6 +17,9 @@ public partial class GenericSwipe : ComponentBase
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
 
+    [Inject]
+    private ICartService Cart { get; set; } = default!;
+
     [Parameter]
     public string? StationType { get; set; }
 
@@ -24,9 +28,6 @@ public partial class GenericSwipe : ComponentBase
 
     [SupplyParameterFromQuery(Name = "payment")]
     public string? Payment { get; set; }
-
-    [SupplyParameterFromQuery(Name = "station")]
-    public int Station { get; set; }
 
     private bool _isLoading = true;
     private bool _showOptionsModal;
@@ -49,7 +50,10 @@ public partial class GenericSwipe : ComponentBase
             var stationType = DetermineStationType();
             bool isCardOrder = Payment == "card";
 
-            await VM.InitializeAsync(stationType, Station, Location, isCardOrder);
+            var order = await Cart.GetOrder("order");
+            int stationId = order?.StationId ?? 0;
+
+            await VM.InitializeAsync(stationType, stationId, Location, isCardOrder);
             _isLoading = false;
             StateHasChanged();
         }

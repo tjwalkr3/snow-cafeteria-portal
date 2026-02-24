@@ -38,6 +38,14 @@ public class CartService : ICartService
         await _protectedStorage.SetAsync(key, order);
     }
 
+    public async Task SetStation(string key, int stationId, string stationName)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        order.StationId = stationId;
+        order.StationName = stationName;
+        await _protectedStorage.SetAsync(key, order);
+    }
+
     public async Task AddEntree(string key, EntreeDto entree)
     {
         var order = await GetOrder(key) ?? new BrowserOrder();

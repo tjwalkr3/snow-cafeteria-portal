@@ -6,6 +6,8 @@ public class BrowserOrder
 {
     public bool IsCardOrder { get; set; } = false;
     public LocationDto? Location { get; set; }
+    public int StationId { get; set; }
+    public string StationName { get; set; } = string.Empty;
     public List<OrderEntreeItem> Entrees { get; set; } = [];
     public List<OrderSideItem> Sides { get; set; } = [];
     public List<DrinkDto> Drinks { get; set; } = [];
