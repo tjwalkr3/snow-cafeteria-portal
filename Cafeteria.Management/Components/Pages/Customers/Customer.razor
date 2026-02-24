@@ -7,11 +7,16 @@
 <PageTitle>Customers</PageTitle>
 
 <div class="px-3">
-    <div class="d-flex justify-content-center align-items-center mb-4">
+    <div class="d-flex justify-content-center align-items-center">
         <h1 class="page-title fw-bold mb-0">Customers</h1>
     </div>
 
-
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <label class="form-label mb-0 me-2 text-nowrap fw-medium">Search:</label>
+            <input type="text" class="form-control" placeholder="Search by name, email, or Badger ID..." @oninput="OnSearchChanged" value="@searchText" />
+        </div>
+    </div>
 
     @if (isLoading)
     {
@@ -22,49 +27,47 @@
             <p class="mt-3 text-muted">Loading customers...</p>
         </div>
     }
-    else if (allCustomers?.Any() ?? false)
+    else if (FilteredCustomers.Any())
     {
-        <div class="row g-4 mb-4">
-            @foreach (CustomerSwipeDto customer in allCustomers)
-            {
-                <div class="col-12 col-md-6 col-lg-4" @key="customer.BadgerId">
-                    <div class="customer-card card h-100 border-1 rounded-3 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
-                                <div class="flex-grow-1">
-                                    <h5 class="customer-name fw-semibold mb-2">
-                                        <i class="bi bi-person-circle me-2 text-primary"></i>@customer.CustName
-                                    </h5>
-                                    <p class="text-muted small mb-1">
-                                        <i class="bi bi-envelope me-1"></i>@customer.Email
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-column gap-2">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="detail-label text-muted text-uppercase small fw-medium">Badger ID:</span>
-                                    <span class="fw-semibold">@customer.BadgerId</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="detail-label text-muted text-uppercase small fw-medium">Swipe Balance:</span>
-                                    <span class="swipe-balance fw-bold @(customer.SwipeCount > 0 ? "text-success" : "text-danger")">
+        <div class="card border-1 rounded-3 shadow-sm mb-4">
+            <div class="table-responsive">
+                <table class="table table-hover customer-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Badger ID</th>
+                            <th class="text-end">Swipe Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (CustomerSwipeDto customer in FilteredCustomers)
+                        {
+                            <tr @key="customer.BadgerId">
+                                <td>
+                                    <i class="bi bi-person-circle me-2 text-primary"></i>
+                                    <span class="fw-semibold">@customer.CustName</span>
+                                </td>
+                                <td class="text-muted">@customer.Email</td>
+                                <td class="text-muted">@customer.BadgerId</td>
+                                <td class="text-end">
+                                    <span class="swipe-badge fw-semibold @(customer.SwipeCount > 0 ? "swipe-positive" : "swipe-zero")">
                                         @customer.SwipeCount
                                     </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
     else
     {
         <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
             <i class="bi bi-people fs-1 mb-3 text-muted d-block"></i>
-            <p class="fs-5 mb-2">@(allCustomers?.Count > 0 ? "No customers match your search." : "No customers found.")</p>
-            <p class="text-muted small mb-0">@(allCustomers?.Count > 0 ? "Try adjusting your search criteria." : "Customers will appear here once registered.")</p>
+            <p class="fs-5 mb-2">@(!string.IsNullOrWhiteSpace(searchText) ? "No customers match your search." : "No customers found.")</p>
+            <p class="text-muted small mb-0">@(!string.IsNullOrWhiteSpace(searchText) ? "Try adjusting your search criteria." : "Customers will appear here once registered.")</p>
         </div>
     }
 </div>

@@ -15,6 +15,30 @@ public partial class Customer : ComponentBase
     private string toastMessage = "";
     private ToastType toastType = ToastType.Success;
     private bool showToast = false;
+    private string searchText = string.Empty;
+
+    private List<CustomerSwipeDto> FilteredCustomers
+    {
+        get
+        {
+            var customers = allCustomers?.AsEnumerable() ?? Enumerable.Empty<CustomerSwipeDto>();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                customers = customers.Where(c =>
+                    c.CustName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    c.Email.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    c.BadgerId.ToString().Contains(searchText));
+            }
+
+            return customers.ToList();
+        }
+    }
+
+    private void OnSearchChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? string.Empty;
+    }
 
     protected override async Task OnInitializedAsync()
     {
