@@ -32,7 +32,7 @@ public class OrderIntegrationTests : IDisposable
         var newOrder = new BrowserOrder
         {
             IsCardOrder = true,
-            Location = new LocationDto { Id = 1, LocationName = "Test Location" },
+            Location = new LocationDto { Id = 1, LocationName = "Test Location", LocationDescription = "Test Location Description" },
             StationId = 1,
             StationName = "Test Station",
             Entrees = new List<OrderEntreeItem>
@@ -45,12 +45,12 @@ public class OrderIntegrationTests : IDisposable
                         new SelectedFoodOption
                         {
                             Option = new FoodOptionDto { FoodOptionName = "Lettuce" },
-                            OptionType = new FoodOptionTypeDto { Id = 1, NumIncluded = 10, FoodOptionPrice = 0 }
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", NumIncluded = 10, MaxAmount = 10, FoodOptionPrice = 0 }
                         },
                         new SelectedFoodOption
                         {
                             Option = new FoodOptionDto { FoodOptionName = "Tomato" },
-                            OptionType = new FoodOptionTypeDto { Id = 1, NumIncluded = 10, FoodOptionPrice = 0 }
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", NumIncluded = 10, MaxAmount = 10, FoodOptionPrice = 0 }
                         }
                     }
                 }
