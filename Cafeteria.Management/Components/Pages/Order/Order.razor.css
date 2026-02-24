@@ -3,17 +3,31 @@
     letter-spacing: -0.025em;
 }
 
-.order-card {
-    transition: all 0.2s ease;
+.orders-table thead th {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
 }
 
-.order-card:hover {
-    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
-    transform: translateY(-2px);
+.orders-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.order-link:hover {
-    color: var(--bs-primary) !important;
+.order-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.order-row:hover {
+    background-color: rgba(30, 54, 108, 0.04) !important;
 }
 
 .customer-link {
@@ -22,8 +36,4 @@
 
 .customer-link:hover {
     text-decoration: underline !important;
-}
-
-.detail-label {
-    letter-spacing: 0.5px;
 }

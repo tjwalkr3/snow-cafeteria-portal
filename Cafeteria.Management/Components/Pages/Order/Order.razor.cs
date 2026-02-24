@@ -8,6 +8,9 @@ public partial class Order : ComponentBase
     [Inject]
     public IOrderVM ViewModel { get; set; } = default!;
 
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+
     private string searchText = string.Empty;
     private string paymentTypeFilter = string.Empty;
 
@@ -50,5 +53,10 @@ public partial class Order : ComponentBase
     {
         paymentTypeFilter = e.Value?.ToString() ?? string.Empty;
         StateHasChanged();
+    }
+
+    private void NavigateToOrder(int orderId)
+    {
+        Navigation.NavigateTo($"orders/{orderId}");
     }
 }
