@@ -15,5 +15,4 @@ public interface IPlaceOrderVM
     List<EntreeGroup> GroupEntrees(BrowserOrder order);
     List<SideGroup> GroupSides(BrowserOrder order);
     List<DrinkGroup> GroupDrinks(BrowserOrder order);
-    CreateOrderDto ConvertToCreateOrderDto(BrowserOrder order);
 }

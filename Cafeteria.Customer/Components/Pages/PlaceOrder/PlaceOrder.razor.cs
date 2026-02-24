@@ -127,8 +127,7 @@ public partial class PlaceOrder : ComponentBase
             return;
         }
 
-        var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
-        var createdOrder = await OrderService.CreateOrder(createOrderDto);
+        var createdOrder = await OrderService.CreateOrder(Order);
 
         await Cart.ClearOrder("order");
 

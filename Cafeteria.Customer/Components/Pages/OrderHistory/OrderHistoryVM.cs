@@ -50,10 +50,12 @@ public class OrderHistoryVM : IOrderHistoryVM
             _allOrders = await _orderService.GetOrdersByCustomerEmail();
             _allOrders = _allOrders.OrderByDescending(o => o.OrderTime).ToList();
 
-            // Load station names for all unique station IDs
+            // Load station names for all unique station IDs (drinks have null StationId, skip them)
             var stationIds = _allOrders
                 .SelectMany(o => o.FoodItems)
                 .Select(f => f.StationId)
+                .Where(s => s.HasValue)
+                .Select(s => s!.Value)
                 .Distinct();
 
             foreach (var stationId in stationIds)
@@ -142,9 +144,10 @@ public class OrderHistoryVM : IOrderHistoryVM
         return order.TotalSwipe ?? order.FoodItems.Sum(f => f.SwipeCost ?? 0);
     }
 
-    public string GetStationName(int stationId)
+    public string GetStationName(int? stationId)
     {
-        return _stationNames.TryGetValue(stationId, out var name) ? name : "Unknown Station";
+        if (!stationId.HasValue) return string.Empty;
+        return _stationNames.TryGetValue(stationId.Value, out var name) ? name : "Unknown Station";
     }
 
     private string GetStationNameFromApi(int stationId)

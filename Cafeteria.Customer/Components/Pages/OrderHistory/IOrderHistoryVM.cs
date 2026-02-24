@@ -22,5 +22,5 @@ public interface IOrderHistoryVM
     decimal GetTax(OrderDto order);
     decimal GetTotal(OrderDto order);
     int GetSwipeCount(OrderDto order);
-    string GetStationName(int stationId);
+    string GetStationName(int? stationId);
 }

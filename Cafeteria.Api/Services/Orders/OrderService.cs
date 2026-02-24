@@ -13,7 +13,7 @@ public class OrderService : IOrderService
         _dbConnection = dbConnection;
     }
 
-    public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto, string customerEmail)
+    public async Task<OrderDto> CreateOrder(BrowserOrder browserOrder, string customerEmail)
     {
         if (_dbConnection.State != ConnectionState.Open)
             _dbConnection.Open();
@@ -38,6 +38,10 @@ public class OrderService : IOrderService
                 throw new InvalidOperationException($"Customer with email {customerEmail} not found");
             }
 
+            decimal? totalPrice = browserOrder.IsCardOrder ? CalculateTotalPrice(browserOrder) : null;
+            decimal tax = CalculateTax(browserOrder);
+            int? totalSwipe = browserOrder.IsCardOrder ? null : CalculateTotalSwipe(browserOrder);
+
             const string insertOrderSql = @"
                 INSERT INTO cafeteria.order (customer_badger_id, total_price, tax, total_swipe)
                 VALUES (@CustomerBadgerId, @TotalPrice, @Tax, @TotalSwipe)
@@ -45,14 +49,13 @@ public class OrderService : IOrderService
 
             var order = await _dbConnection.QuerySingleAsync<OrderDto>(
                 insertOrderSql,
-                new { CustomerBadgerId = customerBadgerId.Value, createOrderDto.TotalPrice, createOrderDto.Tax, createOrderDto.TotalSwipe },
+                new { CustomerBadgerId = customerBadgerId.Value, TotalPrice = totalPrice, Tax = tax, TotalSwipe = totalSwipe },
                 transaction);
 
-            bool isCardOrder = createOrderDto.FoodItems.Any() && createOrderDto.FoodItems[0].CardCost.HasValue;
             int? saleCardId = null;
             int? saleSwipeId = null;
 
-            if (isCardOrder)
+            if (browserOrder.IsCardOrder)
             {
                 const string insertSaleCardSql = @"
                     INSERT INTO cafeteria.sale_card (order_id)
@@ -77,14 +80,14 @@ public class OrderService : IOrderService
                     transaction);
             }
 
-            foreach (var foodItem in createOrderDto.FoodItems)
+            foreach (var foodItem in ConvertOrderToFoodItems(browserOrder))
             {
                 const string insertFoodItemSql = @"
                     INSERT INTO cafeteria.food_item
-                        (name, order_id, station_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
+                        (name, order_id, station_id, location_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
                     VALUES
-                        (@Name, @OrderId, @StationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)
-                    RETURNING id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                        (@Name, @OrderId, @StationId, @LocationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)
+                    RETURNING id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                         sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                         swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special;";
 
@@ -95,6 +98,7 @@ public class OrderService : IOrderService
                         foodItem.Name,
                         OrderId = order.Id,
                         foodItem.StationId,
+                        foodItem.LocationId,
                         SaleCardId = saleCardId,
                         SaleSwipeId = saleSwipeId,
                         foodItem.SwipeCost,
@@ -103,7 +107,7 @@ public class OrderService : IOrderService
                     },
                     transaction);
 
-                foreach (var option in foodItem.Options)
+                foreach (var optionName in foodItem.OptionNames)
                 {
                     const string insertOptionSql = @"
                         INSERT INTO cafeteria.food_item_option (food_item_order_id, food_option_name)
@@ -112,11 +116,7 @@ public class OrderService : IOrderService
 
                     var insertedOption = await _dbConnection.QuerySingleAsync<FoodItemOptionDto>(
                         insertOptionSql,
-                        new
-                        {
-                            FoodItemId = insertedFoodItem.Id,
-                            option.FoodOptionName
-                        },
+                        new { FoodItemId = insertedFoodItem.Id, FoodOptionName = optionName },
                         transaction);
 
                     insertedFoodItem.Options.Add(insertedOption);
@@ -135,6 +135,164 @@ public class OrderService : IOrderService
         }
     }
 
+    private const decimal TaxRate = 0.0775m;
+
+    private decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
+    {
+        if (selectedOptions == null || selectedOptions.Count == 0)
+            return 0m;
+
+        decimal cost = 0m;
+        var optionsByType = selectedOptions.GroupBy(opt => opt.OptionType.Id);
+
+        foreach (var group in optionsByType)
+        {
+            var optionType = group.First().OptionType;
+            var selectedCount = group.Count();
+            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
+            cost += chargeableCount * optionType.FoodOptionPrice;
+        }
+
+        return cost;
+    }
+
+    private decimal CalculateTotalPrice(BrowserOrder order)
+    {
+        decimal total = 0m;
+
+        foreach (var entreeItem in order.Entrees)
+        {
+            total += entreeItem.Entree.EntreePrice;
+            total += CalculateOptionsCost(entreeItem.SelectedOptions);
+        }
+
+        foreach (var sideItem in order.Sides)
+        {
+            total += sideItem.Side.SidePrice;
+            total += CalculateOptionsCost(sideItem.SelectedOptions);
+        }
+
+        total += order.Drinks.Sum(drink => drink.DrinkPrice);
+        return total;
+    }
+
+    private decimal CalculateTax(BrowserOrder order)
+    {
+        if (!order.IsCardOrder)
+            return 0m;
+
+        return Math.Round(CalculateTotalPrice(order) * TaxRate, 2);
+    }
+
+    private int CalculateTotalSwipe(BrowserOrder order)
+    {
+        if (order.IsCardOrder)
+            return 0;
+
+        return Math.Min(order.Entrees.Count,
+               Math.Min(order.Sides.Count, order.Drinks.Count));
+    }
+
+    private List<FoodItemData> ConvertOrderToFoodItems(BrowserOrder order)
+    {
+        var items = new List<FoodItemData>();
+
+        if (order.IsCardOrder)
+        {
+            foreach (var entreeItem in order.Entrees)
+            {
+                items.Add(new FoodItemData(
+                    Name: entreeItem.Entree.EntreeName,
+                    StationId: entreeItem.Entree.StationId,
+                    LocationId: null,
+                    SwipeCost: null,
+                    CardCost: entreeItem.Entree.EntreePrice + CalculateOptionsCost(entreeItem.SelectedOptions),
+                    Special: false,
+                    OptionNames: entreeItem.SelectedOptions.Select(o => o.Option.FoodOptionName).ToList()
+                ));
+            }
+
+            foreach (var sideItem in order.Sides)
+            {
+                items.Add(new FoodItemData(
+                    Name: sideItem.Side.SideName,
+                    StationId: sideItem.Side.StationId,
+                    LocationId: null,
+                    SwipeCost: null,
+                    CardCost: sideItem.Side.SidePrice + CalculateOptionsCost(sideItem.SelectedOptions),
+                    Special: false,
+                    OptionNames: sideItem.SelectedOptions.Select(o => o.Option.FoodOptionName).ToList()
+                ));
+            }
+
+            foreach (var drink in order.Drinks)
+            {
+                items.Add(new FoodItemData(
+                    Name: drink.DrinkName,
+                    StationId: null,
+                    LocationId: drink.LocationId,
+                    SwipeCost: null,
+                    CardCost: drink.DrinkPrice,
+                    Special: false,
+                    OptionNames: new List<string>()
+                ));
+            }
+        }
+        else
+        {
+            int swipeCount = Math.Min(order.Entrees.Count,
+                             Math.Min(order.Sides.Count, order.Drinks.Count));
+
+            for (int i = 0; i < swipeCount; i++)
+            {
+                var entreeItem = order.Entrees[i];
+                var sideItem = order.Sides[i];
+                var drink = order.Drinks[i];
+
+                items.Add(new FoodItemData(
+                    Name: entreeItem.Entree.EntreeName,
+                    StationId: entreeItem.Entree.StationId,
+                    LocationId: null,
+                    SwipeCost: 1,
+                    CardCost: null,
+                    Special: false,
+                    OptionNames: entreeItem.SelectedOptions.Select(o => o.Option.FoodOptionName).ToList()
+                ));
+
+                items.Add(new FoodItemData(
+                    Name: sideItem.Side.SideName,
+                    StationId: sideItem.Side.StationId,
+                    LocationId: null,
+                    SwipeCost: 0,
+                    CardCost: null,
+                    Special: false,
+                    OptionNames: sideItem.SelectedOptions.Select(o => o.Option.FoodOptionName).ToList()
+                ));
+
+                items.Add(new FoodItemData(
+                    Name: drink.DrinkName,
+                    StationId: null,
+                    LocationId: drink.LocationId,
+                    SwipeCost: 0,
+                    CardCost: null,
+                    Special: false,
+                    OptionNames: new List<string>()
+                ));
+            }
+        }
+
+        return items;
+    }
+
+    private record FoodItemData(
+        string Name,
+        int? StationId,
+        int? LocationId,
+        int? SwipeCost,
+        decimal? CardCost,
+        bool Special,
+        List<string> OptionNames);
+
     public async Task<OrderDto?> GetOrderById(int id)
     {
         const string orderSql = @"
@@ -146,7 +304,7 @@ public class OrderService : IOrderService
         if (order == null) return null;
 
         const string foodItemsSql = @"
-            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                 sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                 swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
             FROM cafeteria.food_item
@@ -181,7 +339,7 @@ public class OrderService : IOrderService
         foreach (var order in orders)
         {
             const string foodItemsSql = @"
-                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                     sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                     swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
                 FROM cafeteria.food_item
@@ -252,7 +410,7 @@ public class OrderService : IOrderService
         foreach (var order in orders)
         {
             const string foodItemsSql = @"
-                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                     sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                     swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
                 FROM cafeteria.food_item
@@ -292,7 +450,7 @@ public class OrderService : IOrderService
         if (order == null) return null;
 
         const string foodItemsSql = @"
-            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                 sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                 swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
             FROM cafeteria.food_item

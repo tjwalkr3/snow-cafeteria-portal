@@ -67,7 +67,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
+    public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] BrowserOrder browserOrder)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("preferred_username")?.Value;
 
@@ -76,7 +76,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
             return BadRequest("Email not found in token claims");
         }
 
-        var result = await _orderService.CreateOrder(createOrderDto, email);
+        var result = await _orderService.CreateOrder(browserOrder, email);
         return CreatedAtAction(nameof(GetOrderById), new { id = result.Id }, result);
     }
 }
