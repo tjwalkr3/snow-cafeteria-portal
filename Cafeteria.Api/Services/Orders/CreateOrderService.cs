@@ -8,7 +8,6 @@ namespace Cafeteria.Api.Services.Orders;
 public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderService
 {
     private readonly IDbConnection _dbConnection = dbConnection;
-    private const decimal TaxRate = 0.0775m;
 
     public async Task<OrderDto> CreateOrder(BrowserOrder browserOrder, string customerEmail)
     {
@@ -21,9 +20,9 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
         {
             var customerBadgerId = await GetCustomerBadgerIdAsync(customerEmail, transaction);
 
-            decimal? totalPrice = browserOrder.IsCardOrder ? CalculateTotalPrice(browserOrder) : null;
-            decimal tax = CalculateTax(browserOrder);
-            int? totalSwipe = browserOrder.IsCardOrder ? null : CalculateTotalSwipe(browserOrder);
+            decimal? totalPrice = browserOrder.IsCardOrder ? OrderCalculations.CalculateTotalPrice(browserOrder) : null;
+            decimal tax = OrderCalculations.CalculateTax(browserOrder);
+            int? totalSwipe = browserOrder.IsCardOrder ? null : OrderCalculations.CalculateTotalSwipe(browserOrder);
 
             var order = await InsertOrderAsync(customerBadgerId, totalPrice, tax, totalSwipe, transaction);
 
@@ -43,7 +42,7 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
             else
             {
                 var saleSwipeId = await InsertSaleSwipeAsync(order.Id, transaction);
-                int swipeCount = CalculateTotalSwipe(browserOrder);
+                int swipeCount = OrderCalculations.CalculateTotalSwipe(browserOrder);
 
                 for (int i = 0; i < swipeCount; i++)
                 {
@@ -67,7 +66,7 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
             OrderEntreeItem item, int orderId, int? saleCardId, int? saleSwipeId, IDbTransaction transaction, int? swipeCost = null)
     {
         decimal? cardCost = saleCardId.HasValue
-                ? item.Entree.EntreePrice + CalculateOptionsCost(item.SelectedOptions)
+                ? item.Entree.EntreePrice + OrderCalculations.CalculateOptionsCost(item.SelectedOptions)
                 : null;
 
         var foodItem = await InsertFoodItemAsync(
@@ -84,7 +83,7 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
             OrderSideItem item, int orderId, int? saleCardId, int? saleSwipeId, IDbTransaction transaction, int? swipeCost = null)
     {
         decimal? cardCost = saleCardId.HasValue
-                ? item.Side.SidePrice + CalculateOptionsCost(item.SelectedOptions)
+                ? item.Side.SidePrice + OrderCalculations.CalculateOptionsCost(item.SelectedOptions)
                 : null;
 
         var foodItem = await InsertFoodItemAsync(
@@ -171,8 +170,18 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
 
         return await _dbConnection.QuerySingleAsync<FoodItemDto>(
                 sql,
-                new { Name = name, OrderId = orderId, StationId = stationId, LocationId = locationId,
-                      SaleCardId = saleCardId, SaleSwipeId = saleSwipeId, SwipeCost = swipeCost, CardCost = cardCost, Special = special },
+                new
+                {
+                    Name = name,
+                    OrderId = orderId,
+                    StationId = stationId,
+                    LocationId = locationId,
+                    SaleCardId = saleCardId,
+                    SaleSwipeId = saleSwipeId,
+                    SwipeCost = swipeCost,
+                    CardCost = cardCost,
+                    Special = special
+                },
                 transaction);
     }
 
@@ -187,58 +196,5 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
                 sql,
                 new { FoodItemId = foodItemId, FoodOptionName = optionName },
                 transaction);
-    }
-
-    private decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
-    {
-        if (selectedOptions == null || selectedOptions.Count == 0)
-            return 0m;
-
-        decimal cost = 0m;
-        var optionsByType = selectedOptions.GroupBy(opt => opt.OptionType.Id);
-
-        foreach (var group in optionsByType)
-        {
-            var optionType = group.First().OptionType;
-            var selectedCount = group.Count();
-            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
-            cost += chargeableCount * optionType.FoodOptionPrice;
-        }
-
-        return cost;
-    }
-
-    private decimal CalculateTotalPrice(BrowserOrder order)
-    {
-        decimal total = 0m;
-
-        foreach (var entreeItem in order.Entrees)
-        {
-            total += entreeItem.Entree.EntreePrice;
-            total += CalculateOptionsCost(entreeItem.SelectedOptions);
-        }
-
-        foreach (var sideItem in order.Sides)
-        {
-            total += sideItem.Side.SidePrice;
-            total += CalculateOptionsCost(sideItem.SelectedOptions);
-        }
-
-        total += order.Drinks.Sum(drink => drink.DrinkPrice);
-        return total;
-    }
-
-    private decimal CalculateTax(BrowserOrder order)
-    {
-        if (!order.IsCardOrder)
-            return 0m;
-
-        return Math.Round(CalculateTotalPrice(order) * TaxRate, 2);
-    }
-
-    private int CalculateTotalSwipe(BrowserOrder order)
-    {
-        return Math.Min(order.Entrees.Count,
-                Math.Min(order.Sides.Count, order.Drinks.Count));
     }
 }
