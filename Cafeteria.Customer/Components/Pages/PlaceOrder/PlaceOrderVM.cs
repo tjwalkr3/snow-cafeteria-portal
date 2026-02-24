@@ -8,8 +8,6 @@ namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 public class PlaceOrderVM : IPlaceOrderVM
 {
     private readonly IApiMenuService _menuService;
-    private bool locationParameterInvalid = false;
-    private bool paymentParameterMissing = false;
     private bool locationFetchFailed = false;
     private List<LocationDto> _locations = new();
 
@@ -63,12 +61,6 @@ public class PlaceOrderVM : IPlaceOrderVM
         return cost;
     }
 
-    public void ValidateParameters(int location, string? payment)
-    {
-        locationParameterInvalid = location <= 0;
-        paymentParameterMissing = string.IsNullOrEmpty(payment) || (payment != "card" && payment != "swipe");
-    }
-
     public async Task InitializeLocations()
     {
         try
@@ -88,7 +80,7 @@ public class PlaceOrderVM : IPlaceOrderVM
 
     public bool ErrorOccurred()
     {
-        return locationParameterInvalid || paymentParameterMissing || locationFetchFailed;
+        return locationFetchFailed;
     }
 
     public List<SwipeGroup> GroupItemsIntoSwipes(BrowserOrder order)

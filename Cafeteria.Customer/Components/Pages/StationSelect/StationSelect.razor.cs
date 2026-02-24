@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.WebUtilities;
 using Cafeteria.Customer.Services.Cart;
 
 namespace Cafeteria.Customer.Components.Pages.StationSelect;
@@ -15,12 +14,6 @@ public partial class StationSelect : ComponentBase
     [Inject]
     private ICartService Cart { get; set; } = default!;
 
-    [SupplyParameterFromQuery(Name = "location")]
-    public int Location { get; set; }
-
-    [SupplyParameterFromQuery(Name = "payment")]
-    public string? Payment { get; set; }
-
     public bool IsInitialized { get; set; } = false;
 
     public async Task HandleStationSelected(int stationId)
@@ -29,14 +22,7 @@ public partial class StationSelect : ComponentBase
         if (station == null) return;
 
         await Cart.SetStation("order", station.Id, station.StationName);
-
-        Dictionary<string, string?> queryParameters = new();
-        if (!string.IsNullOrEmpty(Payment))
-            queryParameters.Add("payment", Payment);
-        queryParameters.Add("location", Location.ToString());
-
-        string route = GetStationRoute(station.StationName);
-        Navigation.NavigateTo(QueryHelpers.AddQueryString(route, queryParameters));
+        Navigation.NavigateTo(GetStationRoute(station.StationName));
     }
 
     private string GetStationRoute(string stationName)
@@ -65,18 +51,20 @@ public partial class StationSelect : ComponentBase
         };
     }
 
-    public string CreateBackUrl()
-    {
-        Dictionary<string, string?> queryParameters = new();
-        if (!string.IsNullOrEmpty(Payment))
-            queryParameters.Add("payment", Payment);
-        return QueryHelpers.AddQueryString("/location-select", queryParameters);
-    }
+    public string CreateBackUrl() => "/location-select";
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        StationSelectVM.ValidateParameters(Location, Payment);
-        await StationSelectVM.InitializeStations(Location);
-        IsInitialized = true;
+        if (firstRender)
+        {
+            await InvokeAsync(async () =>
+            {
+                var order = await Cart.GetOrder("order");
+                int locationId = order?.Location?.Id ?? 0;
+                await StationSelectVM.InitializeStations(locationId);
+                IsInitialized = true;
+                StateHasChanged();
+            });
+        }
     }
 }

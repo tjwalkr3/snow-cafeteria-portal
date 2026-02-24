@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.WebUtilities;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Customer.Services.Printer;
@@ -36,12 +35,6 @@ public partial class PlaceOrder : ComponentBase
     [Inject]
     private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
-    [SupplyParameterFromQuery(Name = "location")]
-    public int Location { get; set; }
-
-    [SupplyParameterFromQuery(Name = "payment")]
-    public string? Payment { get; set; }
-
     private BrowserOrder? Order { get; set; } = null;
 
     private decimal Price { get; set; } = 0.0m;
@@ -60,7 +53,6 @@ public partial class PlaceOrder : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await PlaceOrderVM.InitializeLocations();
         IsInitialized = true;
     }
 
@@ -95,9 +87,6 @@ public partial class PlaceOrder : ComponentBase
                     }
                 }
 
-                await SavePaymentMethod(userName);
-                await SaveLocation(userName);
-
                 Order = await GetOrder(userName);
 
                 if (Order != null)
@@ -124,67 +113,12 @@ public partial class PlaceOrder : ComponentBase
         }
     }
 
-    private async Task SavePaymentMethod(string userName)
-    {
-        if (!string.IsNullOrEmpty(Payment))
-        {
-            await Cart.SetIsCardOrder(userName, Payment == "card");
-        }
-    }
-
-    private async Task SaveLocation(string userName)
-    {
-        if (Location != 0)
-        {
-            var locationDto = PlaceOrderVM.GetLocationById(Location);
-            if (locationDto != null)
-            {
-                await Cart.SetLocation(userName, locationDto);
-            }
-        }
-    }
-
     private async Task<BrowserOrder?> GetOrder(string userName)
     {
         return await Cart.GetOrder(userName);
     }
 
-    public string GetStationSelectUrl()
-    {
-        Dictionary<string, string?> queryParameters = new() { };
-
-        string? payment = null;
-        if (Order != null)
-        {
-            payment = Order.IsCardOrder ? "card" : "swipe";
-        }
-        else if (!string.IsNullOrEmpty(Payment))
-        {
-            payment = Payment;
-        }
-
-        if (!string.IsNullOrEmpty(payment))
-        {
-            queryParameters.Add("payment", payment);
-        }
-
-        int? locationId = null;
-        if (Order?.Location != null)
-        {
-            locationId = Order.Location.Id;
-        }
-        else if (Location != 0)
-        {
-            locationId = Location;
-        }
-
-        if (locationId.HasValue && locationId.Value > 0)
-        {
-            queryParameters.Add("location", locationId.Value.ToString());
-        }
-
-        return QueryHelpers.AddQueryString("/location-select", queryParameters);
-    }
+    public string GetStationSelectUrl() => "/location-select";
 
     private async Task HandlePlaceOrder()
     {

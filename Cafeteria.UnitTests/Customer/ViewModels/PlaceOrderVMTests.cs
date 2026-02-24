@@ -232,56 +232,6 @@ public class PlaceOrderVMTests
     }
 
     [Fact]
-    public void ValidateParameters_SetsLocationParameterInvalid_WhenLocationIsZero()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(0, "card");
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_SetsLocationParameterInvalid_WhenLocationIsNegative()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(-1, "card");
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_SetsPaymentParameterMissing_WhenPaymentIsNull()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(1, null);
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_SetsPaymentParameterMissing_WhenPaymentIsEmpty()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(1, string.Empty);
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_DoesNotSetErrors_WhenParametersAreValid()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(1, "card");
-
-        Assert.False(vm.ErrorOccurred());
-    }
-
-    [Fact]
     public async Task ErrorOccurred_ReturnsTrue_WhenInitializeLocationsFails()
     {
         _mockMenuService.Setup(m => m.GetAllLocations())

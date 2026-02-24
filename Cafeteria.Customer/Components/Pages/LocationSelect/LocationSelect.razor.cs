@@ -1,7 +1,6 @@
 using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Services.Cart;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
@@ -16,19 +15,14 @@ public partial class LocationSelect : ComponentBase
     [Inject]
     private ICartService CartService { get; set; } = default!;
 
-    [SupplyParameterFromQuery(Name = "payment")]
-    public string? Payment { get; set; }
     public bool IsInitialized { get; set; } = false;
 
-    public string CreateUrl(int locationId)
+    public async Task HandleLocationSelected(int locationId)
     {
-        Dictionary<string, string?> queryParameters = new() { };
-
-        if (!string.IsNullOrEmpty(Payment))
-            queryParameters.Add("payment", Payment);
-        queryParameters.Add("location", locationId.ToString());
-
-        return QueryHelpers.AddQueryString("/station-select", queryParameters);
+        var location = LocationSelectVM.Locations.FirstOrDefault(l => l.Id == locationId);
+        if (location == null) return;
+        await CartService.SetLocation("order", location);
+        Navigation.NavigateTo("/station-select");
     }
 
     private string GetLocationIcon(string locationName)
@@ -49,7 +43,6 @@ public partial class LocationSelect : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        LocationSelectVM.ValidatePaymentParameter(Payment);
         await LocationSelectVM.InitializeLocationsAsync();
         IsInitialized = true;
     }

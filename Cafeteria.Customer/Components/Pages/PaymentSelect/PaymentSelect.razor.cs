@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
+using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -20,6 +20,12 @@ public partial class PaymentSelect : ComponentBase
 
     [Inject]
     private ILogger<PaymentSelect> Logger { get; set; } = default!;
+
+    [Inject]
+    private ICartService Cart { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
 
     public int SwipeBalance { get; set; } = 0;
     public bool HasSwipes => SwipeBalance > 0;
@@ -58,10 +64,10 @@ public partial class PaymentSelect : ComponentBase
         }
     }
 
-    public string CreateUrl(string value)
+    public async Task HandlePaymentSelected(bool isCard)
     {
-        Dictionary<string, string?> queryParameter = new() { { "payment", value } };
-        return QueryHelpers.AddQueryString("/location-select", queryParameter);
+        await Cart.SetIsCardOrder("order", isCard);
+        Navigation.NavigateTo("/location-select");
     }
 
     private async Task ShowNoSwipesAlert()

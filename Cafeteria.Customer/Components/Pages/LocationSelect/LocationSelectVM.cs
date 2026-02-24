@@ -7,7 +7,6 @@ namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 public class LocationSelectVM : ILocationSelectVM
 {
     private readonly IApiMenuService _menuService;
-    private bool paymentParameterMissing = false;
     private bool initializationFailed = false;
     public List<LocationDto> Locations { get; private set; } = new();
 
@@ -28,16 +27,9 @@ public class LocationSelectVM : ILocationSelectVM
         }
     }
 
-    public void ValidatePaymentParameter(string? payment)
-    {
-        paymentParameterMissing = string.IsNullOrEmpty(payment)
-            && payment != "card"
-            && payment != "swipe";
-    }
-
     public bool ErrorOccurred()
     {
-        return Locations == null || Locations.Count == 0 || paymentParameterMissing || initializationFailed;
+        return Locations == null || Locations.Count == 0 || initializationFailed;
     }
 }
 
