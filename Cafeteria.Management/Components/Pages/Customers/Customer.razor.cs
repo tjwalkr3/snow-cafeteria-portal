@@ -45,4 +45,29 @@ public partial class Customer : ComponentBase
         toastType = type;
         showToast = true;
     }
+
+    private string GetSwipeBalanceDisplay(CustomerSwipeDto customer)
+    {
+        if (customer.SwipeCount == null)
+        {
+            return "No Swipes";
+        }
+
+        if (customer.Status == "Expired")
+        {
+            return "Expired";
+        }
+
+        return customer.SwipeCount.ToString() ?? "0";
+    }
+
+    private string GetSwipeBalanceClass(CustomerSwipeDto customer)
+    {
+        if (customer.Status == "Expired" || customer.SwipeCount == null)
+        {
+            return "text-danger";
+        }
+
+        return customer.SwipeCount > 0 ? "text-success" : "text-danger";
+    }
 }

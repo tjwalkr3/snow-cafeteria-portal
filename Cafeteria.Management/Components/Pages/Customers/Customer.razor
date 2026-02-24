@@ -48,8 +48,8 @@
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="detail-label text-muted text-uppercase small fw-medium">Swipe Balance:</span>
-                                    <span class="swipe-balance fw-bold @(customer.SwipeCount > 0 ? "text-success" : "text-danger")">
-                                        @customer.SwipeCount
+                                    <span class="swipe-balance fw-bold @GetSwipeBalanceClass(customer)">
+                                        @GetSwipeBalanceDisplay(customer)
                                     </span>
                                 </div>
                             </div>
