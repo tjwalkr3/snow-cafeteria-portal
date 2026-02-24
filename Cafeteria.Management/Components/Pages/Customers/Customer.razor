@@ -43,7 +43,7 @@
                     <tbody>
                         @foreach (CustomerSwipeDto customer in FilteredCustomers)
                         {
-                            <tr @key="customer.BadgerId">
+                            <tr @key="customer.BadgerId" class="customer-row" @onclick="() => NavigateToCustomerOrders(customer.BadgerId)">
                                 <td>
                                     <i class="bi bi-person-circle me-2 text-primary"></i>
                                     <span class="fw-semibold">@customer.CustName</span>

@@ -10,6 +10,9 @@ public partial class Customer : ComponentBase
     [Inject]
     private ICustomerService CustomerService { get; set; } = default!;
 
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
     private List<CustomerSwipeDto>? allCustomers;
     private bool isLoading = true;
     private string toastMessage = "";
@@ -68,5 +71,10 @@ public partial class Customer : ComponentBase
         toastMessage = message;
         toastType = type;
         showToast = true;
+    }
+
+    private void NavigateToCustomerOrders(int badgerId)
+    {
+        Navigation.NavigateTo($"orders/customer/{badgerId}");
     }
 }
