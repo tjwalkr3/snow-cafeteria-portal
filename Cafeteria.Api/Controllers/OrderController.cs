@@ -9,9 +9,10 @@ namespace Cafeteria.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class OrderController(IOrderService orderService) : ControllerBase
+public class OrderController(IOrderService orderService, ICreateOrderService createOrderService) : ControllerBase
 {
     private readonly IOrderService _orderService = orderService;
+    private readonly ICreateOrderService _createOrderService = createOrderService;
 
     [HttpGet("{id}")]
     public async Task<ActionResult<OrderDto>> GetOrderById(int id)
@@ -76,7 +77,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
             return BadRequest("Email not found in token claims");
         }
 
-        var result = await _orderService.CreateOrder(browserOrder, email);
+        var result = await _createOrderService.CreateOrder(browserOrder, email);
         return CreatedAtAction(nameof(GetOrderById), new { id = result.Id }, result);
     }
 }
