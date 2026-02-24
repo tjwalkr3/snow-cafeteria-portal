@@ -4,6 +4,7 @@
 ## Get latest from `dotnet new gitignore`
 **/*-secret.yml
 requirements.md
+steps.md
 
 # dotenv files
 .env

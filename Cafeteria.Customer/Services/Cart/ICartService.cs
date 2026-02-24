@@ -1,6 +1,7 @@
 namespace Cafeteria.Customer.Services.Cart;
 
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Shared.DTOs.Order;
 
 public interface ICartService
 {

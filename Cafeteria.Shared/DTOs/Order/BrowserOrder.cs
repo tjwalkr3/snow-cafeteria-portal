@@ -1,4 +1,4 @@
-namespace Cafeteria.Customer;
+namespace Cafeteria.Shared.DTOs.Order;
 
 using Cafeteria.Shared.DTOs.Menu;
 
