@@ -30,6 +30,10 @@ public partial class PaymentSelect : ComponentBase
     public int SwipeBalance { get; set; } = 0;
     public bool HasSwipes => SwipeBalance > 0;
 
+    public bool? CurrentIsCardOrder { get; private set; }
+    public bool? PendingIsCardOrder { get; private set; }
+    public bool ShowConfirmModal { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -66,8 +70,47 @@ public partial class PaymentSelect : ComponentBase
 
     public async Task HandlePaymentSelected(bool isCard)
     {
+        if (CurrentIsCardOrder.HasValue && CurrentIsCardOrder.Value != isCard)
+        {
+            PendingIsCardOrder = isCard;
+            ShowConfirmModal = true;
+            return;
+        }
+        CurrentIsCardOrder = isCard;
         await Cart.SetIsCardOrder("order", isCard);
         Navigation.NavigateTo("/location-select");
+    }
+
+    public async Task ConfirmPaymentChange()
+    {
+        if (!PendingIsCardOrder.HasValue) return;
+        await Cart.ClearOrder("order");
+        CurrentIsCardOrder = PendingIsCardOrder.Value;
+        await Cart.SetIsCardOrder("order", PendingIsCardOrder.Value);
+        PendingIsCardOrder = null;
+        Navigation.NavigateTo("/location-select");
+    }
+
+    public void CancelPaymentChange()
+    {
+        PendingIsCardOrder = null;
+        ShowConfirmModal = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InvokeAsync(async () =>
+            {
+                var order = await Cart.GetOrder("order");
+                if (order != null)
+                {
+                    CurrentIsCardOrder = order.IsCardOrder;
+                }
+                StateHasChanged();
+            });
+        }
     }
 
     private async Task ShowNoSwipesAlert()

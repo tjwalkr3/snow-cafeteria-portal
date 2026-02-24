@@ -17,12 +17,41 @@ public partial class LocationSelect : ComponentBase
 
     public bool IsInitialized { get; set; } = false;
 
+    public int? CurrentLocationId { get; private set; }
+    public int? PendingLocationId { get; private set; }
+    public bool ShowConfirmModal { get; set; }
+
     public async Task HandleLocationSelected(int locationId)
     {
+        if (CurrentLocationId.HasValue && CurrentLocationId.Value != locationId)
+        {
+            PendingLocationId = locationId;
+            ShowConfirmModal = true;
+            return;
+        }
+        CurrentLocationId = locationId;
         var location = LocationSelectVM.Locations.FirstOrDefault(l => l.Id == locationId);
         if (location == null) return;
         await CartService.SetLocation("order", location);
         Navigation.NavigateTo("/station-select");
+    }
+
+    public async Task ConfirmLocationChange()
+    {
+        if (!PendingLocationId.HasValue) return;
+        await CartService.ClearOrder("order");
+        var location = LocationSelectVM.Locations.FirstOrDefault(l => l.Id == PendingLocationId.Value);
+        if (location == null) return;
+        CurrentLocationId = PendingLocationId.Value;
+        PendingLocationId = null;
+        await CartService.SetLocation("order", location);
+        Navigation.NavigateTo("/station-select");
+    }
+
+    public void CancelLocationChange()
+    {
+        PendingLocationId = null;
+        ShowConfirmModal = false;
     }
 
     private string GetLocationIcon(string locationName)
@@ -53,7 +82,11 @@ public partial class LocationSelect : ComponentBase
         {
             await InvokeAsync(async () =>
             {
-                await CartService.ClearOrder("order");
+                var order = await CartService.GetOrder("order");
+                if (order?.Location != null)
+                {
+                    CurrentLocationId = order.Location.Id;
+                }
                 StateHasChanged();
             });
         }

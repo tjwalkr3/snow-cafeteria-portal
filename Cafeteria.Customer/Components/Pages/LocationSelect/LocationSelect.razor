@@ -32,7 +32,7 @@
                 <div class="col">
                     <button class="card-link text-decoration-none d-block w-100 p-0 border-0 bg-transparent"
                             @onclick="() => HandleLocationSelected(location.Id)">
-                        <div class="card h-100 shadow-sm border-0">
+                        <div class="card h-100 shadow-sm @(CurrentLocationId.HasValue && CurrentLocationId.Value == location.Id ? "card-selected" : "border-0")">
                             <div class="card-body text-center p-4">
                                 <div class="mb-4">
                                     <div class="icon-circle">
@@ -49,3 +49,10 @@
         </div>
     }
 </div>
+<ConfirmationModal
+    IsVisible="ShowConfirmModal"
+    Title="Change Location?"
+    Message="Changing your location will clear your current cart. Do you want to continue?"
+    ConfirmText="Yes, Change Location"
+    OnConfirm="ConfirmLocationChange"
+    OnCancel="CancelLocationChange" />
