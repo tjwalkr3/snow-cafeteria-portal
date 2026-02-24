@@ -1,0 +1,104 @@
+@page "/locations"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
+@using Cafeteria.Management.Components.Shared
+@using Cafeteria.Management.Components.Pages.LocationAndStation.Location
+@using Cafeteria.Management.Components.Pages.LocationAndStation.Station
+
+<PageTitle>Locations & Stations</PageTitle>
+
+<div class="px-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title fw-bold mb-0">Locations & Stations</h1>
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center" @onclick="HandleCreateLocationClick">
+            <i class="bi bi-plus-circle me-2"></i>Add Location
+        </button>
+    </div>
+
+    @if (ViewModel.Locations.Any())
+    {
+        <div class="row g-4 mb-4">
+        @foreach (var location in ViewModel.Locations)
+        {
+            <div class="col-12 col-lg-6" @key="location.Id">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="fw-semibold mb-1">@location.LocationName</h5>
+                            <p class="text-muted small mb-0">@location.LocationDescription</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center" @onclick="() => HandleEditLocationClick(location.Id)">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center" @onclick="() => HandleDeleteLocationClick(location.Id, location.LocationName)">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-medium">Stations:</span>
+                        <button type="button" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center" @onclick="() => HandleCreateStationClick(location.Id)">
+                            <i class="bi bi-plus-circle me-1"></i>Add Station
+                        </button>
+                    </div>
+
+                    @if (ViewModel.StationsByLocation.TryGetValue(location.Id, out var stations) && stations.Any())
+                    {
+                        <ul class="list-unstyled mb-0">
+                            @foreach (var station in stations)
+                            {
+                                <li class="d-flex justify-content-between align-items-center py-2 border-bottom" @key="station.Id">
+                                    <div>
+                                        <span class="fw-medium">@station.StationName</span>
+                                        @if (!string.IsNullOrEmpty(station.StationDescription))
+                                        {
+                                            <span class="text-muted small ms-2"> @station.StationDescription</span>
+                                        }
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center" @onclick="() => HandleEditStationClick(station.Id)">
+                                            <i class="bi bi-pencil me-1"></i>Edit
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center" @onclick="() => HandleDeleteStationClick(station.Id, station.StationName)">
+                                            <i class="bi bi-trash me-1"></i>Delete
+                                        </button>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted small mb-0">No stations added yet.</p>
+                    }
+                </div>
+            </div>
+            </div>
+        }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
+            <i class="bi bi-geo-alt fs-1 mb-3 text-muted d-block"></i>
+            <p class="fs-5 mb-2">No locations found.</p>
+            <p class="text-muted small mb-0">Click "Add Location" to create your first location.</p>
+        </div>
+    }
+</div>
+
+<CreateOrEditLocation @ref="locationModalComponent" />
+<CreateOrEditStation @ref="stationModalComponent" />
+
+<ConfirmationModal IsVisible="showDeleteLocationModal" Title="Delete Location" Message="@deleteLocationMessage" ConfirmText="Delete"
+    OnConfirm="ConfirmDeleteLocation" OnCancel="CancelDeleteLocation" />
+
+<ConfirmationModal IsVisible="showDeleteStationModal" Title="Delete Station" Message="@deleteStationMessage" ConfirmText="Delete"
+    OnConfirm="ConfirmDeleteStation" OnCancel="CancelDeleteStation" />
+
+<Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />
