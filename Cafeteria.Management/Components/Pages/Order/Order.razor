@@ -33,7 +33,7 @@
             @foreach (var order in FilteredOrders)
             {
                 <div class="col-12 col-md-6 col-lg-4" @key="order.Id">
-                    <div class="card h-100 border-1 rounded-3 shadow-sm">
+                    <div class="order-card card h-100 border-1 rounded-3 shadow-sm">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
                                 <div class="flex-grow-1">
@@ -107,14 +107,3 @@
     }
 </div>
 
-<style>
-    .order-link:hover {
-        color: var(--bs-primary) !important;
-    }
-    .customer-link {
-        color: var(--bs-primary);
-    }
-    .customer-link:hover {
-        text-decoration: underline !important;
-    }
-</style>

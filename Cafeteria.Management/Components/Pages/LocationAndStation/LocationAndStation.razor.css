@@ -1,3 +1,8 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
 .nav-tabs .nav-link {
     color: #1e366c;
     transition: all 0.2s ease;

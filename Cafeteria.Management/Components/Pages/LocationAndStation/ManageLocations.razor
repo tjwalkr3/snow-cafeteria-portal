@@ -21,8 +21,8 @@
         @foreach (var location in ViewModel.Locations)
         {
             <div class="col-12 col-lg-6" @key="location.Id">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
+            <div class="location-card card h-100 border-1 rounded-3 shadow-sm">
+                <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
                             <h5 class="fw-semibold mb-1">@location.LocationName</h5>

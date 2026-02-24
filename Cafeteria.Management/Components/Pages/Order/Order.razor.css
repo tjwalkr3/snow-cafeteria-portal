@@ -1,0 +1,29 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.order-card {
+    transition: all 0.2s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.order-link:hover {
+    color: var(--bs-primary) !important;
+}
+
+.customer-link {
+    color: var(--bs-primary);
+}
+
+.customer-link:hover {
+    text-decoration: underline !important;
+}
+
+.detail-label {
+    letter-spacing: 0.5px;
+}
