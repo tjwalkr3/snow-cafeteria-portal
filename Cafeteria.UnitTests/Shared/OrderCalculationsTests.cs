@@ -1,8 +1,8 @@
-using Cafeteria.Api.Services.Orders;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Shared.Utilities;
 
-namespace Cafeteria.UnitTests.Api;
+namespace Cafeteria.UnitTests.Shared;
 
 public class OrderCalculationsTests
 {
@@ -89,6 +89,13 @@ public class OrderCalculationsTests
     // ---------------------------------------------------------------------------
 
     [Fact]
+    public void CalculateTotalPrice_NullOrder_ReturnsZero()
+    {
+        var result = OrderCalculations.CalculateTotalPrice(null!);
+        Assert.Equal(0m, result);
+    }
+
+    [Fact]
     public void CalculateTotalPrice_EmptyOrder_ReturnsZero()
     {
         var order = new BrowserOrder();
@@ -165,6 +172,13 @@ public class OrderCalculationsTests
     // ---------------------------------------------------------------------------
 
     [Fact]
+    public void CalculateTax_NullOrder_ReturnsZero()
+    {
+        var result = OrderCalculations.CalculateTax(null!);
+        Assert.Equal(0m, result);
+    }
+
+    [Fact]
     public void CalculateTax_SwipeOrder_ReturnsZero()
     {
         var order = new BrowserOrder
@@ -208,6 +222,13 @@ public class OrderCalculationsTests
     // ---------------------------------------------------------------------------
     // CalculateTotalSwipe
     // ---------------------------------------------------------------------------
+
+    [Fact]
+    public void CalculateTotalSwipe_NullOrder_ReturnsZero()
+    {
+        var result = OrderCalculations.CalculateTotalSwipe(null!);
+        Assert.Equal(0, result);
+    }
 
     [Fact]
     public void CalculateTotalSwipe_EqualCounts_ReturnsThatCount()

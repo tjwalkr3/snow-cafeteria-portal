@@ -1,10 +1,10 @@
 using Cafeteria.Shared.DTOs.Order;
 
-namespace Cafeteria.Api.Services.Orders;
+namespace Cafeteria.Shared.Utilities;
 
 public static class OrderCalculations
 {
-    internal const decimal TaxRate = 0.0775m;
+    public const decimal TaxRate = 0.0775m;
 
     public static decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
     {
@@ -27,6 +27,9 @@ public static class OrderCalculations
 
     public static decimal CalculateTotalPrice(BrowserOrder order)
     {
+        if (order == null)
+            return 0m;
+
         decimal total = 0m;
 
         foreach (var entreeItem in order.Entrees)
@@ -47,7 +50,7 @@ public static class OrderCalculations
 
     public static decimal CalculateTax(BrowserOrder order)
     {
-        if (!order.IsCardOrder)
+        if (order == null || !order.IsCardOrder)
             return 0m;
 
         return Math.Round(CalculateTotalPrice(order) * TaxRate, 2);
@@ -55,6 +58,9 @@ public static class OrderCalculations
 
     public static int CalculateTotalSwipe(BrowserOrder order)
     {
+        if (order == null)
+            return 0;
+
         return Math.Min(order.Entrees.Count,
                 Math.Min(order.Sides.Count, order.Drinks.Count));
     }

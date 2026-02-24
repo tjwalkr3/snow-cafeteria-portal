@@ -2,6 +2,7 @@ using System.Data;
 using Dapper;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Shared.Utilities;
 
 namespace Cafeteria.Api.Services.Orders;
 

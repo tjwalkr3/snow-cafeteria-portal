@@ -5,6 +5,7 @@ using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Swipe;
+using Cafeteria.Shared.Utilities;
 using System.Security.Claims;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
@@ -166,36 +167,11 @@ public partial class PlaceOrder : ComponentBase
         return EntreeGroups.Sum(g => g.Quantity) + SideGroups.Sum(g => g.Quantity) + DrinkGroups.Sum(g => g.Quantity);
     }
 
-    private decimal GetItemPrice(OrderEntreeItem item)
-    {
-        return item.Entree.EntreePrice + CalculateOptionsCost(item.SelectedOptions);
-    }
+    private decimal GetItemPrice(OrderEntreeItem item) =>
+        item.Entree.EntreePrice + OrderCalculations.CalculateOptionsCost(item.SelectedOptions);
 
-    private decimal GetItemPrice(OrderSideItem item)
-    {
-        return item.Side.SidePrice + CalculateOptionsCost(item.SelectedOptions);
-    }
-
-    private decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
-    {
-        if (selectedOptions == null || selectedOptions.Count == 0)
-            return 0m;
-
-        decimal cost = 0m;
-
-        // Group options by their type ID
-        var optionsByType = selectedOptions.GroupBy(opt => opt.OptionType.Id);
-
-        foreach (var group in optionsByType)
-        {
-            var optionType = group.First().OptionType;
-            var selectedCount = group.Count();
-            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
-            cost += chargeableCount * optionType.FoodOptionPrice;
-        }
-
-        return cost;
-    }
+    private decimal GetItemPrice(OrderSideItem item) =>
+        item.Side.SidePrice + OrderCalculations.CalculateOptionsCost(item.SelectedOptions);
 
     private async Task IncreaseSwipeQuantity(SwipeGroup swipe)
     {
