@@ -126,7 +126,7 @@ graph TB
 
 ### Phase 5 — Dynamic Routing from the Database
 
-20. **Convert `FoodBuilder.razor` to a fully dynamic route and remove all hard-coded station routes.** Change the page directive to a single `@page "/station/{StationId:int}"`, removing the five hard-coded legacy routes (`/breakfast`, `/deli`, `/grill`, `/pizza`, `/wrap`). Update every navigation link in the app (station-select page, back URLs, post-order redirects) to build URLs from the station's database ID, completing the transition away from hard-coded station types.
+20. **Convert `FoodBuilder.razor` to a single parameterless route and remove all hard-coded station routes.** Change the page directive to a single `@page "/station"`, removing the five hard-coded legacy routes (`/breakfast`, `/deli`, `/grill`, `/pizza`, `/wrap`) and the intermediate `/station/{StationType}` string-parameter route. Because `stationId`, `locationId`, and `isCardOrder` are already written to browser storage by `StationSelect` before navigation, the page reads all context from storage in `OnAfterRenderAsync` — no URL parameter is needed. Update `StationSelect` to always navigate to `/station`, and update back URLs and post-order redirects accordingly.
 
 ---
 
@@ -144,8 +144,8 @@ graph TB
     classDef domain    fill:#003a20,stroke:#33cc77,color:#bbffdd
 
     subgraph fb["FoodBuilder/"]
-        FBR["FoodBuilder.razor — ~50 lines, route /station/{StationId:int}, renders child components"]:::page
-        FBCS["FoodBuilder.razor.cs — init, StationId/location/payment params, orchestrates children, calls Domain directly"]:::cb
+        FBR["FoodBuilder.razor — ~50 lines, single route /station, renders child components"]:::page
+        FBCS["FoodBuilder.razor.cs — init, reads stationId/location/payment from browser storage, orchestrates children, calls Domain directly"]:::cb
     end
 
     subgraph tabnav["TabNavigation/"]
