@@ -46,8 +46,8 @@ public partial class Analytics : ComponentBase, IAsyncDisposable
     private async Task RenderChart()
     {
         var entries = ViewModel.GetTopFoodForPeriod(selectedPeriod);
-        var labels    = entries.Select(e => e.Label).ToArray();
-        var counts    = entries.Select(e => e.Count).ToArray();
+        var labels = entries.Select(e => e.Label).ToArray();
+        var counts = entries.Select(e => e.Count).ToArray();
         var foodNames = entries.Select(e => e.FoodName).ToArray();
 
         await JS.InvokeVoidAsync("chartManager.renderBarChart", "topFoodChart", labels, counts, foodNames);
