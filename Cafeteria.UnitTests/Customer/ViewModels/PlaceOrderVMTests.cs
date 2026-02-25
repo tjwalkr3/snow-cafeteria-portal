@@ -1,5 +1,5 @@
-using Cafeteria.Customer;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
+using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
@@ -229,56 +229,6 @@ public class PlaceOrderVMTests
 
         // Assert
         Assert.Equal(24.99m, result); // 8.99 + 6.50 + 3.50 + 4.00 + 2.00 + 0.00
-    }
-
-    [Fact]
-    public void ValidateParameters_SetsLocationParameterInvalid_WhenLocationIsZero()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(0, "card");
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_SetsLocationParameterInvalid_WhenLocationIsNegative()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(-1, "card");
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_SetsPaymentParameterMissing_WhenPaymentIsNull()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(1, null);
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_SetsPaymentParameterMissing_WhenPaymentIsEmpty()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(1, string.Empty);
-
-        Assert.True(vm.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidateParameters_DoesNotSetErrors_WhenParametersAreValid()
-    {
-        var vm = new PlaceOrderVM(_mockMenuService.Object);
-
-        vm.ValidateParameters(1, "card");
-
-        Assert.False(vm.ErrorOccurred());
     }
 
     [Fact]

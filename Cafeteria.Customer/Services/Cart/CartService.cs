@@ -2,6 +2,7 @@ namespace Cafeteria.Customer.Services.Cart;
 
 using Cafeteria.Customer.Services.Storage;
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Shared.DTOs.Order;
 
 public class CartService : ICartService
 {
@@ -34,6 +35,14 @@ public class CartService : ICartService
     {
         var order = await GetOrder(key) ?? new BrowserOrder();
         order.IsCardOrder = isCardOrder;
+        await _protectedStorage.SetAsync(key, order);
+    }
+
+    public async Task SetStation(string key, int stationId, string stationName)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        order.StationId = stationId;
+        order.StationName = stationName;
         await _protectedStorage.SetAsync(key, order);
     }
 

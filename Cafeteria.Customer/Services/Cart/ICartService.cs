@@ -1,6 +1,7 @@
 namespace Cafeteria.Customer.Services.Cart;
 
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Shared.DTOs.Order;
 
 public interface ICartService
 {
@@ -8,6 +9,7 @@ public interface ICartService
     Task ClearOrder(string key);
     Task SetLocation(string key, LocationDto location);
     Task SetIsCardOrder(string key, bool isCardOrder);
+    Task SetStation(string key, int stationId, string stationName);
     Task AddEntree(string key, EntreeDto entree);
     Task AddSide(string key, SideDto side);
     Task AddDrink(string key, DrinkDto drink);

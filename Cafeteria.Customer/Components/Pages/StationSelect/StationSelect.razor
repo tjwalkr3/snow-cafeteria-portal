@@ -1,4 +1,5 @@
 ﻿@page "/station-select"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization
 
 <PageTitle>Select Station</PageTitle>
@@ -29,7 +30,8 @@
             @foreach (var station in StationSelectVM.Stations)
             {
                 <div class="col">
-                    <a href="@(CreateUrl(station.Id))" class="card-link text-decoration-none">
+                    <button class="card-link text-decoration-none d-block w-100 p-0 border-0 bg-transparent"
+                            @onclick="() => HandleStationSelected(station.Id)">
                         <div class="card h-100 shadow-sm border-0">
                             <div class="card-body text-center p-4">
                                 <div class="mb-4">
@@ -42,7 +44,7 @@
                                 </p>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
             }
         </div>

@@ -2,14 +2,13 @@ using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Shared.Utilities;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
 
 public class PlaceOrderVM : IPlaceOrderVM
 {
     private readonly IApiMenuService _menuService;
-    private bool locationParameterInvalid = false;
-    private bool paymentParameterMissing = false;
     private bool locationFetchFailed = false;
     private List<LocationDto> _locations = new();
 
@@ -18,56 +17,8 @@ public class PlaceOrderVM : IPlaceOrderVM
         _menuService = menuService;
     }
 
-    public decimal CalculateTotalPrice(BrowserOrder order)
-    {
-        if (order == null)
-            return 0m;
-
-        decimal total = 0m;
-
-        foreach (var entreeItem in order.Entrees)
-        {
-            total += entreeItem.Entree.EntreePrice;
-            total += CalculateOptionsCost(entreeItem.SelectedOptions);
-        }
-
-        foreach (var sideItem in order.Sides)
-        {
-            total += sideItem.Side.SidePrice;
-            total += CalculateOptionsCost(sideItem.SelectedOptions);
-        }
-
-        total += order.Drinks.Sum(drink => drink.DrinkPrice);
-
-        return total;
-    }
-
-    private decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
-    {
-        if (selectedOptions == null || selectedOptions.Count == 0)
-            return 0m;
-
-        decimal cost = 0m;
-
-        // Group options by their type ID
-        var optionsByType = selectedOptions.GroupBy(opt => opt.OptionType.Id);
-
-        foreach (var group in optionsByType)
-        {
-            var optionType = group.First().OptionType;
-            var selectedCount = group.Count();
-            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
-            cost += chargeableCount * optionType.FoodOptionPrice;
-        }
-
-        return cost;
-    }
-
-    public void ValidateParameters(int location, string? payment)
-    {
-        locationParameterInvalid = location <= 0;
-        paymentParameterMissing = string.IsNullOrEmpty(payment) || (payment != "card" && payment != "swipe");
-    }
+    public decimal CalculateTotalPrice(BrowserOrder order) =>
+        OrderCalculations.CalculateTotalPrice(order);
 
     public async Task InitializeLocations()
     {
@@ -88,7 +39,7 @@ public class PlaceOrderVM : IPlaceOrderVM
 
     public bool ErrorOccurred()
     {
-        return locationParameterInvalid || paymentParameterMissing || locationFetchFailed;
+        return locationFetchFailed;
     }
 
     public List<SwipeGroup> GroupItemsIntoSwipes(BrowserOrder order)
@@ -202,137 +153,11 @@ public class PlaceOrderVM : IPlaceOrderVM
         if (order == null || order.IsCardOrder)
             return 0;
 
-        return Math.Min(order.Entrees.Count,
-               Math.Min(order.Sides.Count, order.Drinks.Count));
+        return OrderCalculations.CalculateTotalSwipe(order);
     }
 
-    private const decimal TaxRate = 0.0775m;
-
-    public decimal CalculateTax(BrowserOrder order)
-    {
-        if (order == null || !order.IsCardOrder)
-            return 0m;
-
-        return Math.Round(CalculateTotalPrice(order) * TaxRate, 2);
-    }
-
-    public CreateOrderDto ConvertToCreateOrderDto(BrowserOrder order)
-    {
-        if (order == null)
-            throw new ArgumentNullException(nameof(order));
-
-        var createOrderDto = new CreateOrderDto
-        {
-            TotalPrice = order.IsCardOrder ? CalculateTotalPrice(order) : null,
-            Tax = CalculateTax(order),
-            TotalSwipe = order.IsCardOrder ? null : CalculateTotalSwipe(order),
-            FoodItems = new List<CreateFoodItemDto>()
-        };
-
-        if (order.IsCardOrder)
-        {
-            foreach (var entreeItem in order.Entrees)
-            {
-                var foodItem = new CreateFoodItemDto
-                {
-                    Name = entreeItem.Entree.EntreeName,
-                    StationId = entreeItem.Entree.StationId,
-                    CardCost = entreeItem.Entree.EntreePrice + CalculateOptionsCost(entreeItem.SelectedOptions),
-                    SwipeCost = null,
-                    Special = false,
-                    Options = entreeItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
-                    {
-                        FoodOptionName = o.Option.FoodOptionName
-                    }).ToList()
-                };
-                createOrderDto.FoodItems.Add(foodItem);
-            }
-
-            foreach (var sideItem in order.Sides)
-            {
-                var foodItem = new CreateFoodItemDto
-                {
-                    Name = sideItem.Side.SideName,
-                    StationId = sideItem.Side.StationId,
-                    CardCost = sideItem.Side.SidePrice + CalculateOptionsCost(sideItem.SelectedOptions),
-                    SwipeCost = null,
-                    Special = false,
-                    Options = sideItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
-                    {
-                        FoodOptionName = o.Option.FoodOptionName
-                    }).ToList()
-                };
-                createOrderDto.FoodItems.Add(foodItem);
-            }
-
-            foreach (var drink in order.Drinks)
-            {
-                var foodItem = new CreateFoodItemDto
-                {
-                    Name = drink.DrinkName,
-                    StationId = order.Location?.Id ?? 0,
-                    CardCost = drink.DrinkPrice,
-                    SwipeCost = null,
-                    Special = false,
-                    Options = new List<CreateFoodItemOptionDto>()
-                };
-                createOrderDto.FoodItems.Add(foodItem);
-            }
-        }
-        else
-        {
-            int swipeCount = Math.Min(order.Entrees.Count,
-                             Math.Min(order.Sides.Count, order.Drinks.Count));
-
-            for (int i = 0; i < swipeCount; i++)
-            {
-                var entreeItem = order.Entrees[i];
-                var sideItem = order.Sides[i];
-                var drink = order.Drinks[i];
-
-                var entreeFoodItem = new CreateFoodItemDto
-                {
-                    Name = entreeItem.Entree.EntreeName,
-                    StationId = entreeItem.Entree.StationId,
-                    CardCost = null,
-                    SwipeCost = 1,
-                    Special = false,
-                    Options = entreeItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
-                    {
-                        FoodOptionName = o.Option.FoodOptionName
-                    }).ToList()
-                };
-                createOrderDto.FoodItems.Add(entreeFoodItem);
-
-                var sideFoodItem = new CreateFoodItemDto
-                {
-                    Name = sideItem.Side.SideName,
-                    StationId = sideItem.Side.StationId,
-                    CardCost = null,
-                    SwipeCost = 0, // Side and drink don't add swipe cost, only entree does
-                    Special = false,
-                    Options = sideItem.SelectedOptions.Select(o => new CreateFoodItemOptionDto
-                    {
-                        FoodOptionName = o.Option.FoodOptionName
-                    }).ToList()
-                };
-                createOrderDto.FoodItems.Add(sideFoodItem);
-
-                var drinkFoodItem = new CreateFoodItemDto
-                {
-                    Name = drink.DrinkName,
-                    StationId = order.Location?.Id ?? 0,
-                    CardCost = null,
-                    SwipeCost = 0,
-                    Special = false,
-                    Options = new List<CreateFoodItemOptionDto>()
-                };
-                createOrderDto.FoodItems.Add(drinkFoodItem);
-            }
-        }
-
-        return createOrderDto;
-    }
+    public decimal CalculateTax(BrowserOrder order) =>
+        OrderCalculations.CalculateTax(order);
 }
 
 public class SwipeGroup

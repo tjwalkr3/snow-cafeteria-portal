@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.WebUtilities;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Swipe;
+using Cafeteria.Shared.Utilities;
 using System.Security.Claims;
 
 namespace Cafeteria.Customer.Components.Pages.PlaceOrder;
@@ -36,12 +36,6 @@ public partial class PlaceOrder : ComponentBase
     [Inject]
     private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
-    [SupplyParameterFromQuery(Name = "location")]
-    public int Location { get; set; }
-
-    [SupplyParameterFromQuery(Name = "payment")]
-    public string? Payment { get; set; }
-
     private BrowserOrder? Order { get; set; } = null;
 
     private decimal Price { get; set; } = 0.0m;
@@ -60,7 +54,6 @@ public partial class PlaceOrder : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await PlaceOrderVM.InitializeLocations();
         IsInitialized = true;
     }
 
@@ -95,9 +88,6 @@ public partial class PlaceOrder : ComponentBase
                     }
                 }
 
-                await SavePaymentMethod(userName);
-                await SaveLocation(userName);
-
                 Order = await GetOrder(userName);
 
                 if (Order != null)
@@ -124,67 +114,12 @@ public partial class PlaceOrder : ComponentBase
         }
     }
 
-    private async Task SavePaymentMethod(string userName)
-    {
-        if (!string.IsNullOrEmpty(Payment))
-        {
-            await Cart.SetIsCardOrder(userName, Payment == "card");
-        }
-    }
-
-    private async Task SaveLocation(string userName)
-    {
-        if (Location != 0)
-        {
-            var locationDto = PlaceOrderVM.GetLocationById(Location);
-            if (locationDto != null)
-            {
-                await Cart.SetLocation(userName, locationDto);
-            }
-        }
-    }
-
     private async Task<BrowserOrder?> GetOrder(string userName)
     {
         return await Cart.GetOrder(userName);
     }
 
-    public string GetStationSelectUrl()
-    {
-        Dictionary<string, string?> queryParameters = new() { };
-
-        string? payment = null;
-        if (Order != null)
-        {
-            payment = Order.IsCardOrder ? "card" : "swipe";
-        }
-        else if (!string.IsNullOrEmpty(Payment))
-        {
-            payment = Payment;
-        }
-
-        if (!string.IsNullOrEmpty(payment))
-        {
-            queryParameters.Add("payment", payment);
-        }
-
-        int? locationId = null;
-        if (Order?.Location != null)
-        {
-            locationId = Order.Location.Id;
-        }
-        else if (Location != 0)
-        {
-            locationId = Location;
-        }
-
-        if (locationId.HasValue && locationId.Value > 0)
-        {
-            queryParameters.Add("location", locationId.Value.ToString());
-        }
-
-        return QueryHelpers.AddQueryString("/location-select", queryParameters);
-    }
+    public string GetStationSelectUrl() => "/location-select";
 
     private async Task HandlePlaceOrder()
     {
@@ -193,29 +128,28 @@ public partial class PlaceOrder : ComponentBase
             return;
         }
 
-        var createOrderDto = PlaceOrderVM.ConvertToCreateOrderDto(Order);
-        var createdOrder = await OrderService.CreateOrder(createOrderDto);
+        var createdOrder = await OrderService.CreateOrder(Order);
 
         await Cart.ClearOrder("order");
 
         if (Order?.Location != null)
         {
-            _ = PrintPlacedOrder(Order.Location.Id, createdOrder.Id);
+            _ = PrintPlacedOrder(Order.Location.Id, createdOrder);
         }
 
         Navigation.NavigateTo("/thank-you", true);
     }
 
-    private async Task PrintPlacedOrder(int locationId, int orderId)
+    private async Task PrintPlacedOrder(int locationId, OrderDto createdOrder)
     {
         var printerUrl = await PrinterService.GetPrinterUrl(locationId);
         if (!string.IsNullOrWhiteSpace(printerUrl))
         {
             var printOrderData = new PrintOrderDto
             {
-                Id = orderId,
-                OrderTime = DateTime.Now,
-                FoodItems = ConvertOrderToFoodItems()
+                Id = createdOrder.Id,
+                OrderTime = createdOrder.OrderTime,
+                FoodItems = createdOrder.FoodItems
             };
             await PrinterService.PrintOrder(printerUrl, printOrderData);
         }
@@ -233,36 +167,11 @@ public partial class PlaceOrder : ComponentBase
         return EntreeGroups.Sum(g => g.Quantity) + SideGroups.Sum(g => g.Quantity) + DrinkGroups.Sum(g => g.Quantity);
     }
 
-    private decimal GetItemPrice(OrderEntreeItem item)
-    {
-        return item.Entree.EntreePrice + CalculateOptionsCost(item.SelectedOptions);
-    }
+    private decimal GetItemPrice(OrderEntreeItem item) =>
+        item.Entree.EntreePrice + OrderCalculations.CalculateOptionsCost(item.SelectedOptions);
 
-    private decimal GetItemPrice(OrderSideItem item)
-    {
-        return item.Side.SidePrice + CalculateOptionsCost(item.SelectedOptions);
-    }
-
-    private decimal CalculateOptionsCost(List<SelectedFoodOption> selectedOptions)
-    {
-        if (selectedOptions == null || selectedOptions.Count == 0)
-            return 0m;
-
-        decimal cost = 0m;
-
-        // Group options by their type ID
-        var optionsByType = selectedOptions.GroupBy(opt => opt.OptionType.Id);
-
-        foreach (var group in optionsByType)
-        {
-            var optionType = group.First().OptionType;
-            var selectedCount = group.Count();
-            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
-            cost += chargeableCount * optionType.FoodOptionPrice;
-        }
-
-        return cost;
-    }
+    private decimal GetItemPrice(OrderSideItem item) =>
+        item.Side.SidePrice + OrderCalculations.CalculateOptionsCost(item.SelectedOptions);
 
     private async Task IncreaseSwipeQuantity(SwipeGroup swipe)
     {
@@ -423,45 +332,4 @@ public partial class PlaceOrder : ComponentBase
         StateHasChanged();
     }
 
-    private List<FoodItemDto> ConvertOrderToFoodItems()
-    {
-        if (Order == null) return new List<FoodItemDto>();
-
-        var foodItems = new List<FoodItemDto>();
-
-        foreach (var entreeItem in Order.Entrees)
-        {
-            foodItems.Add(new FoodItemDto
-            {
-                Name = entreeItem.Entree.EntreeName,
-                Options = entreeItem.SelectedOptions.Select(opt => new FoodItemOptionDto
-                {
-                    FoodOptionName = opt.Option.FoodOptionName
-                }).ToList()
-            });
-        }
-
-        foreach (var sideItem in Order.Sides)
-        {
-            foodItems.Add(new FoodItemDto
-            {
-                Name = sideItem.Side.SideName,
-                Options = sideItem.SelectedOptions.Select(opt => new FoodItemOptionDto
-                {
-                    FoodOptionName = opt.Option.FoodOptionName
-                }).ToList()
-            });
-        }
-
-        foreach (var drink in Order.Drinks)
-        {
-            foodItems.Add(new FoodItemDto
-            {
-                Name = drink.DrinkName,
-                Options = new List<FoodItemOptionDto>()
-            });
-        }
-
-        return foodItems;
-    }
 }

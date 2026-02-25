@@ -1,26 +1,22 @@
 # Snow Cafeteria Portal
-[![Lint, Check for Warnings, and Run the Tests](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/code-checks.yml/badge.svg)](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/code-checks.yml)
+[![Deploy Main](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/deploy-main.yml/badge.svg)](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/deploy-main.yml)
+[![Merge Dev](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/merge-dev.yml/badge.svg)](https://github.com/tjwalkr3/snow-cafeteria-portal/actions/workflows/merge-dev.yml)
 
 ## Project Structure
-
 | Project | Type | Description |
 |---------|------|-------------|
 | **Cafeteria.Api** | Web API | Backend API service for the cafeteria system |
-| **Cafeteria.Api.Tests** | Test Project | Unit tests for the API project |
 | **Cafeteria.Customer** | Blazor Server | Customer-facing web application for cafeteria services |
-| **Cafeteria.Customer.Tests** | Test Project | Unit tests for the customer portal |
 | **Cafeteria.Management** | Blazor Server | Management interface for cafeteria administration |
-| **Cafeteria.Management.Tests** | Test Project | Unit tests for the management portal |
-
+| **Cafeteria.Shared** | Shared Library | Contains DTOs and authorization logic and razorcomponents |
+| **Cafeteria.UnitTests** | Test Project | All unit tests for the solution |
+| **Cafeteria.IntegrationTests** | Test Project | All Integration tests for the solution |
+| **ReceiptPrinter** | Python Project | The Pythin project that runs on the Raspberry pi to handle receipt printing |
+| **Docs** | Documentation | Documents related to styling and ongoing development |
+| **kube** | COnfigurations | YAML files for a Kubernetes deployment of our app |
 
 ## Running with Aspire
-
 ### Linux
 ```bash
 ./start-aspire.sh
-```
-
-### Windows
-```bash
-./start-aspire.ps1
 ```
