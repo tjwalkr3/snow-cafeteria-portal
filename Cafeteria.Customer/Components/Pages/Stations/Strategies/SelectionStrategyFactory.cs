@@ -23,8 +23,14 @@ public class SelectionStrategyFactory : ISelectionStrategyFactory
             StationType.Grill => new GrillSelectionStrategy(_cartService, _menuService),
             StationType.Breakfast => new BreakfastSelectionStrategy(_cartService, _menuService),
             StationType.Pizza => new PizzaSelectionStrategy(_cartService, _menuService),
-            StationType.Deli => new DeliSelectionStrategy(_cartService, _menuService),
-            StationType.Wraps => new WrapsSelectionStrategy(_cartService, _menuService),
+            StationType.Deli => new OptionBuilderSelectionStrategy(
+                _cartService, _menuService, StationType.Deli,
+                e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"),
+                "Custom Deli Sandwich"),
+            StationType.Wraps => new OptionBuilderSelectionStrategy(
+                _cartService, _menuService, StationType.Wraps,
+                e => e.EntreeName.Contains("Wrap", StringComparison.OrdinalIgnoreCase),
+                "Custom Wrap"),
             _ => throw new ArgumentException($"Unknown station type: {stationType}")
         };
     }

@@ -4,7 +4,7 @@ using Cafeteria.Customer.Components.Pages.OrderHistory;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Components.Pages.StationSelect;
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
-using Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
+using Cafeteria.Customer.Components.Pages.Stations.FoodBuilder;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Shared.Services.Customer;
@@ -67,7 +67,7 @@ builder.Services.AddScoped<IOrderHistoryVM, OrderHistoryVM>();
 // Register generic station services
 builder.Services.AddSingleton<IStationConfigurationProvider, StationConfigurationProvider>();
 builder.Services.AddScoped<ISelectionStrategyFactory, SelectionStrategyFactory>();
-builder.Services.AddScoped<IGenericSwipeVM, GenericSwipeVM>();
+builder.Services.AddScoped<IFoodBuilderVM, FoodBuilderVM>();
 
 // Register cart service and storage wrapper
 builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();
