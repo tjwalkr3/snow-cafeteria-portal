@@ -16,6 +16,7 @@ public partial class UserProfile : ComponentBase
     public string UserName { get; set; } = "Unknown";
     public string UserEmail { get; set; } = "Unknown";
     public int SwipeBalance { get; set; } = 0;
+    public bool HasActiveSwipePlan { get; set; } = false;
     private bool _isLoaded = false;
 
     protected override async Task OnInitializedAsync()
@@ -38,11 +39,13 @@ public partial class UserProfile : ComponentBase
                         if (swipeData != null)
                         {
                             SwipeBalance = swipeData.SwipeBalance;
+                            HasActiveSwipePlan = true;
                         }
                     }
                     catch (Exception)
                     {
                         SwipeBalance = 0;
+                        HasActiveSwipePlan = false;
                     }
                 }
             }

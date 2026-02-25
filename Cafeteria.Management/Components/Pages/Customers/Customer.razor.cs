@@ -48,14 +48,19 @@ public partial class Customer : ComponentBase
 
     private string GetSwipeBalanceDisplay(CustomerSwipeDto customer)
     {
-        if (customer.SwipeCount == null)
+        if (customer.Status == "Not Enrolled")
         {
-            return "No Swipes";
+            return "Not Enrolled";
         }
 
         if (customer.Status == "Expired")
         {
-            return "Expired";
+            return "Swipes Plan Is Expired";
+        }
+
+        if (customer.SwipeCount == null)
+        {
+            return "No Swipes";
         }
 
         return customer.SwipeCount.ToString() ?? "0";
@@ -63,6 +68,11 @@ public partial class Customer : ComponentBase
 
     private string GetSwipeBalanceClass(CustomerSwipeDto customer)
     {
+        if (customer.Status == "Not Enrolled")
+        {
+            return "text-muted";
+        }
+
         if (customer.Status == "Expired" || customer.SwipeCount == null)
         {
             return "text-danger";

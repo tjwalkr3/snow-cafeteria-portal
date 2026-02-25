@@ -127,11 +127,11 @@ public class SwipeIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task GetSwipesByEmail_WithNonExistentEmail_ReturnsNotFound()
+    public async Task GetSwipesByEmail_WithNonExistentEmail_ReturnsNoContent()
     {
         // Use an email that doesn't exist in the database
         var response = await _client.GetAsync("/api/swipe/email/nonexistent@snow.edu");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
     }
 
     [Fact]
@@ -252,7 +252,7 @@ public class SwipeIntegrationTests : IDisposable
         var noSwipeCustomer = customers.FirstOrDefault(c => c.BadgerId == noSwipeBadgerId);
         Assert.NotNull(noSwipeCustomer);
         Assert.Null(noSwipeCustomer.SwipeCount);
-        Assert.Null(noSwipeCustomer.Status);
+        Assert.Equal("Not Enrolled", noSwipeCustomer.Status);
 
         // Cleanup
         await _connection.ExecuteAsync("DELETE FROM cafeteria.customer WHERE badger_id = @BadgerId", new { BadgerId = noSwipeBadgerId });

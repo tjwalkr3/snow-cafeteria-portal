@@ -147,8 +147,8 @@ CREATE TABLE
 CREATE TABLE
     cafeteria.customer_swipe (
         badger_id int NOT NULL,
-        swipe_balance int4 NOT NULL
-        end_date timestamp,
+        swipe_balance int4 NOT NULL,
+        end_date timestamp
     );
 
 CREATE TABLE
@@ -897,4 +897,4 @@ VALUES
     (1003456, 9, '2026-12-31 23:59:59'),
     (1007890, 0, '2027-12-31 23:59:59'),
     (1000001, 5, '2028-12-31 23:59:59'),
-    (1000002, 2, '2026-2-29 23:59:59');
+    (1000002, 2, '2026-2-28 23:59:59');

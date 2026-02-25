@@ -53,7 +53,14 @@ else
                             </div>
                             <div class="detail-content d-flex flex-column">
                                 <span class="detail-label">Swipe Balance</span>
-                                <span class="detail-value swipe-balance">@SwipeBalance Swipes</span>
+                                @if (HasActiveSwipePlan)
+                                {
+                                    <span class="detail-value swipe-balance">@SwipeBalance Swipes</span>
+                                }
+                                else
+                                {
+                                    <span class="detail-value swipe-balance">Not enrolled in swipes plan</span>
+                                }
                             </div>
                         </div>
                     </div>
