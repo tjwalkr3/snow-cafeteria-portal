@@ -1,10 +1,12 @@
 namespace Cafeteria.Management.Components.Pages.Analytics;
 
+public record TopFoodEntry(string Label, string FoodName, int Count);
+
+public enum AnalyticsPeriod { Day, Week, Month, Year, FiveYears }
+
 public interface IAnalyticsVM
 {
-    int TotalOrdersToday { get; }
-    decimal RevenueToday { get; }
-    int SwipesToday { get; }
-
+    List<TopFoodEntry> GetTopFoodForPeriod(AnalyticsPeriod period);
+    bool HasData { get; }
     Task LoadData();
 }
