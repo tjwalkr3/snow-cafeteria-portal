@@ -134,22 +134,22 @@ public partial class PlaceOrder : ComponentBase
 
         if (Order?.Location != null)
         {
-            _ = PrintPlacedOrder(Order.Location.Id, createdOrder.Id);
+            _ = PrintPlacedOrder(Order.Location.Id, createdOrder);
         }
 
         Navigation.NavigateTo("/thank-you", true);
     }
 
-    private async Task PrintPlacedOrder(int locationId, int orderId)
+    private async Task PrintPlacedOrder(int locationId, OrderDto createdOrder)
     {
         var printerUrl = await PrinterService.GetPrinterUrl(locationId);
         if (!string.IsNullOrWhiteSpace(printerUrl))
         {
             var printOrderData = new PrintOrderDto
             {
-                Id = orderId,
-                OrderTime = DateTime.Now,
-                FoodItems = ConvertOrderToFoodItems()
+                Id = createdOrder.Id,
+                OrderTime = createdOrder.OrderTime,
+                FoodItems = createdOrder.FoodItems
             };
             await PrinterService.PrintOrder(printerUrl, printOrderData);
         }
@@ -332,45 +332,4 @@ public partial class PlaceOrder : ComponentBase
         StateHasChanged();
     }
 
-    private List<FoodItemDto> ConvertOrderToFoodItems()
-    {
-        if (Order == null) return new List<FoodItemDto>();
-
-        var foodItems = new List<FoodItemDto>();
-
-        foreach (var entreeItem in Order.Entrees)
-        {
-            foodItems.Add(new FoodItemDto
-            {
-                Name = entreeItem.Entree.EntreeName,
-                Options = entreeItem.SelectedOptions.Select(opt => new FoodItemOptionDto
-                {
-                    FoodOptionName = opt.Option.FoodOptionName
-                }).ToList()
-            });
-        }
-
-        foreach (var sideItem in Order.Sides)
-        {
-            foodItems.Add(new FoodItemDto
-            {
-                Name = sideItem.Side.SideName,
-                Options = sideItem.SelectedOptions.Select(opt => new FoodItemOptionDto
-                {
-                    FoodOptionName = opt.Option.FoodOptionName
-                }).ToList()
-            });
-        }
-
-        foreach (var drink in Order.Drinks)
-        {
-            foodItems.Add(new FoodItemDto
-            {
-                Name = drink.DrinkName,
-                Options = new List<FoodItemOptionDto>()
-            });
-        }
-
-        return foodItems;
-    }
 }
