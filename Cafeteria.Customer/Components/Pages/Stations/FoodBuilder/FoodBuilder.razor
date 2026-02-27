@@ -6,6 +6,7 @@
 @page "/wrap"
 @rendermode InteractiveServer
 @using Cafeteria.Customer.Components.Pages.Stations.Configuration
+@using Cafeteria.Customer.Components.Pages.Stations.Footer.FoodBuilderFooter
 @using Cafeteria.Customer.Components.Pages.Stations.Modals.EntreeOptionsModal
 @using Cafeteria.Customer.Components.Pages.Stations.Panels.DrinkPanel
 @using Cafeteria.Customer.Components.Pages.Stations.Panels.EntreePanel
@@ -229,38 +230,13 @@ else
                                 OnCancel="@DiscardOptions" />
         }
 
-        <div class="container footer-bar bg-white border-top shadow-sm d-flex justify-content-end align-items-center px-4 py-3">
-           
-            <div class="d-flex gap-2">
-                @if (VM.IsCardOrder)
-                {
-                    <button type="button" class="btn btn-primary" disabled="@(!HasAnySelection())" @onclick="AddToOrder">
-                        Add to Cart
-                    </button>
-                }
-                else
-                {
-                    @if (!IsFirstTab())
-                    {
-                        <button type="button" class="btn btn-outline-secondary" @onclick="GoToPreviousTab">
-                            <i class="bi bi-chevron-left me-1"></i> Back
-                        </button>
-                    }
-                    @if (IsLastTab())
-                    {
-                        <button type="button" class="btn btn-primary" disabled="@(!AreAllTabsCompleted())" @onclick="AddToOrder">
-                            Add to Order
-                        </button>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-primary" disabled="@(!IsTabCompleted(VM.ActiveTab))"
-                            @onclick="GoToNextTab">
-                            Next <i class="bi bi-chevron-right ms-1"></i>
-                        </button>
-                    }
-                }
-            </div>
-        </div>
+        <FoodBuilderFooter IsCardOrder="@VM.IsCardOrder"
+                           IsFirstTab="@IsFirstTab()"
+                           IsLastTab="@IsLastTab()"
+                           CanGoNext="@IsTabCompleted(VM.ActiveTab)"
+                           CanAddToOrder="@(VM.IsCardOrder ? HasAnySelection() : AreAllTabsCompleted())"
+                           OnAddToOrder="@AddToOrder"
+                           OnNext="@GoToNextTab"
+                           OnPrevious="@GoToPreviousTab" />
     </div>
 }

@@ -45,7 +45,7 @@ public partial class FoodBuilder : ComponentBase
         }
     }
 
-    private Configuration.StationType DetermineStationType()
+    private StationType DetermineStationType()
     {
         if (!string.IsNullOrEmpty(StationType) && ConfigProvider.TryParseStationType(StationType, out var parsedType))
         {
