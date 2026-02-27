@@ -66,19 +66,6 @@ public partial class FoodBuilder : ComponentBase
         };
     }
 
-    private string GetStationIcon()
-    {
-        return VM.CurrentStationType switch
-        {
-            Configuration.StationType.Grill => "bi-fire",
-            Configuration.StationType.Breakfast => "bi-egg-fried",
-            Configuration.StationType.Pizza => "bi-basket-fill",
-            Configuration.StationType.Deli => "bi-cup-straw",
-            Configuration.StationType.Wraps => "bi-tornado",
-            _ => "bi-shop"
-        };
-    }
-
     public string CreateBackUrl() => "/station-select";
 
     private void SetActiveTab(string tab)
@@ -124,24 +111,6 @@ public partial class FoodBuilder : ComponentBase
     private void SelectDrink(DrinkDto drink)
     {
         VM.SelectDrink(drink);
-        StateHasChanged();
-    }
-
-    private void SetOptionForType(int optionTypeId, string optionName)
-    {
-        VM.SetOptionForType(optionTypeId, optionName);
-        StateHasChanged();
-    }
-
-    private void ToggleOptionForType(int optionTypeId, string optionName)
-    {
-        VM.ToggleOptionForType(optionTypeId, optionName);
-        StateHasChanged();
-    }
-
-    private void ToggleTopping(string topping)
-    {
-        VM.ToggleTopping(topping);
         StateHasChanged();
     }
 
