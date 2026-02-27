@@ -23,26 +23,6 @@
         margin-left: 0.5rem;
     }
 
-.status-badge {
-    min-width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-    .status-badge.pending {
-        background: #f0f4f8;
-        color: #6c757d;
-        border-radius: 18px;
-        padding: 0 0.75rem;
-    }
-
-    .status-badge.complete {
-        background: #1e8a4c;
-        color: white;
-    }
-
 .option-chip {
     padding: 0.5rem 1rem;
     border: 2px solid #e9ecef;
@@ -64,36 +44,6 @@
         .option-chip.selected i {
             font-size: 0.85rem;
         }
-
-.meal-card {
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 4px;
-    cursor: pointer;
-}
-
-    .meal-card.selected {
-        box-shadow: 0 2px 8px rgba(30, 54, 108, 0.1);
-    }
-
-.select-btn {
-    padding: 0.3rem 0.75rem;
-    border: 1px solid #1e366c;
-    background: white;
-    border-radius: 10px;
-    color: #1e366c;
-    font-size: 0.8rem;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-    .select-btn.added {
-        border-color: #1f973b;
-        background: #1f973b;
-        color: white;
-    }
 
 .info-banner {
     background: #f8f9fa;

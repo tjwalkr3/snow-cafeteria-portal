@@ -6,6 +6,7 @@
 @page "/wrap"
 @rendermode InteractiveServer
 @using Cafeteria.Customer.Components.Pages.Stations.Configuration
+@using Cafeteria.Customer.Components.Pages.Stations.Panels.EntreePanel
 @using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.CardCategoryNav
 @using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.SwipeStepper
 @using Cafeteria.Shared.DTOs
@@ -72,112 +73,23 @@ else
 
             @if (VM.ActiveTab == "entrees" && VM.Configuration?.ShowEntreeSelection == true)
             {
-                <div class="row row-cols-1 row-cols-lg-3 g-3">
-                @foreach (var entree in VM.Entrees)
-                {
-                    <div class="col">
-                        <div class="meal-card d-flex flex-column @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
-                            @onclick="() => SelectEntree(entree)">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
-                                @if (!string.IsNullOrEmpty(entree.EntreeDescription))
-                                {
-                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
-                                }
-                                @if (VM.State.SelectedEntree?.Id == entree.Id && VM.State.SingleSelectOptions.Any())
-                                {
-                                    <div class="d-flex flex-wrap gap-1 mt-2">
-                                        @foreach (var option in VM.State.SingleSelectOptions.Values)
-                                        {
-                                            <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@option</span>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                @if (VM.IsCardOrder)
-                                {
-                                    <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
-                                }
-                                else
-                                {
-                                    <span></span>
-                                }
-                                @if (VM.State.SelectedEntree?.Id == entree.Id)
-                                {
-                                    <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                        <i class="bi bi-check-circle-fill"></i> Added
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                        <i class="bi bi-plus-circle"></i> Add
-                                    </button>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-                </div>
+                <EntreePanel Entrees="@VM.Entrees"
+                             SelectedEntree="@VM.State.SelectedEntree"
+                             IsCardOrder="@VM.IsCardOrder"
+                             SelectedBadges="@VM.State.SingleSelectOptions.Values.ToList()"
+                             OnEntreeSelected="@SelectEntree" />
             }
 
             @if (VM.ActiveTab == "toppings" && VM.CurrentStationType == Configuration.StationType.Pizza)
             {
                 var allToppings = VM.State.MultiSelectOptions.Values.SelectMany(v => v).ToList();
-                var toppingCount = allToppings.Count;
-                <div class="row row-cols-1 row-cols-lg-3 g-3">
-                @foreach (var entree in VM.Entrees)
-                {
-                    <div class="col">
-                        <div class="meal-card d-flex flex-column @(VM.State.SelectedEntree?.Id == entree.Id ? "selected" : "")"
-                            @onclick="() => SelectEntree(entree)">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
-                                @if (!string.IsNullOrEmpty(entree.EntreeDescription))
-                                {
-                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
-                                }
-                                @if (VM.State.SelectedEntree?.Id == entree.Id && allToppings.Any())
-                                {
-                                    <div class="d-flex flex-wrap gap-1 mt-2">
-                                        @foreach (var topping in allToppings)
-                                        {
-                                            <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@topping</span>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                @if (VM.IsCardOrder)
-                                {
-                                    <span class="price-badge">$@entree.EntreePrice.ToString("F2")</span>
-                                }
-                                else
-                                {
-                                    <span></span>
-                                }
-                                @if (VM.State.SelectedEntree?.Id == entree.Id && toppingCount >= (VM.Configuration?.MinimumToppingsRequired ?? 0))
-                                {
-                                    <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                        <i class="bi bi-check-circle-fill"></i> Added
-                                    </button>
-                                }
-                                else if (VM.State.SelectedEntree?.Id == entree.Id)
-                                {
-                                    <span class="status-badge pending d-inline-flex align-items-center justify-content-center">@toppingCount/@(VM.Configuration?.MinimumToppingsRequired ?? 0)</span>
-                                }
-                                else
-                                {
-                                    <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectEntree(entree)" @onclick:stopPropagation="true">
-                                        <i class="bi bi-plus-circle"></i> Add
-                                    </button>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-                </div>
+                <EntreePanel Entrees="@VM.Entrees"
+                             SelectedEntree="@VM.State.SelectedEntree"
+                             IsCardOrder="@VM.IsCardOrder"
+                             SelectedBadges="@allToppings"
+                             SelectionCount="@allToppings.Count"
+                             RequiredCount="@(VM.Configuration?.MinimumToppingsRequired ?? 0)"
+                             OnEntreeSelected="@SelectEntree" />
             }
 
             @if (VM.ActiveTab == "sandwich" && VM.CurrentStationType == Configuration.StationType.Deli)
