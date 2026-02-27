@@ -1,8 +1,8 @@
 # Stations Refactoring Gameplan
 
-## Current Architecture
+## Current Architecture (before Phase 1)
 
-The diagram below shows every file inside `Components/Pages/Stations/` and how they relate to one another. ⚠ marks classes that lock us into hard-coded station types and would need to change every time a new station is added.
+The diagram below shows every file inside `Components/Pages/Stations/` and how they related to one another before any refactoring. ⚠ marks classes that lock us into hard-coded station types and would need to change every time a new station is added.
 
 ```mermaid
 %%{init: {'theme': 'dark'}}%%
@@ -70,69 +70,78 @@ graph TB
 
 ## Ordered Refactoring Task List
 
-### Phase 1 — Rename and Deduplicate (no architectural change)
+### ✅ Phase 1 — Rename and Deduplicate (complete)
 
-1. **Rename `GenericSwipe` → `FoodBuilder` throughout the folder.** Move the `GenericSwipe/` folder to `FoodBuilder/`, rename every file inside it (`.razor`, `.razor.cs`, `.razor.css`, `VM.cs`, interface), and update namespaces and DI registrations. This aligns the file names with the end-goal before any other changes land.
+1. **Rename `GenericSwipe` → `FoodBuilder` throughout the folder.** Move the `GenericSwipe/` folder to `FoodBuilder/`, rename every file inside it (`.razor`, `.razor.cs`, `.razor.css`, `VM.cs`, interface), and update namespaces and DI registrations.
 
-2. **Merge `IsSandwichComplete()` and `IsWrapComplete()` in `FoodBuilder.razor.cs` into one method.** These two methods are byte-for-byte identical — both iterate `VM.OptionTypes` and check `VM.State.MultiSelectOptions`. Collapse them into a single `IsBuilderEntreeComplete()` method that both the sandwich and wrap tabs call.
+2. **Merge `IsSandwichComplete()` and `IsWrapComplete()` in `FoodBuilder.razor.cs` into one method.** These two methods are byte-for-byte identical. Collapse them into a single `IsBuilderEntreeComplete()` method.
 
-3. **Consolidate sandwich/wrap staging state into a single unified set of fields and methods.** Replace the parallel `_stagedSandwichSelections` / `_stagedWrapSelections` dictionaries and the six paired duplicate methods (`OpenXxxBuilderModal`, `CloseXxxBuilderModal`, `ToggleStagedXxxOption`, `SetStagedXxxOption`, `ConfirmXxxBuilder`) with one `_stagedBuilderSelections` dictionary and one unified set of four methods.
+3. **Consolidate sandwich/wrap staging state into a single unified set of fields and methods.** Replace the parallel `_stagedSandwichSelections` / `_stagedWrapSelections` dictionaries and six paired duplicate methods with one `_stagedBuilderSelections` dictionary and one unified set of four methods.
 
-4. **Merge the sandwich builder modal and wrap builder modal markup into a single modal block in `FoodBuilder.razor`.** After step 3, the two near-identical modal `<div>` sections (one for Deli, one for Wraps) can be collapsed into one modal block controlled by a single `_showBuilderModal` flag, with a `_builderModalTitle` string variable for the heading.
+4. **Merge the sandwich builder modal and wrap builder modal markup into a single modal block in `FoodBuilder.razor`.** Collapse the two near-identical modal `<div>` sections into one block controlled by a single `_showBuilderModal` flag with a `_builderModalTitle` string variable.
 
-5. **Merge `DeliSelectionStrategy` and `WrapsSelectionStrategy` into a single `OptionBuilderSelectionStrategy`.** The two classes share every method with minor differences in entree name-matching strings (`"Sandwich"/"Deli"` vs `"Wrap"`). Parameterize the entree name predicate (`Func<EntreeDto, bool>`) and virtual entree name during construction, then delete both concrete classes and update `SelectionStrategyFactory`.
+5. **Merge `DeliSelectionStrategy` and `WrapsSelectionStrategy` into a single `OptionBuilderSelectionStrategy`.** Parameterize the entree name predicate and virtual entree name during construction, then delete both concrete classes and update `SelectionStrategyFactory`.
 
-6. **Move `IsMultiSelectOptionType` logic into a standalone helper.** The method currently lives awkwardly in `GenericSwipeVM` and requires a `DeliSelectionStrategy` type-check. Extract it into a `Domain/OptionTypeHelper.cs` static class that takes a `FoodOptionTypeWithOptionsDto` and returns a bool based purely on `MaxAmount` and `FoodOptionTypeName` — no strategy reference needed.
-
----
-
-### Phase 2 — Extract Domain Logic
-
-7. **Create the `Domain/` subfolder and move `SelectionState` and `TabDefinition` into it.** Create `Stations/Domain/`, relocate `Models/SelectionState.cs` and `Models/TabDefinition.cs` into it, delete the now-empty `Models/` folder, and fix all using directives. These are pure data/logic objects and belong in a domain layer, not a `Models/` folder.
-
-8. **Extract `SelectionValidator` into `Domain/`.** Pull `IsValidSelection` logic out of all strategy classes and into `Domain/SelectionValidator.cs`. The new class should accept a `SelectionState`, a list of option types, and boolean flags (`requiresEntree`, `requiresSide`, `requiresDrink`, `requiresOptionsComplete`) — with no reference to any station type string or enum.
-
-9. **Extract `CartSubmitter` into `Domain/`.** Move the `AddToCartAsync` and all `AddXxxToCart` private methods from all strategy classes into `Domain/CartSubmitter.cs`. This class writes to `ICartService` based on the `SelectionState` and option type data it receives as parameters, containing zero branching on station type.
-
-10. **Extract `FoodOptionStagingStore` into `Domain/`.** Move all staging dictionary fields and the open/confirm/discard lifecycle methods from `FoodBuilder.razor.cs` into `Domain/FoodOptionStagingStore.cs`. This makes the staged-selection workflow independently testable and gives the code-behind a clean, single-responsibility surface.
+6. **Move `IsMultiSelectOptionType` logic into a standalone helper.** Extract it into `Domain/OptionTypeHelper.cs` — a static class that takes a `FoodOptionTypeWithOptionsDto` and returns a bool based purely on `MaxAmount` and `FoodOptionTypeName`.
 
 ---
 
-### Phase 3 — Extract Razor Components
+### ✅ Phase 2 — Extract Domain Logic (complete)
 
-11. **Extract `SwipeStepper` component.** Pull the progress-stepper markup (rendered for swipe/meal-plan orders) from `FoodBuilder.razor` into a new `TabNavigation/SwipeStepper/SwipeStepper.razor` component with its own code-behind and scoped CSS. It should accept a `List<TabDefinition>`, an active tab ID, and an `IsTabCompleted` callback parameter.
+7. **Create the `Domain/` subfolder and move `SelectionState` and `TabDefinition` into it.** Relocate from `Models/`, delete the now-empty `Models/` folder, and fix all using directives.
 
-12. **Extract `CardCategoryNav` component.** Pull the category-card strip (rendered for card/cash orders) from `FoodBuilder.razor` into `TabNavigation/CardCategoryNav/CardCategoryNav.razor`. It should accept the same tab list and active tab, plus a selection-summary callback and icon-resolver callback, with an `OnTabSelected` EventCallback.
+8. **Extract `SelectionValidator` into `Domain/`.** Pull validation logic into `Domain/SelectionValidator.cs`. The class accepts a `SelectionState`, a list of option types, and flags — with no reference to any station type string or enum.
 
-13. **Extract `EntreePanel` component.** Move the entree card-grid markup into `Panels/EntreePanel/EntreePanel.razor`, accepting an entrees list, the currently selected entree, a card-order flag, and an `OnEntreeSelected` EventCallback. Its code-behind should contain only the logic needed to render selection state visually.
+9. **Extract `CartSubmitter` into `Domain/`.** Move `AddToCartAsync` logic into `Domain/CartSubmitter.cs`. This class writes to `ICartService` based on `SelectionState` and option type data, with zero branching on station type.
 
-14. **Extract `SidePanel` and `DrinkPanel` components.** Move the sides card-grid and the drinks card-grid (including the "fountain drink included" fallback) into their own `Panels/SidePanel/SidePanel.razor` and `Panels/DrinkPanel/DrinkPanel.razor` components, following the same parameter pattern used in step 13.
+10. **Extract `FoodOptionStagingStore` into `Domain/`.** Move all staging dictionary fields and the open/confirm/discard lifecycle methods from `FoodBuilder.razor.cs` into `Domain/FoodOptionStagingStore.cs`, making the staged-selection workflow independently testable.
 
-15. **Extract `BuilderModal` component.** Move the unified builder modal (from step 4) into `Modals/BuilderModal/BuilderModal.razor`. Its code-behind should use `FoodOptionStagingStore` to manage staged selections and expose `OnConfirm` and `OnCancel` EventCallbacks to the parent page — no staging state should remain in the parent's code-behind.
+---
 
-16. **Extract `OptionsModal` component.** Move the breakfast options modal and the pizza toppings modal into a single `Modals/OptionsModal/OptionsModal.razor` component that accepts option types, a `SingleSelectMode` bool, and `OnConfirm`/`OnCancel` EventCallbacks. This eliminates both `_showOptionsModal` and `_showPizzaToppingsModal` (and their staging fields) from the parent code-behind.
+### Phase 3 — Unify the Options Modal and Extract Razor Components
 
-17. **Extract `FoodBuilderFooter` component.** Pull the footer bar markup into `Footer/FoodBuilderFooter.razor`. Its parameters should be the current tab, order mode (swipe vs card), and tab navigation state. It exposes `OnAddToOrder`, `OnNext`, and `OnPrevious` EventCallbacks; its code-behind determines button visibility only — no cart or selection logic.
+**Goal of this phase:** Every entree tap follows the same code path. If the selected entree has option types in the API response, the `EntreeOptionsModal` opens. The modal is fully data-driven — it reads `NumIncluded`, `MaxAmount`, and `FoodOptionTypeName` from each option type to decide whether each group is single-select or multi-select. No modal-opening decision and no modal rendering logic references a station type, a flag like `EntreeSelectionLoadsOptions`, or a hard-coded concept like "toppings."
+
+11. **Collapse `FoodOptionStagingStore` from four paradigms into one.** The store as built in step 10 has four independent modal lifecycles (builder, single-type, options/breakfast, toppings/pizza). Replace all four with a single staging model: one `IsModalOpen` flag, one nullable `StagedEntree`, and one `StagedSelections (Dictionary<int, HashSet<string>>)` seeded from all of the entree's option types at open time. The single `Open(entree, optionTypes, state)` / `Confirm(state, optionTypes)` / `Discard()` API is then the same regardless of which station or entree type triggered it. Remove `OpenBuilder`, `OpenSingleType`, `OpenOptions`, `OpenToppings`, and all their paired close/toggle/confirm methods in favor of this unified set.
+
+    Update `FoodBuilder.razor.cs` so that `SelectEntree` has a single branch: if the entree has associated option types, call `StagingStore.Open(...)`. Remove the `EntreeSelectionLoadsOptions` flag check and the `StationType == Pizza` check entirely — the data drives the decision, not a configuration flag.
+
+12. **Extract `SwipeStepper` component.** Pull the progress-stepper markup (rendered for swipe/meal-plan orders) from `FoodBuilder.razor` into a new `TabNavigation/SwipeStepper/SwipeStepper.razor` component with its own code-behind and scoped CSS. It should accept a `List<TabDefinition>`, an active tab ID, and an `IsTabCompleted` callback parameter.
+
+13. **Extract `CardCategoryNav` component.** Pull the category-card strip (rendered for card/cash orders) from `FoodBuilder.razor` into `TabNavigation/CardCategoryNav/CardCategoryNav.razor`. It should accept the same tab list and active tab, plus a selection-summary callback and icon-resolver callback, with an `OnTabSelected` EventCallback.
+
+14. **Extract `EntreePanel` component.** Move the entree card-grid markup into `Panels/EntreePanel/EntreePanel.razor`, accepting an entrees list, the currently selected entree, a card-order flag, and an `OnEntreeSelected` EventCallback.
+
+15. **Extract `SidePanel` and `DrinkPanel` components.** Move the sides card-grid and the drinks card-grid (including the "fountain drink included" fallback) into their own `Panels/SidePanel/SidePanel.razor` and `Panels/DrinkPanel/DrinkPanel.razor` components, following the same parameter pattern used in step 14.
+
+16. **Extract `EntreeOptionsModal` component.** Move the unified options modal into `Modals/EntreeOptionsModal/EntreeOptionsModal.razor`. This single component replaces the old builder modal, the breakfast options modal, and the pizza toppings modal. Its parameters are a list of `FoodOptionTypeWithOptionsDto`, the staged entree, a card-order flag, and `OnConfirm`/`OnCancel` EventCallbacks. Internally it renders each option type group by inspecting `MaxAmount` and `NumIncluded`:
+
+    - **Single-select group** (`MaxAmount == 1`): renders as a radio-style chip row where selecting one clears the others.
+    - **Multi-select group** (`MaxAmount > 1`): renders as a checkbox-style chip row with a "selected N / required N" counter; selections beyond `NumIncluded` are allowed for card orders and blocked for swipe orders.
+
+    The component uses `FoodOptionStagingStore.StagedSelections` for all state and calls `StagingStore.Confirm` or `StagingStore.Discard` on the respective callbacks. No station name, type, or flag is referenced anywhere inside the component.
+
+17. **Extract `FoodBuilderFooter` component.** Pull the footer bar markup into `Footer/FoodBuilderFooter.razor`. Its parameters are the current tab, order mode (swipe vs card), and tab navigation state. It exposes `OnAddToOrder`, `OnNext`, and `OnPrevious` EventCallbacks; its code-behind determines button visibility only — no cart or selection logic.
 
 ---
 
 ### Phase 4 — Eliminate the Strategies and Configuration Folders
 
-18. **Replace `StationType` and `StationConfigurationProvider` with database-driven station data.** Delete `Configuration/StationType.cs`, `Configuration/StationConfiguration.cs`, `Configuration/StationConfigurationProvider.cs`, and `Configuration/IStationConfigurationProvider.cs`. Instead, have `FoodBuilder.razor.cs` call the API to retrieve the station's entrees, sides, drinks, and option types; infer whether the station is "list" or "builder" style directly from whether option types are present in the data.
+18. **Replace `StationType` and `StationConfigurationProvider` with database-driven station data.** Delete `Configuration/StationType.cs`, `Configuration/StationConfiguration.cs`, `Configuration/StationConfigurationProvider.cs`, `Configuration/IStationConfigurationProvider.cs`, and all remaining `StationType` references. `FoodBuilder.razor.cs` should load the station's entrees, option types, sides, and drinks directly from the API. Tab layout, page title, minimum topping counts, and virtual entree names must come from the database record, not from a hard-coded provider method. Whether the `EntreeOptionsModal` opens on entree selection is determined solely by whether the API returned option types for that entree — no flag, no enum, no configuration object needed.
 
-19. **Remove the `ISelectionStrategy` / `BaseSelectionStrategy` abstraction entirely.** Once `Domain/SelectionValidator.cs`, `Domain/CartSubmitter.cs`, and `Domain/FoodOptionStagingStore.cs` are in place, delete `Strategies/ISelectionStrategy.cs`, `Strategies/ISelectionStrategyFactory.cs`, `Strategies/BaseSelectionStrategy.cs`, `Strategies/SelectionStrategyFactory.cs`, and the remaining concrete strategy file. Update `FoodBuilder.razor.cs` to call the domain classes directly, and delete the now-unused `GenericSwipeVM`/`IGenericSwipeVM` pair.
+19. **Remove the `ISelectionStrategy` / `BaseSelectionStrategy` abstraction entirely.** Once `Domain/SelectionValidator.cs`, `Domain/CartSubmitter.cs`, and `Domain/FoodOptionStagingStore.cs` are in place, delete `Strategies/ISelectionStrategy.cs`, `Strategies/ISelectionStrategyFactory.cs`, `Strategies/BaseSelectionStrategy.cs`, `Strategies/SelectionStrategyFactory.cs`, `Strategies/OptionBuilderSelectionStrategy.cs`, and all remaining concrete strategy files. Update `FoodBuilder.razor.cs` to call `SelectionValidator`, `CartSubmitter`, and `FoodOptionStagingStore` directly. Delete the `FoodBuilderVM`/`IFoodBuilderVM` pair and move its remaining surface (entree/side/drink lists, `ActiveTab`, `IsCardOrder`) into the code-behind directly, since those properties exist only to bridge the strategy abstraction to the view.
 
 ---
 
 ### Phase 5 — Dynamic Routing from the Database
 
-20. **Convert `FoodBuilder.razor` to a single parameterless route and remove all hard-coded station routes.** Change the page directive to a single `@page "/station"`, removing the five hard-coded legacy routes (`/breakfast`, `/deli`, `/grill`, `/pizza`, `/wrap`) and the intermediate `/station/{StationType}` string-parameter route. Because `stationId`, `locationId`, and `isCardOrder` are already written to browser storage by `StationSelect` before navigation, the page reads all context from storage in `OnAfterRenderAsync` — no URL parameter is needed. Update `StationSelect` to always navigate to `/station`, and update back URLs and post-order redirects accordingly.
+20. **Convert `FoodBuilder.razor` to a single parameterless route and remove all hard-coded station routes.** Change the page directive to a single `@page "/station"`, removing all legacy routes (`/breakfast`, `/deli`, `/grill`, `/pizza`, `/wrap`) and the intermediate `/station/{StationType}` string-parameter route. Because `stationId`, `locationId`, and `isCardOrder` are already written to browser storage by `StationSelect` before navigation, the page reads all context from storage in `OnAfterRenderAsync` — no URL parameter is needed. Update `StationSelect` to always navigate to `/station`, and update back URLs and post-order redirects accordingly.
 
 ---
 
 ## Target Architecture
 
-The diagram below shows the `Components/Pages/Stations/` folder after all tasks above are complete. Stations are no longer enumerated in code; `FoodBuilder` loads any station dynamically from the API.
+The diagram below shows the `Components/Pages/Stations/` folder after all tasks above are complete. Stations are no longer enumerated in code; `FoodBuilder` loads any station dynamically from the API, and every entree with option types uses the same `EntreeOptionsModal` regardless of station.
 
 ```mermaid
 %%{init: {'theme': 'dark'}}%%
@@ -145,7 +154,7 @@ graph TB
 
     subgraph fb["FoodBuilder/"]
         FBR["FoodBuilder.razor — ~50 lines, single route /station, renders child components"]:::page
-        FBCS["FoodBuilder.razor.cs — init, reads stationId/location/payment from browser storage, orchestrates children, calls Domain directly"]:::cb
+        FBCS["FoodBuilder.razor.cs — init, reads stationId/location/payment from browser storage, opens EntreeOptionsModal if entree has option types, calls Domain directly"]:::cb
     end
 
     subgraph tabnav["TabNavigation/"]
@@ -160,8 +169,7 @@ graph TB
     end
 
     subgraph modals["Modals/"]
-        BM["BuilderModal — unified sandwich/wrap builder, uses FoodOptionStagingStore, OnConfirm/OnCancel"]:::modal
-        OM["OptionsModal — single/multi-select modes, replaces breakfast and pizza toppings modals"]:::modal
+        EOM["EntreeOptionsModal — single component for all option types; single-select vs multi-select determined by MaxAmount per group; no station-type references"]:::modal
     end
 
     subgraph footer["Footer/"]
@@ -173,7 +181,7 @@ graph TB
         TD2["TabDefinition — moved from Models/"]:::domain
         VAL["SelectionValidator — IsValidSelection driven by flags, no station-type references"]:::domain
         CART["CartSubmitter — writes SelectionState to ICartService, data-driven, no station-type refs"]:::domain
-        STAGE["FoodOptionStagingStore — staged selection lifecycle: open, confirm, discard"]:::domain
+        STAGE["FoodOptionStagingStore — single Open/Confirm/Discard lifecycle; one StagedSelections dict works for all option type groups"]:::domain
         OTH["OptionTypeHelper — IsMultiSelectOptionType, GetCategoryIcon mapping"]:::domain
     end
 
@@ -183,18 +191,15 @@ graph TB
     FBCS --> |renders| EP
     FBCS --> |renders| SP
     FBCS --> |renders| DP
-    FBCS --> |renders| BM
-    FBCS --> |renders| OM
+    FBCS --> |renders| EOM
     FBCS --> |renders| FF
     FBCS --> |uses| VAL
     FBCS --> |uses| CART
     FBCS --> |holds| SEL
-    BM --> |uses| STAGE
-    OM --> |uses| STAGE
+    EOM --> |uses| STAGE
     STAGE --> |updates| SEL
     VAL --> |reads| SEL
     CART --> |reads| SEL
     EP --> |uses| OTH
-    BM --> |uses| OTH
-    OM --> |uses| OTH
+    EOM --> |uses| OTH
 ```
