@@ -6,7 +6,9 @@
 @page "/wrap"
 @rendermode InteractiveServer
 @using Cafeteria.Customer.Components.Pages.Stations.Configuration
+@using Cafeteria.Customer.Components.Pages.Stations.Panels.DrinkPanel
 @using Cafeteria.Customer.Components.Pages.Stations.Panels.EntreePanel
+@using Cafeteria.Customer.Components.Pages.Stations.Panels.SidePanel
 @using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.CardCategoryNav
 @using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.SwipeStepper
 @using Cafeteria.Shared.DTOs
@@ -202,103 +204,18 @@ else
 
             @if (VM.ActiveTab == "sides")
             {
-                <div class="row row-cols-1 row-cols-lg-3 g-3">
-                @foreach (var side in VM.Sides)
-                {
-                    <div class="col">
-                        <div class="meal-card h-100 d-flex flex-column" @onclick="() => SelectSide(side)">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1 fw-600">@side.SideName</h5>
-                                @if (!string.IsNullOrEmpty(side.SideDescription))
-                                {
-                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
-                                }
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                @if (VM.IsCardOrder)
-                                {
-                                    <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
-                                }
-                                else
-                                {
-                                    <span></span>
-                                }
-                                @if (VM.State.SelectedSide?.Id == side.Id)
-                                {
-                                    <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectSide(side)" @onclick:stopPropagation="true">
-                                        <i class="bi bi-check-circle-fill"></i> Added
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectSide(side)" @onclick:stopPropagation="true">
-                                        <i class="bi bi-plus-circle"></i> Add
-                                    </button>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-                </div>
+                <SidePanel Sides="@VM.Sides"
+                           SelectedSide="@VM.State.SelectedSide"
+                           IsCardOrder="@VM.IsCardOrder"
+                           OnSideSelected="@SelectSide" />
             }
 
             @if (VM.ActiveTab == "drinks")
             {
-                @if (VM.Drinks.Any())
-                {
-                    <div class="row row-cols-1 row-cols-lg-3 g-3">
-                    @foreach (var drink in VM.Drinks)
-                    {
-                        <div class="col">
-                            <div class="meal-card h-100 d-flex flex-column" @onclick="() => SelectDrink(drink)">
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1 fw-600">@drink.DrinkName</h5>
-                                    @if (!string.IsNullOrEmpty(drink.DrinkDescription))
-                                    {
-                                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@drink.DrinkDescription</p>
-                                    }
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    @if (VM.IsCardOrder)
-                                    {
-                                        <span class="price-badge">$@drink.DrinkPrice.ToString("F2")</span>
-                                    }
-                                    else
-                                    {
-                                        <span></span>
-                                    }
-                                    @if (VM.State.SelectedDrink?.Id == drink.Id)
-                                    {
-                                        <button type="button" class="select-btn added d-inline-flex align-items-center gap-1" @onclick="() => SelectDrink(drink)" @onclick:stopPropagation="true">
-                                            <i class="bi bi-check-circle-fill"></i> Added
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" class="select-btn d-inline-flex align-items-center gap-1" @onclick="() => SelectDrink(drink)" @onclick:stopPropagation="true">
-                                            <i class="bi bi-plus-circle"></i> Add
-                                        </button>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    </div>
-                }
-                else
-                {
-                    <div class="meal-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="mb-1 fw-600">Fountain Drink</h5>
-                                <p class="text-muted mb-0" style="font-size: 0.9rem;">Included with your meal</p>
-                            </div>
-                            <div>
-                                <span class="status-badge complete d-inline-flex align-items-center justify-content-center"><i class="bi bi-check"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                }
+                <DrinkPanel Drinks="@VM.Drinks"
+                            SelectedDrink="@VM.State.SelectedDrink"
+                            IsCardOrder="@VM.IsCardOrder"
+                            OnDrinkSelected="@SelectDrink" />
             }
         </div>
 
