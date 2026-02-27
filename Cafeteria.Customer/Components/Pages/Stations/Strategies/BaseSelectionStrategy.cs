@@ -1,7 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
-using Cafeteria.Customer.Services;
-using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 
@@ -9,9 +7,8 @@ namespace Cafeteria.Customer.Components.Pages.Stations.Strategies;
 
 public abstract class BaseSelectionStrategy : ISelectionStrategy
 {
-    protected readonly ICartService CartService;
+    protected readonly CartSubmitter CartSubmitter;
     protected readonly IApiMenuService MenuService;
-    protected const string CART_KEY = "order";
 
     protected int StationId { get; set; }
     protected int LocationId { get; set; }
@@ -22,9 +19,9 @@ public abstract class BaseSelectionStrategy : ISelectionStrategy
 
     public abstract StationType StationType { get; }
 
-    protected BaseSelectionStrategy(ICartService cartService, IApiMenuService menuService)
+    protected BaseSelectionStrategy(CartSubmitter cartSubmitter, IApiMenuService menuService)
     {
-        CartService = cartService;
+        CartSubmitter = cartSubmitter;
         MenuService = menuService;
     }
 
@@ -115,33 +112,4 @@ public abstract class BaseSelectionStrategy : ISelectionStrategy
     public virtual decimal GetExtraToppingCharge(SelectionState state) => 0m;
 
     public virtual bool HasExtraToppingCharge(SelectionState state) => false;
-
-    protected async Task AddEntreeWithOptionsToCart(SelectionState state)
-    {
-        if (state.SelectedEntree == null) return;
-
-        await CartService.AddEntree(CART_KEY, state.SelectedEntree);
-
-        foreach (var optionType in OptionTypes)
-        {
-            if (state.SingleSelectOptions.TryGetValue(optionType.OptionType.Id, out var selectedOptionName))
-            {
-                var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
-                if (option != null)
-                {
-                    await CartService.AddEntreeOption(CART_KEY, state.SelectedEntree.Id, option, optionType.OptionType);
-                }
-            }
-        }
-    }
-
-    protected async Task AddBasicItemsToCart(SelectionState state)
-    {
-        if (state.SelectedEntree != null)
-            await CartService.AddEntree(CART_KEY, state.SelectedEntree);
-        if (state.SelectedSide != null)
-            await CartService.AddSide(CART_KEY, state.SelectedSide);
-        if (state.SelectedDrink != null)
-            await CartService.AddDrink(CART_KEY, state.SelectedDrink);
-    }
 }

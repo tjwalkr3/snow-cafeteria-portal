@@ -1,0 +1,78 @@
+using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Shared.DTOs.Menu;
+
+namespace Cafeteria.Customer.Components.Pages.Stations.Domain;
+
+public class CartSubmitter
+{
+    private const string CART_KEY = "order";
+    private readonly ICartService _cartService;
+
+    public CartSubmitter(ICartService cartService)
+    {
+        _cartService = cartService;
+    }
+
+    public async Task SubmitAsync(
+        SelectionState state,
+        List<FoodOptionTypeWithOptionsDto> optionTypes,
+        List<FoodOptionDto> allEntreeOptions)
+    {
+        if (state.SelectedEntree != null)
+            await AddEntreeAsync(state, optionTypes, allEntreeOptions);
+
+        if (state.SelectedSide != null)
+            await _cartService.AddSide(CART_KEY, state.SelectedSide);
+
+        if (state.SelectedDrink != null)
+            await _cartService.AddDrink(CART_KEY, state.SelectedDrink);
+    }
+
+    private async Task AddEntreeAsync(
+        SelectionState state,
+        List<FoodOptionTypeWithOptionsDto> optionTypes,
+        List<FoodOptionDto> allEntreeOptions)
+    {
+        await _cartService.AddEntree(CART_KEY, state.SelectedEntree!);
+
+        foreach (var optionType in optionTypes)
+        {
+            if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+            {
+                if (!state.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var selections))
+                    continue;
+
+                foreach (var name in selections)
+                {
+                    var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == name);
+                    if (option != null)
+                        await _cartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, option, optionType.OptionType);
+                }
+            }
+            else
+            {
+                if (!state.SingleSelectOptions.TryGetValue(optionType.OptionType.Id, out var name)
+                    || string.IsNullOrEmpty(name))
+                    continue;
+
+                var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == name);
+                if (option != null)
+                    await _cartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, option, optionType.OptionType);
+            }
+        }
+
+        if (state.SelectedToppings.Any())
+        {
+            var toppingsOptionType = optionTypes.FirstOrDefault(ot =>
+                ot.OptionType.FoodOptionTypeName == "Pizza Toppings" ||
+                ot.Options.Any(o => state.SelectedToppings.Contains(o.FoodOptionName)));
+
+            foreach (var topping in state.SelectedToppings)
+            {
+                var toppingOption = allEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
+                if (toppingOption != null && toppingsOptionType != null)
+                    await _cartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, toppingOption, toppingsOptionType.OptionType);
+            }
+        }
+    }
+}

@@ -1,7 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
-using Cafeteria.Customer.Services;
-using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 
@@ -11,8 +9,8 @@ public class BreakfastSelectionStrategy : BaseSelectionStrategy
 {
     public override StationType StationType => StationType.Breakfast;
 
-    public BreakfastSelectionStrategy(ICartService cartService, IApiMenuService menuService)
-        : base(cartService, menuService)
+    public BreakfastSelectionStrategy(CartSubmitter cartSubmitter, IApiMenuService menuService)
+        : base(cartSubmitter, menuService)
     {
     }
 
@@ -26,7 +24,6 @@ public class BreakfastSelectionStrategy : BaseSelectionStrategy
         state.SelectedEntree = entree;
         state.SingleSelectOptions.Clear();
 
-        // Load options for the selected entree
         AllEntreeOptions = await MenuService.GetOptionsByEntree(entree.Id);
         OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(entree.Id);
     }
@@ -36,51 +33,7 @@ public class BreakfastSelectionStrategy : BaseSelectionStrategy
         if (!IsValidSelection(state, isCardOrder))
             return;
 
-        if (isCardOrder)
-        {
-            // Add only selected items
-            if (state.SelectedEntree != null)
-            {
-                await CartService.AddEntree(CART_KEY, state.SelectedEntree);
-
-                foreach (var optionType in OptionTypes)
-                {
-                    if (state.SingleSelectOptions.TryGetValue(optionType.OptionType.Id, out var selectedOptionName))
-                    {
-                        var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
-                        if (option != null)
-                        {
-                            await CartService.AddEntreeOption(CART_KEY, state.SelectedEntree.Id, option, optionType.OptionType);
-                        }
-                    }
-                }
-            }
-            if (state.SelectedSide != null)
-                await CartService.AddSide(CART_KEY, state.SelectedSide);
-            if (state.SelectedDrink != null)
-                await CartService.AddDrink(CART_KEY, state.SelectedDrink);
-        }
-        else
-        {
-            // Swipe: add all three
-            await CartService.AddEntree(CART_KEY, state.SelectedEntree!);
-
-            foreach (var optionType in OptionTypes)
-            {
-                if (state.SingleSelectOptions.TryGetValue(optionType.OptionType.Id, out var selectedOptionName))
-                {
-                    var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
-                    if (option != null)
-                    {
-                        await CartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, option, optionType.OptionType);
-                    }
-                }
-            }
-
-            await CartService.AddSide(CART_KEY, state.SelectedSide!);
-            await CartService.AddDrink(CART_KEY, state.SelectedDrink!);
-        }
-
+        await CartSubmitter.SubmitAsync(state, OptionTypes, AllEntreeOptions);
         ClearSelections(state, Entrees);
     }
 
@@ -94,9 +47,7 @@ public class BreakfastSelectionStrategy : BaseSelectionStrategy
     public override string GetSelectionSummary(SelectionState state)
     {
         if (!IsValidSelection(state, true))
-        {
             return "Complete all required fields";
-        }
 
         var items = new List<string>();
         if (state.SelectedEntree != null) items.Add(state.SelectedEntree.EntreeName);

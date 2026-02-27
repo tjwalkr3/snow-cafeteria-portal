@@ -1,7 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
-using Cafeteria.Customer.Services;
-using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 
@@ -10,7 +8,6 @@ namespace Cafeteria.Customer.Components.Pages.Stations.Strategies;
 public class PizzaSelectionStrategy : BaseSelectionStrategy
 {
     private const int MINIMUM_TOPPINGS = 2;
-    private const int INCLUDED_TOPPINGS = 2;
 
     private static readonly List<string> FallbackToppings = new()
     {
@@ -20,8 +17,8 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
 
     public override StationType StationType => StationType.Pizza;
 
-    public PizzaSelectionStrategy(ICartService cartService, IApiMenuService menuService)
-        : base(cartService, menuService)
+    public PizzaSelectionStrategy(CartSubmitter cartSubmitter, IApiMenuService menuService)
+        : base(cartSubmitter, menuService)
     {
     }
 
@@ -57,19 +54,13 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
             AvailableToppings = AllEntreeOptions.Select(o => o.FoodOptionName).ToList();
 
             if (!AvailableToppings.Any())
-            {
                 AvailableToppings = new List<string>(FallbackToppings);
-            }
 
-            // Load option types with pricing information
             OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(pizzaEntree.Id);
         }
 
-        // Auto-select first entree
         if (entrees.Any())
-        {
             state.SelectedEntree = entrees.First();
-        }
     }
 
     public override async Task AddToCartAsync(SelectionState state, bool isCardOrder)
@@ -77,53 +68,8 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
         if (!IsValidSelection(state, isCardOrder))
             return;
 
-        if (isCardOrder)
-        {
-            // Add only selected items
-            if (state.SelectedToppings.Count >= MINIMUM_TOPPINGS)
-            {
-                await AddPizzaWithToppingsToCart(state);
-            }
-            if (state.SelectedSide != null)
-                await CartService.AddSide(CART_KEY, state.SelectedSide);
-            if (state.SelectedDrink != null)
-                await CartService.AddDrink(CART_KEY, state.SelectedDrink);
-        }
-        else
-        {
-            // Swipe: add all three
-            await AddPizzaWithToppingsToCart(state);
-            await CartService.AddSide(CART_KEY, state.SelectedSide!);
-            await CartService.AddDrink(CART_KEY, state.SelectedDrink!);
-        }
-
+        await CartSubmitter.SubmitAsync(state, OptionTypes, AllEntreeOptions);
         ClearSelections(state, Entrees);
-    }
-
-    private async Task AddPizzaWithToppingsToCart(SelectionState state)
-    {
-        if (state.SelectedEntree == null && Entrees.Any())
-        {
-            state.SelectedEntree = Entrees.First();
-        }
-
-        if (state.SelectedEntree == null)
-            return;
-
-        await CartService.AddEntree(CART_KEY, state.SelectedEntree);
-
-        // Get the toppings option type (should be the first/only option type for pizza)
-        var toppingsOptionType = OptionTypes.FirstOrDefault(ot => ot.OptionType.FoodOptionTypeName == "Pizza Toppings" || ot.Options.Any(o => state.SelectedToppings.Contains(o.FoodOptionName)));
-
-        foreach (var topping in state.SelectedToppings)
-        {
-            var toppingOption = AllEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
-            if (toppingOption != null && toppingsOptionType != null)
-            {
-                // Use the actual option type with pricing information from the database
-                await CartService.AddEntreeOption(CART_KEY, state.SelectedEntree.Id, toppingOption, toppingsOptionType.OptionType);
-            }
-        }
     }
 
     public override void ClearSelections(SelectionState state, List<EntreeDto> entrees)
@@ -132,19 +78,14 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
         state.SelectedDrink = null;
         state.SelectedToppings.Clear();
 
-        // Re-select first entree
         if (entrees.Any())
-        {
             state.SelectedEntree = entrees.First();
-        }
     }
 
     public override string GetSelectionSummary(SelectionState state)
     {
         if (!IsValidSelection(state, true))
-        {
             return "Complete all required fields";
-        }
 
         return $"Personal Pizza with {state.SelectedToppings.Count} topping(s)";
     }

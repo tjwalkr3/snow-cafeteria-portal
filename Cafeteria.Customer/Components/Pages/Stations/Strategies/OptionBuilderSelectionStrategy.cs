@@ -1,6 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
-using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 
@@ -16,12 +15,12 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
     public override StationType StationType { get; }
 
     public OptionBuilderSelectionStrategy(
-        ICartService cartService,
+        CartSubmitter cartSubmitter,
         IApiMenuService menuService,
         StationType stationType,
         Func<EntreeDto, bool> entreePredicate,
         string virtualEntreeName)
-        : base(cartService, menuService)
+        : base(cartSubmitter, menuService)
     {
         StationType = stationType;
         _entreePredicate = entreePredicate;
@@ -92,49 +91,8 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
         if (!IsValidSelection(state, isCardOrder))
             return;
 
-        if (isCardOrder)
-        {
-            if (SelectionValidator.AreOptionsComplete(state, OptionTypes))
-                await AddBuilderEntreeToCart(state);
-            if (state.SelectedSide != null)
-                await CartService.AddSide(CART_KEY, state.SelectedSide);
-            if (state.SelectedDrink != null)
-                await CartService.AddDrink(CART_KEY, state.SelectedDrink);
-        }
-        else
-        {
-            await AddBuilderEntreeToCart(state);
-            await CartService.AddSide(CART_KEY, state.SelectedSide!);
-            await CartService.AddDrink(CART_KEY, state.SelectedDrink!);
-        }
-
+        await CartSubmitter.SubmitAsync(state, OptionTypes, AllEntreeOptions);
         ClearSelections(state, Entrees);
-    }
-
-    private async Task AddBuilderEntreeToCart(SelectionState state)
-    {
-        var entree = _builderEntree ?? new EntreeDto
-        {
-            Id = 0,
-            StationId = StationId,
-            EntreeName = _virtualEntreeName,
-            EntreePrice = 6.99m
-        };
-
-        await CartService.AddEntree(CART_KEY, entree);
-
-        foreach (var optionType in OptionTypes)
-        {
-            if (!state.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var selectedOptions))
-                continue;
-
-            foreach (var selectedOptionName in selectedOptions)
-            {
-                var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == selectedOptionName);
-                if (option != null)
-                    await CartService.AddEntreeOption(CART_KEY, entree.Id, option, optionType.OptionType);
-            }
-        }
     }
 
     public override void ClearSelections(SelectionState state, List<EntreeDto> entrees)
