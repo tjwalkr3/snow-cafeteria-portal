@@ -6,6 +6,7 @@
 @page "/wrap"
 @rendermode InteractiveServer
 @using Cafeteria.Customer.Components.Pages.Stations.Configuration
+@using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.SwipeStepper
 @using Cafeteria.Shared.DTOs
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -77,35 +78,10 @@ else
         }
         else
         {
-            <div class="progress-stepper d-flex align-items-start justify-content-center mb-2">
-                @{
-                    var tabs = VM.Configuration?.Tabs ?? new();
-                    var tabCount = tabs.Count;
-                }
-                @for (int i = 0; i < tabCount; i++)
-                {
-                    var tab = tabs[i];
-                    var isActive = VM.ActiveTab == tab.Id;
-                    var isCompleted = IsTabCompleted(tab.Id);
-                    var tabIndex = i;
-
-                    @if (i > 0)
-                    {
-                        <div class="stepper-line @(IsTabCompleted(tabs[i - 1].Id) ? "completed" : "") flex-grow-1"></div>
-                    }
-
-                    <div class="stepper-step @(isActive ? "active" : "") @(isCompleted ? "completed" : "") d-flex flex-column align-items-center"
-                         @onclick="@(() => SetActiveTab(tab.Id))">
-                        <div class="stepper-circle d-flex align-items-center justify-content-center">
-                            @if (isCompleted)
-                            {
-                                <i class="bi bi-check"></i>
-                            }
-                        </div>
-                        <span class="stepper-label">@tab.DisplayName.ToUpper()</span>
-                    </div>
-                }
-            </div>
+            <SwipeStepper Tabs="@(VM.Configuration?.Tabs ?? new())"
+                          ActiveTab="@VM.ActiveTab"
+                          IsTabCompleted="@IsTabCompleted"
+                          OnTabSelected="@SetActiveTab" />
         }
 
         <div class="content-area">
