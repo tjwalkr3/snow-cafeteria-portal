@@ -95,8 +95,22 @@ public class GetOrderService : IOrderService
             LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
             ORDER BY o.order_time DESC";
 
-        var orders = await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql);
-        return orders.ToList();
+        var orders = (await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql)).ToList();
+
+        const string foodItemsSql = @"
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
+                swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
+            FROM cafeteria.food_item
+            WHERE order_id = @orderId;";
+
+        foreach (var order in orders)
+        {
+            var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = order.Id });
+            order.FoodItems = foodItems.ToList();
+        }
+
+        return orders;
     }
 
     public async Task<List<OrderWithCustomerDto>> GetOrdersByCustomer(int badgerId)

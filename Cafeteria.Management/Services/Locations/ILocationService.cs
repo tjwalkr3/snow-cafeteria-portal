@@ -9,4 +9,7 @@ public interface ILocationService
     Task AddLocationBusinessHours(int locationId, TimeOnly openTime, TimeOnly closeTime, int weekdayId);
     Task UpdateLocationBusinessHours(int locationHrsId, TimeOnly openTime, TimeOnly closeTime, int weekdayId);
     Task<bool> DeleteLocationBusinessHours(int locationHrsId);
+    Task CreateLocation(string name, string? description);
+    Task UpdateLocation(int locationId, string name, string? description);
+    Task<bool> DeleteLocation(int locationId);
 }

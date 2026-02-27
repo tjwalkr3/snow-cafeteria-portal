@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Management.Services.Orders;
 
@@ -11,6 +12,9 @@ public partial class CustomerOrders : ComponentBase
 
     [Inject]
     public IOrderService OrderService { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
 
     private List<OrderWithCustomerDto> Orders { get; set; } = [];
     private string searchText = string.Empty;
@@ -53,5 +57,10 @@ public partial class CustomerOrders : ComponentBase
     {
         paymentTypeFilter = e.Value?.ToString() ?? string.Empty;
         StateHasChanged();
+    }
+
+    private void NavigateToOrder(int orderId)
+    {
+        Navigation.NavigateTo($"orders/{orderId}");
     }
 }

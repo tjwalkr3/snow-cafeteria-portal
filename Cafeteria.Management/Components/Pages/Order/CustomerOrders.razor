@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Cafeteria.Management.Components.Pages.Order
 
-<PageTitle>Customer Orders</PageTitle>
+<PageTitle>Customer Order History</PageTitle>
 
 <div class="px-3">
     <div class="mb-4">
@@ -12,24 +12,23 @@
         </a>
     </div>
 
-    <div class="d-flex justify-content-center align-items-center mb-2">
-        <h1 class="page-title fw-bold mb-0">Customer Order History</h1>
-    </div>
-
     @if (Orders.Any())
     {
-        <div class="text-center mb-4">
-            <h4 class="text-muted">@Orders.First().CustomerName</h4>
-            <p class="text-muted small mb-0">@Orders.First().CustomerEmail</p>
-            <p class="text-muted small">@Orders.Count order(s)</p>
+        <div class="customer-summary card border-1 rounded-3 shadow-sm mb-4">
+            <div class="card-body p-4 d-flex align-items-center gap-3">
+                <i class="bi bi-person-circle fs-1 text-primary flex-shrink-0"></i>
+                <div class="flex-grow-1">
+                    <h4 class="fw-bold mb-0">@Orders.First().CustomerName</h4>
+                    <p class="text-muted small mb-0"><i class="bi bi-envelope me-1"></i>@Orders.First().CustomerEmail</p>
+                </div>
+                <span class="badge bg-primary rounded-pill px-3 py-2 fs-6">@Orders.Count order(s)</span>
+            </div>
         </div>
 
         <div class="row g-3 mb-4">
             <div class="col-12 col-md-8">
                 <label class="form-label mb-0 me-2 text-nowrap fw-medium">Search:</label>
-                <div class="d-flex align-items-center">
-                    <input type="text" class="form-control" placeholder="Search by order ID..." @oninput="OnSearchChanged" value="@searchText" />
-                </div>
+                <input type="text" class="form-control" placeholder="Search by order ID..." @oninput="OnSearchChanged" value="@searchText" />
             </div>
             <div class="col-12 col-md-4">
                 <label class="form-label mb-0 me-2 text-nowrap fw-medium">Payment Type:</label>
@@ -41,52 +40,49 @@
             </div>
         </div>
 
-        <div class="row g-4 mb-4">
-            @foreach (var order in FilteredOrders)
-            {
-                <div class="col-12 col-md-6 col-lg-4" @key="order.Id">
-                    <div class="card h-100 border-1 rounded-3 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
-                                <div class="flex-grow-1">
-                                    <a href="orders/@order.Id" class="text-decoration-none text-dark">
-                                        <h5 class="fw-semibold mb-1 order-link">Order #@order.Id</h5>
-                                    </a>
-                                    <p class="text-muted small mb-0">@order.OrderTime.ToString("MMM dd, yyyy h:mm tt")</p>
-                                </div>
-                                <span class="badge @(order.PaymentType == "Card" ? "bg-primary" : "bg-success")">
-                                    @order.PaymentType
-                                </span>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small text-uppercase fw-medium">Items:</span>
-                                    <span>@order.ItemCount</span>
-                                </div>
-                            </div>
-
-                            <div class="pt-3 border-top">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-muted small text-uppercase fw-medium">Total:</span>
+        <div class="card border-1 rounded-3 shadow-sm mb-4">
+            <div class="table-responsive">
+                <table class="table table-hover order-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Date</th>
+                            <th>Payment</th>
+                            <th class="text-center">Items</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in FilteredOrders)
+                        {
+                            <tr @key="order.Id" class="order-row" @onclick="() => NavigateToOrder(order.Id)">
+                                <td><span class="fw-semibold">#@order.Id</span></td>
+                                <td class="text-muted">@order.OrderTime.ToString("MMM dd, yyyy h:mm tt")</td>
+                                <td>
+                                    <span class="badge @(order.PaymentType == "Card" ? "bg-primary" : "bg-success")">
+                                        @order.PaymentType
+                                    </span>
+                                </td>
+                                <td class="text-center">@order.ItemCount</td>
+                                <td class="text-end fw-bold">
                                     @if (order.TotalPrice.HasValue)
                                     {
-                                        <span class="fs-5 fw-bold">$@((order.TotalPrice.Value + order.Tax).ToString("F2"))</span>
+                                        <span>$@((order.TotalPrice.Value + order.Tax).ToString("F2"))</span>
                                     }
                                     else if (order.TotalSwipe.HasValue)
                                     {
-                                        <span class="fs-5 fw-bold">@order.TotalSwipe.Value Swipe(s)</span>
+                                        <span>@order.TotalSwipe.Value Swipe(s)</span>
                                     }
                                     else
                                     {
-                                        <span class="fs-5 fw-bold text-muted">N/A</span>
+                                        <span class="text-muted">N/A</span>
                                     }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
     else
@@ -98,9 +94,3 @@
         </div>
     }
 </div>
-
-<style>
-    .order-link:hover {
-        color: var(--bs-primary) !important;
-    }
-</style>

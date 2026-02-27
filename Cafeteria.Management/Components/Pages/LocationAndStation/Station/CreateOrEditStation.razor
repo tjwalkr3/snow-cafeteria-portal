@@ -1,21 +1,51 @@
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create or Edit Station</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Modal content for creating or editing stations.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+@if (ViewModel?.IsVisible ?? false)
+{
+    <Toast Message="@ViewModel.ToastMessage"
+        Type="@ViewModel.ToastType"
+        IsVisible="@ViewModel.ShowToast"
+        OnClose="@(() => ViewModel.ShowToast = false)" />
+
+    <div class="modal" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(ViewModel.IsEditing ? "Edit Station" : "Create Station")</h5>
+                    <button type="button" class="btn-close" @onclick="HandleClose" aria-label="Close"></button>
+                </div>
+                <EditForm Model="@ViewModel.CurrentStation" OnValidSubmit="HandleSave">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Station Name:</label>
+                            <InputText class="form-control" @bind-Value="ViewModel.CurrentStation.StationName" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentStation.StationName)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Location:</label>
+                            <InputSelect @bind-Value="ViewModel.CurrentStation.LocationId" class="form-control">
+                                <option value="0">-- Select a Location --</option>
+                                @foreach (var location in ViewModel.Locations)
+                                {
+                                    <option value="@location.Id">@location.LocationName</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => ViewModel.CurrentStation.LocationId)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <InputTextArea class="form-control" @bind-Value="ViewModel.CurrentStation.StationDescription" />
+                            <ValidationMessage For="@(() => ViewModel.CurrentStation.StationDescription)" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </EditForm>
             </div>
         </div>
     </div>
-</div>
+}

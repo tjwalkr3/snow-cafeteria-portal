@@ -1,57 +1,53 @@
-.customer-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
 }
 
-.customer-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.customer-name {
-    color: #212529;
-    font-size: 1.1rem;
-    word-break: break-word;
-}
-
-.detail-label {
-    color: #6c757d;
+.customer-table thead th {
+    background-color: #f8f9fa;
+    color: #1e366c;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.875rem 1rem;
 }
 
-.swipe-balance {
-    font-size: 1.25rem;
+.customer-table tbody tr {
+    transition: background-color 0.15s ease;
 }
 
-.swipe-balance.text-success {
-    color: #198754 !important;
+.customer-table tbody td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f5;
 }
 
-.swipe-balance.text-danger {
-    color: #dc3545 !important;
+.customer-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
-.customer-count {
-    color: #6c757d;
+.swipe-badge {
+    display: inline-block;
+    min-width: 2rem;
+    text-align: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
 }
 
-.empty-state {
-    background: #f8f9fa;
+.swipe-positive {
+    color: #198754;
+    background-color: #d1e7dd;
 }
 
-.empty-state i {
-    color: #adb5bd;
+.swipe-zero {
+    color: #dc3545;
+    background-color: #f8d7da;
 }
 
-.page-title {
-    font-size: 2.5rem;
-    color: #212529;
-}
-
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
-    border-width: 0.4em;
+.customer-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
 }
