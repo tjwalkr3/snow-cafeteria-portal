@@ -14,6 +14,8 @@ public partial class Analytics : ComponentBase, IAsyncDisposable
     private bool isLoading = true;
     private bool chartRendered = false;
     private AnalyticsPeriod selectedPeriod = AnalyticsPeriod.Week;
+    private int? selectedLocationId = null;
+    private int? selectedStationId = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,9 +45,24 @@ public partial class Analytics : ComponentBase, IAsyncDisposable
         await RenderChart();
     }
 
+    private async Task SelectLocation(ChangeEventArgs e)
+    {
+        selectedLocationId = int.TryParse(e.Value?.ToString(), out var id) ? id : null;
+        selectedStationId = null;
+        StateHasChanged();
+        await RenderChart();
+    }
+
+    private async Task SelectStation(ChangeEventArgs e)
+    {
+        selectedStationId = int.TryParse(e.Value?.ToString(), out var id) ? id : null;
+        StateHasChanged();
+        await RenderChart();
+    }
+
     private async Task RenderChart()
     {
-        var entries = ViewModel.GetTopFoodForPeriod(selectedPeriod);
+        var entries = ViewModel.GetTopFoodForPeriod(selectedPeriod, selectedStationId, selectedLocationId);
         var labels = entries.Select(e => e.Label).ToArray();
         var counts = entries.Select(e => e.Count).ToArray();
         var foodNames = entries.Select(e => e.FoodName).ToArray();

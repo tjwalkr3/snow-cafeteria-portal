@@ -98,7 +98,7 @@ public class GetOrderService : IOrderService
         var orders = (await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql)).ToList();
 
         const string foodItemsSql = @"
-            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                 sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                 swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
             FROM cafeteria.food_item

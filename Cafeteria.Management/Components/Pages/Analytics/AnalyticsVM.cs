@@ -1,20 +1,31 @@
+using Cafeteria.Management.Services.Locations;
 using Cafeteria.Management.Services.Orders;
+using Cafeteria.Management.Services.Stations;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
 
 namespace Cafeteria.Management.Components.Pages.Analytics;
 
-public class AnalyticsVM(IOrderService orderService) : IAnalyticsVM
+public class AnalyticsVM(IOrderService orderService, IStationService stationService, ILocationService locationService) : IAnalyticsVM
 {
     private List<OrderWithCustomerDto> _orders = [];
 
     public bool HasData => _orders.Any(o => o.FoodItems.Count > 0);
+    public List<StationDto> Stations { get; private set; } = [];
+    public List<LocationDto> Locations { get; private set; } = [];
 
     public async Task LoadData()
     {
-        _orders = await orderService.GetAllOrdersWithCustomer();
+        var ordersTask = orderService.GetAllOrdersWithCustomer();
+        var stationsTask = stationService.GetAllStations();
+        var locationsTask = locationService.GetAllLocations();
+        await Task.WhenAll(ordersTask, stationsTask, locationsTask);
+        _orders = ordersTask.Result;
+        Stations = stationsTask.Result;
+        Locations = locationsTask.Result;
     }
 
-    public List<TopFoodEntry> GetTopFoodForPeriod(AnalyticsPeriod period)
+    public List<TopFoodEntry> GetTopFoodForPeriod(AnalyticsPeriod period, int? stationId = null, int? locationId = null)
     {
         var now = DateTime.Now;
 
@@ -52,9 +63,21 @@ public class AnalyticsVM(IOrderService orderService) : IAnalyticsVM
                 break;
         }
 
+        var stationIdsForLocation = locationId.HasValue
+            ? Stations.Where(s => s.LocationId == locationId).Select(s => (int?)s.Id).ToHashSet()
+            : null;
+
         return _orders
-            .SelectMany(o => o.FoodItems.Select(f => new { o.OrderTime, f.Name }))
+            .SelectMany(o => o.FoodItems.Select(f => new { o.OrderTime, f.Name, f.StationId, f.LocationId }))
             .Where(x => inRange(x.OrderTime))
+            .Where(x =>
+            {
+                if (stationId.HasValue)
+                    return x.StationId == stationId;
+                if (locationId.HasValue)
+                    return x.LocationId == locationId || (x.StationId.HasValue && stationIdsForLocation!.Contains(x.StationId));
+                return true;
+            })
             .GroupBy(x => truncate(x.OrderTime))
             .OrderBy(g => g.Key)
             .Select(g =>

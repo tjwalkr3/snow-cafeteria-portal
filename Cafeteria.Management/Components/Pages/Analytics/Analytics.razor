@@ -29,7 +29,7 @@
     {
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+                <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-3">
                     <div>
                         <h6 class="section-label text-uppercase fw-semibold mb-1">Top Food Sold</h6>
                         <p class="text-muted small mb-0">Most ordered food item for each time bucket.</p>
@@ -46,6 +46,22 @@
                         <button class="btn @(selectedPeriod == AnalyticsPeriod.FiveYears ? "btn-primary" : "btn-outline-secondary")"
                                 @onclick="() => SelectPeriod(AnalyticsPeriod.FiveYears)">5 Years</button>
                     </div>
+                </div>
+                <div class="d-flex gap-2 mb-4 flex-wrap">
+                    <select class="form-select form-select-sm" style="max-width:200px;" @onchange="SelectLocation">
+                        <option value="">All Locations</option>
+                        @foreach (var loc in ViewModel.Locations)
+                        {
+                            <option value="@loc.Id" selected="@(selectedLocationId == loc.Id)">@loc.LocationName</option>
+                        }
+                    </select>
+                    <select class="form-select form-select-sm" style="max-width:200px;" @onchange="SelectStation">
+                        <option value="">All Stations</option>
+                        @foreach (var st in ViewModel.Stations.Where(s => selectedLocationId == null || s.LocationId == selectedLocationId))
+                        {
+                            <option value="@st.Id" selected="@(selectedStationId == st.Id)">@st.StationName</option>
+                        }
+                    </select>
                 </div>
                 <div class="chart-container">
                     <canvas id="topFoodChart"></canvas>
