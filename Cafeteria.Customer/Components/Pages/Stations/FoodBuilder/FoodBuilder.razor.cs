@@ -79,25 +79,6 @@ public partial class FoodBuilder : ComponentBase
         };
     }
 
-    private string GetCategoryIcon(string categoryName)
-    {
-        return categoryName.ToLower() switch
-        {
-            "bread" => "bi-slash-square",
-            "meat" => "bi-egg-fill",
-            "meat choice" => "bi-egg-fill",
-            "cheese" => "bi-square-fill",
-            "toppings" => "bi-leaf",
-            "dressing" => "bi-droplet-fill",
-            "plate base" => "bi-basket2-fill",
-            "side" or "sides" => "bi-basket2-fill",
-            "tortilla" => "bi-circle",
-            "protein" => "bi-egg-fried",
-            "sauce" => "bi-droplet-fill",
-            _ => "bi-circle"
-        };
-    }
-
     public string CreateBackUrl() => "/station-select";
 
     private void SetActiveTab(string tab)
@@ -120,20 +101,6 @@ public partial class FoodBuilder : ComponentBase
     {
         if (VM.State.SelectedEntree != null && VM.OptionTypes.Any())
             StagingStore.Open(VM.State.SelectedEntree, VM.OptionTypes, VM.State);
-    }
-
-    private void ToggleStagedOption(int optionTypeId, string name)
-    {
-        var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == optionTypeId);
-        if (optionType != null)
-            StagingStore.Toggle(optionTypeId, name, optionType, VM.IsCardOrder);
-        StateHasChanged();
-    }
-
-    private void SetStagedOption(int optionTypeId, string name)
-    {
-        StagingStore.Set(optionTypeId, name);
-        StateHasChanged();
     }
 
     private void ConfirmOptions()

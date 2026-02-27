@@ -23,36 +23,6 @@
         margin-left: 0.5rem;
     }
 
-.option-chip {
-    padding: 0.5rem 1rem;
-    border: 2px solid #e9ecef;
-    background: white;
-    border-radius: 8px;
-    color: #495057;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    gap: 0.35rem;
-}
-
-    .option-chip.selected {
-        border-color: #1e366c;
-        background: #1e366c;
-        color: white;
-    }
-
-        .option-chip.selected i {
-            font-size: 0.85rem;
-        }
-
-.info-banner {
-    background: #f8f9fa;
-    color: #495057;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-}
-
 .footer-bar {
     position: fixed;
     bottom: 1rem;
