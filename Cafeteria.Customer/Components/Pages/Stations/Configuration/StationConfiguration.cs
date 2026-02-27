@@ -1,4 +1,4 @@
-using Cafeteria.Customer.Components.Pages.Stations.Models;
+using Cafeteria.Customer.Components.Pages.Stations.Domain;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.Configuration;
 

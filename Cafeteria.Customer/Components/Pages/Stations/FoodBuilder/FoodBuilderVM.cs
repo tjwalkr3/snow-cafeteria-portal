@@ -1,6 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
-using Cafeteria.Customer.Components.Pages.Stations.Models;
 using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
