@@ -110,103 +110,41 @@ public partial class FoodBuilder : ComponentBase
     {
         await VM.SelectEntreeAsync(entree);
 
-        if (VM.Configuration?.EntreeSelectionLoadsOptions == true && VM.OptionTypes.Any())
-            StagingStore.OpenOptions(entree, VM.State);
-
-        if (VM.CurrentStationType == Configuration.StationType.Pizza)
-            StagingStore.OpenToppings(entree, VM.State);
+        if (VM.OptionTypes.Any())
+            StagingStore.Open(entree, VM.OptionTypes, VM.State);
 
         StateHasChanged();
     }
 
-    private void CloseOptionsModal()
+    private void OpenOptionsModal()
     {
-        StagingStore.CloseOptions();
-        StateHasChanged();
+        if (VM.State.SelectedEntree != null && VM.OptionTypes.Any())
+            StagingStore.Open(VM.State.SelectedEntree, VM.OptionTypes, VM.State);
     }
 
-    private void OpenBuilderModal(string title) =>
-        StagingStore.OpenBuilder(title, VM.OptionTypes, VM.State);
-
-    private void CloseBuilderModal() =>
-        StagingStore.CloseBuilder();
-
-    private void ToggleStagedBuilderOption(int optionTypeId, string name)
+    private void ToggleStagedOption(int optionTypeId, string name)
     {
-        StagingStore.ToggleStagedBuilderOption(optionTypeId, name, VM.OptionTypes, VM.IsCardOrder);
-        StateHasChanged();
-    }
-
-    private void SetStagedBuilderOption(int optionTypeId, string name)
-    {
-        StagingStore.SetStagedBuilderOption(optionTypeId, name);
-        StateHasChanged();
-    }
-
-    private void ConfirmBuilder()
-    {
-        StagingStore.ConfirmBuilder(VM.State, VM.OptionTypes);
-        StateHasChanged();
-    }
-
-    private void OpenDeliOptionsModal(int optionTypeId) =>
-        StagingStore.OpenSingleType(optionTypeId, VM.State);
-
-    private void CloseDeliOptionsModal() =>
-        StagingStore.CloseSingleType();
-
-    private void ToggleStagedDeliOption(string name)
-    {
-        var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == StagingStore.ActiveOptionTypeId);
+        var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == optionTypeId);
         if (optionType != null)
-            StagingStore.ToggleStagedSingleTypeOption(name, optionType, VM.IsCardOrder);
+            StagingStore.Toggle(optionTypeId, name, optionType, VM.IsCardOrder);
         StateHasChanged();
     }
 
-    private void SetStagedDeliOption(string name)
+    private void SetStagedOption(int optionTypeId, string name)
     {
-        StagingStore.SetStagedSingleTypeOption(name);
+        StagingStore.Set(optionTypeId, name);
         StateHasChanged();
     }
 
-    private void ConfirmDeliOptions()
+    private void ConfirmOptions()
     {
-        StagingStore.ConfirmSingleType(VM.State, VM.OptionTypes);
+        StagingStore.Confirm(VM.State, VM.OptionTypes);
         StateHasChanged();
     }
 
-    private void SetStagedBreakfastOption(int optionTypeId, string optionName)
+    private void DiscardOptions()
     {
-        StagingStore.SetStagedSingleSelectOption(optionTypeId, optionName);
-        StateHasChanged();
-    }
-
-    private void ConfirmBreakfastOptions()
-    {
-        StagingStore.ConfirmOptions(VM.State);
-        StateHasChanged();
-    }
-
-    private void OpenPizzaToppingsModal()
-    {
-        StagingStore.ReopenToppings(VM.State);
-    }
-
-    private void ClosePizzaToppingsModal()
-    {
-        StagingStore.CloseToppings();
-        StateHasChanged();
-    }
-
-    private void ToggleStagedTopping(string topping)
-    {
-        StagingStore.ToggleStagedTopping(topping, VM.OptionTypes, VM.IsCardOrder);
-        StateHasChanged();
-    }
-
-    private void ConfirmPizzaToppings()
-    {
-        StagingStore.ConfirmToppings(VM.State);
+        StagingStore.Discard();
         StateHasChanged();
     }
 
@@ -257,7 +195,7 @@ public partial class FoodBuilder : ComponentBase
             "sandwich" => IsBuilderEntreeComplete(),
             "wrap" => IsBuilderEntreeComplete(),
             "toppings" => VM.State.SelectedEntree != null &&
-                          VM.State.SelectedToppings.Count >= (VM.Configuration?.MinimumToppingsRequired ?? 0),
+                          VM.State.MultiSelectOptions.Values.Sum(list => list.Count) >= (VM.Configuration?.MinimumToppingsRequired ?? 0),
             "sides" => VM.State.SelectedSide != null,
             "drinks" => VM.State.SelectedDrink != null || !VM.Drinks.Any(),
             _ => false
@@ -311,8 +249,8 @@ public partial class FoodBuilder : ComponentBase
         return VM.State.SelectedEntree != null ||
                VM.State.SelectedSide != null ||
                VM.State.SelectedDrink != null ||
-               VM.State.SelectedToppings.Count > 0 ||
-               VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0);
+               VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0) ||
+               VM.State.SingleSelectOptions.Any();
     }
 
     private bool IsFirstTab()
@@ -353,7 +291,7 @@ public partial class FoodBuilder : ComponentBase
             "entrees" => VM.State.SelectedEntree != null,
             "sandwich" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
             "wrap" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
-            "toppings" => VM.State.SelectedToppings.Count > 0,
+            "toppings" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
             "sides" => VM.State.SelectedSide != null,
             "drinks" => VM.State.SelectedDrink != null,
             _ => false
@@ -367,7 +305,7 @@ public partial class FoodBuilder : ComponentBase
             "entrees" => VM.State.SelectedEntree?.EntreeName ?? "",
             "sandwich" => GetBuilderSummary("option(s)"),
             "wrap" => GetBuilderSummary("filling(s)"),
-            "toppings" => $"{VM.State.SelectedToppings.Count} topping(s)",
+            "toppings" => $"{VM.State.MultiSelectOptions.Values.Sum(list => list.Count)} topping(s)",
             "sides" => VM.State.SelectedSide?.SideName ?? "",
             "drinks" => VM.State.SelectedDrink?.DrinkName ?? "",
             _ => ""
