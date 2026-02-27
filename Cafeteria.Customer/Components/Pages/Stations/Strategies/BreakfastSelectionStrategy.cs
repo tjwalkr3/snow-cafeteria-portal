@@ -16,44 +16,10 @@ public class BreakfastSelectionStrategy : BaseSelectionStrategy
     {
     }
 
-    public override bool IsValidSelection(SelectionState state, bool isCardOrder)
-    {
-        if (isCardOrder)
-        {
-            // Card orders: allow any selection
-            // If entree is selected, ensure all required options are selected
-            if (state.SelectedEntree != null)
-            {
-                foreach (var optionType in OptionTypes)
-                {
-                    if (!state.SingleSelectOptions.ContainsKey(optionType.OptionType.Id) ||
-                        string.IsNullOrEmpty(state.SingleSelectOptions[optionType.OptionType.Id]))
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            // Allow just side or just drink
-            return state.SelectedSide != null || state.SelectedDrink != null;
-        }
-
-        // Swipe orders: require all three
-        if (state.SelectedEntree == null || state.SelectedSide == null || state.SelectedDrink == null)
-            return false;
-
-        // Validate all options are selected
-        foreach (var optionType in OptionTypes)
-        {
-            if (!state.SingleSelectOptions.ContainsKey(optionType.OptionType.Id) ||
-                string.IsNullOrEmpty(state.SingleSelectOptions[optionType.OptionType.Id]))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
+    public override bool IsValidSelection(SelectionState state, bool isCardOrder) =>
+        SelectionValidator.IsValid(
+            state, OptionTypes, isCardOrder,
+            requiresOptionsComplete: true);
 
     public override async Task OnEntreeSelectedAsync(EntreeDto entree, SelectionState state)
     {

@@ -11,6 +11,8 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
     private readonly Func<EntreeDto, bool> _entreePredicate;
     private readonly string _virtualEntreeName;
 
+    private EntreeDto? _builderEntree;
+
     public override StationType StationType { get; }
 
     public OptionBuilderSelectionStrategy(
@@ -26,38 +28,10 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
         _virtualEntreeName = virtualEntreeName;
     }
 
-    public override bool IsValidSelection(SelectionState state, bool isCardOrder)
-    {
-        if (isCardOrder)
-        {
-            if (IsBuilderComplete(state))
-                return true;
-            return state.SelectedSide != null || state.SelectedDrink != null;
-        }
-
-        if (state.SelectedSide == null || state.SelectedDrink == null)
-            return false;
-
-        return IsBuilderComplete(state);
-    }
-
-    private bool IsBuilderComplete(SelectionState state)
-    {
-        if (!OptionTypes.Any())
-            return false;
-
-        foreach (var optionType in OptionTypes)
-        {
-            var selected = state.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var value)
-                ? value
-                : new List<string>();
-
-            if (selected.Count < optionType.OptionType.NumIncluded)
-                return false;
-        }
-
-        return true;
-    }
+    public override bool IsValidSelection(SelectionState state, bool isCardOrder) =>
+        SelectionValidator.IsValid(
+            state, OptionTypes, isCardOrder,
+            requiresOptionsComplete: true);
 
     public override int GetSelectionCount(SelectionState state)
     {
@@ -79,11 +53,20 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
         SelectionState state)
     {
         Entrees = entrees;
-        var builderEntree = entrees.FirstOrDefault(_entreePredicate);
-        if (builderEntree != null)
+        var matched = entrees.FirstOrDefault(_entreePredicate);
+        _builderEntree = matched ?? new EntreeDto
         {
-            AllEntreeOptions = await MenuService.GetOptionsByEntree(builderEntree.Id);
-            OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(builderEntree.Id);
+            Id = 0,
+            StationId = StationId,
+            EntreeName = _virtualEntreeName,
+            EntreePrice = 6.99m
+        };
+        state.SelectedEntree = _builderEntree;
+
+        if (matched != null)
+        {
+            AllEntreeOptions = await MenuService.GetOptionsByEntree(matched.Id);
+            OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(matched.Id);
         }
     }
 
@@ -111,7 +94,7 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
 
         if (isCardOrder)
         {
-            if (IsBuilderComplete(state))
+            if (SelectionValidator.AreOptionsComplete(state, OptionTypes))
                 await AddBuilderEntreeToCart(state);
             if (state.SelectedSide != null)
                 await CartService.AddSide(CART_KEY, state.SelectedSide);
@@ -130,7 +113,7 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
 
     private async Task AddBuilderEntreeToCart(SelectionState state)
     {
-        var entree = Entrees.FirstOrDefault(_entreePredicate) ?? new EntreeDto
+        var entree = _builderEntree ?? new EntreeDto
         {
             Id = 0,
             StationId = StationId,
@@ -157,6 +140,7 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
     public override void ClearSelections(SelectionState state, List<EntreeDto> entrees)
     {
         state.Clear();
+        state.SelectedEntree = _builderEntree;
     }
 
     public override string GetSelectionSummary(SelectionState state)

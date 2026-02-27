@@ -25,21 +25,13 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
     {
     }
 
-    public override bool IsValidSelection(SelectionState state, bool isCardOrder)
-    {
-        if (isCardOrder)
-        {
-            // Card orders: allow pizza with toppings, or just side, or just drink
-            if (state.SelectedToppings.Count >= MINIMUM_TOPPINGS)
-                return true;
-            return state.SelectedSide != null || state.SelectedDrink != null;
-        }
-
-        // Swipe orders: require pizza with 2+ toppings + side + drink
-        return state.SelectedToppings.Count >= MINIMUM_TOPPINGS &&
-               state.SelectedSide != null &&
-               state.SelectedDrink != null;
-    }
+    public override bool IsValidSelection(SelectionState state, bool isCardOrder) =>
+        SelectionValidator.IsValid(
+            state, OptionTypes, isCardOrder,
+            requiresOptionsComplete: false,
+            minimumToppings: OptionTypes.Any()
+                ? OptionTypes.First().OptionType.NumIncluded
+                : MINIMUM_TOPPINGS);
 
     public override int GetSelectionCount(SelectionState state)
     {

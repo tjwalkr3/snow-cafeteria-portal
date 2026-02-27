@@ -16,17 +16,10 @@ public class GrillSelectionStrategy : BaseSelectionStrategy
     {
     }
 
-    public override bool IsValidSelection(SelectionState state, bool isCardOrder)
-    {
-        if (isCardOrder)
-        {
-            // Card orders: allow any selection
-            return state.SelectedEntree != null || state.SelectedSide != null || state.SelectedDrink != null;
-        }
-
-        // Swipe orders: require all three
-        return state.SelectedEntree != null && state.SelectedSide != null && state.SelectedDrink != null;
-    }
+    public override bool IsValidSelection(SelectionState state, bool isCardOrder) =>
+        SelectionValidator.IsValid(
+            state, OptionTypes, isCardOrder,
+            requiresOptionsComplete: false);
 
     public override async Task AddToCartAsync(SelectionState state, bool isCardOrder)
     {
