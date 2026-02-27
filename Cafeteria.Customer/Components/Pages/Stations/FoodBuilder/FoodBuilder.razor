@@ -438,13 +438,13 @@ else
             }
         </div>
 
-        @if (_showBuilderModal && VM.OptionTypes.Any())
+        @if (StagingStore.IsBuilderOpen && VM.OptionTypes.Any())
         {
             <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                     <div class="modal-content border-0 shadow" style="border-radius: 16px;">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@_builderModalTitle</h5>
+                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@StagingStore.BuilderTitle</h5>
                             <button type="button" class="btn-close" @onclick="CloseBuilderModal"></button>
                         </div>
                         <div class="modal-body pt-2">
@@ -454,7 +454,7 @@ else
                                 var optionTypeWithOptions = optTypeList[oi];
                                 var optType = optionTypeWithOptions.OptionType;
                                 var isMulti = VM.IsMultiSelectOptionType(optionTypeWithOptions);
-                                var stagedForType = _stagedBuilderSelections.GetValueOrDefault(optType.Id) ?? new HashSet<string>();
+                                var stagedForType = StagingStore.StagedBuilderSelections.GetValueOrDefault(optType.Id) ?? new HashSet<string>();
                                 var stagedCount = stagedForType.Count;
                                 var extraCost = stagedCount > optType.NumIncluded ?
                                     (stagedCount - optType.NumIncluded) * optType.FoodOptionPrice : 0;
@@ -525,14 +525,14 @@ else
             </div>
         }
 
-        @if (_showDeliOptionsModal && VM.OptionTypes.Any())
+        @if (StagingStore.IsSingleTypeOpen && VM.OptionTypes.Any())
         {
-            var activeOptionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == _activeDeliOptionTypeId);
+            var activeOptionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == StagingStore.ActiveOptionTypeId);
             if (activeOptionType != null)
             {
                 var optType = activeOptionType.OptionType;
                 var isMulti = VM.IsMultiSelectOptionType(activeOptionType);
-                var stagedCount = _stagedDeliSelections.Count;
+                var stagedCount = StagingStore.StagedSingleTypeSelections.Count;
                 var extraCost = stagedCount > optType.NumIncluded ?
                     (stagedCount - optType.NumIncluded) * optType.FoodOptionPrice : 0;
 
@@ -558,7 +558,7 @@ else
                                 <div class="d-flex flex-wrap gap-2">
                                     @foreach (var option in activeOptionType.Options)
                                     {
-                                        var isStaged = _stagedDeliSelections.Contains(option.FoodOptionName);
+                                        var isStaged = StagingStore.StagedSingleTypeSelections.Contains(option.FoodOptionName);
 
                                         @if (isMulti)
                                         {
@@ -606,7 +606,7 @@ else
             }
         }
 
-        @if (_showPizzaToppingsModal)
+        @if (StagingStore.IsToppingsOpen)
         {
             <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -627,24 +627,24 @@ else
                                 @foreach (var topping in VM.AvailableToppings)
                                 {
                                     <button type="button"
-                                        class="option-chip @(_stagedToppings.Contains(topping) ? "selected" : "") d-inline-flex align-items-center"
+                                        class="option-chip @(StagingStore.StagedToppings.Contains(topping) ? "selected" : "") d-inline-flex align-items-center"
                                         @onclick="() => ToggleStagedTopping(topping)">
                                         @topping
-                                        @if (_stagedToppings.Contains(topping))
+                                        @if (StagingStore.StagedToppings.Contains(topping))
                                         {
                                             <i class="bi bi-check-lg"></i>
                                         }
                                     </button>
                                 }
                             </div>
-                            @if (_stagedToppings.Count > (VM.Configuration?.IncludedToppingsCount ?? 0))
+                            @if (StagingStore.StagedToppings.Count > (VM.Configuration?.IncludedToppingsCount ?? 0))
                             {
                                 var toppingOptionType = VM.OptionTypes.FirstOrDefault();
-                                var extraChargeAmount = (_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0)) * (toppingOptionType?.OptionType.FoodOptionPrice ?? 0m);
+                                var extraChargeAmount = (StagingStore.StagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0)) * (toppingOptionType?.OptionType.FoodOptionPrice ?? 0m);
                                 <div class="info-banner warning mt-3">
                                     <div>
                                         <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Additional charge: $@extraChargeAmount.ToString("F2") for @(_stagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0))
+                                        Additional charge: $@extraChargeAmount.ToString("F2") for @(StagingStore.StagedToppings.Count - (VM.Configuration?.IncludedToppingsCount ?? 0))
                                         extra topping(s)
                                     </div>
                                 </div>
@@ -660,13 +660,13 @@ else
             </div>
         }
 
-        @if (_showOptionsModal && _stagedEntree != null && VM.OptionTypes.Any())
+        @if (StagingStore.IsOptionsOpen && StagingStore.StagedEntree != null && VM.OptionTypes.Any())
         {
             <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content border-0 shadow" style="border-radius: 16px;">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@_stagedEntree.EntreeName</h5>
+                            <h5 class="modal-title fw-bold" style="color: #1e366c;">@StagingStore.StagedEntree!.EntreeName</h5>
                             <button type="button" class="btn-close" @onclick="CloseOptionsModal"></button>
                         </div>
                         <div class="modal-body pt-2">
@@ -685,7 +685,7 @@ else
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach (var option in optionTypeWithOptions.Options)
                                         {
-                                            var isStagedSelected = _stagedBreakfastOptions.TryGetValue(otId, out var staged) && staged == option.FoodOptionName;
+                                            var isStagedSelected = StagingStore.StagedSingleSelectOptions.TryGetValue(otId, out var staged) && staged == option.FoodOptionName;
                                             <button type="button"
                                                 class="option-chip @(isStagedSelected ? "selected" : "") d-inline-flex align-items-center"
                                                 @onclick="@(() => SetStagedBreakfastOption(otId, option.FoodOptionName))">

@@ -68,6 +68,7 @@ builder.Services.AddScoped<IOrderHistoryVM, OrderHistoryVM>();
 // Register generic station services
 builder.Services.AddSingleton<IStationConfigurationProvider, StationConfigurationProvider>();
 builder.Services.AddScoped<CartSubmitter>();
+builder.Services.AddScoped<FoodOptionStagingStore>();
 builder.Services.AddScoped<ISelectionStrategyFactory, SelectionStrategyFactory>();
 builder.Services.AddScoped<IFoodBuilderVM, FoodBuilderVM>();
 

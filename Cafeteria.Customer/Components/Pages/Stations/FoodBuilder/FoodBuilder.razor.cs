@@ -1,4 +1,5 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
+using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Components;
@@ -19,21 +20,13 @@ public partial class FoodBuilder : ComponentBase
     [Inject]
     private ICartService Cart { get; set; } = default!;
 
+    [Inject]
+    private FoodOptionStagingStore StagingStore { get; set; } = default!;
+
     [Parameter]
     public string? StationType { get; set; }
 
     private bool _isLoading = true;
-    private bool _showOptionsModal;
-    private bool _showBuilderModal;
-    private string _builderModalTitle = string.Empty;
-    private Dictionary<int, HashSet<string>> _stagedBuilderSelections = new();
-    private bool _showDeliOptionsModal;
-    private int _activeDeliOptionTypeId;
-    private HashSet<string> _stagedDeliSelections = new();
-    private bool _showPizzaToppingsModal;
-    private HashSet<string> _stagedToppings = new();
-    private Dictionary<int, string> _stagedBreakfastOptions = new();
-    private EntreeDto? _stagedEntree;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -118,233 +111,102 @@ public partial class FoodBuilder : ComponentBase
         await VM.SelectEntreeAsync(entree);
 
         if (VM.Configuration?.EntreeSelectionLoadsOptions == true && VM.OptionTypes.Any())
-        {
-            _stagedEntree = entree;
-            VM.State.SelectedEntree = null;
-            _stagedBreakfastOptions = new Dictionary<int, string>(VM.State.SingleSelectOptions);
-            VM.State.SingleSelectOptions.Clear();
-            _showOptionsModal = true;
-        }
+            StagingStore.OpenOptions(entree, VM.State);
 
         if (VM.CurrentStationType == Configuration.StationType.Pizza)
-        {
-            _stagedEntree = entree;
-            VM.State.SelectedEntree = null;
-            _stagedToppings = new HashSet<string>(VM.State.SelectedToppings);
-            VM.State.SelectedToppings.Clear();
-            _showPizzaToppingsModal = true;
-        }
+            StagingStore.OpenToppings(entree, VM.State);
 
         StateHasChanged();
     }
 
     private void CloseOptionsModal()
     {
-        _stagedEntree = null;
-        _stagedBreakfastOptions.Clear();
-        _showOptionsModal = false;
+        StagingStore.CloseOptions();
         StateHasChanged();
     }
 
-    private void OpenBuilderModal(string title)
-    {
-        _builderModalTitle = title;
-        _stagedBuilderSelections = new Dictionary<int, HashSet<string>>();
-        foreach (var optionTypeWithOptions in VM.OptionTypes)
-        {
-            var id = optionTypeWithOptions.OptionType.Id;
-            _stagedBuilderSelections[id] = new HashSet<string>(VM.GetSelectedOptionsForType(id));
-        }
-        _showBuilderModal = true;
-    }
+    private void OpenBuilderModal(string title) =>
+        StagingStore.OpenBuilder(title, VM.OptionTypes, VM.State);
 
-    private void CloseBuilderModal()
-    {
-        _showBuilderModal = false;
-    }
+    private void CloseBuilderModal() =>
+        StagingStore.CloseBuilder();
 
     private void ToggleStagedBuilderOption(int optionTypeId, string name)
     {
-        if (!_stagedBuilderSelections.ContainsKey(optionTypeId))
-            _stagedBuilderSelections[optionTypeId] = new HashSet<string>();
-
-        if (!_stagedBuilderSelections[optionTypeId].Remove(name))
-        {
-            if (!VM.IsCardOrder)
-            {
-                var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == optionTypeId);
-                if (optionType != null && _stagedBuilderSelections[optionTypeId].Count >= optionType.OptionType.NumIncluded)
-                    return;
-            }
-            _stagedBuilderSelections[optionTypeId].Add(name);
-        }
+        StagingStore.ToggleStagedBuilderOption(optionTypeId, name, VM.OptionTypes, VM.IsCardOrder);
         StateHasChanged();
     }
 
     private void SetStagedBuilderOption(int optionTypeId, string name)
     {
-        _stagedBuilderSelections[optionTypeId] = new HashSet<string> { name };
+        StagingStore.SetStagedBuilderOption(optionTypeId, name);
         StateHasChanged();
     }
 
     private void ConfirmBuilder()
     {
-        foreach (var optionTypeWithOptions in VM.OptionTypes)
-        {
-            var optTypeId = optionTypeWithOptions.OptionType.Id;
-            var isMulti = VM.IsMultiSelectOptionType(optionTypeWithOptions);
-            var currentSelections = VM.GetSelectedOptionsForType(optTypeId);
-            var staged = _stagedBuilderSelections.GetValueOrDefault(optTypeId) ?? new HashSet<string>();
-
-            if (isMulti)
-            {
-                var toRemove = currentSelections.Except(staged).ToList();
-                var toAdd = staged.Except(currentSelections).ToList();
-                foreach (var opt in toRemove)
-                    VM.ToggleOptionForType(optTypeId, opt);
-                foreach (var opt in toAdd)
-                    VM.ToggleOptionForType(optTypeId, opt);
-            }
-            else
-            {
-                var selected = staged.FirstOrDefault();
-                if (selected != null)
-                    VM.SetOptionForType(optTypeId, selected);
-            }
-        }
-
-        _showBuilderModal = false;
+        StagingStore.ConfirmBuilder(VM.State, VM.OptionTypes);
         StateHasChanged();
     }
 
-    private void OpenDeliOptionsModal(int optionTypeId)
-    {
-        _activeDeliOptionTypeId = optionTypeId;
-        _stagedDeliSelections = new HashSet<string>(VM.GetSelectedOptionsForType(optionTypeId));
-        _showDeliOptionsModal = true;
-    }
+    private void OpenDeliOptionsModal(int optionTypeId) =>
+        StagingStore.OpenSingleType(optionTypeId, VM.State);
 
-    private void CloseDeliOptionsModal()
-    {
-        _showDeliOptionsModal = false;
-    }
+    private void CloseDeliOptionsModal() =>
+        StagingStore.CloseSingleType();
 
     private void ToggleStagedDeliOption(string name)
     {
-        if (!_stagedDeliSelections.Remove(name))
-        {
-            if (!VM.IsCardOrder)
-            {
-                var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == _activeDeliOptionTypeId);
-                if (optionType != null && _stagedDeliSelections.Count >= optionType.OptionType.NumIncluded)
-                    return;
-            }
-            _stagedDeliSelections.Add(name);
-        }
+        var optionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == StagingStore.ActiveOptionTypeId);
+        if (optionType != null)
+            StagingStore.ToggleStagedSingleTypeOption(name, optionType, VM.IsCardOrder);
         StateHasChanged();
     }
 
     private void SetStagedDeliOption(string name)
     {
-        _stagedDeliSelections.Clear();
-        _stagedDeliSelections.Add(name);
+        StagingStore.SetStagedSingleTypeOption(name);
         StateHasChanged();
     }
 
     private void ConfirmDeliOptions()
     {
-        var currentSelections = VM.GetSelectedOptionsForType(_activeDeliOptionTypeId);
-        var activeOptionType = VM.OptionTypes.FirstOrDefault(o => o.OptionType.Id == _activeDeliOptionTypeId);
-        var isMulti = activeOptionType != null && VM.IsMultiSelectOptionType(activeOptionType);
-
-        if (isMulti)
-        {
-            var toRemove = currentSelections.Except(_stagedDeliSelections).ToList();
-            var toAdd = _stagedDeliSelections.Except(currentSelections).ToList();
-            foreach (var opt in toRemove)
-                VM.ToggleOptionForType(_activeDeliOptionTypeId, opt);
-            foreach (var opt in toAdd)
-                VM.ToggleOptionForType(_activeDeliOptionTypeId, opt);
-        }
-        else
-        {
-            var selected = _stagedDeliSelections.FirstOrDefault();
-            if (selected != null)
-                VM.SetOptionForType(_activeDeliOptionTypeId, selected);
-        }
-
-        _showDeliOptionsModal = false;
+        StagingStore.ConfirmSingleType(VM.State, VM.OptionTypes);
         StateHasChanged();
     }
 
     private void SetStagedBreakfastOption(int optionTypeId, string optionName)
     {
-        _stagedBreakfastOptions[optionTypeId] = optionName;
+        StagingStore.SetStagedSingleSelectOption(optionTypeId, optionName);
         StateHasChanged();
     }
 
     private void ConfirmBreakfastOptions()
     {
-        if (_stagedEntree != null)
-        {
-            VM.State.SelectedEntree = _stagedEntree;
-            _stagedEntree = null;
-        }
-
-        foreach (var kvp in _stagedBreakfastOptions)
-        {
-            VM.SetOptionForType(kvp.Key, kvp.Value);
-        }
-        _showOptionsModal = false;
+        StagingStore.ConfirmOptions(VM.State);
         StateHasChanged();
     }
 
     private void OpenPizzaToppingsModal()
     {
-        _stagedToppings = new HashSet<string>(VM.State.SelectedToppings);
-        _showPizzaToppingsModal = true;
+        StagingStore.ReopenToppings(VM.State);
     }
 
     private void ClosePizzaToppingsModal()
     {
-        _stagedEntree = null;
-        _stagedToppings.Clear();
-        _showPizzaToppingsModal = false;
+        StagingStore.CloseToppings();
         StateHasChanged();
     }
 
     private void ToggleStagedTopping(string topping)
     {
-        if (!_stagedToppings.Remove(topping))
-        {
-            if (!VM.IsCardOrder)
-            {
-                var toppingsOptionType = VM.OptionTypes.FirstOrDefault();
-                if (toppingsOptionType != null && _stagedToppings.Count >= toppingsOptionType.OptionType.NumIncluded)
-                    return;
-            }
-            _stagedToppings.Add(topping);
-        }
+        StagingStore.ToggleStagedTopping(topping, VM.OptionTypes, VM.IsCardOrder);
         StateHasChanged();
     }
 
     private void ConfirmPizzaToppings()
     {
-        if (_stagedEntree != null)
-        {
-            VM.State.SelectedEntree = _stagedEntree;
-            _stagedEntree = null;
-        }
-
-        var toRemove = VM.State.SelectedToppings.Except(_stagedToppings).ToList();
-        var toAdd = _stagedToppings.Except(VM.State.SelectedToppings).ToList();
-
-        foreach (var topping in toRemove)
-            VM.ToggleTopping(topping);
-        foreach (var topping in toAdd)
-            VM.ToggleTopping(topping);
-
-        _showPizzaToppingsModal = false;
+        StagingStore.ConfirmToppings(VM.State);
         StateHasChanged();
     }
 
