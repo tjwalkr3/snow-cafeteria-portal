@@ -125,17 +125,29 @@ graph TB
 
 ---
 
-### Phase 4 — Eliminate the Strategies and Configuration Folders
+### Phase 4 — Side Options
 
-18. **Replace `StationType` and `StationConfigurationProvider` with database-driven station data.** Delete `Configuration/StationType.cs`, `Configuration/StationConfiguration.cs`, `Configuration/StationConfigurationProvider.cs`, `Configuration/IStationConfigurationProvider.cs`, and all remaining `StationType` references. `FoodBuilder.razor.cs` should load the station's entrees, option types, sides, and drinks directly from the API. Tab layout, page title, minimum topping counts, and virtual entree names must come from the database record, not from a hard-coded provider method. Whether the `EntreeOptionsModal` opens on entree selection is determined solely by whether the API returned option types for that entree — no flag, no enum, no configuration object needed.
+**Goal of this phase:** The database schema already supports option types on sides (`food_option_type.side_id`). This phase wires that capability through every layer — API, domain, and UI — so that tapping a side with options opens the same `EntreeOptionsModal` used for entrees. A side with no option types selects immediately as before; a side with option types opens the modal, and confirmed selections are stored separately in `SelectionState` and submitted to the cart.
 
-19. **Remove the `ISelectionStrategy` / `BaseSelectionStrategy` abstraction entirely.** Once `Domain/SelectionValidator.cs`, `Domain/CartSubmitter.cs`, and `Domain/FoodOptionStagingStore.cs` are in place, delete `Strategies/ISelectionStrategy.cs`, `Strategies/ISelectionStrategyFactory.cs`, `Strategies/BaseSelectionStrategy.cs`, `Strategies/SelectionStrategyFactory.cs`, `Strategies/OptionBuilderSelectionStrategy.cs`, and all remaining concrete strategy files. Update `FoodBuilder.razor.cs` to call `SelectionValidator`, `CartSubmitter`, and `FoodOptionStagingStore` directly. Delete the `FoodBuilderVM`/`IFoodBuilderVM` pair and move its remaining surface (entree/side/drink lists, `ActiveTab`, `IsCardOrder`) into the code-behind directly, since those properties exist only to bridge the strategy abstraction to the view.
+18. **Extend the sides API endpoint to return option types alongside each side.** Create a `SideWithOptionsDto` in `Cafeteria.Shared/DTOs/Menu/` wrapping a `SideDto` and a `List<FoodOptionTypeWithOptionsDto> OptionTypes`. Update the sides service and controller to query `food_option_type` rows where `side_id` matches and join `option_option_type` / `food_option` rows, populating `OptionTypes` for each side in the response. Sides without option types return an empty list.
+
+19. **Extend `SelectionState` and `FoodOptionStagingStore` to support side option selections.** Add `SideOptions (Dictionary<int, HashSet<string>>)` to `SelectionState` — same shape as `SingleSelectOptions`/`MultiSelectOptions` — and clear it in `Reset()`. Add a `StagedSide: SideWithOptionsDto?` property to `FoodOptionStagingStore` alongside the existing `StagedEntree`. Add an `OpenForSide(side, state)` method that sets `StagedSide`, clears `StagedEntree`, sets `ModalTitle` to the side's name, and seeds `StagedSelections` from any existing `state.SideOptions` entries for that side's option type IDs. Update `Confirm(state, optionTypes)` to detect the active context: when `StagedSide` is set, write confirmed selections into `state.SideOptions` instead of `state.SingleSelectOptions`/`state.MultiSelectOptions`, then clear `StagedSide`. Update `CartSubmitter` to attach confirmed `state.SideOptions` selections when submitting a side order to the cart.
+
+20. **Update `SidePanel` and `FoodBuilder.razor.cs` to open `EntreeOptionsModal` for sides with options.** Change `SidePanel`'s `Sides` parameter from `List<SideDto>` to `List<SideWithOptionsDto>`. Add an `OnSideWithOptionsSelected (EventCallback<SideWithOptionsDto>)` parameter alongside the existing `OnSideSelected`. In the component, check whether a side's `OptionTypes` list is non-empty: if so, invoke `OnSideWithOptionsSelected` on tap; otherwise invoke `OnSideSelected` directly. In `FoodBuilder.razor.cs`, add a `SelectSideWithOptions(SideWithOptionsDto side)` handler that records the entree on `SelectionState` and calls `StagingStore.OpenForSide(side, VM.State)`, then triggers a re-render so the modal appears. No station type or configuration flag is referenced — the presence of option types in the API response is the only condition.
 
 ---
 
-### Phase 5 — Dynamic Routing from the Database
+### Phase 5 — Eliminate the Strategies and Configuration Folders
 
-20. **Convert `FoodBuilder.razor` to a single parameterless route and remove all hard-coded station routes.** Change the page directive to a single `@page "/station"`, removing all legacy routes (`/breakfast`, `/deli`, `/grill`, `/pizza`, `/wrap`) and the intermediate `/station/{StationType}` string-parameter route. Because `stationId`, `locationId`, and `isCardOrder` are already written to browser storage by `StationSelect` before navigation, the page reads all context from storage in `OnAfterRenderAsync` — no URL parameter is needed. Update `StationSelect` to always navigate to `/station`, and update back URLs and post-order redirects accordingly.
+21. **Replace `StationType` and `StationConfigurationProvider` with database-driven station data.** Delete `Configuration/StationType.cs`, `Configuration/StationConfiguration.cs`, `Configuration/StationConfigurationProvider.cs`, `Configuration/IStationConfigurationProvider.cs`, and all remaining `StationType` references. `FoodBuilder.razor.cs` should load the station's entrees, option types, sides, and drinks directly from the API. Tab layout, page title, minimum topping counts, and virtual entree names must come from the database record, not from a hard-coded provider method. Whether the `EntreeOptionsModal` opens on entree selection is determined solely by whether the API returned option types for that entree — no flag, no enum, no configuration object needed.
+
+22. **Remove the `ISelectionStrategy` / `BaseSelectionStrategy` abstraction entirely.** Once `Domain/SelectionValidator.cs`, `Domain/CartSubmitter.cs`, and `Domain/FoodOptionStagingStore.cs` are in place, delete `Strategies/ISelectionStrategy.cs`, `Strategies/ISelectionStrategyFactory.cs`, `Strategies/BaseSelectionStrategy.cs`, `Strategies/SelectionStrategyFactory.cs`, `Strategies/OptionBuilderSelectionStrategy.cs`, and all remaining concrete strategy files. Update `FoodBuilder.razor.cs` to call `SelectionValidator`, `CartSubmitter`, and `FoodOptionStagingStore` directly. Delete the `FoodBuilderVM`/`IFoodBuilderVM` pair and move its remaining surface (entree/side/drink lists, `ActiveTab`, `IsCardOrder`) into the code-behind directly, since those properties exist only to bridge the strategy abstraction to the view.
+
+---
+
+### Phase 6 — Dynamic Routing from the Database
+
+23. **Convert `FoodBuilder.razor` to a single parameterless route and remove all hard-coded station routes.** Change the page directive to a single `@page "/station"`, removing all legacy routes (`/breakfast`, `/deli`, `/grill`, `/pizza`, `/wrap`) and the intermediate `/station/{StationType}` string-parameter route. Because `stationId`, `locationId`, and `isCardOrder` are already written to browser storage by `StationSelect` before navigation, the page reads all context from storage in `OnAfterRenderAsync` — no URL parameter is needed. Update `StationSelect` to always navigate to `/station`, and update back URLs and post-order redirects accordingly.
 
 ---
 
@@ -164,7 +176,7 @@ graph TB
 
     subgraph panels["Panels/"]
         EP["EntreePanel — entree card grid, OnEntreeSelected callback"]:::component
-        SP["SidePanel — side card grid, OnSideSelected callback"]:::component
+        SP["SidePanel — side card grid; OnSideSelected for plain sides, OnSideWithOptionsSelected for sides with options"]:::component
         DP["DrinkPanel — drink card grid with fountain fallback, OnDrinkSelected callback"]:::component
     end
 
@@ -177,11 +189,11 @@ graph TB
     end
 
     subgraph domain["Domain/"]
-        SEL["SelectionState — selected entree, side, drink, options; moved from Models/"]:::domain
+        SEL["SelectionState — selected entree, side, drink, entree options, side options; moved from Models/"]:::domain
         TD2["TabDefinition — moved from Models/"]:::domain
         VAL["SelectionValidator — IsValidSelection driven by flags, no station-type references"]:::domain
         CART["CartSubmitter — writes SelectionState to ICartService, data-driven, no station-type refs"]:::domain
-        STAGE["FoodOptionStagingStore — single Open/Confirm/Discard lifecycle; one StagedSelections dict works for all option type groups"]:::domain
+        STAGE["FoodOptionStagingStore — Open/OpenForSide/Confirm/Discard lifecycle; StagedEntree or StagedSide context determines which SelectionState field is written on confirm"]:::domain
         OTH["OptionTypeHelper — IsMultiSelectOptionType, GetCategoryIcon mapping"]:::domain
     end
 
@@ -197,7 +209,9 @@ graph TB
     FBCS --> |uses| CART
     FBCS --> |holds| SEL
     EOM --> |uses| STAGE
-    STAGE --> |updates| SEL
+    STAGE --> |updates entree options| SEL
+    STAGE --> |updates side options| SEL
+    SP --> |opens modal if side has options| EOM
     VAL --> |reads| SEL
     CART --> |reads| SEL
     EP --> |uses| OTH
