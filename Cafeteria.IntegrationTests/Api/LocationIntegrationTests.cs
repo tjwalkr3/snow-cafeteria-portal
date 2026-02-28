@@ -89,7 +89,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location To Update",
                 LocationDescription = "Original description",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -120,7 +120,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location To Delete",
                 LocationDescription = "Will be deleted",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -142,7 +142,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location With Hours",
                 LocationDescription = "Has business hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -172,7 +172,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location For Hours Test",
                 LocationDescription = "Testing hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -209,7 +209,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location For Add Hours",
                 LocationDescription = "Adding hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -240,7 +240,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Bad Weekday",
                 LocationDescription = "Testing bad weekday",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -265,7 +265,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Update Hours",
                 LocationDescription = "Updating hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -304,7 +304,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Bad Update",
                 LocationDescription = "Testing bad update",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
@@ -337,7 +337,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Delete Hours",
                 LocationDescription = "Deleting hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconName = "bi-geo-alt-fill",
             }
         );
 
