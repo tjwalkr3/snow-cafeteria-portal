@@ -46,7 +46,7 @@ public class SchedulingExceptionsController : ControllerBase
             return BadRequest("Start time must be before end time.");
         }
 
-        await _schedulingExceptionsService.AddLocationException(locationId, request.StartDateTime, request.EndDateTime);
+        await _schedulingExceptionsService.AddLocationException(locationId, request.StartDateTime, request.EndDateTime, request.Reason);
         return NoContent();
     }
 
@@ -65,7 +65,7 @@ public class SchedulingExceptionsController : ControllerBase
             return NotFound();
         }
 
-        await _schedulingExceptionsService.UpdateLocationException(exceptionId, request.StartDateTime, request.EndDateTime);
+        await _schedulingExceptionsService.UpdateLocationException(exceptionId, request.StartDateTime, request.EndDateTime, request.Reason);
         return NoContent();
     }
 
@@ -113,7 +113,7 @@ public class SchedulingExceptionsController : ControllerBase
             return BadRequest("Start time must be before end time.");
         }
 
-        await _schedulingExceptionsService.AddStationException(stationId, request.StartDateTime, request.EndDateTime);
+        await _schedulingExceptionsService.AddStationException(stationId, request.StartDateTime, request.EndDateTime, request.Reason);
         return NoContent();
     }
 
@@ -132,7 +132,7 @@ public class SchedulingExceptionsController : ControllerBase
             return NotFound();
         }
 
-        await _schedulingExceptionsService.UpdateStationException(exceptionId, request.StartDateTime, request.EndDateTime);
+        await _schedulingExceptionsService.UpdateStationException(exceptionId, request.StartDateTime, request.EndDateTime, request.Reason);
         return NoContent();
     }
 
@@ -151,4 +151,4 @@ public class SchedulingExceptionsController : ControllerBase
     }
 }
 
-public record SchedulingExceptionRequest(DateTime StartDateTime, DateTime EndDateTime);
+public record SchedulingExceptionRequest(DateTime StartDateTime, DateTime EndDateTime, string? Reason = null);

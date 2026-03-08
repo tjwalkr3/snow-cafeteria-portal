@@ -14,4 +14,6 @@ public class LocationExceptionHoursDto
 
     [Required]
     public DateTime EndExceptionDateTime { get; set; }
+
+    public string? Reason { get; set; }
 }

@@ -19,16 +19,20 @@ public partial class SchedulingExceptionsEditor : ComponentBase
     [Parameter]
     public EventCallback OnExceptionsChanged { get; set; }
 
-    private List<(int Id, DateTime StartDateTime, DateTime EndDateTime)> Exceptions { get; set; } = [];
+    [Parameter]
+    public EventCallback OnModalStateChanged { get; set; }
 
-    private bool ShowModal { get; set; }
-    private bool IsEditing { get; set; }
-    private int EditingExceptionId { get; set; }
-    private DateTime EditStartDateTime { get; set; }
-    private DateTime EditEndDateTime { get; set; }
+    private List<(int Id, DateTime StartDateTime, DateTime EndDateTime, string? Reason)> Exceptions { get; set; } = [];
+
+    public bool ShowModal { get; set; }
+    public bool IsEditing { get; set; }
+    public int EditingExceptionId { get; set; }
+    public DateTime EditStartDateTime { get; set; }
+    public DateTime EditEndDateTime { get; set; }
+    public string? EditReason { get; set; }
 
     private bool ShowDeleteConfirmation { get; set; }
-    private (int Id, DateTime Start, DateTime End)? DeletingException { get; set; }
+    private (int Id, DateTime StartDateTime, DateTime EndDateTime, string? Reason)? DeletingException { get; set; }
 
     private bool ShowToast { get; set; }
     private string ToastMessage { get; set; } = string.Empty;
@@ -48,7 +52,7 @@ public partial class SchedulingExceptionsEditor : ComponentBase
                 var stationExceptions = await SchedulingExceptionsService.GetStationExceptions(EntityId);
                 Exceptions = stationExceptions
                     .OrderByDescending(e => e.StartExceptionDateTime)
-                    .Select(e => (e.Id, e.StartExceptionDateTime, e.EndExceptionDateTime))
+                    .Select(e => (e.Id, e.StartExceptionDateTime, e.EndExceptionDateTime, e.Reason))
                     .ToList();
             }
             else
@@ -56,7 +60,7 @@ public partial class SchedulingExceptionsEditor : ComponentBase
                 var locationExceptions = await SchedulingExceptionsService.GetLocationExceptions(EntityId);
                 Exceptions = locationExceptions
                     .OrderByDescending(e => e.StartExceptionDateTime)
-                    .Select(e => (e.Id, e.StartExceptionDateTime, e.EndExceptionDateTime))
+                    .Select(e => (e.Id, e.StartExceptionDateTime, e.EndExceptionDateTime, e.Reason))
                     .ToList();
             }
         }
@@ -66,63 +70,28 @@ public partial class SchedulingExceptionsEditor : ComponentBase
         }
     }
 
-    private void HandleAdd()
+    private async Task HandleAdd()
     {
         IsEditing = false;
         EditStartDateTime = DateTime.Now;
         EditEndDateTime = DateTime.Now.AddHours(1);
+        EditReason = null;
         ShowModal = true;
+        await OnModalStateChanged.InvokeAsync();
     }
 
-    private void HandleEdit((int Id, DateTime StartDateTime, DateTime EndDateTime) exception)
+    private async Task HandleEdit((int Id, DateTime StartDateTime, DateTime EndDateTime, string? Reason) exception)
     {
         IsEditing = true;
         EditingExceptionId = exception.Id;
         EditStartDateTime = exception.StartDateTime;
         EditEndDateTime = exception.EndDateTime;
+        EditReason = exception.Reason;
         ShowModal = true;
+        await OnModalStateChanged.InvokeAsync();
     }
 
-    private async Task SaveException()
-    {
-        if (EditEndDateTime <= EditStartDateTime)
-        {
-            ShowToastMessage("End time must be after start time.", ToastType.Error);
-            return;
-        }
-
-        try
-        {
-            if (IsEditing)
-            {
-                if (IsStation)
-                    await SchedulingExceptionsService.UpdateStationException(EditingExceptionId, EditStartDateTime, EditEndDateTime);
-                else
-                    await SchedulingExceptionsService.UpdateLocationException(EditingExceptionId, EditStartDateTime, EditEndDateTime);
-
-                ShowToastMessage("Exception updated successfully.", ToastType.Success);
-            }
-            else
-            {
-                if (IsStation)
-                    await SchedulingExceptionsService.AddStationException(EntityId, EditStartDateTime, EditEndDateTime);
-                else
-                    await SchedulingExceptionsService.AddLocationException(EntityId, EditStartDateTime, EditEndDateTime);
-
-                ShowToastMessage("Exception added successfully.", ToastType.Success);
-            }
-
-            ShowModal = false;
-            await LoadExceptions();
-            await OnExceptionsChanged.InvokeAsync();
-        }
-        catch (Exception ex)
-        {
-            ShowToastMessage($"Error saving exception: {ex.Message}", ToastType.Error);
-        }
-    }
-
-    private void HandleDelete((int Id, DateTime StartDateTime, DateTime EndDateTime) exception)
+    private void HandleDelete((int Id, DateTime StartDateTime, DateTime EndDateTime, string? Reason) exception)
     {
         DeletingException = exception;
         ShowDeleteConfirmation = true;
@@ -142,6 +111,7 @@ public partial class SchedulingExceptionsEditor : ComponentBase
             ShowToastMessage("Exception deleted.", ToastType.Success);
             await LoadExceptions();
             await OnExceptionsChanged.InvokeAsync();
+            StateHasChanged();
         }
         catch (Exception ex)
         {
@@ -158,9 +128,50 @@ public partial class SchedulingExceptionsEditor : ComponentBase
         DeletingException = null;
     }
 
-    private void CloseModal()
+    public async Task CloseModal()
     {
         ShowModal = false;
+        await OnModalStateChanged.InvokeAsync();
+    }
+
+    public async Task SaveException()
+    {
+        if (EditEndDateTime <= EditStartDateTime)
+        {
+            ShowToastMessage("End time must be after start time.", ToastType.Error);
+            return;
+        }
+
+        try
+        {
+            if (IsEditing)
+            {
+                if (IsStation)
+                    await SchedulingExceptionsService.UpdateStationException(EditingExceptionId, EditStartDateTime, EditEndDateTime, EditReason);
+                else
+                    await SchedulingExceptionsService.UpdateLocationException(EditingExceptionId, EditStartDateTime, EditEndDateTime, EditReason);
+
+                ShowToastMessage("Exception updated successfully.", ToastType.Success);
+            }
+            else
+            {
+                if (IsStation)
+                    await SchedulingExceptionsService.AddStationException(EntityId, EditStartDateTime, EditEndDateTime, EditReason);
+                else
+                    await SchedulingExceptionsService.AddLocationException(EntityId, EditStartDateTime, EditEndDateTime, EditReason);
+
+                ShowToastMessage("Exception added successfully.", ToastType.Success);
+            }
+
+            ShowModal = false;
+            await LoadExceptions();
+            await OnExceptionsChanged.InvokeAsync();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ShowToastMessage($"Error saving exception: {ex.Message}", ToastType.Error);
+        }
     }
 
     private void ShowToastMessage(string message, ToastType type)

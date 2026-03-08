@@ -36,6 +36,7 @@ CREATE TABLE
         location_id int4 NOT NULL,
         start_exception_datetime timestamp NOT NULL,
         end_exception_datetime timestamp NOT NULL,
+        reason varchar(255),
         PRIMARY KEY (id),
         FOREIGN KEY (location_id) REFERENCES cafeteria.cafeteria_location (id)
     );
@@ -68,6 +69,7 @@ CREATE TABLE
         station_id int4 NOT NULL,
         start_exception_datetime timestamp NOT NULL,
         end_exception_datetime timestamp NOT NULL,
+        reason varchar(255),
         PRIMARY KEY (id),
         FOREIGN KEY (station_id) REFERENCES cafeteria.station (id)
     );

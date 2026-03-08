@@ -14,4 +14,6 @@ public class StationExceptionHoursDto
 
     [Required]
     public DateTime EndExceptionDateTime { get; set; }
+
+    public string? Reason { get; set; }
 }

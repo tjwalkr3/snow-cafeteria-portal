@@ -82,9 +82,11 @@
             else if (ActiveTab == "exceptions")
             {
                 <h5><i class="bi bi-exclamation-circle me-2"></i>Location Exceptions</h5>
-                <SchedulingExceptionsEditor @key="@($"loc-exc-{SelectedLocation.Id}")"
+                <SchedulingExceptionsEditor @ref="LocationExceptionsEditor"
+                                            @key="@($"loc-exc-{SelectedLocation.Id}")"
                                             EntityId="@SelectedLocation.Id"
-                                            IsStation="false" />
+                                            IsStation="false"
+                                            OnModalStateChanged="@OnExceptionsModalStateChanged" />
 
                 @if (Stations.Any())
                 {
@@ -101,9 +103,11 @@
                                     </div>
                                     <div class="card-body">
                                         <small class="text-muted d-block mb-2">@station.StationDescription</small>
-                                        <SchedulingExceptionsEditor @key="@($"sta-exc-{station.Id}")"
+                                        <SchedulingExceptionsEditor @ref="StationExceptionsEditorRefs[station.Id]"
+                                                                    @key="@($"sta-exc-{station.Id}")"
                                                                     EntityId="@station.Id"
-                                                                    IsStation="true" />
+                                                                    IsStation="true"
+                                                                    OnModalStateChanged="@OnExceptionsModalStateChanged" />
                                     </div>
                                 </div>
                             </div>
@@ -118,4 +122,55 @@
         }
     </div>
 }
+
+<!-- Page-level modal for exceptions -->
+@{
+    SchedulingExceptionsEditor? activeEditor = GetActiveExceptionsEditor();
+    if (activeEditor?.ShowModal == true)
+    {
+        <div class="modal-backdrop fade show"></div>
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" style="position: fixed; top: 0; left: 0; z-index: 9999; width: 100%; height: 100%;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi @(activeEditor.IsEditing ? "bi-pencil" : "bi-plus-circle") me-2"></i>@(activeEditor.IsEditing ? "Edit" : "Add") Exception</h5>
+                        <button type="button" class="btn-close" @onclick="@(() => activeEditor.CloseModal())" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Start Date/Time</label>
+                            <input type="datetime-local" class="form-control" @bind="activeEditor.EditStartDateTime" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">End Date/Time</label>
+                            <input type="datetime-local" class="form-control" @bind="activeEditor.EditEndDateTime" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Reason (Optional)</label>
+                            <textarea class="form-control" @bind="activeEditor.EditReason" placeholder="e.g., Spring break, Maintenance, etc." rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => activeEditor.CloseModal())">Cancel</button>
+                        <button type="button" class="btn btn-primary" @onclick="@(() => activeEditor.SaveException())">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<style>
+    .modal-backdrop {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        z-index: 9998 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+</style>
 </div>
