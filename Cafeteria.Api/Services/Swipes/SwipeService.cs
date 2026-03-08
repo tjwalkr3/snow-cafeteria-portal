@@ -35,8 +35,23 @@ public class SwipeService : ISwipeService
         return result;
     }
 
-    public async Task<SwipeDto> GetSwipesByEmail(string email)
+    public async Task<SwipeDto?> GetSwipesByEmail(string email)
+    {
+        if (_dbConnection.State != ConnectionState.Open)
+            _dbConnection.Open();
 
+        const string sql = @"
+            SELECT cs.badger_id AS BadgerId, cs.swipe_balance AS SwipeBalance
+            FROM cafeteria.customer_swipe cs
+            INNER JOIN cafeteria.customer c ON cs.badger_id = c.badger_id
+            WHERE c.email = @Email
+            AND (cs.end_date IS NULL OR cs.end_date >= CURRENT_DATE)
+            ORDER BY cs.end_date DESC NULLS FIRST
+            LIMIT 1";
+
+        var result = await _dbConnection.QuerySingleOrDefaultAsync<SwipeDto>(sql, new { Email = email });
+        return result;
+    }
 
     public async Task<List<CustomerSwipeDto>> GetAllCustomers()
     {

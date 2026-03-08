@@ -17,6 +17,7 @@ public partial class LocationAndStation : ComponentBase
     private List<StationDto> Stations { get; set; } = [];
     private int? SelectedLocationId { get; set; }
     private LocationDto? SelectedLocation => Locations.FirstOrDefault(l => l.Id == SelectedLocationId);
+    private string ActiveTab { get; set; } = "hours";
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,5 +32,11 @@ public partial class LocationAndStation : ComponentBase
     {
         SelectedLocationId = locationId;
         Stations = await StationService.GetStationsByLocation(locationId);
+        ActiveTab = "hours";
+    }
+
+    private void SetActiveTab(string tabName)
+    {
+        ActiveTab = tabName;
     }
 }

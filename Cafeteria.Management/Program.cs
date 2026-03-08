@@ -15,6 +15,7 @@ using Cafeteria.Management.Services.FoodOptions;
 using Cafeteria.Management.Services.FoodOptionTypes;
 using Cafeteria.Management.Services.Locations;
 using Cafeteria.Management.Services.OptionOptionTypes;
+using Cafeteria.Management.Services.SchedulingExceptions;
 using Cafeteria.Management.Services.Sides;
 using Cafeteria.Management.Services.Stations;
 using Cafeteria.Management.Services.Orders;
@@ -64,6 +65,7 @@ builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddScoped<IEntreeService, EntreeService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ISchedulingExceptionsService, SchedulingExceptionsService>();
 
 builder.Services.AddHttpClient<ICustomerRegistrationService, CustomerRegistrationService>(client =>
 {

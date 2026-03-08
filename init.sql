@@ -38,7 +38,7 @@ CREATE TABLE
         end_exception_datetime timestamp NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (location_id) REFERENCES cafeteria.cafeteria_location (id)
-    )
+    );
 
 CREATE TABLE
     cafeteria.station (
