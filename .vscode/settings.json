@@ -4,6 +4,9 @@
     "editor.formatOnSave": true
   },
   "python.defaultInterpreterPath": "${workspaceFolder}/ReceiptPrinter/.venv/bin/python",
+  "files.exclude": {
+    "ReceiptPrinter/.venv": true
+  },
   "cSpell.words": [
     "rendermode"
   ]

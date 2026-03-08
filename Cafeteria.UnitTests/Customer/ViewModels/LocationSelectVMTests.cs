@@ -17,45 +17,6 @@ public class LocationSelectVMTests
     }
 
     [Fact]
-    public void ValidatePaymentParameter_SetsPaymentParameterMissing_WhenPaymentIsNull()
-    {
-        var locationSelectVM = new LocationSelectVM(_mockMenuService.Object);
-
-        locationSelectVM.ValidatePaymentParameter(null);
-
-        Assert.True(locationSelectVM.ErrorOccurred());
-    }
-
-    [Fact]
-    public void ValidatePaymentParameter_SetsPaymentParameterMissing_WhenPaymentIsEmpty()
-    {
-        var locationSelectVM = new LocationSelectVM(_mockMenuService.Object);
-
-        locationSelectVM.ValidatePaymentParameter(string.Empty);
-
-        Assert.True(locationSelectVM.ErrorOccurred());
-    }
-
-    [Fact]
-    public async Task ValidatePaymentParameter_DoesNotSetError_WhenPaymentIsValid()
-    {
-        var expectedLocations = new List<LocationDto>
-        {
-            new LocationDto { Id = 1, LocationName = "Location 1" }
-        };
-
-        _mockMenuService.Setup(m => m.GetAllLocations())
-            .ReturnsAsync(expectedLocations);
-
-        var locationSelectVM = new LocationSelectVM(_mockMenuService.Object);
-        await locationSelectVM.InitializeLocationsAsync();
-
-        locationSelectVM.ValidatePaymentParameter("swipe");
-
-        Assert.False(locationSelectVM.ErrorOccurred());
-    }
-
-    [Fact]
     public async Task ErrorOccurred_ReturnsTrue_WhenInitializeLocationsAsyncFails()
     {
         _mockMenuService.Setup(m => m.GetAllLocations())

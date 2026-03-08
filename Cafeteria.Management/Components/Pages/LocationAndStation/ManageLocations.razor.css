@@ -1,0 +1,13 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.location-card {
+    transition: all 0.2s ease;
+}
+
+.location-card:hover {
+    box-shadow: 0 4px 12px rgba(30, 54, 108, 0.15) !important;
+    transform: translateY(-2px);
+}

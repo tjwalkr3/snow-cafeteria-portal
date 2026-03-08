@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
 using Dapper;
 using Npgsql;
@@ -28,34 +29,41 @@ public class OrderIntegrationTests : IDisposable
     [Fact]
     public async Task CreateOrder_AddsNewOrder()
     {
-        var newOrder = new CreateOrderDto
+        var newOrder = new BrowserOrder
         {
-            TotalPrice = 15.99m,
-            Tax = 1.24m,
-            TotalSwipe = 0,
-            FoodItems = new List<CreateFoodItemDto>
+            IsCardOrder = true,
+            Location = new LocationDto { Id = 1, LocationName = "Test Location", LocationDescription = "Test Location Description" },
+            StationId = 1,
+            StationName = "Test Station",
+            Entrees = new List<OrderEntreeItem>
             {
-                new CreateFoodItemDto
+                new OrderEntreeItem
                 {
-                    Name = "Test Entree",
-                    StationId = 1,
-                    CardCost = 10.99m,
-                    Special = false,
-                    Options = new List<CreateFoodItemOptionDto>
+                    Entree = new EntreeDto { Id = 1, EntreeName = "Test Entree", EntreePrice = 10.99m, StationId = 1 },
+                    SelectedOptions = new List<SelectedFoodOption>
                     {
-                        new CreateFoodItemOptionDto { FoodOptionName = "Lettuce" },
-                        new CreateFoodItemOptionDto { FoodOptionName = "Tomato" }
+                        new SelectedFoodOption
+                        {
+                            Option = new FoodOptionDto { FoodOptionName = "Lettuce" },
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", NumIncluded = 10, MaxAmount = 10, FoodOptionPrice = 0 }
+                        },
+                        new SelectedFoodOption
+                        {
+                            Option = new FoodOptionDto { FoodOptionName = "Tomato" },
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", NumIncluded = 10, MaxAmount = 10, FoodOptionPrice = 0 }
+                        }
                     }
-                },
-                new CreateFoodItemDto
-                {
-                    Name = "Test Side",
-                    StationId = 2,
-                    SwipeCost = 1,
-                    Special = true,
-                    Options = new List<CreateFoodItemOptionDto>()
                 }
-            }
+            },
+            Sides = new List<OrderSideItem>
+            {
+                new OrderSideItem
+                {
+                    Side = new SideDto { Id = 1, SideName = "Test Side", SidePrice = 5.00m, StationId = 2 },
+                    SelectedOptions = new List<SelectedFoodOption>()
+                }
+            },
+            Drinks = new List<DrinkDto>()
         };
 
         var response = await _client.PostAsJsonAsync("/api/order", newOrder);
@@ -64,7 +72,7 @@ public class OrderIntegrationTests : IDisposable
 
         Assert.NotNull(createdOrder);
         Assert.True(createdOrder.Id > 0);
-        Assert.Equal(newOrder.TotalPrice, createdOrder.TotalPrice);
+        Assert.Equal(15.99m, createdOrder.TotalPrice);
         Assert.Equal(2, createdOrder.FoodItems.Count);
         Assert.Equal(2, createdOrder.FoodItems[0].Options.Count);
         Assert.Equal("Lettuce", createdOrder.FoodItems[0].Options[0].FoodOptionName);

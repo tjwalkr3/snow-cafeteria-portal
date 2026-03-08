@@ -20,11 +20,7 @@ public class ApiOrderServiceTests
     [Fact]
     public async Task CreateOrder_ReturnsOrderDto_WhenSuccessful()
     {
-        var createOrderDto = new CreateOrderDto
-        {
-            Tax = 1.5m,
-            FoodItems = new List<CreateFoodItemDto>()
-        };
+        var browserOrder = new BrowserOrder { IsCardOrder = true };
 
         var expectedOrder = new OrderDto
         {
@@ -33,7 +29,7 @@ public class ApiOrderServiceTests
         };
 
         var mockClient = new Mock<IHttpClientAuth>();
-        mockClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<CreateOrderDto>()))
+        mockClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<BrowserOrder>()))
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
@@ -42,7 +38,7 @@ public class ApiOrderServiceTests
 
         var service = new ApiOrderService(mockClient.Object);
 
-        var result = await service.CreateOrder(createOrderDto);
+        var result = await service.CreateOrder(browserOrder);
 
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
@@ -51,14 +47,10 @@ public class ApiOrderServiceTests
     [Fact]
     public async Task CreateOrder_ThrowsException_WhenResponseIsUnsuccessful()
     {
-        var createOrderDto = new CreateOrderDto
-        {
-            Tax = 1.5m,
-            FoodItems = new List<CreateFoodItemDto>()
-        };
+        var browserOrder = new BrowserOrder { IsCardOrder = true };
 
         var mockClient = new Mock<IHttpClientAuth>();
-        mockClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<CreateOrderDto>()))
+        mockClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<BrowserOrder>()))
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.BadRequest
@@ -66,7 +58,7 @@ public class ApiOrderServiceTests
 
         var service = new ApiOrderService(mockClient.Object);
 
-        await Assert.ThrowsAsync<HttpRequestException>(async () => await service.CreateOrder(createOrderDto));
+        await Assert.ThrowsAsync<HttpRequestException>(async () => await service.CreateOrder(browserOrder));
     }
 
     [Theory]

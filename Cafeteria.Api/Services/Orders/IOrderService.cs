@@ -4,7 +4,6 @@ namespace Cafeteria.Api.Services.Orders;
 
 public interface IOrderService
 {
-    Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto, string customerEmail);
     Task<OrderDto?> GetOrderById(int id);
     Task<List<OrderDto>> GetAllOrders();
     Task<List<OrderWithCustomerDto>> GetAllOrdersWithCustomer();

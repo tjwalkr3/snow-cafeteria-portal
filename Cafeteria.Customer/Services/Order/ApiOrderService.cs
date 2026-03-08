@@ -6,9 +6,9 @@ namespace Cafeteria.Customer.Services.Order;
 
 public class ApiOrderService(IHttpClientAuth client) : IApiOrderService
 {
-    public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto)
+    public async Task<OrderDto> CreateOrder(BrowserOrder browserOrder)
     {
-        var response = await client.PostAsync("order", createOrderDto);
+        var response = await client.PostAsync("order", browserOrder);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<OrderDto>()
             ?? throw new InvalidOperationException("Failed to create order");

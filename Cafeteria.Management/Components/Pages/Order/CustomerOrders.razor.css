@@ -1,0 +1,34 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.customer-summary {
+    transition: all 0.2s ease;
+}
+
+.order-table thead th {
+    background-color: #f8f9fa;
+    color: #1e366c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.875rem 1rem;
+}
+
+.order-table tbody td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.order-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.order-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}

@@ -17,56 +17,6 @@ public class StationSelectVMTests
     }
 
     [Fact]
-    public void ValidateLocationParameter_SetsLocationParameterInvalid_WhenLocationIsZero()
-    {
-        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
-
-        stationSelectVM.ValidateParameters(0, "card");
-
-        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
-    }
-
-    [Fact]
-    public void ValidateLocationParameter_SetsLocationParameterInvalid_WhenLocationIsNegative()
-    {
-        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
-
-        stationSelectVM.ValidateParameters(-1, "card");
-
-        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
-    }
-
-    [Fact]
-    public void ValidateLocationParameter_SetsPaymentParameterMissing_WhenPaymentIsNull()
-    {
-        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
-
-        stationSelectVM.ValidateParameters(1, null);
-
-        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
-    }
-
-    [Fact]
-    public void ValidateLocationParameter_SetsPaymentParameterMissing_WhenPaymentIsEmpty()
-    {
-        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
-
-        stationSelectVM.ValidateParameters(1, string.Empty);
-
-        Assert.True(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
-    }
-
-    [Fact]
-    public void ValidateLocationParameter_DoesNotSetErrors_WhenParametersAreValid()
-    {
-        var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
-
-        stationSelectVM.ValidateParameters(1, "card");
-
-        Assert.False(stationSelectVM.ErrorOccurredWhileParsingSelectedLocation());
-    }
-
-    [Fact]
     public async Task ErrorOccurredWhileParsingSelectedLocation_ReturnsTrue_WhenInitializeStationsFails()
     {
         _mockMenuService.Setup(m => m.GetStationsByLocation(It.IsAny<int>()))

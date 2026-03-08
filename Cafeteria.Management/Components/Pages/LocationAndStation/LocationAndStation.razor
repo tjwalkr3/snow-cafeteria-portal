@@ -1,9 +1,13 @@
-@page "/location-station"
+@page "/business-hours"
 @using Cafeteria.Shared.Enums
 @rendermode InteractiveServer
 
-<h1>Locations & Stations</h1>
-<p>Manage business hours for locations and their stations.</p>
+<PageTitle>Business Hours</PageTitle>
+
+<div class="px-3">
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <h1 class="page-title fw-bold mb-0">Business Hours</h1>
+    </div>
 
 @if (Locations.Any())
 {
@@ -114,3 +118,4 @@
         }
     </div>
 }
+</div>

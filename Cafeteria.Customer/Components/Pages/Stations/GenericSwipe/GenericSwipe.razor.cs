@@ -1,7 +1,7 @@
 using Cafeteria.Customer.Components.Pages.Stations.Configuration;
+using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.GenericSwipe;
 
@@ -16,17 +16,11 @@ public partial class GenericSwipe : ComponentBase
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
 
+    [Inject]
+    private ICartService Cart { get; set; } = default!;
+
     [Parameter]
     public string? StationType { get; set; }
-
-    [SupplyParameterFromQuery(Name = "location")]
-    public int Location { get; set; }
-
-    [SupplyParameterFromQuery(Name = "payment")]
-    public string? Payment { get; set; }
-
-    [SupplyParameterFromQuery(Name = "station")]
-    public int Station { get; set; }
 
     private bool _isLoading = true;
     private bool _showOptionsModal;
@@ -47,9 +41,13 @@ public partial class GenericSwipe : ComponentBase
         if (firstRender)
         {
             var stationType = DetermineStationType();
-            bool isCardOrder = Payment == "card";
 
-            await VM.InitializeAsync(stationType, Station, Location, isCardOrder);
+            var order = await Cart.GetOrder("order");
+            int stationId = order?.StationId ?? 0;
+            int locationId = order?.Location?.Id ?? 0;
+            bool isCardOrder = order?.IsCardOrder ?? false;
+
+            await VM.InitializeAsync(stationType, stationId, locationId, isCardOrder);
             _isLoading = false;
             StateHasChanged();
         }
@@ -108,16 +106,7 @@ public partial class GenericSwipe : ComponentBase
         };
     }
 
-    public string CreateBackUrl()
-    {
-        Dictionary<string, string?> queryParameters = new() { };
-
-        if (!string.IsNullOrEmpty(Payment))
-            queryParameters.Add("payment", Payment);
-        queryParameters.Add("location", Location.ToString());
-
-        return QueryHelpers.AddQueryString("/station-select", queryParameters);
-    }
+    public string CreateBackUrl() => "/station-select";
 
     private void SetActiveTab(string tab)
     {
@@ -465,16 +454,7 @@ public partial class GenericSwipe : ComponentBase
         var success = await VM.AddToOrderAsync();
         if (success)
         {
-            Dictionary<string, string?> queryParameters = new() { };
-
-            if (!string.IsNullOrEmpty(Payment))
-                queryParameters.Add("payment", Payment);
-
-            if (Location > 0)
-                queryParameters.Add("location", Location.ToString());
-
-            string url = QueryHelpers.AddQueryString("/place-order", queryParameters);
-            NavigationManager.NavigateTo(url);
+            NavigationManager.NavigateTo("/place-order");
         }
     }
 

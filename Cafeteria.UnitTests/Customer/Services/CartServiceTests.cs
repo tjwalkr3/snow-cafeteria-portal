@@ -1,5 +1,5 @@
-using Cafeteria.Customer;
 using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Shared.DTOs.Order;
 using Cafeteria.Customer.Services.Storage;
 using Cafeteria.Shared.DTOs.Menu;
 
