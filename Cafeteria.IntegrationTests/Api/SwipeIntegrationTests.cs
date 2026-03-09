@@ -256,4 +256,5 @@ public class SwipeIntegrationTests : IDisposable
 
         // Cleanup
         await _connection.ExecuteAsync("DELETE FROM cafeteria.customer WHERE badger_id = @BadgerId", new { BadgerId = noSwipeBadgerId });
-    }}
+    }
+}
