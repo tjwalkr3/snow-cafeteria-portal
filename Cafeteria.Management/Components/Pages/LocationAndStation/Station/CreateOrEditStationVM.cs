@@ -51,11 +51,11 @@ public class CreateOrEditStationVM : ICreateOrEditStationVM
 
         if (IsEditing)
         {
-            await _stationService.UpdateStation(CurrentStation.Id, CurrentStation.StationName, CurrentStation.StationDescription);
+            await _stationService.UpdateStation(CurrentStation.Id, CurrentStation.StationName, CurrentStation.StationDescription, CurrentStation.IconName);
         }
         else
         {
-            await _stationService.CreateStation(CurrentStation.LocationId, CurrentStation.StationName, CurrentStation.StationDescription);
+            await _stationService.CreateStation(CurrentStation.LocationId, CurrentStation.StationName, CurrentStation.StationDescription, CurrentStation.IconName);
         }
 
         IsVisible = false;

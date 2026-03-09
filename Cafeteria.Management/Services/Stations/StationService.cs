@@ -55,16 +55,16 @@ public class StationService(IHttpClientAuth client) : IStationService
         return response.IsSuccessStatusCode;
     }
 
-    public async Task CreateStation(int locationId, string name, string? description)
+    public async Task CreateStation(int locationId, string name, string? description, string? iconName = null)
     {
-        var body = new { Name = name, Description = description };
+        var body = new { Name = name, Description = description, IconName = iconName };
         var response = await client.PostAsync($"station/location/{locationId}", body);
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task UpdateStation(int stationId, string name, string? description)
+    public async Task UpdateStation(int stationId, string name, string? description, string? iconName = null)
     {
-        var body = new { Name = name, Description = description };
+        var body = new { Name = name, Description = description, IconName = iconName };
         var response = await client.PutAsync($"station/{stationId}", body);
         response.EnsureSuccessStatusCode();
     }

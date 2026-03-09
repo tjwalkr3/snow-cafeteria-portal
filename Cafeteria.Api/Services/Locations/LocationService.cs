@@ -25,7 +25,7 @@ public class LocationService : ILocationService
                 id AS Id,
                 location_name AS LocationName,
                 location_description AS LocationDescription,
-                image_url AS ImageUrl,
+                icon_name AS IconName,
                 printer_url AS PrinterUrl
             FROM cafeteria.cafeteria_location
             ORDER BY location_name;";
@@ -41,7 +41,7 @@ public class LocationService : ILocationService
                 id AS Id,
                 location_name AS LocationName,
                 location_description AS LocationDescription,
-                image_url AS ImageUrl,
+                icon_name AS IconName,
                 printer_url AS PrinterUrl
             FROM cafeteria.cafeteria_location
             WHERE id = @id;";
@@ -50,34 +50,37 @@ public class LocationService : ILocationService
         return location;
     }
 
-    public async Task CreateLocation(string name, string? description = null)
+    public async Task CreateLocation(string name, string? description = null, string? iconName = null)
     {
         const string sql = @"
-            INSERT INTO cafeteria.cafeteria_location (location_name, location_description)
-            VALUES (@location_name, @location_description);";
+            INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_name)
+            VALUES (@location_name, @location_description, @icon_name);";
 
         var parameters = new
         {
             location_name = name,
-            location_description = description ?? string.Empty
+            location_description = description ?? string.Empty,
+            icon_name = iconName
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateLocationById(int locationId, string name, string? description)
+    public async Task UpdateLocationById(int locationId, string name, string? description, string? iconName = null)
     {
         const string sql = @"
             UPDATE cafeteria.cafeteria_location
             SET location_name = @location_name,
-                location_description = @location_description
+                location_description = @location_description,
+                icon_name = @icon_name
             WHERE id = @id;";
 
         var parameters = new
         {
             id = locationId,
             location_name = name,
-            location_description = description ?? string.Empty
+            location_description = description ?? string.Empty,
+            icon_name = iconName
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
