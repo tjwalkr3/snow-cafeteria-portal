@@ -1,0 +1,106 @@
+@page "/analytics"
+@rendermode InteractiveServer
+
+<PageTitle>Analytics</PageTitle>
+
+<div class="px-3">
+    <div class="d-flex justify-content-center align-items-center mb-3">
+        <h1 class="page-title fw-bold mb-0">Analytics</h1>
+    </div>
+
+    @if (!isLoading && ViewModel.HasData)
+    {
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div class="row">
+                <div class="col">
+
+                    <select class="form-select form-select-sm" style="max-width:200px;" @onchange="SelectLocation">
+                        <option value="">All Locations</option>
+                        @foreach (var loc in ViewModel.Locations)
+                        {
+                            <option value="@loc.Id" selected="@(selectedLocationId == loc.Id)">@loc.LocationName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col">
+
+                    <select class="form-select form-select-sm" style="max-width:200px;" @onchange="SelectStation">
+                        <option value="">All Stations</option>
+                        @foreach (var st in ViewModel.Stations.Where(s => selectedLocationId == null || s.LocationId ==
+                                            selectedLocationId))
+                        {
+                            <option value="@st.Id" selected="@(selectedStationId == st.Id)">@st.StationName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="period-selector btn-group" role="group">
+                <button class="btn @(selectedPeriod == AnalyticsPeriod.Day      ? "btn-primary" : "btn-outline-secondary")"
+                        @onclick="() => SelectPeriod(AnalyticsPeriod.Day)">Day</button>
+                <button class="btn @(selectedPeriod == AnalyticsPeriod.Week     ? "btn-primary" : "btn-outline-secondary")"
+                        @onclick="() => SelectPeriod(AnalyticsPeriod.Week)">Week</button>
+                <button class="btn @(selectedPeriod == AnalyticsPeriod.Month    ? "btn-primary" : "btn-outline-secondary")"
+                        @onclick="() => SelectPeriod(AnalyticsPeriod.Month)">Month</button>
+                <button class="btn @(selectedPeriod == AnalyticsPeriod.Year     ? "btn-primary" : "btn-outline-secondary")"
+                        @onclick="() => SelectPeriod(AnalyticsPeriod.Year)">1 Year</button>
+                <button class="btn @(selectedPeriod == AnalyticsPeriod.FiveYears ? "btn-primary" : "btn-outline-secondary")"
+                        @onclick="() => SelectPeriod(AnalyticsPeriod.FiveYears)">5 Years</button>
+            </div>
+        </div>
+    }
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Loading analytics...</p>
+        </div>
+    }
+    else if (!ViewModel.HasData)
+    {
+        <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
+            <i class="bi bi-bar-chart-line fs-1 mb-3 text-muted d-block"></i>
+            <p class="fs-5 mb-2">No order data yet.</p>
+            <p class="text-muted small mb-0">Analytics will appear once orders have been placed.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <h6 class="section-label text-uppercase fw-semibold mb-1">Top Food Sold</h6>
+                    <p class="text-muted small mb-0">Most ordered food item for each time bucket.</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="topFoodChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="section-label text-uppercase fw-semibold mb-1">Swipes Used</h6>
+                        <p class="text-muted small mb-3">Total meal swipes redeemed in this period.</p>
+                        <p class="stat-value fw-bold mb-0">@ViewModel.GetSwipesForPeriod(selectedPeriod, selectedStationId,
+                                                    selectedLocationId)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-body p-4">
+                            <h6 class="section-label text-uppercase fw-semibold mb-1">Card Revenue</h6>
+                            <p class="text-muted small mb-3">Total charged via card in this period.</p>
+                            <p class="stat-value fw-bold mb-0">$@ViewModel.GetCardRevenueForPeriod(selectedPeriod,
+                                                        selectedStationId, selectedLocationId).ToString("N2")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>

@@ -4,6 +4,8 @@ using Cafeteria.Management.Components.Pages.Entree;
 using Cafeteria.Management.Components.Pages.FoodOption;
 using Cafeteria.Management.Components.Pages.FoodType;
 using Cafeteria.Management.Components.Pages.LocationAndStation;
+using Cafeteria.Management.Components.Pages.LocationAndStation.Location;
+using Cafeteria.Management.Components.Pages.LocationAndStation.Station;
 using Cafeteria.Management.Components.Pages.Side;
 using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Shared.Services.Customer;
@@ -19,6 +21,7 @@ using Cafeteria.Management.Services.Sides;
 using Cafeteria.Management.Services.Stations;
 using Cafeteria.Management.Services.Orders;
 using Cafeteria.Management.Components.Pages.Order;
+using Cafeteria.Management.Components.Pages.Analytics;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -85,6 +88,10 @@ builder.Services.AddScoped<IFoodTypeVM, FoodTypeVM>();
 builder.Services.AddScoped<IFoodTypeModalVM, FoodTypeModalVM>();
 builder.Services.AddScoped<IOptionOptionTypeVM, OptionOptionTypeVM>();
 builder.Services.AddScoped<IOrderVM, OrderVM>();
+builder.Services.AddScoped<IAnalyticsVM, AnalyticsVM>();
+builder.Services.AddScoped<IManageLocationVM, ManageLocationVM>();
+builder.Services.AddScoped<ICreateOrEditLocationVM, CreateOrEditLocationVM>();
+builder.Services.AddScoped<ICreateOrEditStationVM, CreateOrEditStationVM>();
 
 
 // Add authentication services

@@ -65,7 +65,7 @@ public class StationController : ControllerBase
     [HttpPost("location/{locationId:int}")]
     public async Task<IActionResult> CreateStationByLocationId(int locationId, [FromBody] StationUpsertRequest request)
     {
-        await _stationService.CreateStationByLocationId(locationId, request.Name, request.Description);
+        await _stationService.CreateStationByLocationId(locationId, request.Name, request.Description, request.IconName);
         return NoContent();
     }
 
@@ -73,7 +73,7 @@ public class StationController : ControllerBase
     [HttpPut("{stationId:int}")]
     public async Task<IActionResult> UpdateStationById(int stationId, [FromBody] StationUpsertRequest request)
     {
-        await _stationService.UpdateStationById(stationId, request.Name, request.Description);
+        await _stationService.UpdateStationById(stationId, request.Name, request.Description, request.IconName);
         return NoContent();
     }
 
@@ -122,6 +122,6 @@ public class StationController : ControllerBase
     }
 }
 
-public record StationUpsertRequest(string Name, string? Description);
+public record StationUpsertRequest(string Name, string? Description, string? IconName = null);
 
 public record StationHoursRequest(DateTime StartTime, DateTime EndTime, int WeekdayId);

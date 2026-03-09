@@ -38,19 +38,6 @@ public partial class StationSelect : ComponentBase
         };
     }
 
-    private string GetStationIcon(string stationName)
-    {
-        return stationName.ToLower() switch
-        {
-            "breakfast" or "breakfast station" => "bi-egg-fried",
-            "deli" or "deli station" or "sandwich station" => "bi-cup-straw",
-            "pizza" or "pizza station" => "bi-pie-chart",
-            "grill" or "grill station" => "bi-fire",
-            "wraps" or "wraps station" => "bi-tornado",
-            _ => "bi-shop"
-        };
-    }
-
     public string CreateBackUrl() => "/location-select";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

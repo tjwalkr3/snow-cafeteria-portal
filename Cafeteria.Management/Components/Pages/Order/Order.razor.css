@@ -1,0 +1,39 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.orders-table thead th {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+}
+
+.orders-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.order-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.order-row:hover {
+    background-color: rgba(30, 54, 108, 0.04) !important;
+}
+
+.customer-link {
+    color: var(--bs-primary);
+}
+
+.customer-link:hover {
+    text-decoration: underline !important;
+}
