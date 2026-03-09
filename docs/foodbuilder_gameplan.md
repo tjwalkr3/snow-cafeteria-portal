@@ -98,7 +98,7 @@ graph TB
 
 ---
 
-### Phase 3 — Unify the Options Modal and Extract Razor Components
+### ✅ Phase 3 — Unify the Options Modal and Extract Razor Components
 
 **Goal of this phase:** Every entree tap follows the same code path. If the selected entree has option types in the API response, the `EntreeOptionsModal` opens. The modal is fully data-driven — it reads `NumIncluded`, `MaxAmount`, and `FoodOptionTypeName` from each option type to decide whether each group is single-select or multi-select. No modal-opening decision and no modal rendering logic references a station type, a flag like `EntreeSelectionLoadsOptions`, or a hard-coded concept like "toppings."
 

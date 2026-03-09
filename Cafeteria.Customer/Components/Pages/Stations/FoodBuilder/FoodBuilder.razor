@@ -5,7 +5,6 @@
 @page "/pizza"
 @page "/wrap"
 @rendermode InteractiveServer
-@using Cafeteria.Customer.Components.Pages.Stations.Configuration
 @using Cafeteria.Customer.Components.Pages.Stations.Footer.FoodBuilderFooter
 @using Cafeteria.Customer.Components.Pages.Stations.Modals.EntreeOptionsModal
 @using Cafeteria.Customer.Components.Pages.Stations.Panels.DrinkPanel
@@ -84,7 +83,7 @@ else
                              OnEntreeSelected="@SelectEntree" />
             }
 
-            @if (VM.ActiveTab == "toppings" && VM.CurrentStationType == Configuration.StationType.Pizza)
+            @if (VM.ActiveTab == "toppings")
             {
                 var allToppings = VM.State.MultiSelectOptions.Values.SelectMany(v => v).ToList();
                 <EntreePanel Entrees="@VM.Entrees"
@@ -96,112 +95,28 @@ else
                              OnEntreeSelected="@SelectEntree" />
             }
 
-            @if (VM.ActiveTab == "sandwich" && VM.CurrentStationType == Configuration.StationType.Deli)
+            @if (VM.ActiveTab == "sandwich")
             {
-                var sandwichSelectionCount = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
-                var sandwichComplete = IsBuilderEntreeComplete();
-                var deliEntree = VM.Entrees.FirstOrDefault(e => e.EntreeName.Contains("Sandwich") || e.EntreeName.Contains("Deli"));
-                var deliEntreeName = deliEntree?.EntreeName ?? "Sandwich";
-                <div class="meal-card mb-3 d-flex justify-content-between align-items-center"
-                     @onclick="OpenOptionsModal" style="cursor: pointer;">
-                    <div class="d-flex align-items-center gap-3 flex-grow-1">
-                        <div class="d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: #eef1f6; border-radius: 10px;">
-                            <i class="bi bi-stack" style="font-size: 1.3rem; color: #1e366c;"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold" style="color: #1e366c;">@deliEntreeName</h5>
-                            @if (sandwichSelectionCount > 0)
-                            {
-                                <div class="d-flex flex-wrap gap-1 mt-1">
-                                    @foreach (var optionTypeWithOptions in VM.OptionTypes)
-                                    {
-                                        var selected = VM.GetSelectedOptionsForType(optionTypeWithOptions.OptionType.Id);
-                                        @foreach (var opt in selected)
-                                        {
-                                            <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@opt</span>
-                                        }
-                                    }
-                                </div>
-                            }
-                            else
-                            {
-                                <span class="text-muted" style="font-size: 0.85rem;">Tap to build your sandwich</span>
-                            }
-                        </div>
-                    </div>
-                    <div class="ms-3 d-flex flex-column align-items-end gap-1">
-                        @if (VM.IsCardOrder && deliEntree != null)
-                        {
-                            <span class="price-badge">$@deliEntree.EntreePrice.ToString("F2")</span>
-                        }
-                        @if (sandwichComplete)
-                        {
-                            <span class="select-btn added d-inline-flex align-items-center gap-1">
-                                <i class="bi bi-check-circle-fill"></i> Added
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="status-badge pending d-inline-flex align-items-center justify-content-center">
-                                @sandwichSelectionCount/@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)
-                            </span>
-                        }
-                    </div>
-                </div>
+                var sandwichSelections = VM.State.MultiSelectOptions.Values.SelectMany(v => v).ToList();
+                <EntreePanel Entrees="@VM.Entrees"
+                             SelectedEntree="@VM.State.SelectedEntree"
+                             IsCardOrder="@VM.IsCardOrder"
+                             SelectedBadges="@sandwichSelections"
+                             SelectionCount="@sandwichSelections.Count"
+                             RequiredCount="@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)"
+                             OnEntreeSelected="@SelectEntree" />
             }
 
-            @if (VM.ActiveTab == "wrap" && VM.CurrentStationType == Configuration.StationType.Wraps)
+            @if (VM.ActiveTab == "wrap")
             {
-                var wrapSelectionCount = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
-                var wrapComplete = IsBuilderEntreeComplete();
-                var wrapEntree = VM.Entrees.FirstOrDefault(e => e.EntreeName.Contains("Wrap", StringComparison.OrdinalIgnoreCase));
-                var wrapEntreeName = wrapEntree?.EntreeName ?? "Wrap";
-                <div class="meal-card mb-3 d-flex justify-content-between align-items-center"
-                     @onclick="OpenOptionsModal" style="cursor: pointer;">
-                    <div class="d-flex align-items-center gap-3 flex-grow-1">
-                        <div class="d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: #eef1f6; border-radius: 10px;">
-                            <i class="bi bi-tornado" style="font-size: 1.3rem; color: #1e366c;"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold" style="color: #1e366c;">@wrapEntreeName</h5>
-                            @if (wrapSelectionCount > 0)
-                            {
-                                <div class="d-flex flex-wrap gap-1 mt-1">
-                                    @foreach (var optionTypeWithOptions in VM.OptionTypes)
-                                    {
-                                        var selected = VM.GetSelectedOptionsForType(optionTypeWithOptions.OptionType.Id);
-                                        @foreach (var opt in selected)
-                                        {
-                                            <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@opt</span>
-                                        }
-                                    }
-                                </div>
-                            }
-                            else
-                            {
-                                <span class="text-muted" style="font-size: 0.85rem;">Tap to build your wrap</span>
-                            }
-                        </div>
-                    </div>
-                    <div class="ms-3 d-flex flex-column align-items-end gap-1">
-                        @if (VM.IsCardOrder && wrapEntree != null)
-                        {
-                            <span class="price-badge">$@wrapEntree.EntreePrice.ToString("F2")</span>
-                        }
-                        @if (wrapComplete)
-                        {
-                            <span class="select-btn added d-inline-flex align-items-center gap-1">
-                                <i class="bi bi-check-circle-fill"></i> Added
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="status-badge pending d-inline-flex align-items-center justify-content-center">
-                                @wrapSelectionCount/@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)
-                            </span>
-                        }
-                    </div>
-                </div>
+                var wrapSelections = VM.State.MultiSelectOptions.Values.SelectMany(v => v).ToList();
+                <EntreePanel Entrees="@VM.Entrees"
+                             SelectedEntree="@VM.State.SelectedEntree"
+                             IsCardOrder="@VM.IsCardOrder"
+                             SelectedBadges="@wrapSelections"
+                             SelectionCount="@wrapSelections.Count"
+                             RequiredCount="@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)"
+                             OnEntreeSelected="@SelectEntree" />
             }
 
             @if (VM.ActiveTab == "sides")
