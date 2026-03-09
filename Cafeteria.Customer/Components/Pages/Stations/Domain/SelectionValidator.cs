@@ -12,7 +12,7 @@ public static class SelectionValidator
         int minimumToppings = 0)
     {
         bool primaryComplete = IsPrimaryItemComplete(state, optionTypes, requiresOptionsComplete, minimumToppings);
-        bool primaryStarted  = IsPrimaryItemStarted(state, minimumToppings);
+        bool primaryStarted = IsPrimaryItemStarted(state, minimumToppings);
 
         if (isCardOrder)
         {
