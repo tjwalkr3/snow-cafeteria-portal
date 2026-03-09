@@ -152,7 +152,8 @@ public static class DBSql
         CREATE TABLE
             cafeteria.customer_swipe (
                 badger_id int NOT NULL,
-                swipe_balance int4 NOT NULL
+                swipe_balance int4 NOT NULL,
+                end_date timestamp
             );
 
         CREATE TABLE
@@ -332,14 +333,14 @@ public static class DBSql
                 ('test@example.com', 1000001, 'Test User');
 
             -- Sample customer swipe data
-            INSERT INTO cafeteria.customer_swipe (badger_id, swipe_balance)
+            INSERT INTO cafeteria.customer_swipe (badger_id, swipe_balance, end_date)
             VALUES
-                (1001234, 7),
-                (1005678, 21),
-                (1009012, 8),
-                (1003456, 9),
-                (1007890, 0),
-                (1000001, 15);
+                (1001234, 7, '2027-12-31 23:59:59'),
+                (1005678, 21, '2027-12-31 23:59:59'),
+                (1009012, 8, '2024-12-31 23:59:59'),
+                (1003456, 9, '2027-12-31 23:59:59'),
+                (1007890, 0, '2027-12-31 23:59:59'),
+                (1000001, 15, '2028-12-31 23:59:59');
 
             -- Orders (IDs 1-10 reserved for sample data)
             INSERT INTO cafeteria.order (id, customer_badger_id, total_price, tax, total_swipe)

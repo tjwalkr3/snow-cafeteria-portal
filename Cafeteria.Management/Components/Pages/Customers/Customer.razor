@@ -29,6 +29,7 @@
     }
     else if (FilteredCustomers.Any())
     {
+
         <div class="card border-1 rounded-3 shadow-sm mb-4">
             <div class="table-responsive">
                 <table class="table table-hover customer-table mb-0">
@@ -51,8 +52,8 @@
                                 <td class="text-muted">@customer.Email</td>
                                 <td class="text-muted">@customer.BadgerId</td>
                                 <td class="text-end">
-                                    <span class="swipe-badge fw-semibold @(customer.SwipeCount > 0 ? "swipe-positive" : "swipe-zero")">
-                                        @customer.SwipeCount
+                                    <span class="swipe-balance fw-bold @GetSwipeBalanceClass(customer)">
+                                        @GetSwipeBalanceDisplay(customer)
                                     </span>
                                 </td>
                             </tr>

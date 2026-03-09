@@ -17,7 +17,7 @@ public class SwipeService : ISwipeService
         _dbConnection = dbConnection;
     }
 
-    public async Task<SwipeDto> GetSwipesByUserID(int userId)
+    public async Task<SwipeDto?> GetSwipesByUserID(int userId)
     {
         if (_dbConnection.State != ConnectionState.Open)
             _dbConnection.Open();
@@ -35,7 +35,7 @@ public class SwipeService : ISwipeService
         return result;
     }
 
-    public async Task<SwipeDto> GetSwipesByEmail(string email)
+    public async Task<SwipeDto?> GetSwipesByEmail(string email)
     {
         if (_dbConnection.State != ConnectionState.Open)
             _dbConnection.Open();
@@ -44,13 +44,12 @@ public class SwipeService : ISwipeService
             SELECT cs.badger_id AS BadgerId, cs.swipe_balance AS SwipeBalance
             FROM cafeteria.customer_swipe cs
             INNER JOIN cafeteria.customer c ON cs.badger_id = c.badger_id
-            WHERE c.email = @Email";
+            WHERE c.email = @Email
+            AND (cs.end_date IS NULL OR cs.end_date >= CURRENT_DATE)
+            ORDER BY cs.end_date DESC NULLS FIRST
+            LIMIT 1";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<SwipeDto>(sql, new { Email = email });
-        if (result == null)
-        {
-            throw new KeyNotFoundException($"No swipe data found for email {email}.");
-        }
         return result;
     }
 
@@ -64,9 +63,26 @@ public class SwipeService : ISwipeService
                 c.cust_name AS CustName,
                 c.email AS Email,
                 c.badger_id AS BadgerId,
-                COALESCE(cs.swipe_balance, 0) AS SwipeCount
+                CASE 
+                    WHEN latest_swipe.swipe_balance IS NULL THEN NULL
+                    WHEN latest_swipe.end_date IS NULL THEN latest_swipe.swipe_balance
+                    WHEN latest_swipe.end_date < CURRENT_DATE THEN NULL
+                    ELSE latest_swipe.swipe_balance
+                END AS SwipeCount,
+                CASE 
+                    WHEN latest_swipe.swipe_balance IS NULL THEN 'Not Enrolled'
+                    WHEN latest_swipe.end_date IS NULL THEN 'Active'
+                    WHEN latest_swipe.end_date < CURRENT_DATE THEN 'Expired'
+                    ELSE 'Active'
+                END AS Status
             FROM cafeteria.customer c
-            LEFT JOIN cafeteria.customer_swipe cs ON c.badger_id = cs.badger_id
+            LEFT JOIN LATERAL (
+                SELECT swipe_balance, end_date
+                FROM cafeteria.customer_swipe
+                WHERE badger_id = c.badger_id
+                ORDER BY end_date DESC NULLS FIRST
+                LIMIT 1
+            ) latest_swipe ON true
             ORDER BY c.cust_name";
 
         var result = await _dbConnection.QueryAsync<CustomerSwipeDto>(sql);
