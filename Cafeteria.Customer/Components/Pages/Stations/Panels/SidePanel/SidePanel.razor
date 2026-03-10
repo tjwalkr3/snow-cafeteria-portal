@@ -1,10 +1,12 @@
 @using Cafeteria.Shared.DTOs.Menu
 
 <div class="row row-cols-1 row-cols-lg-3 g-3">
-    @foreach (var side in Sides)
+    @foreach (var sideWithOptions in Sides)
     {
+        var side = sideWithOptions.Side;
+        var hasOptions = sideWithOptions.OptionTypes.Any();
         <div class="col">
-            <div class="meal-card h-100 d-flex flex-column" @onclick="() => OnSideSelected.InvokeAsync(side)">
+            <div class="meal-card h-100 d-flex flex-column" @onclick="() => HandleSideTap(sideWithOptions)">
                 <div class="flex-grow-1">
                     <h5 class="mb-1 fw-600">@side.SideName</h5>
                     @if (!string.IsNullOrEmpty(side.SideDescription))
@@ -24,15 +26,15 @@
                     @if (SelectedSide?.Id == side.Id)
                     {
                         <button type="button" class="select-btn added d-inline-flex align-items-center gap-1"
-                                @onclick="() => OnSideSelected.InvokeAsync(side)" @onclick:stopPropagation="true">
+                                @onclick="() => HandleSideTap(sideWithOptions)" @onclick:stopPropagation="true">
                             <i class="bi bi-check-circle-fill"></i> Added
                         </button>
                     }
                     else
                     {
                         <button type="button" class="select-btn d-inline-flex align-items-center gap-1"
-                                @onclick="() => OnSideSelected.InvokeAsync(side)" @onclick:stopPropagation="true">
-                            <i class="bi bi-plus-circle"></i> Add
+                                @onclick="() => HandleSideTap(sideWithOptions)" @onclick:stopPropagation="true">
+                            <i class="bi bi-plus-circle"></i> @(hasOptions ? "Build" : "Add")
                         </button>
                     }
                 </div>

@@ -92,7 +92,8 @@ public partial class FoodBuilder : ComponentBase
 
     private void ConfirmOptions()
     {
-        StagingStore.Confirm(VM.State, VM.OptionTypes);
+        var optionTypes = StagingStore.StagedSide?.OptionTypes ?? VM.OptionTypes;
+        StagingStore.Confirm(VM.State, optionTypes);
         StateHasChanged();
     }
 
@@ -105,6 +106,12 @@ public partial class FoodBuilder : ComponentBase
     private void SelectSide(SideDto side)
     {
         VM.SelectSide(side);
+        StateHasChanged();
+    }
+
+    private void SelectSideWithOptions(SideWithOptionsDto side)
+    {
+        StagingStore.OpenForSide(side, VM.State);
         StateHasChanged();
     }
 

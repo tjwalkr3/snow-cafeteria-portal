@@ -6,7 +6,7 @@ namespace Cafeteria.Customer.Components.Pages.Stations.Panels.SidePanel;
 public partial class SidePanel : ComponentBase
 {
     [Parameter, EditorRequired]
-    public List<SideDto> Sides { get; set; } = new();
+    public List<SideWithOptionsDto> Sides { get; set; } = new();
 
     [Parameter, EditorRequired]
     public SideDto? SelectedSide { get; set; }
@@ -16,4 +16,14 @@ public partial class SidePanel : ComponentBase
 
     [Parameter, EditorRequired]
     public EventCallback<SideDto> OnSideSelected { get; set; }
+
+    [Parameter]
+    public EventCallback<SideWithOptionsDto> OnSideWithOptionsSelected { get; set; }
+
+    private Task HandleSideTap(SideWithOptionsDto sideWithOptions)
+    {
+        if (sideWithOptions.OptionTypes.Any())
+            return OnSideWithOptionsSelected.InvokeAsync(sideWithOptions);
+        return OnSideSelected.InvokeAsync(sideWithOptions.Side);
+    }
 }

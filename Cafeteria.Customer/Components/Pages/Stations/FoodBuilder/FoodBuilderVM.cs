@@ -24,7 +24,7 @@ public class FoodBuilderVM : IFoodBuilderVM
     }
 
     public List<EntreeDto> Entrees { get; private set; } = new();
-    public List<SideDto> Sides { get; private set; } = new();
+    public List<SideWithOptionsDto> Sides { get; private set; } = new();
     public List<DrinkDto> Drinks { get; private set; } = new();
     public List<FoodOptionTypeWithOptionsDto> OptionTypes => _strategy?.GetOptionTypes() ?? new();
     public List<string> AvailableToppings => _strategy?.GetAvailableToppings() ?? new();
@@ -54,10 +54,10 @@ public class FoodBuilderVM : IFoodBuilderVM
         ActiveTab = Configuration.DefaultTab;
 
         Entrees = await _menuService.GetEntreesByStation(stationId);
-        Sides = await _menuService.GetSidesByStation(stationId);
+        Sides = await _menuService.GetSidesWithOptionsByStation(stationId);
         Drinks = await _menuService.GetDrinksByLocation(locationId);
 
-        await _strategy.OnDataLoadedAsync(Entrees, Sides, Drinks, State);
+        await _strategy.OnDataLoadedAsync(Entrees, Sides.Select(s => s.Side).ToList(), Drinks, State);
     }
 
     public void SetActiveTab(string tab) => ActiveTab = tab;

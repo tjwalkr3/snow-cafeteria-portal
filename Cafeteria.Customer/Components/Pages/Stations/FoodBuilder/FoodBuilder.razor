@@ -124,7 +124,8 @@ else
                 <SidePanel Sides="@VM.Sides"
                            SelectedSide="@VM.State.SelectedSide"
                            IsCardOrder="@VM.IsCardOrder"
-                           OnSideSelected="@SelectSide" />
+                           OnSideSelected="@SelectSide"
+                           OnSideWithOptionsSelected="@SelectSideWithOptions" />
             }
 
             @if (VM.ActiveTab == "drinks")
@@ -136,9 +137,12 @@ else
             }
         </div>
 
-        @if (StagingStore.IsModalOpen && VM.OptionTypes.Any())
+        @{
+            var activeOptionTypes = StagingStore.StagedSide?.OptionTypes ?? VM.OptionTypes;
+        }
+        @if (StagingStore.IsModalOpen && activeOptionTypes.Any())
         {
-            <EntreeOptionsModal OptionTypes="@VM.OptionTypes.ToList()"
+            <EntreeOptionsModal OptionTypes="@activeOptionTypes"
                                 IsCardOrder="@VM.IsCardOrder"
                                 StagingStore="@StagingStore"
                                 OnConfirm="@ConfirmOptions"

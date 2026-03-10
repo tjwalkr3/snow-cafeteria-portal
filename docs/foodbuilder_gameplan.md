@@ -125,7 +125,7 @@ graph TB
 
 ---
 
-### Phase 4 — Side Options
+### ✅ Phase 4 — Side Options
 
 **Goal of this phase:** The database schema already supports option types on sides (`food_option_type.side_id`). This phase wires that capability through every layer — API, domain, and UI — so that tapping a side with options opens the same `EntreeOptionsModal` used for entrees. A side with no option types selects immediately as before; a side with option types opens the modal, and confirmed selections are stored separately in `SelectionState` and submitted to the cart.
 

@@ -7,7 +7,7 @@ namespace Cafeteria.Customer.Components.Pages.Stations.FoodBuilder;
 public interface IFoodBuilderVM
 {
     List<EntreeDto> Entrees { get; }
-    List<SideDto> Sides { get; }
+    List<SideWithOptionsDto> Sides { get; }
     List<DrinkDto> Drinks { get; }
     List<FoodOptionTypeWithOptionsDto> OptionTypes { get; }
     List<string> AvailableToppings { get; }
