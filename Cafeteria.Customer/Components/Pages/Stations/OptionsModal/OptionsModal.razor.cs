@@ -2,9 +2,9 @@ using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Components;
 
-namespace Cafeteria.Customer.Components.Pages.Stations.Modals.EntreeOptionsModal;
+namespace Cafeteria.Customer.Components.Pages.Stations.OptionsModal;
 
-public partial class EntreeOptionsModal : ComponentBase
+public partial class OptionsModal : ComponentBase
 {
     [Parameter, EditorRequired]
     public List<FoodOptionTypeWithOptionsDto> OptionTypes { get; set; } = new();

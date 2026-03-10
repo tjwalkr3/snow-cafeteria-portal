@@ -1,7 +1,7 @@
 @page "/station"
 @rendermode InteractiveServer
-@using Cafeteria.Customer.Components.Pages.Stations.Footer.FoodBuilderFooter
-@using Cafeteria.Customer.Components.Pages.Stations.Modals.EntreeOptionsModal
+@using Cafeteria.Customer.Components.Pages.Stations.Footer
+@using Cafeteria.Customer.Components.Pages.Stations.OptionsModal
 @using Cafeteria.Customer.Components.Pages.Stations.Panels.DrinkPanel
 @using Cafeteria.Customer.Components.Pages.Stations.Panels.EntreePanel
 @using Cafeteria.Customer.Components.Pages.Stations.Panels.SidePanel
@@ -106,14 +106,14 @@ else
         }
         @if (StagingStore.IsModalOpen && activeOptionTypes.Any())
         {
-            <EntreeOptionsModal OptionTypes="@activeOptionTypes"
-                                IsCardOrder="@IsCardOrder"
-                                StagingStore="@StagingStore"
-                                OnConfirm="@ConfirmOptions"
-                                OnCancel="@DiscardOptions" />
+            <OptionsModal OptionTypes="@activeOptionTypes"
+                          IsCardOrder="@IsCardOrder"
+                          StagingStore="@StagingStore"
+                          OnConfirm="@ConfirmOptions"
+                          OnCancel="@DiscardOptions" />
         }
 
-        <FoodBuilderFooter IsCardOrder="@IsCardOrder"
+        <Footer IsCardOrder="@IsCardOrder"
                            IsFirstTab="@IsFirstTab()"
                            IsLastTab="@IsLastTab()"
                            CanGoNext="@IsTabCompleted(ActiveTab)"

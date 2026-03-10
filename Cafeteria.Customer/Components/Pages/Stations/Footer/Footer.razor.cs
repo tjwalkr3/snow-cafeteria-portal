@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Cafeteria.Customer.Components.Pages.Stations.Footer.FoodBuilderFooter;
+namespace Cafeteria.Customer.Components.Pages.Stations.Footer;
 
-public partial class FoodBuilderFooter : ComponentBase
+public partial class Footer : ComponentBase
 {
     [Parameter, EditorRequired]
     public bool IsCardOrder { get; set; }
