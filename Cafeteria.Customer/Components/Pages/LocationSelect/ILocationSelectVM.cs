@@ -7,4 +7,5 @@ public interface ILocationSelectVM
     List<LocationDto> Locations { get; }
     Task InitializeLocationsAsync();
     bool ErrorOccurred();
+    Task<bool> IsLocationOpenNow(int locationId);
 }

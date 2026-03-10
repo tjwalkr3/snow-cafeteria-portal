@@ -15,6 +15,17 @@
     {
         Navigation.NavigateTo("/error", false);
     }
+    else if (LocationSelectVM.Locations != null && LocationSelectVM.Locations.Count == 0)
+    {
+        <a href="/" class="btn text-decoration-none ps-0">
+            ❮ Back to Payment Method
+        </a>
+
+        <div class="text-center py-5">
+            <h2 class="mb-3">No Locations Currently Open</h2>
+            <p class="fs-6">All cafeteria locations are currently closed. Please try again later.</p>
+        </div>
+    }
     else if (LocationSelectVM.Locations != null)
     {
         <a href="/" class="btn text-decoration-none ps-0">
