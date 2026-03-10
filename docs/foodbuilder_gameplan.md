@@ -137,7 +137,7 @@ graph TB
 
 ---
 
-### Phase 5 — Eliminate the Strategies and Configuration Folders
+### ✅ Phase 5 — Eliminate the Strategies and Configuration Folders
 
 21. **Replace `StationType` and `StationConfigurationProvider` with database-driven station data.** Delete `Configuration/StationType.cs`, `Configuration/StationConfiguration.cs`, `Configuration/StationConfigurationProvider.cs`, `Configuration/IStationConfigurationProvider.cs`, and all remaining `StationType` references. `FoodBuilder.razor.cs` should load the station's entrees, option types, sides, and drinks directly from the API. Tab layout, page title, minimum topping counts, and virtual entree names must come from the database record, not from a hard-coded provider method. Whether the `EntreeOptionsModal` opens on entree selection is determined solely by whether the API returned option types for that entree — no flag, no enum, no configuration object needed.
 

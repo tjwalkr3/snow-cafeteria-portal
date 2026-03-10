@@ -1,5 +1,6 @@
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Cart;
+using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Components;
 
@@ -8,16 +9,29 @@ namespace Cafeteria.Customer.Components.Pages.Stations.FoodBuilder;
 public partial class FoodBuilder : ComponentBase
 {
     [Inject]
-    private IFoodBuilderVM VM { get; set; } = default!;
-
-    [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
 
     [Inject]
     private ICartService Cart { get; set; } = default!;
 
     [Inject]
+    private IApiMenuService MenuService { get; set; } = default!;
+
+    [Inject]
+    private CartSubmitter CartSubmitter { get; set; } = default!;
+
+    [Inject]
     private FoodOptionStagingStore StagingStore { get; set; } = default!;
+
+    private List<EntreeDto> Entrees { get; set; } = new();
+    private List<SideWithOptionsDto> Sides { get; set; } = new();
+    private List<DrinkDto> Drinks { get; set; } = new();
+    private List<FoodOptionTypeWithOptionsDto> OptionTypes { get; set; } = new();
+    private List<TabDefinition> Tabs { get; set; } = new();
+    private string PageTitle { get; set; } = string.Empty;
+    private SelectionState State { get; } = new();
+    private string ActiveTab { get; set; } = "entrees";
+    private bool IsCardOrder { get; set; }
 
     private bool _isLoading = true;
 
@@ -28,10 +42,22 @@ public partial class FoodBuilder : ComponentBase
             var order = await Cart.GetOrder("order");
             int stationId = order?.StationId ?? 0;
             int locationId = order?.Location?.Id ?? 0;
-            bool isCardOrder = order?.IsCardOrder ?? false;
-            string stationName = order?.StationName ?? "";
+            IsCardOrder = order?.IsCardOrder ?? false;
+            PageTitle = string.IsNullOrEmpty(order?.StationName) ? "Station" : order.StationName;
 
-            await VM.InitializeAsync(stationId, locationId, isCardOrder, stationName);
+            State.Clear();
+            Entrees = await MenuService.GetEntreesByStation(stationId);
+            Sides = await MenuService.GetSidesWithOptionsByStation(stationId);
+            Drinks = await MenuService.GetDrinksByLocation(locationId);
+            OptionTypes = new List<FoodOptionTypeWithOptionsDto>();
+            Tabs = new List<TabDefinition>
+            {
+                new("entrees", "Entrees", isDefault: true),
+                new("sides", "Sides"),
+                new("drinks", "Drinks")
+            };
+            ActiveTab = "entrees";
+
             _isLoading = false;
             StateHasChanged();
         }
@@ -41,30 +67,26 @@ public partial class FoodBuilder : ComponentBase
 
     private void SetActiveTab(string tab)
     {
-        VM.SetActiveTab(tab);
+        ActiveTab = tab;
         StateHasChanged();
     }
 
     private async Task SelectEntree(EntreeDto entree)
     {
-        await VM.SelectEntreeAsync(entree);
+        State.SelectedEntree = entree;
+        State.ClearOptionsOnly();
+        OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(entree.Id);
 
-        if (VM.OptionTypes.Any())
-            StagingStore.Open(entree, VM.OptionTypes, VM.State);
+        if (OptionTypes.Any())
+            StagingStore.Open(entree, OptionTypes, State);
 
         StateHasChanged();
     }
 
-    private void OpenOptionsModal()
-    {
-        if (VM.State.SelectedEntree != null && VM.OptionTypes.Any())
-            StagingStore.Open(VM.State.SelectedEntree, VM.OptionTypes, VM.State);
-    }
-
     private void ConfirmOptions()
     {
-        var optionTypes = StagingStore.StagedSide?.OptionTypes ?? VM.OptionTypes;
-        StagingStore.Confirm(VM.State, optionTypes);
+        var optionTypes = StagingStore.StagedSide?.OptionTypes ?? OptionTypes;
+        StagingStore.Confirm(State, optionTypes);
         StateHasChanged();
     }
 
@@ -76,82 +98,85 @@ public partial class FoodBuilder : ComponentBase
 
     private void SelectSide(SideDto side)
     {
-        VM.SelectSide(side);
+        State.SelectedSide = side;
         StateHasChanged();
     }
 
     private void SelectSideWithOptions(SideWithOptionsDto side)
     {
-        StagingStore.OpenForSide(side, VM.State);
+        StagingStore.OpenForSide(side, State);
         StateHasChanged();
     }
 
     private void SelectDrink(DrinkDto drink)
     {
-        VM.SelectDrink(drink);
+        State.SelectedDrink = drink;
         StateHasChanged();
     }
 
     private async Task AddToOrder()
     {
-        var success = await VM.AddToOrderAsync();
-        if (success)
-        {
-            NavigationManager.NavigateTo("/place-order");
-        }
+        if (!SelectionValidator.IsValid(State, OptionTypes, IsCardOrder, requiresOptionsComplete: OptionTypes.Any()))
+            return;
+
+        var sideWithOptions = Sides.FirstOrDefault(s => s.Side.Id == State.SelectedSide?.Id);
+        await CartSubmitter.SubmitAsync(State, OptionTypes, new List<FoodOptionDto>(), sideWithOptions?.OptionTypes);
+        State.Clear();
+        ActiveTab = Tabs.FirstOrDefault()?.Id ?? "entrees";
+        NavigationManager.NavigateTo("/place-order");
     }
 
     private bool IsTabCompleted(string tabId)
     {
         return tabId switch
         {
-            "entrees" => VM.State.SelectedEntree != null,
-            "sides" => VM.State.SelectedSide != null,
-            "drinks" => VM.State.SelectedDrink != null || !VM.Drinks.Any(),
+            "entrees" => State.SelectedEntree != null,
+            "sides" => State.SelectedSide != null,
+            "drinks" => State.SelectedDrink != null || !Drinks.Any(),
             _ => false
         };
     }
 
     private bool IsLastTab()
     {
-        return VM.Tabs.Count == 0 || VM.Tabs.Last().Id == VM.ActiveTab;
+        return Tabs.Count == 0 || Tabs.Last().Id == ActiveTab;
     }
 
     private void GoToNextTab()
     {
-        var currentIndex = VM.Tabs.FindIndex(t => t.Id == VM.ActiveTab);
-        if (currentIndex >= 0 && currentIndex < VM.Tabs.Count - 1)
+        var currentIndex = Tabs.FindIndex(t => t.Id == ActiveTab);
+        if (currentIndex >= 0 && currentIndex < Tabs.Count - 1)
         {
-            VM.SetActiveTab(VM.Tabs[currentIndex + 1].Id);
+            ActiveTab = Tabs[currentIndex + 1].Id;
             StateHasChanged();
         }
     }
 
     private bool AreAllTabsCompleted()
     {
-        return VM.Tabs.All(tab => IsTabCompleted(tab.Id));
+        return Tabs.All(tab => IsTabCompleted(tab.Id));
     }
 
     private bool HasAnySelection()
     {
-        return VM.State.SelectedEntree != null ||
-               VM.State.SelectedSide != null ||
-               VM.State.SelectedDrink != null ||
-               VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0) ||
-               VM.State.SingleSelectOptions.Any();
+        return State.SelectedEntree != null ||
+               State.SelectedSide != null ||
+               State.SelectedDrink != null ||
+               State.MultiSelectOptions.Values.Any(list => list.Count > 0) ||
+               State.SingleSelectOptions.Any();
     }
 
     private bool IsFirstTab()
     {
-        return VM.Tabs.Count == 0 || VM.Tabs.First().Id == VM.ActiveTab;
+        return Tabs.Count == 0 || Tabs.First().Id == ActiveTab;
     }
 
     private void GoToPreviousTab()
     {
-        var currentIndex = VM.Tabs.FindIndex(t => t.Id == VM.ActiveTab);
+        var currentIndex = Tabs.FindIndex(t => t.Id == ActiveTab);
         if (currentIndex > 0)
         {
-            VM.SetActiveTab(VM.Tabs[currentIndex - 1].Id);
+            ActiveTab = Tabs[currentIndex - 1].Id;
             StateHasChanged();
         }
     }
@@ -171,9 +196,9 @@ public partial class FoodBuilder : ComponentBase
     {
         return tabId switch
         {
-            "entrees" => VM.State.SelectedEntree != null,
-            "sides" => VM.State.SelectedSide != null,
-            "drinks" => VM.State.SelectedDrink != null,
+            "entrees" => State.SelectedEntree != null,
+            "sides" => State.SelectedSide != null,
+            "drinks" => State.SelectedDrink != null,
             _ => false
         };
     }
@@ -182,20 +207,20 @@ public partial class FoodBuilder : ComponentBase
     {
         return tabId switch
         {
-            "entrees" => VM.State.SelectedEntree?.EntreeName ?? "",
-            "sides" => VM.State.SelectedSide?.SideName ?? "",
-            "drinks" => VM.State.SelectedDrink?.DrinkName ?? "",
+            "entrees" => State.SelectedEntree?.EntreeName ?? "",
+            "sides" => State.SelectedSide?.SideName ?? "",
+            "drinks" => State.SelectedDrink?.DrinkName ?? "",
             _ => ""
         };
     }
 
     private string GetStepHint()
     {
-        return VM.ActiveTab switch
+        return ActiveTab switch
         {
             "entrees" => "Pick one entree to start your meal.",
             "sides" => "Pick a side to go with your meal.",
-            "drinks" => VM.Drinks.Any()
+            "drinks" => Drinks.Any()
                 ? "Choose a drink to complete your meal."
                 : "A fountain drink is included with your meal.",
             _ => ""
@@ -204,11 +229,11 @@ public partial class FoodBuilder : ComponentBase
 
     private string GetCardStepHint()
     {
-        return VM.ActiveTab switch
+        return ActiveTab switch
         {
             "entrees" => "Browse entrees and add any you'd like.",
             "sides" => "Add a side, prices shown per item.",
-            "drinks" => VM.Drinks.Any()
+            "drinks" => Drinks.Any()
                 ? "Add a drink, prices shown per item."
                 : "A fountain drink is available at the station.",
             _ => ""
