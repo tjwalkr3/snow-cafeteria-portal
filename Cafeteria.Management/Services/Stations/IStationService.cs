@@ -11,7 +11,7 @@ public interface IStationService
     Task AddStationBusinessHours(int stationId, TimeOnly openTime, TimeOnly closeTime, int weekdayId);
     Task UpdateStationBusinessHours(int stationHrsId, TimeOnly openTime, TimeOnly closeTime, int weekdayId);
     Task<bool> DeleteStationBusinessHours(int stationHrsId);
-    Task CreateStation(int locationId, string name, string? description, string? iconName = null);
-    Task UpdateStation(int stationId, string name, string? description, string? iconName = null);
+    Task CreateStation(int locationId, string name, string? description, int? iconId = null);
+    Task UpdateStation(int stationId, string name, string? description, int? iconId = null);
     Task<bool> DeleteStation(int stationId);
 }

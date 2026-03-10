@@ -4,9 +4,9 @@
     <div class="d-flex align-items-center gap-2 mb-2">
         <div class="border rounded d-flex align-items-center justify-content-center flex-shrink-0"
              style="width:48px;height:48px;">
-            @if (!string.IsNullOrEmpty(Value))
+            @if (Value.HasValue)
             {
-                <i class="bi @Value fs-3"></i>
+                <i class="bi @SelectedBootstrapName fs-3"></i>
             }
             else
             {
@@ -25,10 +25,10 @@
             @foreach (var icon in FilteredIcons)
             {
                 <button type="button"
-                        class="btn btn-sm @(Value == icon.ClassName ? "btn-primary" : "btn-outline-secondary") p-2"
-                        title="@icon.Label"
-                        @onclick="() => SelectIcon(icon.ClassName)">
-                    <i class="bi @icon.ClassName"></i>
+                        class="btn btn-sm @(Value == icon.Id ? "btn-primary" : "btn-outline-secondary") p-2"
+                        title="@icon.IconName"
+                        @onclick="() => SelectIcon(icon.Id)">
+                    <i class="bi @icon.BootstrapName"></i>
                 </button>
             }
             @if (!FilteredIcons.Any())
@@ -38,10 +38,10 @@
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(Value))
+    @if (Value.HasValue)
     {
         <div class="mt-1 d-flex align-items-center gap-2">
-            <small class="text-muted">Selected: <code>@Value</code></small>
+            <small class="text-muted">Selected: <code>@SelectedBootstrapName</code></small>
             <button type="button" class="btn btn-link btn-sm text-danger p-0" @onclick="ClearIcon">Clear</button>
         </div>
     }

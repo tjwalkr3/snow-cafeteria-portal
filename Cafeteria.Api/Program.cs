@@ -7,6 +7,7 @@ using Cafeteria.Api.Services.Orders;
 using Cafeteria.Api.Services.Sides;
 using Cafeteria.Api.Services.Stations;
 using Cafeteria.Api.Services.FoodOptions;
+using Cafeteria.Api.Services.Icons;
 using Cafeteria.Api.Services.Locations;
 using Cafeteria.Api.Services.OptionOptionTypes;
 using Cafeteria.Api.Services.Swipes;
@@ -33,6 +34,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IDbConnection>(provider => provider.GetRequiredService<NpgsqlDataSource>().CreateConnection());
+builder.Services.AddScoped<IIconService, IconService>();
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodOptionTypeService, FoodOptionTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();

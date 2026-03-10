@@ -15,6 +15,7 @@ using Cafeteria.Management.Services.Drinks;
 using Cafeteria.Management.Services.Entrees;
 using Cafeteria.Management.Services.FoodOptions;
 using Cafeteria.Management.Services.FoodOptionTypes;
+using Cafeteria.Management.Services.Icons;
 using Cafeteria.Management.Services.Locations;
 using Cafeteria.Management.Services.OptionOptionTypes;
 using Cafeteria.Management.Services.SchedulingExceptions;
@@ -58,6 +59,7 @@ builder.Services.AddSingleton<IPortalSettings>(new PortalSettings
     PortalName = "Management Portal",
     SignInSubtitle = "Sign in to access the management system"
 });
+builder.Services.AddScoped<IIconService, IconService>();
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
 builder.Services.AddScoped<IFoodOptionTypeService, FoodOptionTypeService>();
 builder.Services.AddScoped<IOptionOptionTypeService, OptionOptionTypeService>();
