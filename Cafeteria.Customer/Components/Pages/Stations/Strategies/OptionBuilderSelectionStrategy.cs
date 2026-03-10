@@ -1,4 +1,3 @@
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
@@ -12,17 +11,13 @@ public class OptionBuilderSelectionStrategy : BaseSelectionStrategy
 
     private EntreeDto? _builderEntree;
 
-    public override StationType StationType { get; }
-
     public OptionBuilderSelectionStrategy(
         CartSubmitter cartSubmitter,
         IApiMenuService menuService,
-        StationType stationType,
         Func<EntreeDto, bool> entreePredicate,
         string virtualEntreeName)
         : base(cartSubmitter, menuService)
     {
-        StationType = stationType;
         _entreePredicate = entreePredicate;
         _virtualEntreeName = virtualEntreeName;
     }

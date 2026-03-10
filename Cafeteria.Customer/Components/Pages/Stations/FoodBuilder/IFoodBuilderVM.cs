@@ -1,4 +1,3 @@
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Shared.DTOs.Menu;
 
@@ -10,10 +9,8 @@ public interface IFoodBuilderVM
     List<SideWithOptionsDto> Sides { get; }
     List<DrinkDto> Drinks { get; }
     List<FoodOptionTypeWithOptionsDto> OptionTypes { get; }
-    List<string> AvailableToppings { get; }
-
-    StationConfiguration Configuration { get; }
-    StationType CurrentStationType { get; }
+    List<TabDefinition> Tabs { get; }
+    string PageTitle { get; }
 
     SelectionState State { get; }
     string ActiveTab { get; }
@@ -21,7 +18,7 @@ public interface IFoodBuilderVM
     int StationId { get; }
     int LocationId { get; }
 
-    Task InitializeAsync(StationType stationType, int stationId, int locationId, bool isCardOrder);
+    Task InitializeAsync(int stationId, int locationId, bool isCardOrder, string stationName);
 
     void SetActiveTab(string tab);
 
@@ -29,21 +26,9 @@ public interface IFoodBuilderVM
     void SelectSide(SideDto side);
     void SelectDrink(DrinkDto drink);
 
-    void SetOptionForType(int optionTypeId, string optionName);
-    void ToggleOptionForType(int optionTypeId, string optionName);
-    void ToggleTopping(string topping);
-    string? GetSelectedOption(int optionTypeId);
-    List<string> GetSelectedOptionsForType(int optionTypeId);
-    bool IsOptionSelected(int optionTypeId, string optionName);
-
     bool IsValidSelection();
-    int GetSelectionCount();
-    string GetSelectionSummary();
-    decimal GetExtraToppingCharge();
-    bool HasExtraToppingCharge();
 
     Task<bool> AddToOrderAsync();
     void ClearSelections();
-
-    bool IsMultiSelectOptionType(FoodOptionTypeWithOptionsDto optionType);
 }
+

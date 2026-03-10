@@ -1,4 +1,3 @@
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Menu;
@@ -12,9 +11,6 @@ public partial class FoodBuilder : ComponentBase
     private IFoodBuilderVM VM { get; set; } = default!;
 
     [Inject]
-    private IStationConfigurationProvider ConfigProvider { get; set; } = default!;
-
-    [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
 
     [Inject]
@@ -23,47 +19,22 @@ public partial class FoodBuilder : ComponentBase
     [Inject]
     private FoodOptionStagingStore StagingStore { get; set; } = default!;
 
-    [Parameter]
-    public string? StationType { get; set; }
-
     private bool _isLoading = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var stationType = DetermineStationType();
-
             var order = await Cart.GetOrder("order");
             int stationId = order?.StationId ?? 0;
             int locationId = order?.Location?.Id ?? 0;
             bool isCardOrder = order?.IsCardOrder ?? false;
+            string stationName = order?.StationName ?? "";
 
-            await VM.InitializeAsync(stationType, stationId, locationId, isCardOrder);
+            await VM.InitializeAsync(stationId, locationId, isCardOrder, stationName);
             _isLoading = false;
             StateHasChanged();
         }
-    }
-
-    private StationType DetermineStationType()
-    {
-        if (!string.IsNullOrEmpty(StationType) && ConfigProvider.TryParseStationType(StationType, out var parsedType))
-        {
-            return parsedType;
-        }
-
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        var path = uri.AbsolutePath.ToLowerInvariant().TrimStart('/');
-
-        return path switch
-        {
-            "breakfast" => Configuration.StationType.Breakfast,
-            "deli" => Configuration.StationType.Deli,
-            "grill" => Configuration.StationType.Grill,
-            "pizza" => Configuration.StationType.Pizza,
-            "wrap" => Configuration.StationType.Wraps,
-            _ => Configuration.StationType.Grill
-        };
     }
 
     public string CreateBackUrl() => "/station-select";
@@ -135,56 +106,30 @@ public partial class FoodBuilder : ComponentBase
         return tabId switch
         {
             "entrees" => VM.State.SelectedEntree != null,
-            "sandwich" => IsBuilderEntreeComplete(),
-            "wrap" => IsBuilderEntreeComplete(),
-            "toppings" => VM.State.SelectedEntree != null &&
-                          VM.State.MultiSelectOptions.Values.Sum(list => list.Count) >= (VM.Configuration?.MinimumToppingsRequired ?? 0),
             "sides" => VM.State.SelectedSide != null,
             "drinks" => VM.State.SelectedDrink != null || !VM.Drinks.Any(),
             _ => false
         };
     }
 
-    private bool IsBuilderEntreeComplete()
-    {
-        if (!VM.OptionTypes.Any())
-            return false;
-
-        foreach (var optionType in VM.OptionTypes)
-        {
-            var requiredCount = optionType.OptionType.NumIncluded;
-            var selectedCount = VM.State.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var selected)
-                ? selected.Count
-                : 0;
-
-            if (selectedCount < requiredCount)
-                return false;
-        }
-
-        return true;
-    }
-
     private bool IsLastTab()
     {
-        var tabs = VM.Configuration?.Tabs ?? new();
-        return tabs.Count == 0 || tabs.Last().Id == VM.ActiveTab;
+        return VM.Tabs.Count == 0 || VM.Tabs.Last().Id == VM.ActiveTab;
     }
 
     private void GoToNextTab()
     {
-        var tabs = VM.Configuration?.Tabs ?? new();
-        var currentIndex = tabs.FindIndex(t => t.Id == VM.ActiveTab);
-        if (currentIndex >= 0 && currentIndex < tabs.Count - 1)
+        var currentIndex = VM.Tabs.FindIndex(t => t.Id == VM.ActiveTab);
+        if (currentIndex >= 0 && currentIndex < VM.Tabs.Count - 1)
         {
-            VM.SetActiveTab(tabs[currentIndex + 1].Id);
+            VM.SetActiveTab(VM.Tabs[currentIndex + 1].Id);
             StateHasChanged();
         }
     }
 
     private bool AreAllTabsCompleted()
     {
-        var tabs = VM.Configuration?.Tabs ?? new();
-        return tabs.All(tab => IsTabCompleted(tab.Id));
+        return VM.Tabs.All(tab => IsTabCompleted(tab.Id));
     }
 
     private bool HasAnySelection()
@@ -198,17 +143,15 @@ public partial class FoodBuilder : ComponentBase
 
     private bool IsFirstTab()
     {
-        var tabs = VM.Configuration?.Tabs ?? new();
-        return tabs.Count == 0 || tabs.First().Id == VM.ActiveTab;
+        return VM.Tabs.Count == 0 || VM.Tabs.First().Id == VM.ActiveTab;
     }
 
     private void GoToPreviousTab()
     {
-        var tabs = VM.Configuration?.Tabs ?? new();
-        var currentIndex = tabs.FindIndex(t => t.Id == VM.ActiveTab);
+        var currentIndex = VM.Tabs.FindIndex(t => t.Id == VM.ActiveTab);
         if (currentIndex > 0)
         {
-            VM.SetActiveTab(tabs[currentIndex - 1].Id);
+            VM.SetActiveTab(VM.Tabs[currentIndex - 1].Id);
             StateHasChanged();
         }
     }
@@ -218,9 +161,6 @@ public partial class FoodBuilder : ComponentBase
         return tabId switch
         {
             "entrees" => "bi-egg-fried",
-            "sandwich" => "bi-stack",
-            "wrap" => "bi-tornado",
-            "toppings" => "bi-circle-fill",
             "sides" => "bi-basket2-fill",
             "drinks" => "bi-cup-straw",
             _ => "bi-circle"
@@ -232,9 +172,6 @@ public partial class FoodBuilder : ComponentBase
         return tabId switch
         {
             "entrees" => VM.State.SelectedEntree != null,
-            "sandwich" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
-            "wrap" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
-            "toppings" => VM.State.MultiSelectOptions.Values.Any(list => list.Count > 0),
             "sides" => VM.State.SelectedSide != null,
             "drinks" => VM.State.SelectedDrink != null,
             _ => false
@@ -246,20 +183,10 @@ public partial class FoodBuilder : ComponentBase
         return tabId switch
         {
             "entrees" => VM.State.SelectedEntree?.EntreeName ?? "",
-            "sandwich" => GetBuilderSummary("option(s)"),
-            "wrap" => GetBuilderSummary("filling(s)"),
-            "toppings" => $"{VM.State.MultiSelectOptions.Values.Sum(list => list.Count)} topping(s)",
             "sides" => VM.State.SelectedSide?.SideName ?? "",
             "drinks" => VM.State.SelectedDrink?.DrinkName ?? "",
             _ => ""
         };
-    }
-
-    private string GetBuilderSummary(string unit)
-    {
-        var totalSelections = VM.State.MultiSelectOptions.Values.Sum(list => list.Count);
-        if (totalSelections == 0) return "";
-        return $"{totalSelections} {unit} selected";
     }
 
     private string GetStepHint()
@@ -267,9 +194,6 @@ public partial class FoodBuilder : ComponentBase
         return VM.ActiveTab switch
         {
             "entrees" => "Pick one entree to start your meal.",
-            "toppings" => "Select your pizza and choose your toppings.",
-            "sandwich" => "Tap the sandwich card to build your custom sandwich.",
-            "wrap" => "Build your wrap by selecting your fillings.",
             "sides" => "Pick a side to go with your meal.",
             "drinks" => VM.Drinks.Any()
                 ? "Choose a drink to complete your meal."
@@ -283,9 +207,6 @@ public partial class FoodBuilder : ComponentBase
         return VM.ActiveTab switch
         {
             "entrees" => "Browse entrees and add any you'd like.",
-            "toppings" => "Pick your pizza, prices shown per item.",
-            "sandwich" => "Build your sandwich, extras may have an additional charge.",
-            "wrap" => "Build your wrap, extras may have an additional charge.",
             "sides" => "Add a side, prices shown per item.",
             "drinks" => VM.Drinks.Any()
                 ? "Add a drink, prices shown per item."

@@ -1,4 +1,3 @@
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
@@ -16,8 +15,6 @@ public abstract class BaseSelectionStrategy : ISelectionStrategy
     protected List<FoodOptionTypeWithOptionsDto> OptionTypes { get; set; } = new();
     protected List<FoodOptionDto> AllEntreeOptions { get; set; } = new();
     protected List<string> AvailableToppings { get; set; } = new();
-
-    public abstract StationType StationType { get; }
 
     protected BaseSelectionStrategy(CartSubmitter cartSubmitter, IApiMenuService menuService)
     {

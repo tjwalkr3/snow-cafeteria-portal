@@ -1,4 +1,3 @@
-@page "/station/{StationType}"
 @page "/breakfast"
 @page "/deli"
 @page "/grill"
@@ -15,7 +14,7 @@
 @using Cafeteria.Shared.DTOs
 @using Microsoft.AspNetCore.Components.Authorization
 
-<PageTitle>@(VM.Configuration?.PageTitle ?? "Station")</PageTitle>
+<PageTitle>@VM.PageTitle</PageTitle>
 
 @if (_isLoading)
 {
@@ -49,7 +48,7 @@ else
                 <span>Pay per item. Browse the categories below and add what you'd like to your cart.</span>
             </div>
 
-            <CardCategoryNav Tabs="@(VM.Configuration?.Tabs ?? new())"
+            <CardCategoryNav Tabs="@VM.Tabs"
                              ActiveTab="@VM.ActiveTab"
                              HasSelectionForTab="@HasSelectionForTab"
                              GetSelectionText="@GetSelectionTextForTab"
@@ -58,7 +57,7 @@ else
         }
         else
         {
-            <SwipeStepper Tabs="@(VM.Configuration?.Tabs ?? new())"
+            <SwipeStepper Tabs="@VM.Tabs"
                           ActiveTab="@VM.ActiveTab"
                           IsTabCompleted="@IsTabCompleted"
                           OnTabSelected="@SetActiveTab" />
@@ -74,48 +73,17 @@ else
                 <p class="step-hint text-muted mb-3">@GetCardStepHint()</p>
             }
 
-            @if (VM.ActiveTab == "entrees" && VM.Configuration?.ShowEntreeSelection == true)
+            @if (VM.ActiveTab == "entrees")
             {
+                var allSelections = VM.State.SingleSelectOptions.Values
+                    .Concat(VM.State.MultiSelectOptions.Values.SelectMany(v => v)).ToList();
+                var totalRequired = VM.OptionTypes.Sum(o => o.OptionType.NumIncluded);
                 <EntreePanel Entrees="@VM.Entrees"
                              SelectedEntree="@VM.State.SelectedEntree"
                              IsCardOrder="@VM.IsCardOrder"
-                             SelectedBadges="@VM.State.SingleSelectOptions.Values.ToList()"
-                             OnEntreeSelected="@SelectEntree" />
-            }
-
-            @if (VM.ActiveTab == "toppings")
-            {
-                var allToppings = VM.State.MultiSelectOptions.Values.SelectMany(v => v).ToList();
-                <EntreePanel Entrees="@VM.Entrees"
-                             SelectedEntree="@VM.State.SelectedEntree"
-                             IsCardOrder="@VM.IsCardOrder"
-                             SelectedBadges="@allToppings"
-                             SelectionCount="@allToppings.Count"
-                             RequiredCount="@(VM.Configuration?.MinimumToppingsRequired ?? 0)"
-                             OnEntreeSelected="@SelectEntree" />
-            }
-
-            @if (VM.ActiveTab == "sandwich")
-            {
-                var sandwichSelections = VM.State.MultiSelectOptions.Values.SelectMany(v => v).ToList();
-                <EntreePanel Entrees="@VM.Entrees"
-                             SelectedEntree="@VM.State.SelectedEntree"
-                             IsCardOrder="@VM.IsCardOrder"
-                             SelectedBadges="@sandwichSelections"
-                             SelectionCount="@sandwichSelections.Count"
-                             RequiredCount="@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)"
-                             OnEntreeSelected="@SelectEntree" />
-            }
-
-            @if (VM.ActiveTab == "wrap")
-            {
-                var wrapSelections = VM.State.MultiSelectOptions.Values.SelectMany(v => v).ToList();
-                <EntreePanel Entrees="@VM.Entrees"
-                             SelectedEntree="@VM.State.SelectedEntree"
-                             IsCardOrder="@VM.IsCardOrder"
-                             SelectedBadges="@wrapSelections"
-                             SelectionCount="@wrapSelections.Count"
-                             RequiredCount="@VM.OptionTypes.Sum(o => o.OptionType.NumIncluded)"
+                             SelectedBadges="@allSelections"
+                             SelectionCount="@allSelections.Count"
+                             RequiredCount="@totalRequired"
                              OnEntreeSelected="@SelectEntree" />
             }
 

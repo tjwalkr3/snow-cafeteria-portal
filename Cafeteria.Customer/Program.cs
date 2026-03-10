@@ -3,10 +3,8 @@ using Cafeteria.Customer.Components.Pages.LocationSelect;
 using Cafeteria.Customer.Components.Pages.OrderHistory;
 using Cafeteria.Customer.Components.Pages.PlaceOrder;
 using Cafeteria.Customer.Components.Pages.StationSelect;
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Components.Pages.Stations.FoodBuilder;
-using Cafeteria.Customer.Components.Pages.Stations.Strategies;
 using Cafeteria.Shared.Services.Auth;
 using Cafeteria.Shared.Services.Customer;
 using Cafeteria.Shared.Services.Portal;
@@ -66,10 +64,8 @@ builder.Services.AddScoped<IPlaceOrderVM, PlaceOrderVM>();
 builder.Services.AddScoped<IOrderHistoryVM, OrderHistoryVM>();
 
 // Register generic station services
-builder.Services.AddSingleton<IStationConfigurationProvider, StationConfigurationProvider>();
 builder.Services.AddScoped<CartSubmitter>();
 builder.Services.AddScoped<FoodOptionStagingStore>();
-builder.Services.AddScoped<ISelectionStrategyFactory, SelectionStrategyFactory>();
 builder.Services.AddScoped<IFoodBuilderVM, FoodBuilderVM>();
 
 // Register cart service and storage wrapper

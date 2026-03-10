@@ -1,4 +1,3 @@
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Shared.DTOs.Menu;
 
@@ -6,7 +5,6 @@ namespace Cafeteria.Customer.Components.Pages.Stations.Strategies;
 
 public interface ISelectionStrategy
 {
-    StationType StationType { get; }
 
     bool IsValidSelection(SelectionState state, bool isCardOrder);
 

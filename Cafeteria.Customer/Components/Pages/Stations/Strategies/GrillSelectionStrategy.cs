@@ -1,4 +1,3 @@
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs;
@@ -7,8 +6,6 @@ namespace Cafeteria.Customer.Components.Pages.Stations.Strategies;
 
 public class GrillSelectionStrategy : BaseSelectionStrategy
 {
-    public override StationType StationType => StationType.Grill;
-
     public GrillSelectionStrategy(CartSubmitter cartSubmitter, IApiMenuService menuService)
         : base(cartSubmitter, menuService)
     {

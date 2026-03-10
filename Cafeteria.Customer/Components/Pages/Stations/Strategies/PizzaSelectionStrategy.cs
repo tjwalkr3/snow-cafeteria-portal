@@ -1,4 +1,3 @@
-using Cafeteria.Customer.Components.Pages.Stations.Configuration;
 using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
@@ -14,8 +13,6 @@ public class PizzaSelectionStrategy : BaseSelectionStrategy
         "Extra Cheese", "Pepperoni", "Sausage", "Bacon", "Chicken", "Ham",
         "Olives", "Mushrooms", "Onions", "Pineapple", "Bell Peppers", "Banana Peppers"
     };
-
-    public override StationType StationType => StationType.Pizza;
 
     public PizzaSelectionStrategy(CartSubmitter cartSubmitter, IApiMenuService menuService)
         : base(cartSubmitter, menuService)
