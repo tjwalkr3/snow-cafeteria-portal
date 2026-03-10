@@ -22,20 +22,7 @@ public partial class StationSelect : ComponentBase
         if (station == null) return;
 
         await Cart.SetStation("order", station.Id, station.StationName);
-        Navigation.NavigateTo(GetStationRoute(station.StationName));
-    }
-
-    private string GetStationRoute(string stationName)
-    {
-        return stationName.ToLower() switch
-        {
-            "breakfast" or "breakfast station" => "/breakfast",
-            "deli" or "deli station" or "sandwich station" => "/deli",
-            "pizza" or "pizza station" => "/pizza",
-            "grill" or "grill station" => "/grill",
-            "wraps" or "wraps station" => "/wrap",
-            _ => "/swipe-menu"
-        };
+        Navigation.NavigateTo("/station");
     }
 
     public string CreateBackUrl() => "/location-select";
