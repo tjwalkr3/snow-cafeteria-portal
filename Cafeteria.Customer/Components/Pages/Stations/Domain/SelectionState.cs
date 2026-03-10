@@ -11,11 +11,11 @@ public class SelectionState
     // For single-select options (e.g., Breakfast - one option per type)
     public Dictionary<int, string> SingleSelectOptions { get; } = new();
 
-    // For multi-select options (e.g., Deli toppings, Pizza toppings)
     public Dictionary<int, List<string>> MultiSelectOptions { get; } = new();
 
-    // Simple list for Pizza toppings (backward compatibility)
     public List<string> SelectedToppings { get; } = new();
+
+    public Dictionary<int, HashSet<string>> SideOptions { get; } = new();
 
     public void Clear()
     {
@@ -25,6 +25,7 @@ public class SelectionState
         SingleSelectOptions.Clear();
         MultiSelectOptions.Clear();
         SelectedToppings.Clear();
+        SideOptions.Clear();
     }
 
     public void ClearOptionsOnly()

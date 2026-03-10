@@ -8,6 +8,7 @@ public interface ISideService
     Task<SideDto?> GetSideById(int id);
     Task<List<SideDto>> GetAllSides();
     Task<List<SideDto>> GetSidesByStationId(int stationId);
+    Task<List<SideWithOptionsDto>> GetSidesByStationIdWithOptions(int stationId);
     Task<SideDto?> UpdateSideById(int id, SideDto sideDto);
     Task<bool> DeleteSideById(int id);
     Task<bool> SetStockStatusById(int id, bool inStock);

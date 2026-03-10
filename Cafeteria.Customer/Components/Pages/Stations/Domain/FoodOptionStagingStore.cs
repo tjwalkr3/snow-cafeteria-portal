@@ -7,11 +7,13 @@ public class FoodOptionStagingStore
     public bool IsModalOpen { get; private set; }
     public string ModalTitle { get; private set; } = string.Empty;
     public EntreeDto? StagedEntree { get; private set; }
+    public SideWithOptionsDto? StagedSide { get; private set; }
     public Dictionary<int, HashSet<string>> StagedSelections { get; private set; } = new();
 
     public void Open(EntreeDto entree, List<FoodOptionTypeWithOptionsDto> optionTypes, SelectionState state)
     {
         StagedEntree = entree;
+        StagedSide = null;
         ModalTitle = entree.EntreeName;
         StagedSelections = new Dictionary<int, HashSet<string>>();
 
@@ -28,6 +30,23 @@ public class FoodOptionStagingStore
                 var existing = state.SingleSelectOptions.TryGetValue(id, out var val) ? val : null;
                 StagedSelections[id] = existing != null ? new HashSet<string> { existing } : new HashSet<string>();
             }
+        }
+
+        IsModalOpen = true;
+    }
+
+    public void OpenForSide(SideWithOptionsDto side, SelectionState state)
+    {
+        StagedSide = side;
+        StagedEntree = null;
+        ModalTitle = side.Side.SideName;
+        StagedSelections = new Dictionary<int, HashSet<string>>();
+
+        foreach (var optionType in side.OptionTypes)
+        {
+            var id = optionType.OptionType.Id;
+            var existing = state.SideOptions.TryGetValue(id, out var set) ? set : new HashSet<string>();
+            StagedSelections[id] = new HashSet<string>(existing);
         }
 
         IsModalOpen = true;
@@ -53,21 +72,35 @@ public class FoodOptionStagingStore
 
     public void Confirm(SelectionState state, List<FoodOptionTypeWithOptionsDto> optionTypes)
     {
-        if (StagedEntree != null)
-            state.SelectedEntree = StagedEntree;
-
-        foreach (var optionType in optionTypes)
+        if (StagedSide != null)
         {
-            var id = optionType.OptionType.Id;
-            var staged = StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>();
-
-            if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
-                state.MultiSelectOptions[id] = staged.ToList();
-            else
+            state.SelectedSide = StagedSide.Side;
+            foreach (var optionType in optionTypes)
             {
-                var selected = staged.FirstOrDefault();
-                if (selected != null)
-                    state.SingleSelectOptions[id] = selected;
+                var id = optionType.OptionType.Id;
+                var staged = StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>();
+                state.SideOptions[id] = staged;
+            }
+            StagedSide = null;
+        }
+        else
+        {
+            if (StagedEntree != null)
+                state.SelectedEntree = StagedEntree;
+
+            foreach (var optionType in optionTypes)
+            {
+                var id = optionType.OptionType.Id;
+                var staged = StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>();
+
+                if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+                    state.MultiSelectOptions[id] = staged.ToList();
+                else
+                {
+                    var selected = staged.FirstOrDefault();
+                    if (selected != null)
+                        state.SingleSelectOptions[id] = selected;
+                }
             }
         }
 
@@ -77,6 +110,7 @@ public class FoodOptionStagingStore
     public void Discard()
     {
         StagedEntree = null;
+        StagedSide = null;
         StagedSelections.Clear();
         IsModalOpen = false;
     }
