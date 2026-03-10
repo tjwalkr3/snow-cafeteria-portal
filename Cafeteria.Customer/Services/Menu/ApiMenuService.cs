@@ -42,6 +42,14 @@ public class ApiMenuService(IHttpClientAuth client) : IApiMenuService
         return await client.GetAsync<List<SideDto>>($"side/station/{stationId}") ?? new List<SideDto>();
     }
 
+    public async Task<List<SideWithOptionsDto>> GetSidesWithOptionsByStation(int stationId)
+    {
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
+
+        return await client.GetAsync<List<SideWithOptionsDto>>($"side/station/{stationId}/with-options") ?? new List<SideWithOptionsDto>();
+    }
+
     public async Task<List<DrinkDto>> GetDrinksByLocation(int locationId)
     {
         if (locationId < 1)

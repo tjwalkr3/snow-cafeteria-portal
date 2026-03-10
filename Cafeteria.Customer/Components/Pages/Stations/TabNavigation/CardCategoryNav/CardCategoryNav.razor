@@ -1,0 +1,30 @@
+@using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.CardCategoryNav
+
+<div class="category-nav d-flex flex-column flex-sm-row flex-wrap gap-3 mb-4">
+    @foreach (var tab in Tabs)
+    {
+        var isActive = ActiveTab == tab.Id;
+        var hasSelection = HasSelectionForTab(tab.Id);
+        var selectionText = GetSelectionText(tab.Id);
+
+        <div class="category-nav-card @(isActive ? "active" : "") @(hasSelection ? "has-selection" : "") d-flex align-items-center gap-3 p-3"
+             @onclick="@(() => OnTabSelected.InvokeAsync(tab.Id))">
+            <div class="category-nav-icon d-flex align-items-center justify-content-center">
+                <i class="bi @GetTabIcon(tab.Id)"></i>
+            </div>
+            <div class="category-nav-content d-flex flex-column flex-grow-1">
+                <span class="category-nav-title">@tab.DisplayName</span>
+                <span class="category-nav-selection">
+                    @if (hasSelection)
+                    {
+                        @selectionText
+                    }
+                    else
+                    {
+                        <span class="text-muted">Tap to browse</span>
+                    }
+                </span>
+            </div>
+        </div>
+    }
+</div>

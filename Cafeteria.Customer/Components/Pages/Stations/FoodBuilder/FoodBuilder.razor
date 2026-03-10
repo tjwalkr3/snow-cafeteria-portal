@@ -1,0 +1,125 @@
+@page "/station"
+@rendermode InteractiveServer
+@using Cafeteria.Customer.Components.Pages.Stations.Footer
+@using Cafeteria.Customer.Components.Pages.Stations.OptionsModal
+@using Cafeteria.Customer.Components.Pages.Stations.Panels.DrinkPanel
+@using Cafeteria.Customer.Components.Pages.Stations.Panels.EntreePanel
+@using Cafeteria.Customer.Components.Pages.Stations.Panels.SidePanel
+@using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.CardCategoryNav
+@using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.SwipeStepper
+@using Cafeteria.Shared.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>@PageTitle</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="container px-3 py-4">
+        <div class="text-center py-5">
+            <Spinner Message="Loading menu..." />
+        </div>
+    </div>
+}
+else
+{
+    <div class="container py-2 px-1">
+        <div class="mb-">
+            <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
+                &#10094; Back to Station Selection
+            </a>
+        </div>
+
+        @if (!IsCardOrder)
+        {
+            <div class="swipe-info-banner d-flex align-items-start gap-2 my-3">
+                <i class="bi bi-info-circle flex-shrink-0" style="margin-top: 2px;"></i>
+                <span>Your meal swipe includes one entree, one side, and a drink. Follow the steps below to build your meal.</span>
+            </div>
+        }
+
+        @if (IsCardOrder)
+        {
+            <div class="card-info-banner d-flex align-items-start gap-2 my-3">
+                <i class="bi bi-credit-card flex-shrink-0" style="margin-top: 2px;"></i>
+                <span>Pay per item. Browse the categories below and add what you'd like to your cart.</span>
+            </div>
+
+            <CardCategoryNav Tabs="@Tabs"
+                             ActiveTab="@ActiveTab"
+                             HasSelectionForTab="@HasSelectionForTab"
+                             GetSelectionText="@GetSelectionTextForTab"
+                             GetTabIcon="@GetTabIcon"
+                             OnTabSelected="@SetActiveTab" />
+        }
+        else
+        {
+            <SwipeStepper Tabs="@Tabs"
+                          ActiveTab="@ActiveTab"
+                          IsTabCompleted="@IsTabCompleted"
+                          OnTabSelected="@SetActiveTab" />
+        }
+
+        <div class="content-area">
+            @if (!IsCardOrder)
+            {
+                <p class="step-hint text-muted mb-3">@GetStepHint()</p>
+            }
+            else
+            {
+                <p class="step-hint text-muted mb-3">@GetCardStepHint()</p>
+            }
+
+            @if (ActiveTab == "entrees")
+            {
+                var allSelections = State.SingleSelectOptions.Values
+                    .Concat(State.MultiSelectOptions.Values.SelectMany(v => v)).ToList();
+                var totalRequired = OptionTypes.Sum(o => o.OptionType.NumIncluded);
+                <EntreePanel Entrees="@Entrees"
+                             SelectedEntree="@State.SelectedEntree"
+                             IsCardOrder="@IsCardOrder"
+                             SelectedBadges="@allSelections"
+                             SelectionCount="@allSelections.Count"
+                             RequiredCount="@totalRequired"
+                             OnEntreeSelected="@SelectEntree" />
+            }
+
+            @if (ActiveTab == "sides")
+            {
+                <SidePanel Sides="@Sides"
+                           SelectedSide="@State.SelectedSide"
+                           IsCardOrder="@IsCardOrder"
+                           OnSideSelected="@SelectSide"
+                           OnSideWithOptionsSelected="@SelectSideWithOptions" />
+            }
+
+            @if (ActiveTab == "drinks")
+            {
+                <DrinkPanel Drinks="@Drinks"
+                            SelectedDrink="@State.SelectedDrink"
+                            IsCardOrder="@IsCardOrder"
+                            OnDrinkSelected="@SelectDrink" />
+            }
+        </div>
+
+        @{
+            var activeOptionTypes = StagingStore.StagedSide?.OptionTypes ?? OptionTypes;
+        }
+        @if (StagingStore.IsModalOpen && activeOptionTypes.Any())
+        {
+            <OptionsModal OptionTypes="@activeOptionTypes"
+                          IsCardOrder="@IsCardOrder"
+                          StagingStore="@StagingStore"
+                          OnConfirm="@ConfirmOptions"
+                          OnCancel="@DiscardOptions" />
+        }
+
+        <Footer IsCardOrder="@IsCardOrder"
+                           IsFirstTab="@IsFirstTab()"
+                           IsLastTab="@IsLastTab()"
+                           CanGoNext="@IsTabCompleted(ActiveTab)"
+                           CanAddToOrder="@(IsCardOrder ? HasAnySelection() : AreAllTabsCompleted())"
+                           OnAddToOrder="@AddToOrder"
+                           OnNext="@GoToNextTab"
+                           OnPrevious="@GoToPreviousTab" />
+    </div>
+}

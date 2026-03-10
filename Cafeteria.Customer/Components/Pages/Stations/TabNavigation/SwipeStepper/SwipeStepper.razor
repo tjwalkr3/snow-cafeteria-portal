@@ -1,0 +1,26 @@
+@using Cafeteria.Customer.Components.Pages.Stations.TabNavigation.SwipeStepper
+
+<div class="progress-stepper d-flex align-items-start justify-content-center mb-2">
+    @for (int i = 0; i < Tabs.Count; i++)
+    {
+        var tab = Tabs[i];
+        var isActive = ActiveTab == tab.Id;
+        var isCompleted = IsTabCompleted(tab.Id);
+
+        @if (i > 0)
+        {
+            <div class="stepper-line @(IsTabCompleted(Tabs[i - 1].Id) ? "completed" : "") flex-grow-1"></div>
+        }
+
+        <div class="stepper-step @(isActive ? "active" : "") @(isCompleted ? "completed" : "") d-flex flex-column align-items-center"
+             @onclick="@(() => OnTabSelected.InvokeAsync(tab.Id))">
+            <div class="stepper-circle d-flex align-items-center justify-content-center">
+                @if (isCompleted)
+                {
+                    <i class="bi bi-check"></i>
+                }
+            </div>
+            <span class="stepper-label">@tab.DisplayName.ToUpper()</span>
+        </div>
+    }
+</div>

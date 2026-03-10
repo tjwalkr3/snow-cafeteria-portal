@@ -34,6 +34,13 @@ public class SideController(ISideService sideService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("station/{stationId}/with-options")]
+    public async Task<ActionResult<List<SideWithOptionsDto>>> GetSidesByStationIdWithOptions(int stationId)
+    {
+        var result = await _sideService.GetSidesByStationIdWithOptions(stationId);
+        return Ok(result);
+    }
+
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<SideDto>> CreateSide([FromBody] SideDto sideDto)

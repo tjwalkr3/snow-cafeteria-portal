@@ -1,0 +1,59 @@
+.progress-stepper {
+    padding: 0rem 0.5rem;
+    border-radius: 8px;
+}
+
+.stepper-step {
+    cursor: pointer;
+}
+
+.stepper-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    background: white;
+    font-size: 0.7rem;
+    color: white;
+}
+
+.stepper-step.active .stepper-circle {
+    border-color: #1f973b;
+    background: white;
+}
+
+.stepper-step.completed .stepper-circle {
+    border-color: #1f973b;
+    background: #1f973b;
+}
+
+    .stepper-step.completed .stepper-circle i {
+        color: white;
+        font-weight: bold;
+    }
+
+.stepper-label {
+    margin-top: 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #6c757d;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.stepper-step.active .stepper-label,
+.stepper-step.completed .stepper-label {
+    color: #1e8a4c;
+}
+
+.stepper-line {
+    height: 2px;
+    background: #d1d5db;
+    margin: 16px 0.5rem 0;
+    max-width: 60px;
+    min-width: 30px;
+}
+
+    .stepper-line.completed {
+        background: #1e8a4c;
+    }
