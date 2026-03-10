@@ -61,7 +61,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     [HttpPost]
     public async Task<IActionResult> CreateLocation([FromBody] LocationUpsertRequest request)
     {
-        await _locationService.CreateLocation(request.Name, request.Description);
+        await _locationService.CreateLocation(request.Name, request.Description, request.IconName);
         return NoContent();
     }
 
@@ -69,7 +69,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     [HttpPut("{locationId:int}")]
     public async Task<IActionResult> UpdateLocationById(int locationId, [FromBody] LocationUpsertRequest request)
     {
-        await _locationService.UpdateLocationById(locationId, request.Name, request.Description);
+        await _locationService.UpdateLocationById(locationId, request.Name, request.Description, request.IconName);
         return NoContent();
     }
 
@@ -118,6 +118,6 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 }
 
-public record LocationUpsertRequest(string Name, string? Description);
+public record LocationUpsertRequest(string Name, string? Description, string? IconName = null);
 
 public record LocationHoursRequest(DateTime StartTime, DateTime EndTime, int WeekdayId);

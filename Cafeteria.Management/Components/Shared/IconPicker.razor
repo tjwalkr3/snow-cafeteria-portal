@@ -1,0 +1,48 @@
+@rendermode InteractiveServer
+
+<div class="icon-picker">
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <div class="border rounded d-flex align-items-center justify-content-center flex-shrink-0"
+             style="width:48px;height:48px;">
+            @if (!string.IsNullOrEmpty(Value))
+            {
+                <i class="bi @Value fs-3"></i>
+            }
+            else
+            {
+                <i class="bi bi-question-circle text-muted fs-3"></i>
+            }
+        </div>
+        <input type="text"
+               class="form-control"
+               placeholder="Search icons..."
+               @bind="searchQuery"
+               @bind:event="oninput" />
+    </div>
+
+    <div class="border rounded p-2" style="max-height:220px; overflow-y:auto;">
+        <div class="d-flex flex-wrap gap-1">
+            @foreach (var icon in FilteredIcons)
+            {
+                <button type="button"
+                        class="btn btn-sm @(Value == icon.ClassName ? "btn-primary" : "btn-outline-secondary") p-2"
+                        title="@icon.Label"
+                        @onclick="() => SelectIcon(icon.ClassName)">
+                    <i class="bi @icon.ClassName"></i>
+                </button>
+            }
+            @if (!FilteredIcons.Any())
+            {
+                <span class="text-muted small">No icons match your search.</span>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Value))
+    {
+        <div class="mt-1 d-flex align-items-center gap-2">
+            <small class="text-muted">Selected: <code>@Value</code></small>
+            <button type="button" class="btn btn-link btn-sm text-danger p-0" @onclick="ClearIcon">Clear</button>
+        </div>
+    }
+</div>

@@ -11,8 +11,8 @@ public class LocationDto
     [Required]
     [StringLength(200)]
     public string LocationDescription { get; set; } = string.Empty;
-    [StringLength(500)]
-    public string? ImageUrl { get; set; }
+    [StringLength(100)]
+    public string? IconName { get; set; }
     [StringLength(500)]
     public string? PrinterUrl { get; set; }
 }

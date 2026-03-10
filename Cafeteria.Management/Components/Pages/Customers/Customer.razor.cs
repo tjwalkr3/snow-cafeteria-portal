@@ -10,11 +10,38 @@ public partial class Customer : ComponentBase
     [Inject]
     private ICustomerService CustomerService { get; set; } = default!;
 
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
     private List<CustomerSwipeDto>? allCustomers;
     private bool isLoading = true;
     private string toastMessage = "";
     private ToastType toastType = ToastType.Success;
     private bool showToast = false;
+    private string searchText = string.Empty;
+
+    private List<CustomerSwipeDto> FilteredCustomers
+    {
+        get
+        {
+            var customers = allCustomers?.AsEnumerable() ?? Enumerable.Empty<CustomerSwipeDto>();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                customers = customers.Where(c =>
+                    c.CustName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    c.Email.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    c.BadgerId.ToString().Contains(searchText));
+            }
+
+            return customers.ToList();
+        }
+    }
+
+    private void OnSearchChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? string.Empty;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,5 +71,46 @@ public partial class Customer : ComponentBase
         toastMessage = message;
         toastType = type;
         showToast = true;
+    }
+
+    private string GetSwipeBalanceDisplay(CustomerSwipeDto customer)
+    {
+        if (customer.Status == "Not Enrolled")
+        {
+            return "Not Enrolled";
+        }
+
+        if (customer.Status == "Expired")
+        {
+            return "Swipes Plan Is Expired";
+        }
+
+        if (customer.SwipeCount == null)
+        {
+            return "No Swipes";
+        }
+
+        return customer.SwipeCount.ToString() ?? "0";
+    }
+
+    private string GetSwipeBalanceClass(CustomerSwipeDto customer)
+    {
+        if (customer.Status == "Not Enrolled")
+        {
+            return "text-muted";
+        }
+
+        if (customer.Status == "Expired" || customer.SwipeCount == null)
+        {
+            return "text-danger";
+        }
+
+        return customer.SwipeCount > 0 ? "text-success" : "text-danger";
+    }
+
+    private void NavigateToCustomerOrders(int badgerId)
+    {
+        Navigation.NavigateTo($"orders/customer/{badgerId}");
+
     }
 }

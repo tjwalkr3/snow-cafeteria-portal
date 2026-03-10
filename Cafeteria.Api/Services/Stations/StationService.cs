@@ -25,7 +25,8 @@ public class StationService : IStationService
                 id AS Id,
                 location_id AS LocationId,
                 station_name AS StationName,
-                station_description AS StationDescription
+                station_description AS StationDescription,
+                icon_name AS IconName
             FROM cafeteria.station
             ORDER BY station_name;";
 
@@ -40,7 +41,8 @@ public class StationService : IStationService
                 id AS Id,
                 location_id AS LocationId,
                 station_name AS StationName,
-                station_description AS StationDescription
+                station_description AS StationDescription,
+                icon_name AS IconName
             FROM cafeteria.station
             WHERE location_id = @location_id
             ORDER BY station_name;";
@@ -56,7 +58,8 @@ public class StationService : IStationService
                 id AS Id,
                 location_id AS LocationId,
                 station_name AS StationName,
-                station_description AS StationDescription
+                station_description AS StationDescription,
+                icon_name AS IconName
             FROM cafeteria.station
             WHERE id = @id;";
 
@@ -64,35 +67,38 @@ public class StationService : IStationService
         return station;
     }
 
-    public async Task CreateStationByLocationId(int locationId, string stationName, string? stationDescription = null)
+    public async Task CreateStationByLocationId(int locationId, string stationName, string? stationDescription = null, string? iconName = null)
     {
         const string sql = @"
-            INSERT INTO cafeteria.station (location_id, station_name, station_description)
-            VALUES (@location_id, @station_name, @station_description);";
+            INSERT INTO cafeteria.station (location_id, station_name, station_description, icon_name)
+            VALUES (@location_id, @station_name, @station_description, @icon_name);";
 
         var parameters = new
         {
             location_id = locationId,
             station_name = stationName,
-            station_description = stationDescription ?? string.Empty
+            station_description = stationDescription ?? string.Empty,
+            icon_name = iconName
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateStationById(int stationId, string name, string? description)
+    public async Task UpdateStationById(int stationId, string name, string? description, string? iconName = null)
     {
         const string sql = @"
             UPDATE cafeteria.station
             SET station_name = @station_name,
-                station_description = @station_description
+                station_description = @station_description,
+                icon_name = @icon_name
             WHERE id = @id;";
 
         var parameters = new
         {
             id = stationId,
             station_name = name,
-            station_description = description ?? string.Empty
+            station_description = description ?? string.Empty,
+            icon_name = iconName
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);

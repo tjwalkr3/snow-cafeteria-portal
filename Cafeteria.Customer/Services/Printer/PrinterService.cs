@@ -32,7 +32,7 @@ public class PrinterService(IHttpClientAuth client, IApiMenuService menuService,
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to print order to {Url}", printerUrl);
+            logger.LogWarning(ex, "Failed to print order to {Url}", printerUrl);
             return false;
         }
     }

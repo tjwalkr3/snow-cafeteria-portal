@@ -127,11 +127,11 @@ public class SwipeIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task GetSwipesByEmail_WithNonExistentEmail_ReturnsNotFound()
+    public async Task GetSwipesByEmail_WithNonExistentEmail_ReturnsNoContent()
     {
         // Use an email that doesn't exist in the database
         var response = await _client.GetAsync("/api/swipe/email/nonexistent@snow.edu");
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
     }
 
     [Fact]
@@ -150,11 +150,13 @@ public class SwipeIntegrationTests : IDisposable
         Assert.Equal("John Doe", johnDoe.CustName);
         Assert.Equal("john.doe@snow.edu", johnDoe.Email);
         Assert.Equal(7, johnDoe.SwipeCount);
+        Assert.Equal("Active", johnDoe.Status);
 
         var janeSmith = customers.FirstOrDefault(c => c.BadgerId == 1005678);
         Assert.NotNull(janeSmith);
         Assert.Equal("Jane Smith", janeSmith.CustName);
         Assert.Equal(21, janeSmith.SwipeCount);
+        Assert.Equal("Active", janeSmith.Status);
     }
 
     [Fact]
@@ -171,5 +173,88 @@ public class SwipeIntegrationTests : IDisposable
         Assert.NotNull(charlieBrown);
         Assert.Equal("Charlie Brown", charlieBrown.CustName);
         Assert.Equal(0, charlieBrown.SwipeCount);
+        Assert.Equal("Active", charlieBrown.Status);
+    }
+
+    [Fact]
+    public async Task GetAllCustomers_WithExpiredSwipes_ReturnsExpiredStatus()
+    {
+        // Setup: Insert a customer with expired swipes
+        const string insertCustomerSql = @"
+            INSERT INTO cafeteria.customer (badger_id, cust_name, email)
+            VALUES (@BadgerId, @CustName, @Email)
+            ON CONFLICT DO NOTHING";
+
+        const string insertExpiredSwipeSql = @"
+            INSERT INTO cafeteria.customer_swipe (badger_id, swipe_balance, end_date)
+            VALUES (@BadgerId, @SwipeBalance, @EndDate)
+            ON CONFLICT DO NOTHING";
+
+        var expiredBadgerId = 9999001;
+        var expiredDate = DateTime.UtcNow.AddDays(-7); // 7 days in the past
+
+        await _connection.ExecuteAsync(insertCustomerSql, new
+        {
+            BadgerId = expiredBadgerId,
+            CustName = "Expired Customer",
+            Email = "expired@test.edu"
+        });
+
+        await _connection.ExecuteAsync(insertExpiredSwipeSql, new
+        {
+            BadgerId = expiredBadgerId,
+            SwipeBalance = 5,
+            EndDate = expiredDate
+        });
+
+        // Act
+        var response = await _client.GetAsync("/api/swipe/all-customers");
+        response.EnsureSuccessStatusCode();
+        var customers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
+
+        // Assert
+        Assert.NotNull(customers);
+        var expiredCustomer = customers.FirstOrDefault(c => c.BadgerId == expiredBadgerId);
+        Assert.NotNull(expiredCustomer);
+        Assert.Null(expiredCustomer.SwipeCount);
+        Assert.Equal("Expired", expiredCustomer.Status);
+
+        // Cleanup
+        await _connection.ExecuteAsync("DELETE FROM cafeteria.customer_swipe WHERE badger_id = @BadgerId", new { BadgerId = expiredBadgerId });
+        await _connection.ExecuteAsync("DELETE FROM cafeteria.customer WHERE badger_id = @BadgerId", new { BadgerId = expiredBadgerId });
+    }
+
+    [Fact]
+    public async Task GetAllCustomers_WithNoSwipeEntry_ReturnsNullCount()
+    {
+        // Setup: Insert a customer with no swipe entry
+        const string insertCustomerSql = @"
+            INSERT INTO cafeteria.customer (badger_id, cust_name, email)
+            VALUES (@BadgerId, @CustName, @Email)
+            ON CONFLICT DO NOTHING";
+
+        var noSwipeBadgerId = 9999002;
+
+        await _connection.ExecuteAsync(insertCustomerSql, new
+        {
+            BadgerId = noSwipeBadgerId,
+            CustName = "No Swipes Customer",
+            Email = "noswipes@test.edu"
+        });
+
+        // Act
+        var response = await _client.GetAsync("/api/swipe/all-customers");
+        response.EnsureSuccessStatusCode();
+        var customers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
+
+        // Assert
+        Assert.NotNull(customers);
+        var noSwipeCustomer = customers.FirstOrDefault(c => c.BadgerId == noSwipeBadgerId);
+        Assert.NotNull(noSwipeCustomer);
+        Assert.Null(noSwipeCustomer.SwipeCount);
+        Assert.Equal("Not Enrolled", noSwipeCustomer.Status);
+
+        // Cleanup
+        await _connection.ExecuteAsync("DELETE FROM cafeteria.customer WHERE badger_id = @BadgerId", new { BadgerId = noSwipeBadgerId });
     }
 }

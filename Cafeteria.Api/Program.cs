@@ -11,6 +11,7 @@ using Cafeteria.Api.Services.Locations;
 using Cafeteria.Api.Services.OptionOptionTypes;
 using Cafeteria.Api.Services.Swipes;
 using Cafeteria.Api.Services.Customer;
+using Cafeteria.Api.Services.SchedulingExceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -44,6 +45,7 @@ builder.Services.AddScoped<IOrderService, GetOrderService>();
 builder.Services.AddScoped<ICreateOrderService, CreateOrderService>();
 builder.Services.AddScoped<ISwipeService, SwipeService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ISchedulingExceptionsService, SchedulingExceptionsService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
