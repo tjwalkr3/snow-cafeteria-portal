@@ -22,13 +22,15 @@ public class LocationService : ILocationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                location_name AS LocationName,
-                location_description AS LocationDescription,
-                icon_name AS IconName,
-                printer_url AS PrinterUrl
-            FROM cafeteria.cafeteria_location
-            ORDER BY location_name;";
+                cl.id AS Id,
+                cl.location_name AS LocationName,
+                cl.location_description AS LocationDescription,
+                cl.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName,
+                cl.printer_url AS PrinterUrl
+            FROM cafeteria.cafeteria_location cl
+            LEFT JOIN cafeteria.icon i ON cl.icon_id = i.id
+            ORDER BY cl.location_name;";
 
         var locations = await _dbConnection.QueryAsync<LocationDto>(sql);
         return locations.ToList();
@@ -38,41 +40,43 @@ public class LocationService : ILocationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                location_name AS LocationName,
-                location_description AS LocationDescription,
-                icon_name AS IconName,
-                printer_url AS PrinterUrl
-            FROM cafeteria.cafeteria_location
-            WHERE id = @id;";
+                cl.id AS Id,
+                cl.location_name AS LocationName,
+                cl.location_description AS LocationDescription,
+                cl.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName,
+                cl.printer_url AS PrinterUrl
+            FROM cafeteria.cafeteria_location cl
+            LEFT JOIN cafeteria.icon i ON cl.icon_id = i.id
+            WHERE cl.id = @id;";
 
         var location = await _dbConnection.QuerySingleOrDefaultAsync<LocationDto>(sql, new { id = locationId });
         return location;
     }
 
-    public async Task CreateLocation(string name, string? description = null, string? iconName = null)
+    public async Task CreateLocation(string name, string? description = null, int? iconId = null)
     {
         const string sql = @"
-            INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_name)
-            VALUES (@location_name, @location_description, @icon_name);";
+            INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_id)
+            VALUES (@location_name, @location_description, @icon_id);";
 
         var parameters = new
         {
             location_name = name,
             location_description = description ?? string.Empty,
-            icon_name = iconName
+            icon_id = iconId
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateLocationById(int locationId, string name, string? description, string? iconName = null)
+    public async Task UpdateLocationById(int locationId, string name, string? description, int? iconId = null)
     {
         const string sql = @"
             UPDATE cafeteria.cafeteria_location
             SET location_name = @location_name,
                 location_description = @location_description,
-                icon_name = @icon_name
+                icon_id = @icon_id
             WHERE id = @id;";
 
         var parameters = new
@@ -80,7 +84,7 @@ public class LocationService : ILocationService
             id = locationId,
             location_name = name,
             location_description = description ?? string.Empty,
-            icon_name = iconName
+            icon_id = iconId
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);

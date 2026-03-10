@@ -7,8 +7,8 @@ public static class SqlInsertQueries
     // SQL Insert Queries
     public const string InsertLocationSql =
         @"
-        INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_name)
-        VALUES (@LocationName, @LocationDescription, @IconName)";
+        INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_id)
+        VALUES (@LocationName, @LocationDescription, @IconId)";
 
     public const string InsertStationSql =
         @"

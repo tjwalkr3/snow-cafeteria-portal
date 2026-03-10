@@ -89,7 +89,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location To Update",
                 LocationDescription = "Original description",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -120,7 +120,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location To Delete",
                 LocationDescription = "Will be deleted",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -142,7 +142,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location With Hours",
                 LocationDescription = "Has business hours",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -172,7 +172,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location For Hours Test",
                 LocationDescription = "Testing hours",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -209,7 +209,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location For Add Hours",
                 LocationDescription = "Adding hours",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -240,7 +240,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Bad Weekday",
                 LocationDescription = "Testing bad weekday",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -265,7 +265,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Update Hours",
                 LocationDescription = "Updating hours",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -304,7 +304,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Bad Update",
                 LocationDescription = "Testing bad update",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
@@ -337,7 +337,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Delete Hours",
                 LocationDescription = "Deleting hours",
-                IconName = "bi-geo-alt-fill",
+                IconId = 1,
             }
         );
 
