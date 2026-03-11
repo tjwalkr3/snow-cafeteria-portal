@@ -18,7 +18,11 @@
             {
                 <button class="card-link text-decoration-none d-block w-100 p-0 border-0 bg-transparent"
                         @onclick="() => HandlePaymentSelected(false)">
-                    <div class="card h-100 shadow-sm @(CurrentIsCardOrder.HasValue && !CurrentIsCardOrder.Value ? "card-selected" : "border-0")">
+                    <div class="card h-100 shadow-sm position-relative @(CurrentIsCardOrder.HasValue && !CurrentIsCardOrder.Value ? "card-selected" : "border-0")">
+                        @if (CurrentIsCardOrder.HasValue && !CurrentIsCardOrder.Value)
+                        {
+                            <span class="card-selected-badge">Selected</span>
+                        }
                         <div class="card-body text-center p-4">
                             <div class="mb-4">
                                 <div class="icon-circle">
@@ -51,7 +55,11 @@
         <div class="col">
             <button class="card-link text-decoration-none d-block w-100 p-0 border-0 bg-transparent"
                     @onclick="() => HandlePaymentSelected(true)">
-                <div class="card h-100 shadow-sm @(CurrentIsCardOrder.HasValue && CurrentIsCardOrder.Value ? "card-selected" : "border-0")">
+                <div class="card h-100 shadow-sm position-relative @(CurrentIsCardOrder.HasValue && CurrentIsCardOrder.Value ? "card-selected" : "border-0")">
+                    @if (CurrentIsCardOrder.HasValue && CurrentIsCardOrder.Value)
+                    {
+                        <span class="card-selected-badge">Selected</span>
+                    }
                     <div class="card-body text-center p-4">
                         <div class="mb-4">
                             <div class="icon-circle">

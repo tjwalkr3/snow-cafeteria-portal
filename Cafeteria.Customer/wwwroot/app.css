@@ -48,7 +48,21 @@ body {
 }
 
 .card-selected {
-  border: 2px solid #198754 !important;
+  border: 0 !important;
+}
+
+.card-selected-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #1e366c;
+  color: #fff;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .icon-circle {
