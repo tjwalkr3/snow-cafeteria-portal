@@ -36,10 +36,10 @@ public partial class OptionsModal : ComponentBase
         if (!isMulti)
             return "— Select 1";
         if (optType.RequiredAmount == 0)
-            return $"— Optional, up to {optType.MaxAmount}";
+            return $"— Optional, {optType.IncludedAmount} are included, up to {optType.MaxAmount}";
         if (optType.MaxAmount > optType.RequiredAmount)
-            return $"— Select at least {optType.RequiredAmount}, up to {optType.MaxAmount}";
-        return $"— Select {optType.RequiredAmount}";
+            return $"— Select at least {optType.RequiredAmount}, {optType.IncludedAmount} are included, up to {optType.MaxAmount}";
+        return $"— Select {optType.RequiredAmount}, {optType.IncludedAmount} are included";
     }
 
     private void Toggle(int optionTypeId, string name)
