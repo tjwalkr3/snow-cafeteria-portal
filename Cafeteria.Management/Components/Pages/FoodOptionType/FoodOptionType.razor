@@ -56,7 +56,13 @@
                                 <div class="type-card card h-100 border-1 rounded-3 shadow-sm">
                                     <div class="card-body p-4">
                                         <div class="mb-3 pb-3 border-bottom">
-                                            <h5 class="type-name fw-semibold mb-2">@foodType.FoodOptionTypeName</h5>
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                @if (!string.IsNullOrEmpty(foodType.IconBootstrapName))
+                                                {
+                                                    <i class="bi @foodType.IconBootstrapName" style="font-size: 1.2rem;"></i>
+                                                }
+                                                <h5 class="type-name fw-semibold mb-0">@foodType.FoodOptionTypeName</h5>
+                                            </div>
                                             <div class="type-price fs-5 fw-bold">$@foodType.FoodOptionPrice.ToString("F2")</div>
                                         </div>
 

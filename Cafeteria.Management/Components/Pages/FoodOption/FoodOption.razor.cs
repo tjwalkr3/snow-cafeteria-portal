@@ -166,7 +166,8 @@ public partial class FoodOption : ComponentBase
             MaxAmount = foodType.MaxAmount,
             FoodOptionPrice = foodType.FoodOptionPrice,
             EntreeId = foodType.EntreeId,
-            SideId = foodType.SideId
+            SideId = foodType.SideId,
+            IconId = foodType.IconId
         };
         ShowTypeModal = true;
     }

@@ -42,22 +42,6 @@ public partial class OptionsModal : ComponentBase
         return $"— Select {optType.RequiredAmount}";
     }
 
-    private string GetCategoryIcon(string categoryName) => categoryName.ToLower() switch
-    {
-        "bread" => "bi-slash-square",
-        "meat" => "bi-egg-fill",
-        "meat choice" => "bi-egg-fill",
-        "cheese" => "bi-square-fill",
-        "toppings" => "bi-leaf",
-        "dressing" => "bi-droplet-fill",
-        "plate base" => "bi-basket2-fill",
-        "side" or "sides" => "bi-basket2-fill",
-        "tortilla" => "bi-circle",
-        "protein" => "bi-egg-fried",
-        "sauce" => "bi-droplet-fill",
-        _ => "bi-circle"
-    };
-
     private void Toggle(int optionTypeId, string name)
     {
         var optionType = OptionTypes.FirstOrDefault(o => o.OptionType.Id == optionTypeId);

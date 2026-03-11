@@ -24,7 +24,7 @@
 
                     <div class="@(isLast ? "mb-2" : "mb-4 pb-3")" style="@(isLast ? "" : "border-bottom: 1px solid #e9ecef;")">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <i class="bi @GetCategoryIcon(optType.FoodOptionTypeName)" style="font-size: 1.1rem; color: #1e366c;"></i>
+                            <i class="bi @(optType.IconBootstrapName ?? "bi-circle")" style="font-size: 1.1rem; color: #1e366c;"></i>
                             <span style="font-size: 1rem; font-weight: 700; color: #1e366c;">@optType.FoodOptionTypeName</span>
                             <span class="text-muted" style="font-size: 0.8rem; font-weight: 400;">
                                 @GetHintText(optType, isMulti)

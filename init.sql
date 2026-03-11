@@ -146,9 +146,11 @@ CREATE TABLE
         food_option_price decimal NOT NULL,
         entree_id int4,
         side_id int4,
+        icon_id int4,
         PRIMARY KEY (id),
         FOREIGN KEY (entree_id) REFERENCES cafeteria.entree (id),
-        FOREIGN KEY (side_id) REFERENCES cafeteria.side (id)
+        FOREIGN KEY (side_id) REFERENCES cafeteria.side (id),
+        FOREIGN KEY (icon_id) REFERENCES cafeteria.icon (id)
     );
 
 CREATE TABLE

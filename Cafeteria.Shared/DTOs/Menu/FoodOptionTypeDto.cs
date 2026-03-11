@@ -29,4 +29,8 @@ public class FoodOptionTypeDto
     public int? EntreeId { get; set; }
 
     public int? SideId { get; set; }
+
+    public int? IconId { get; set; }
+
+    public string? IconBootstrapName { get; set; }
 }
