@@ -21,6 +21,27 @@ public partial class OptionsModal : ComponentBase
     [Parameter, EditorRequired]
     public EventCallback OnCancel { get; set; }
 
+    private bool IsAllComplete =>
+        OptionTypes.All(ot =>
+            IsOptionTypeComplete(ot, (StagingStore.StagedSelections.GetValueOrDefault(ot.OptionType.Id) ?? new HashSet<string>()).Count));
+
+    private static bool IsOptionTypeComplete(FoodOptionTypeWithOptionsDto optionTypeWithOptions, int stagedCount)
+    {
+        var required = optionTypeWithOptions.OptionType.RequiredAmount;
+        return required == 0 || stagedCount >= required;
+    }
+
+    private static string GetHintText(FoodOptionTypeDto optType, bool isMulti)
+    {
+        if (!isMulti)
+            return "— Select 1";
+        if (optType.RequiredAmount == 0)
+            return $"— Optional, up to {optType.MaxAmount}";
+        if (optType.MaxAmount > optType.RequiredAmount)
+            return $"— Select at least {optType.RequiredAmount}, up to {optType.MaxAmount}";
+        return $"— Select {optType.RequiredAmount}";
+    }
+
     private string GetCategoryIcon(string categoryName) => categoryName.ToLower() switch
     {
         "bread" => "bi-slash-square",
