@@ -31,7 +31,7 @@ public class StationSelectVM : IStationSelectVM
                 // Fetch business hours and exceptions for this station
                 var businessHours = await _menuService.GetStationBusinessHours(station.Id);
                 var exceptions = await _menuService.GetStationExceptions(station.Id);
-                
+
                 _businessHoursCache[station.Id] = businessHours;
                 _exceptionsCache[station.Id] = exceptions;
 
@@ -56,10 +56,10 @@ public class StationSelectVM : IStationSelectVM
         if (_exceptionsCache.TryGetValue(stationId, out var exceptions))
         {
             var now = DateTime.Now;
-            var hasActiveException = exceptions.Any(e => 
-                now >= e.StartExceptionDateTime && 
+            var hasActiveException = exceptions.Any(e =>
+                now >= e.StartExceptionDateTime &&
                 now <= e.EndExceptionDateTime);
-            
+
             if (hasActiveException)
                 return false;
         }
@@ -70,7 +70,7 @@ public class StationSelectVM : IStationSelectVM
             var now = DateTime.Now;
             var currentWeekday = (int)now.DayOfWeek;
             var todayHours = businessHours.FirstOrDefault(h => h.WeekdayId == currentWeekday);
-            
+
             if (todayHours == null)
                 return false; // No hours defined for today
 

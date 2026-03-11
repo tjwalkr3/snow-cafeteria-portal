@@ -11,7 +11,7 @@ public class LocationSelectVM : ILocationSelectVM
     private bool initializationFailed = false;
     private Dictionary<int, List<LocationBusinessHoursDto>> _businessHoursCache = new();
     private Dictionary<int, List<LocationExceptionHoursDto>> _exceptionsCache = new();
-    
+
     public List<LocationDto> Locations { get; private set; } = new();
 
     public LocationSelectVM(IApiMenuService menuService)
@@ -31,7 +31,7 @@ public class LocationSelectVM : ILocationSelectVM
                 // Fetch business hours and exceptions for this location
                 var businessHours = await _menuService.GetLocationBusinessHours(location.Id);
                 var exceptions = await _menuService.GetLocationExceptions(location.Id);
-                
+
                 _businessHoursCache[location.Id] = businessHours;
                 _exceptionsCache[location.Id] = exceptions;
 
@@ -56,10 +56,10 @@ public class LocationSelectVM : ILocationSelectVM
         if (_exceptionsCache.TryGetValue(locationId, out var exceptions))
         {
             var now = DateTime.Now;
-            var hasActiveException = exceptions.Any(e => 
-                now >= e.StartExceptionDateTime && 
+            var hasActiveException = exceptions.Any(e =>
+                now >= e.StartExceptionDateTime &&
                 now <= e.EndExceptionDateTime);
-            
+
             if (hasActiveException)
                 return false;
         }
@@ -71,7 +71,7 @@ public class LocationSelectVM : ILocationSelectVM
             var currentWeekday = (int)now.DayOfWeek;
             // Convert .NET DayOfWeek (0 = Sunday) to WeekDay enum if needed
             var todayHours = businessHours.FirstOrDefault(h => h.WeekdayId == currentWeekday);
-            
+
             if (todayHours == null)
                 return false; // No hours defined for today
 
