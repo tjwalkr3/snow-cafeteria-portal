@@ -16,9 +16,9 @@ public class FoodOptionTypeService : IFoodOptionTypeService
     public async Task<FoodOptionTypeDto> CreateFoodOptionType(FoodOptionTypeDto foodTypeDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.food_option_type (food_option_type_name, num_included, max_amount, food_option_price, entree_id, side_id)
-            VALUES (@FoodOptionTypeName, @NumIncluded, @MaxAmount, @FoodOptionPrice, @EntreeId, @SideId)
-            RETURNING id AS Id, food_option_type_name AS FoodOptionTypeName, num_included AS NumIncluded, max_amount AS MaxAmount, food_option_price AS FoodOptionPrice, entree_id AS EntreeId, side_id AS SideId;";
+            INSERT INTO cafeteria.food_option_type (food_option_type_name, required_amount, included_amount, max_amount, food_option_price, entree_id, side_id)
+            VALUES (@FoodOptionTypeName, @RequiredAmount, @IncludedAmount, @MaxAmount, @FoodOptionPrice, @EntreeId, @SideId)
+            RETURNING id AS Id, food_option_type_name AS FoodOptionTypeName, required_amount AS RequiredAmount, included_amount AS IncludedAmount, max_amount AS MaxAmount, food_option_price AS FoodOptionPrice, entree_id AS EntreeId, side_id AS SideId;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<FoodOptionTypeDto>(sql, foodTypeDto);
         return result ?? throw new InvalidOperationException("Failed to create food type");
@@ -30,7 +30,8 @@ public class FoodOptionTypeService : IFoodOptionTypeService
             SELECT 
                 id AS Id, 
                 food_option_type_name AS FoodOptionTypeName, 
-                num_included AS NumIncluded, 
+                required_amount AS RequiredAmount, 
+                included_amount AS IncludedAmount, 
                 max_amount AS MaxAmount, 
                 food_option_price AS FoodOptionPrice, 
                 entree_id AS EntreeId, 
@@ -48,7 +49,8 @@ public class FoodOptionTypeService : IFoodOptionTypeService
             SELECT 
                 id AS Id, 
                 food_option_type_name AS FoodOptionTypeName, 
-                num_included AS NumIncluded, 
+                required_amount AS RequiredAmount, 
+                included_amount AS IncludedAmount, 
                 max_amount AS MaxAmount, 
                 food_option_price AS FoodOptionPrice, 
                 entree_id AS EntreeId, 
@@ -66,7 +68,8 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         SELECT 
             id AS Id,
             food_option_type_name AS FoodOptionTypeName,
-            num_included AS NumIncluded,
+            required_amount AS RequiredAmount,
+            included_amount AS IncludedAmount,
             max_amount AS MaxAmount,
             food_option_price AS FoodOptionPrice,
             entree_id AS EntreeId,
@@ -83,7 +86,8 @@ public class FoodOptionTypeService : IFoodOptionTypeService
             SELECT
                 fot.id AS Id,
                 fot.food_option_type_name AS FoodOptionTypeName,
-                fot.num_included AS NumIncluded,
+                fot.required_amount AS RequiredAmount,
+                fot.included_amount AS IncludedAmount,
                 fot.max_amount AS MaxAmount,
                 fot.food_option_price AS FoodOptionPrice,
                 fot.entree_id AS EntreeId,
@@ -124,19 +128,21 @@ public class FoodOptionTypeService : IFoodOptionTypeService
         const string sql = @"
             UPDATE cafeteria.food_option_type
             SET food_option_type_name = @FoodOptionTypeName,
-                num_included = @NumIncluded,
+                required_amount = @RequiredAmount,
+                included_amount = @IncludedAmount,
                 max_amount = @MaxAmount,
                 food_option_price = @FoodOptionPrice,
                 entree_id = @EntreeId,
                 side_id = @SideId
             WHERE id = @id
-            RETURNING id AS Id, food_option_type_name AS FoodOptionTypeName, num_included AS NumIncluded, max_amount AS MaxAmount, food_option_price AS FoodOptionPrice, entree_id AS EntreeId, side_id AS SideId;";
+            RETURNING id AS Id, food_option_type_name AS FoodOptionTypeName, required_amount AS RequiredAmount, included_amount AS IncludedAmount, max_amount AS MaxAmount, food_option_price AS FoodOptionPrice, entree_id AS EntreeId, side_id AS SideId;";
 
         var parameters = new
         {
             id,
             foodTypeDto.FoodOptionTypeName,
-            foodTypeDto.NumIncluded,
+            foodTypeDto.RequiredAmount,
+            foodTypeDto.IncludedAmount,
             foodTypeDto.MaxAmount,
             foodTypeDto.FoodOptionPrice,
             foodTypeDto.EntreeId,
