@@ -59,7 +59,7 @@ public class FoodOptionStagingStore
 
         if (!StagedSelections[optionTypeId].Remove(name))
         {
-            if (!isCardOrder && StagedSelections[optionTypeId].Count >= optionType.OptionType.NumIncluded)
+            if (StagedSelections[optionTypeId].Count >= optionType.OptionType.MaxAmount)
                 return;
             StagedSelections[optionTypeId].Add(name);
         }
