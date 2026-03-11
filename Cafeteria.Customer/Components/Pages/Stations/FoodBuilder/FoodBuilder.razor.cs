@@ -73,12 +73,15 @@ public partial class FoodBuilder : ComponentBase
 
     private async Task SelectEntree(EntreeDto entree)
     {
-        State.SelectedEntree = entree;
-        State.ClearOptionsOnly();
         OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(entree.Id);
 
         if (OptionTypes.Any())
             StagingStore.Open(entree, OptionTypes, State);
+        else
+        {
+            State.SelectedEntree = entree;
+            State.ClearOptionsOnly();
+        }
 
         StateHasChanged();
     }
