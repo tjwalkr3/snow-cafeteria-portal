@@ -84,19 +84,5 @@ public class CartSubmitter
                     await _cartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, option, optionType.OptionType);
             }
         }
-
-        if (state.SelectedToppings.Any())
-        {
-            var toppingsOptionType = optionTypes.FirstOrDefault(ot =>
-                ot.OptionType.FoodOptionTypeName == "Pizza Toppings" ||
-                ot.Options.Any(o => state.SelectedToppings.Contains(o.FoodOptionName)));
-
-            foreach (var topping in state.SelectedToppings)
-            {
-                var toppingOption = allEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
-                if (toppingOption != null && toppingsOptionType != null)
-                    await _cartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, toppingOption, toppingsOptionType.OptionType);
-            }
-        }
     }
 }
