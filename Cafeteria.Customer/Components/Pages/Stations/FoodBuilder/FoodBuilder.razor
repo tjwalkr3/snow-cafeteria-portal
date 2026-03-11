@@ -59,7 +59,7 @@ else
                           OnTabSelected="@SetActiveTab" />
         }
 
-        <div class="content-area">
+        <div class="content-area @(IsCardOrder ? "card-tab-panel" : "")">
             @if (!IsCardOrder)
             {
                 <p class="step-hint text-muted mb-3">@GetStepHint()</p>

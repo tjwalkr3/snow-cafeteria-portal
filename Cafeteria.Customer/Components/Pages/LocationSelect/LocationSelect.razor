@@ -32,7 +32,7 @@
                 <div class="col">
                     <button class="card-link text-decoration-none d-block w-100 p-0 border-0 bg-transparent"
                             @onclick="() => HandleLocationSelected(location.Id)">
-                        <div class="card h-100 shadow-sm position-relative @(CurrentLocationId.HasValue && CurrentLocationId.Value == location.Id ? "card-selected" : "border-0")">
+                        <div class="card h-100 selection-card position-relative @(CurrentLocationId.HasValue && CurrentLocationId.Value == location.Id ? "card-selected" : "")">
                             @if (CurrentLocationId.HasValue && CurrentLocationId.Value == location.Id)
                             {
                                 <span class="card-selected-badge">Selected</span>
