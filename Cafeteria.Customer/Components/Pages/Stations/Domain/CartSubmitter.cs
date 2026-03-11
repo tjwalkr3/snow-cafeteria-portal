@@ -61,7 +61,7 @@ public class CartSubmitter
 
         foreach (var optionType in optionTypes)
         {
-            if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+            if (optionType.OptionType.MaxAmount > 1)
             {
                 if (!state.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var selections))
                     continue;

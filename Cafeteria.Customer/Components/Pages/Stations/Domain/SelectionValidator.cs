@@ -31,7 +31,7 @@ public static class SelectionValidator
     {
         foreach (var optionType in optionTypes)
         {
-            if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+            if (optionType.OptionType.MaxAmount > 1)
             {
                 var selected = state.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var list)
                     ? list

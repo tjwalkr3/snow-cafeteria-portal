@@ -1,4 +1,3 @@
-@using Cafeteria.Customer.Components.Pages.Stations.Domain
 @using Cafeteria.Shared.DTOs.Menu
 
 <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
@@ -14,7 +13,7 @@
                 {
                     var optionTypeWithOptions = optTypeList[oi];
                     var optType = optionTypeWithOptions.OptionType;
-                    var isMulti = OptionTypeHelper.IsMultiSelectOptionType(optionTypeWithOptions);
+                    var isMulti = optType.MaxAmount > 1;
                     var stagedForType = StagingStore.StagedSelections.GetValueOrDefault(optType.Id) ?? new HashSet<string>();
                     var stagedCount = stagedForType.Count;
                     var extraCost = stagedCount > optType.NumIncluded
