@@ -1,27 +1,48 @@
-.category-nav-card {
-    flex: 1;
-    min-width: 140px;
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    cursor: pointer;
-    position: relative;
+.category-nav {
+    border-bottom: 2px solid #1e366c;
 }
 
-    .category-nav-card.active {
-        border-color: #1e366c;
-        background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
-        box-shadow: 0 4px 16px rgba(30, 54, 108, 0.15);
-    }
+.category-nav-card {
+    flex: 1;
+    min-width: 120px;
+    background: #edf0f7;
+    border: 1px solid #c5cad8;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    position: relative;
+    margin-right: 4px;
+    padding: 10px 14px;
+    transition: background 0.15s ease;
+}
+
+.category-nav-card:last-child {
+    margin-right: 0;
+}
+
+.category-nav-card:hover:not(.active) {
+    background: #dde3f0;
+}
+
+.category-nav-card.active {
+    background: white;
+    border-color: #1e366c;
+    border-top: 3px solid #1e366c;
+    margin-bottom: -2px;
+    z-index: 1;
+}
 
 .category-nav-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: #f0f4f8;
-    font-size: 1.25rem;
-    color: #6c757d;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: #d6dcea;
+    font-size: 1rem;
+    color: #4a5568;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .category-nav-card.active .category-nav-icon {
@@ -30,20 +51,24 @@
 }
 
 .category-nav-content {
-    gap: 0.15rem;
+    gap: 0.1rem;
     min-width: 0;
 }
 
 .category-nav-title {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    color: #1e366c;
+    color: #374151;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
 
+.category-nav-card.active .category-nav-title {
+    color: #1e366c;
+}
+
 .category-nav-selection {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #6c757d;
     white-space: nowrap;
     overflow: hidden;
@@ -52,10 +77,25 @@
 
 .category-nav-card.has-selection .category-nav-selection {
     font-weight: 500;
+    color: #1e366c;
 }
 
 @media (max-width: 576px) {
     .category-nav-card {
-        min-width: 100%;
+        min-width: 0;
+        border-radius: 0;
+        border-bottom: 1px solid #c5cad8;
+        border-right: none;
+        margin-right: 0;
+    }
+
+    .category-nav-card:last-child {
+        border-right: none;
+    }
+
+    .category-nav-card.active {
+        border-left: 3px solid #1e366c;
+        border-top: 1px solid #1e366c;
+        margin-bottom: 0;
     }
 }

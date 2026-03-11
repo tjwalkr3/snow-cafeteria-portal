@@ -45,3 +45,15 @@
     font-size: 0.88rem;
     font-weight: 500;
 }
+
+.content-area {
+    padding-bottom: 100px;
+}
+
+.card-tab-panel {
+    background: white;
+    border: 1px solid #1e366c;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 1.25rem;
+}
