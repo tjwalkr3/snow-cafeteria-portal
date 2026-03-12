@@ -41,6 +41,25 @@ public class StationSelectVMTests
         _mockMenuService.Setup(m => m.GetStationsByLocation(1))
             .ReturnsAsync(expectedStations);
 
+        // Mock business hours for all days of the week (1-7 where 7 = Sunday)
+        // Set hours as 00:00 to 23:59 to ensure test passes regardless of when it runs
+        var businessHours = Enumerable.Range(1, 7)
+            .Select(weekday => new StationBusinessHoursDto
+            {
+                Id = weekday,
+                StationId = 0,
+                WeekdayId = weekday,
+                OpenTime = new TimeOnly(0, 0),
+                CloseTime = new TimeOnly(23, 59)
+            })
+            .ToList();
+
+        _mockMenuService.Setup(m => m.GetStationBusinessHours(It.IsAny<int>()))
+            .ReturnsAsync(businessHours);
+
+        _mockMenuService.Setup(m => m.GetStationExceptions(It.IsAny<int>()))
+            .ReturnsAsync(new List<StationExceptionHoursDto>());
+
         var stationSelectVM = new StationSelectVM(_mockMenuService.Object);
 
         await stationSelectVM.InitializeStations(1);

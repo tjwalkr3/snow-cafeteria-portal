@@ -7,4 +7,5 @@ public interface IStationSelectVM
     List<StationDto>? Stations { get; }
     Task InitializeStations(int locationId);
     bool ErrorOccurredWhileParsingSelectedLocation();
+    Task<bool> IsStationOpenNow(int stationId);
 }
