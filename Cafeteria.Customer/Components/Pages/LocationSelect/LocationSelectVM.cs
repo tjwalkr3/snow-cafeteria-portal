@@ -68,12 +68,12 @@ public class LocationSelectVM : ILocationSelectVM
         if (_businessHoursCache.TryGetValue(locationId, out var businessHours))
         {
             var now = DateTime.Now;
-            
+
             // Convert .NET DayOfWeek (0 = Sunday) to custom WeekDay enum (Sunday = 7)
             int currentWeekday = (int)now.DayOfWeek;
             if (currentWeekday == 0) // Sunday in .NET is 0, but in WeekDay enum it's 7
                 currentWeekday = 7;
-            
+
             var todayHours = businessHours.FirstOrDefault(h => h.WeekdayId == currentWeekday);
 
             if (todayHours == null)
