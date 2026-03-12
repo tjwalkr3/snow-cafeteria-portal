@@ -39,12 +39,19 @@ public partial class LocationSelect : ComponentBase
     public async Task ConfirmLocationChange()
     {
         if (!PendingLocationId.HasValue) return;
+        // Preserve the payment method when changing locations
+        var currentOrder = await CartService.GetOrder("order");
+        bool preservedIsCardOrder = currentOrder?.IsCardOrder ?? false;
+
         await CartService.ClearOrder("order");
         var location = LocationSelectVM.Locations.FirstOrDefault(l => l.Id == PendingLocationId.Value);
         if (location == null) return;
+
         CurrentLocationId = PendingLocationId.Value;
         PendingLocationId = null;
         await CartService.SetLocation("order", location);
+        // Restore the payment method
+        await CartService.SetIsCardOrder("order", preservedIsCardOrder);
         Navigation.NavigateTo("/station-select");
     }
 
