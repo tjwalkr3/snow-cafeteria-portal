@@ -2,6 +2,7 @@
 using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.Enums;
+using Cafeteria.Shared.Extensions;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
@@ -88,7 +89,7 @@ public class LocationSelectVM : ILocationSelectVM
 
     public bool ErrorOccurred()
     {
-        return Locations == null || initializationFailed;
+        return Locations == null || Locations.Count == 0 || initializationFailed;
     }
 }
 

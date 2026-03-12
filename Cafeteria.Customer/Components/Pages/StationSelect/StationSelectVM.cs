@@ -1,6 +1,7 @@
 ﻿using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Services.Menu;
+using Cafeteria.Shared.Extensions;
 
 namespace Cafeteria.Customer.Components.Pages.StationSelect;
 
@@ -68,7 +69,12 @@ public class StationSelectVM : IStationSelectVM
         if (_businessHoursCache.TryGetValue(stationId, out var businessHours))
         {
             var now = DateTime.Now;
-            var currentWeekday = (int)now.DayOfWeek;
+
+            // Convert .NET DayOfWeek (0 = Sunday) to custom WeekDay enum (Sunday = 7)
+            int currentWeekday = (int)now.DayOfWeek;
+            if (currentWeekday == 0) // Sunday in .NET is 0, but in WeekDay enum it's 7
+                currentWeekday = 7;
+
             var todayHours = businessHours.FirstOrDefault(h => h.WeekdayId == currentWeekday);
 
             if (todayHours == null)
