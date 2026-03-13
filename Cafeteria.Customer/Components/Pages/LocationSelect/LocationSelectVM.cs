@@ -25,6 +25,13 @@ public class LocationSelectVM : ILocationSelectVM
         try
         {
             var allLocations = await _menuService.GetAllLocations();
+
+            if (allLocations == null || !allLocations.Any())
+            {
+                initializationFailed = true;
+                return;
+            }
+
             var openLocations = new List<LocationDto>();
 
             foreach (var location in allLocations)
