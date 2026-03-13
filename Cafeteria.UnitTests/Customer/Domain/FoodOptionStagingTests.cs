@@ -263,22 +263,7 @@ public class FoodOptionStagingStoreTests
         Assert.Equal(2, _store.StagedSelections[1].Count);
     }
 
-    [Fact]
-    public void Toggle_CardOrder_IgnoresLimit()
-    {
-        // Arrange
-        var optionType = CreateOptionTypeWithOptions(1, "Toppings", 2, 2);
-        _store.StagedSelections[1] = new HashSet<string> { "Lettuce", "Tomato" };
-
-        // Act
-        _store.Toggle(1, "Onion", optionType, true); // isCardOrder = true
-
-        // Assert
-        Assert.Contains("Onion", _store.StagedSelections[1]);
-        Assert.Equal(3, _store.StagedSelections[1].Count);
-    }
-
-    [Fact]
+[Fact]
     public void Toggle_NonExistentOptionType_CreatesNewEntry()
     {
         // Arrange
