@@ -205,42 +205,6 @@ public class CartSubmitterTests
     }
 
     [Fact]
-    public async Task SubmitAsync_WithToppings_AddsToppingOptions()
-    {
-        // Arrange
-        var entree = new EntreeDto { Id = 1, EntreeName = "Pizza", EntreePrice = 12.99m };
-        var toppingsOptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Pizza Toppings" };
-        var topping1 = new FoodOptionDto { Id = 20, FoodOptionName = "Pepperoni" };
-        var topping2 = new FoodOptionDto { Id = 21, FoodOptionName = "Mushroom" };
-
-        var state = new SelectionState { SelectedEntree = entree };
-        state.SelectedToppings.Add("Pepperoni");
-        state.SelectedToppings.Add("Mushroom");
-
-        var optionTypes = new List<FoodOptionTypeWithOptionsDto>
-        {
-            new FoodOptionTypeWithOptionsDto
-            {
-                OptionType = toppingsOptionType,
-                Options = new List<FoodOptionDto> { topping1, topping2 }
-            }
-        };
-
-        var allEntreeOptions = new List<FoodOptionDto> { topping1, topping2 };
-
-        // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes, allEntreeOptions);
-
-        // Assert
-        _mockCartService.Verify(
-            x => x.AddEntreeOption(CART_KEY, entree.Id, topping1, It.IsAny<FoodOptionTypeDto>()),
-            Times.Once);
-        _mockCartService.Verify(
-            x => x.AddEntreeOption(CART_KEY, entree.Id, topping2, It.IsAny<FoodOptionTypeDto>()),
-            Times.Once);
-    }
-
-    [Fact]
     public async Task SubmitAsync_WithNonExistentOption_SkipsOption()
     {
         // Arrange
@@ -419,37 +383,6 @@ public class CartSubmitterTests
 
         // Assert
         _mockCartService.Verify(x => x.AddEntree(CART_KEY, entree), Times.Once);
-        _mockCartService.Verify(
-            x => x.AddEntreeOption(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<FoodOptionDto>(), It.IsAny<FoodOptionTypeDto>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task SubmitAsync_WithToppingButNoMatchingOptionType_SkipsTopping()
-    {
-        // Arrange
-        var entree = new EntreeDto { Id = 1, EntreeName = "Pizza", EntreePrice = 12.99m };
-        var topping = new FoodOptionDto { Id = 20, FoodOptionName = "Pepperoni" };
-
-        var state = new SelectionState { SelectedEntree = entree };
-        state.SelectedToppings.Add("Pepperoni");
-
-        var optionTypes = new List<FoodOptionTypeWithOptionsDto>
-        {
-            new FoodOptionTypeWithOptionsDto
-            {
-                OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Other" },
-                Options = new List<FoodOptionDto>()
-            }
-        };
-
-        var allEntreeOptions = new List<FoodOptionDto> { topping };
-
-        // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes, allEntreeOptions);
-
-        // Assert
-        // Should not add the topping option because no matching option type was found
         _mockCartService.Verify(
             x => x.AddEntreeOption(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<FoodOptionDto>(), It.IsAny<FoodOptionTypeDto>()),
             Times.Never);

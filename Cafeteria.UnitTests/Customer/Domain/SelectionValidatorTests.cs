@@ -33,7 +33,7 @@ public class SelectionValidatorTests
             {
                 Id = id,
                 FoodOptionTypeName = name,
-                NumIncluded = numIncluded,
+                RequiredAmount = numIncluded,
                 MaxAmount = maxAmount
             },
             Options = options.ToList()
@@ -50,7 +50,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true);
 
         // Assert
         Assert.True(result);
@@ -64,7 +64,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true);
 
         // Assert
         Assert.True(result);
@@ -78,7 +78,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true);
 
         // Assert
         Assert.True(result);
@@ -96,7 +96,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true);
 
         // Assert
         Assert.True(result);
@@ -110,7 +110,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true);
 
         // Assert
         Assert.False(result);
@@ -128,7 +128,7 @@ public class SelectionValidatorTests
         };
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: true);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true);
 
         // Assert
         Assert.False(result); // Entree started but options not complete
@@ -151,7 +151,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false);
 
         // Assert
         Assert.True(result);
@@ -169,7 +169,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false);
 
         // Assert
         Assert.False(result);
@@ -187,7 +187,7 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false);
 
         // Assert
         Assert.False(result);
@@ -205,74 +205,10 @@ public class SelectionValidatorTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false, requiresOptionsComplete: false);
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false);
 
         // Assert
         Assert.False(result);
-    }
-
-    #endregion
-
-    #region IsValid - Toppings Tests
-
-    [Fact]
-    public void IsValid_WithMinimumToppingsRequired_EnoughToppings_ReturnsTrue()
-    {
-        // Arrange
-        var state = new SelectionState();
-        state.SelectedToppings.Add("Pepperoni");
-        state.SelectedToppings.Add("Mushroom");
-        var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
-
-        // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false, minimumToppings: 2);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsValid_WithMinimumToppingsRequired_NotEnoughToppings_ReturnsFalse()
-    {
-        // Arrange
-        var state = new SelectionState();
-        state.SelectedToppings.Add("Pepperoni");
-        var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
-
-        // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false, minimumToppings: 2);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsValid_WithMinimumToppingsRequired_NoToppings_ReturnsFalse()
-    {
-        // Arrange
-        var state = new SelectionState();
-        var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
-
-        // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false, minimumToppings: 1);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsValid_WithMinimumToppingsStartedIncomplete_ReturnsFalse()
-    {
-        // Arrange
-        var state = new SelectionState();
-        state.SelectedToppings.Add("Pepperoni");
-        var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
-
-        // Act
-        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: true, requiresOptionsComplete: false, minimumToppings: 3);
-
-        // Assert
-        Assert.False(result); // Toppings started but not enough
     }
 
     #endregion

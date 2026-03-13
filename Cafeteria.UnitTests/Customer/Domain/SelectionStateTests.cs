@@ -38,7 +38,6 @@ public class SelectionStateTests
         _state.SelectedDrink = CreateDrink();
         _state.SingleSelectOptions[1] = "Extra Cheese";
         _state.MultiSelectOptions[1] = new List<string> { "Lettuce", "Tomato" };
-        _state.SelectedToppings.Add("Pepperoni");
         _state.SideOptions[2] = new HashSet<string> { "Extra Salt" };
 
         // Act
@@ -50,7 +49,6 @@ public class SelectionStateTests
         Assert.Null(_state.SelectedDrink);
         Assert.Empty(_state.SingleSelectOptions);
         Assert.Empty(_state.MultiSelectOptions);
-        Assert.Empty(_state.SelectedToppings);
         Assert.Empty(_state.SideOptions);
     }
 
@@ -122,20 +120,6 @@ public class SelectionStateTests
     }
 
     [Fact]
-    public void Clear_WithOnlyToppings_ClearsToppings()
-    {
-        // Arrange
-        _state.SelectedToppings.Add("Pepperoni");
-        _state.SelectedToppings.Add("Mushroom");
-
-        // Act
-        _state.Clear();
-
-        // Assert
-        Assert.Empty(_state.SelectedToppings);
-    }
-
-    [Fact]
     public void Clear_WithOnlySideOptions_ClearsSideOptions()
     {
         // Arrange
@@ -161,7 +145,6 @@ public class SelectionStateTests
         Assert.Null(_state.SelectedDrink);
         Assert.Empty(_state.SingleSelectOptions);
         Assert.Empty(_state.MultiSelectOptions);
-        Assert.Empty(_state.SelectedToppings);
         Assert.Empty(_state.SideOptions);
     }
 
@@ -181,7 +164,6 @@ public class SelectionStateTests
         _state.SelectedDrink = drink;
         _state.SingleSelectOptions[1] = "Extra Cheese";
         _state.MultiSelectOptions[1] = new List<string> { "Lettuce", "Tomato" };
-        _state.SelectedToppings.Add("Pepperoni");
         _state.SideOptions[2] = new HashSet<string> { "Extra Salt" };
 
         // Act
@@ -193,7 +175,6 @@ public class SelectionStateTests
         Assert.Equal(drink, _state.SelectedDrink);
         Assert.Empty(_state.SingleSelectOptions);
         Assert.Empty(_state.MultiSelectOptions);
-        Assert.Empty(_state.SelectedToppings);
         // SideOptions is NOT cleared by ClearOptionsOnly()
         Assert.NotEmpty(_state.SideOptions);
     }
@@ -226,21 +207,6 @@ public class SelectionStateTests
         // Assert
         Assert.NotNull(_state.SelectedSide);
         Assert.Empty(_state.MultiSelectOptions);
-    }
-
-    [Fact]
-    public void ClearOptionsOnly_WithOnlyToppings_ClearsToppings()
-    {
-        // Arrange
-        _state.SelectedDrink = CreateDrink();
-        _state.SelectedToppings.Add("Pepperoni");
-
-        // Act
-        _state.ClearOptionsOnly();
-
-        // Assert
-        Assert.NotNull(_state.SelectedDrink);
-        Assert.Empty(_state.SelectedToppings);
     }
 
     [Fact]
@@ -381,19 +347,6 @@ public class SelectionStateTests
         Assert.False(result);
     }
 
-    [Fact]
-    public void HasAnySelection_WithOnlyToppings_ReturnsFalse()
-    {
-        // Arrange
-        _state.SelectedToppings.Add("Pepperoni");
-
-        // Act
-        var result = _state.HasAnySelection();
-
-        // Assert
-        Assert.False(result);
-    }
-
     #endregion
 
     #region GetTotalSelectionCount Tests
@@ -517,21 +470,6 @@ public class SelectionStateTests
 
         // Assert
         Assert.Equal(1, count); // Options don't count
-    }
-
-    [Fact]
-    public void GetTotalSelectionCount_WithToppings_StillCountsOnlyMainItems()
-    {
-        // Arrange
-        _state.SelectedEntree = CreateEntree();
-        _state.SelectedToppings.Add("Pepperoni");
-        _state.SelectedToppings.Add("Mushroom");
-
-        // Act
-        var count = _state.GetTotalSelectionCount();
-
-        // Assert
-        Assert.Equal(1, count); // Toppings don't count
     }
 
     #endregion

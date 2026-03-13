@@ -40,7 +40,7 @@ public class FoodOptionStagingStoreTests
         {
             Id = id,
             FoodOptionTypeName = name,
-            NumIncluded = numIncluded,
+            IncludedAmount = numIncluded,
             MaxAmount = maxAmount
         };
     }
