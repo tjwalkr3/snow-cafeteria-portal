@@ -148,7 +148,7 @@ public class CartSubmitterTests
         // Arrange
         var entree = new EntreeDto { Id = 1, EntreeName = "Breakfast", EntreePrice = 6.99m };
         var optionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Eggs", MaxAmount = 1 };
-        var option = new FoodOptionDto { Id = 10, FoodOptionName = "Scrambled"};
+        var option = new FoodOptionDto { Id = 10, FoodOptionName = "Scrambled" };
 
         var state = new SelectionState { SelectedEntree = entree };
         state.SingleSelectOptions[optionType.Id] = "Scrambled";
@@ -300,7 +300,7 @@ public class CartSubmitterTests
         // Update the state with side options for the actual submit
         var stateWithOptions = new SelectionState { SelectedSide = side };
         stateWithOptions.SideOptions[sideOptionType.Id] = new HashSet<string> { "Large" };
-        
+
         await _cartSubmitter.SubmitAsync(stateWithOptions, new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), sideOptionTypes);
 
         _mockCartService.Verify(

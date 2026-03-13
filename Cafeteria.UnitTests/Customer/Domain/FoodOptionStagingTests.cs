@@ -36,10 +36,10 @@ public class FoodOptionStagingStoreTests
 
     private static FoodOptionTypeDto CreateOptionType(int id = 1, string name = "Cheese", short numIncluded = 1, int maxAmount = 1)
     {
-        return new FoodOptionTypeDto 
-        { 
-            Id = id, 
-            FoodOptionTypeName = name, 
+        return new FoodOptionTypeDto
+        {
+            Id = id,
+            FoodOptionTypeName = name,
             NumIncluded = numIncluded,
             MaxAmount = maxAmount
         };
