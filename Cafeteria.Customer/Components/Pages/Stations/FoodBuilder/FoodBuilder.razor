@@ -73,13 +73,12 @@ else
             {
                 var allSelections = State.SingleSelectOptions.Values
                     .Concat(State.MultiSelectOptions.Values.SelectMany(v => v)).ToList();
-                var totalRequired = OptionTypes.Sum(o => o.OptionType.NumIncluded);
                 <EntreePanel Entrees="@Entrees"
                              SelectedEntree="@State.SelectedEntree"
                              IsCardOrder="@IsCardOrder"
                              SelectedBadges="@allSelections"
-                             SelectionCount="@allSelections.Count"
-                             RequiredCount="@totalRequired"
+                             Quantity="@_entreeQuantity"
+                             OnQuantityChanged="@ChangeEntreeQuantity"
                              OnEntreeSelected="@SelectEntree" />
             }
 
@@ -88,6 +87,8 @@ else
                 <SidePanel Sides="@Sides"
                            SelectedSide="@State.SelectedSide"
                            IsCardOrder="@IsCardOrder"
+                           Quantity="@_sideQuantity"
+                           OnQuantityChanged="@ChangeSideQuantity"
                            OnSideSelected="@SelectSide"
                            OnSideWithOptionsSelected="@SelectSideWithOptions" />
             }
@@ -97,6 +98,8 @@ else
                 <DrinkPanel Drinks="@Drinks"
                             SelectedDrink="@State.SelectedDrink"
                             IsCardOrder="@IsCardOrder"
+                            Quantity="@_drinkQuantity"
+                            OnQuantityChanged="@ChangeDrinkQuantity"
                             OnDrinkSelected="@SelectDrink" />
             }
         </div>

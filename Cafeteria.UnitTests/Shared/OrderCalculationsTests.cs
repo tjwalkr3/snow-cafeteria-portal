@@ -25,12 +25,12 @@ public class OrderCalculationsTests
     }
 
     [Fact]
-    public void CalculateOptionsCost_AllWithinNumIncluded_ReturnsZero()
+    public void CalculateOptionsCost_AllWithinIncludedAmount_ReturnsZero()
     {
-        // NumIncluded is 2, only 1 selected — no charge
+        // IncludedAmount is 2, only 1 selected — no charge
         var options = new List<SelectedFoodOption>
         {
-            MakeFoodOption(optionTypeId: 1, numIncluded: 2, pricePerExtra: 0.50m)
+            MakeFoodOption(optionTypeId: 1, includedAmount: 2, pricePerExtra: 0.50m)
         };
 
         var result = OrderCalculations.CalculateOptionsCost(options);
@@ -38,14 +38,14 @@ public class OrderCalculationsTests
     }
 
     [Fact]
-    public void CalculateOptionsCost_ExceedsNumIncluded_ChargesForExtras()
+    public void CalculateOptionsCost_ExceedsIncludedAmount_ChargesForExtras()
     {
-        // NumIncluded is 1, selected 3 — 2 extras charged at $0.50 each
+        // IncludedAmount is 1, selected 3 — 2 extras charged at $0.50 each
         var options = new List<SelectedFoodOption>
         {
-            MakeFoodOption(optionTypeId: 1, numIncluded: 1, pricePerExtra: 0.50m),
-            MakeFoodOption(optionTypeId: 1, numIncluded: 1, pricePerExtra: 0.50m),
-            MakeFoodOption(optionTypeId: 1, numIncluded: 1, pricePerExtra: 0.50m)
+            MakeFoodOption(optionTypeId: 1, includedAmount: 1, pricePerExtra: 0.50m),
+            MakeFoodOption(optionTypeId: 1, includedAmount: 1, pricePerExtra: 0.50m),
+            MakeFoodOption(optionTypeId: 1, includedAmount: 1, pricePerExtra: 0.50m)
         };
 
         var result = OrderCalculations.CalculateOptionsCost(options);
@@ -53,13 +53,13 @@ public class OrderCalculationsTests
     }
 
     [Fact]
-    public void CalculateOptionsCost_ExactlyNumIncluded_ReturnsZero()
+    public void CalculateOptionsCost_ExactlyIncludedAmount_ReturnsZero()
     {
-        // NumIncluded is 2, selected exactly 2 — no charge
+        // IncludedAmount is 2, selected exactly 2 — no charge
         var options = new List<SelectedFoodOption>
         {
-            MakeFoodOption(optionTypeId: 1, numIncluded: 2, pricePerExtra: 1.00m),
-            MakeFoodOption(optionTypeId: 1, numIncluded: 2, pricePerExtra: 1.00m)
+            MakeFoodOption(optionTypeId: 1, includedAmount: 2, pricePerExtra: 1.00m),
+            MakeFoodOption(optionTypeId: 1, includedAmount: 2, pricePerExtra: 1.00m)
         };
 
         var result = OrderCalculations.CalculateOptionsCost(options);
@@ -73,11 +73,11 @@ public class OrderCalculationsTests
         // Type 2: 2 selected, 0 included → 2 extras × $0.75 = $1.50
         var options = new List<SelectedFoodOption>
         {
-            MakeFoodOption(optionTypeId: 1, numIncluded: 1, pricePerExtra: 1.00m),
-            MakeFoodOption(optionTypeId: 1, numIncluded: 1, pricePerExtra: 1.00m),
-            MakeFoodOption(optionTypeId: 1, numIncluded: 1, pricePerExtra: 1.00m),
-            MakeFoodOption(optionTypeId: 2, numIncluded: 0, pricePerExtra: 0.75m),
-            MakeFoodOption(optionTypeId: 2, numIncluded: 0, pricePerExtra: 0.75m)
+            MakeFoodOption(optionTypeId: 1, includedAmount: 1, pricePerExtra: 1.00m),
+            MakeFoodOption(optionTypeId: 1, includedAmount: 1, pricePerExtra: 1.00m),
+            MakeFoodOption(optionTypeId: 1, includedAmount: 1, pricePerExtra: 1.00m),
+            MakeFoodOption(optionTypeId: 2, includedAmount: 0, pricePerExtra: 0.75m),
+            MakeFoodOption(optionTypeId: 2, includedAmount: 0, pricePerExtra: 0.75m)
         };
 
         var result = OrderCalculations.CalculateOptionsCost(options);
@@ -137,8 +137,8 @@ public class OrderCalculationsTests
             Entree = new EntreeDto { EntreePrice = 8.00m, StationId = 1, EntreeName = "Pasta" },
             SelectedOptions =
             [
-                MakeFoodOption(optionTypeId: 1, numIncluded: 0, pricePerExtra: 0.50m),
-                MakeFoodOption(optionTypeId: 1, numIncluded: 0, pricePerExtra: 0.50m)
+                MakeFoodOption(optionTypeId: 1, includedAmount: 0, pricePerExtra: 0.50m),
+                MakeFoodOption(optionTypeId: 1, includedAmount: 0, pricePerExtra: 0.50m)
             ]
         };
 
@@ -157,7 +157,7 @@ public class OrderCalculationsTests
             Side = new SideDto { SidePrice = 2.00m, StationId = 1, SideName = "Salad" },
             SelectedOptions =
             [
-                MakeFoodOption(optionTypeId: 1, numIncluded: 0, pricePerExtra: 1.00m)
+                MakeFoodOption(optionTypeId: 1, includedAmount: 0, pricePerExtra: 1.00m)
             ]
         };
 
@@ -262,7 +262,7 @@ public class OrderCalculationsTests
     // Helpers
     // ---------------------------------------------------------------------------
 
-    private static SelectedFoodOption MakeFoodOption(int optionTypeId, int numIncluded, decimal pricePerExtra)
+    private static SelectedFoodOption MakeFoodOption(int optionTypeId, int includedAmount, decimal pricePerExtra)
     {
         return new SelectedFoodOption
         {
@@ -270,7 +270,7 @@ public class OrderCalculationsTests
             OptionType = new FoodOptionTypeDto
             {
                 Id = optionTypeId,
-                NumIncluded = (short)numIncluded,
+                IncludedAmount = includedAmount,
                 FoodOptionPrice = pricePerExtra,
                 FoodOptionTypeName = "Type"
             }

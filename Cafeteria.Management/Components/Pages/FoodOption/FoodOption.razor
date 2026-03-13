@@ -27,7 +27,8 @@
                 <tr @key="foodType.Id">
                     <td>@foodType.FoodOptionTypeName</td>
                     <td>@foodType.FoodOptionPrice</td>
-                    <td>@foodType.NumIncluded</td>
+                    <td>@foodType.RequiredAmount</td>
+                    <td>@foodType.IncludedAmount</td>
                     <td>@foodType.MaxAmount</td>
                     <td>
                         <button type="button" @onclick="() => ShowEditTypeModal(foodType)">Edit</button>

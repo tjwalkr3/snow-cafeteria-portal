@@ -66,11 +66,13 @@ public partial class FoodType : ComponentBase
         {
             Id = foodType.Id,
             FoodOptionTypeName = foodType.FoodOptionTypeName,
-            NumIncluded = foodType.NumIncluded,
+            RequiredAmount = foodType.RequiredAmount,
+            IncludedAmount = foodType.IncludedAmount,
             MaxAmount = foodType.MaxAmount,
             FoodOptionPrice = foodType.FoodOptionPrice,
             EntreeId = foodType.EntreeId,
-            SideId = foodType.SideId
+            SideId = foodType.SideId,
+            IconId = foodType.IconId
         };
         ShowModal = true;
     }

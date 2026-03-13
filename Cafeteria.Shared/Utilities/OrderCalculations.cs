@@ -18,7 +18,7 @@ public static class OrderCalculations
         {
             var optionType = group.First().OptionType;
             var selectedCount = group.Count();
-            var chargeableCount = Math.Max(0, selectedCount - optionType.NumIncluded);
+            var chargeableCount = Math.Max(0, selectedCount - optionType.IncludedAmount);
             cost += chargeableCount * optionType.FoodOptionPrice;
         }
 

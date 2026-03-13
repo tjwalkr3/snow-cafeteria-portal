@@ -61,7 +61,7 @@ public class CartSubmitter
 
         foreach (var optionType in optionTypes)
         {
-            if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+            if (optionType.OptionType.MaxAmount > 1)
             {
                 if (!state.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var selections))
                     continue;
@@ -82,20 +82,6 @@ public class CartSubmitter
                 var option = optionType.Options.FirstOrDefault(o => o.FoodOptionName == name);
                 if (option != null)
                     await _cartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, option, optionType.OptionType);
-            }
-        }
-
-        if (state.SelectedToppings.Any())
-        {
-            var toppingsOptionType = optionTypes.FirstOrDefault(ot =>
-                ot.OptionType.FoodOptionTypeName == "Pizza Toppings" ||
-                ot.Options.Any(o => state.SelectedToppings.Contains(o.FoodOptionName)));
-
-            foreach (var topping in state.SelectedToppings)
-            {
-                var toppingOption = allEntreeOptions.FirstOrDefault(o => o.FoodOptionName == topping);
-                if (toppingOption != null && toppingsOptionType != null)
-                    await _cartService.AddEntreeOption(CART_KEY, state.SelectedEntree!.Id, toppingOption, toppingsOptionType.OptionType);
             }
         }
     }
