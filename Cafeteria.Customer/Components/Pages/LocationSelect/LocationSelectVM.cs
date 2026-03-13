@@ -89,7 +89,7 @@ public class LocationSelectVM : ILocationSelectVM
 
     public bool ErrorOccurred()
     {
-        return Locations == null || Locations.Count == 0 || initializationFailed;
+        return initializationFailed;
     }
 }
 

@@ -34,6 +34,9 @@ public partial class FoodBuilder : ComponentBase
     private bool IsCardOrder { get; set; }
 
     private bool _isLoading = true;
+    private int _entreeQuantity = 0;
+    private int _sideQuantity = 0;
+    private int _drinkQuantity = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -75,6 +78,7 @@ public partial class FoodBuilder : ComponentBase
     {
         State.SelectedEntree = entree;
         State.ClearOptionsOnly();
+        _entreeQuantity = 1;
         OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(entree.Id);
 
         if (OptionTypes.Any())
@@ -99,18 +103,48 @@ public partial class FoodBuilder : ComponentBase
     private void SelectSide(SideDto side)
     {
         State.SelectedSide = side;
+        _sideQuantity = 1;
         StateHasChanged();
     }
 
     private void SelectSideWithOptions(SideWithOptionsDto side)
     {
         StagingStore.OpenForSide(side, State);
+        _sideQuantity = 1;
         StateHasChanged();
     }
 
     private void SelectDrink(DrinkDto drink)
     {
         State.SelectedDrink = drink;
+        _drinkQuantity = 1;
+        StateHasChanged();
+    }
+
+    private void ChangeEntreeQuantity(int newQty)
+    {
+        _entreeQuantity = Math.Max(0, newQty);
+        if (_entreeQuantity == 0)
+        {
+            State.SelectedEntree = null;
+            State.ClearOptionsOnly();
+        }
+        StateHasChanged();
+    }
+
+    private void ChangeSideQuantity(int newQty)
+    {
+        _sideQuantity = Math.Max(0, newQty);
+        if (_sideQuantity == 0)
+            State.SelectedSide = null;
+        StateHasChanged();
+    }
+
+    private void ChangeDrinkQuantity(int newQty)
+    {
+        _drinkQuantity = Math.Max(0, newQty);
+        if (_drinkQuantity == 0)
+            State.SelectedDrink = null;
         StateHasChanged();
     }
 
@@ -120,10 +154,45 @@ public partial class FoodBuilder : ComponentBase
             return;
 
         var sideWithOptions = Sides.FirstOrDefault(s => s.Side.Id == State.SelectedSide?.Id);
-        await CartSubmitter.SubmitAsync(State, OptionTypes, new List<FoodOptionDto>(), sideWithOptions?.OptionTypes);
+
+        if (!IsCardOrder)
+        {
+            await CartSubmitter.SubmitAsync(State, OptionTypes, new List<FoodOptionDto>(), sideWithOptions?.OptionTypes);
+        }
+        else
+        {
+            for (int i = 0; i < _entreeQuantity && State.SelectedEntree != null; i++)
+                await CartSubmitter.SubmitAsync(EntreeOnlyState(), OptionTypes, new List<FoodOptionDto>(), null);
+
+            for (int i = 0; i < _sideQuantity && State.SelectedSide != null; i++)
+            {
+                var sideState = new SelectionState { SelectedSide = State.SelectedSide };
+                foreach (var kv in State.SideOptions)
+                    sideState.SideOptions[kv.Key] = new HashSet<string>(kv.Value);
+                await CartSubmitter.SubmitAsync(sideState, new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), sideWithOptions?.OptionTypes);
+            }
+
+            for (int i = 0; i < _drinkQuantity && State.SelectedDrink != null; i++)
+                await CartSubmitter.SubmitAsync(
+                    new SelectionState { SelectedDrink = State.SelectedDrink },
+                    new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), null);
+        }
+
         State.Clear();
+        _entreeQuantity = 0;
+        _sideQuantity = 0;
+        _drinkQuantity = 0;
         ActiveTab = Tabs.FirstOrDefault()?.Id ?? "entrees";
         NavigationManager.NavigateTo("/place-order");
+    }
+
+    private SelectionState EntreeOnlyState()
+    {
+        var s = new SelectionState { SelectedEntree = State.SelectedEntree };
+        foreach (var kv in State.SingleSelectOptions) s.SingleSelectOptions[kv.Key] = kv.Value;
+        foreach (var kv in State.MultiSelectOptions) s.MultiSelectOptions[kv.Key] = new List<string>(kv.Value);
+        foreach (var t in State.SelectedToppings) s.SelectedToppings.Add(t);
+        return s;
     }
 
     private bool IsTabCompleted(string tabId)
