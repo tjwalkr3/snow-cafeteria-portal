@@ -73,13 +73,10 @@ else
             {
                 var allSelections = State.SingleSelectOptions.Values
                     .Concat(State.MultiSelectOptions.Values.SelectMany(v => v)).ToList();
-                var totalRequired = OptionTypes.Sum(o => o.OptionType.NumIncluded);
                 <EntreePanel Entrees="@Entrees"
                              SelectedEntree="@State.SelectedEntree"
                              IsCardOrder="@IsCardOrder"
                              SelectedBadges="@allSelections"
-                             SelectionCount="@allSelections.Count"
-                             RequiredCount="@totalRequired"
                              OnEntreeSelected="@SelectEntree" />
             }
 

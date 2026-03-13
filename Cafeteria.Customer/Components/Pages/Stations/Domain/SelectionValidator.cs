@@ -7,12 +7,10 @@ public static class SelectionValidator
     public static bool IsValid(
         SelectionState state,
         List<FoodOptionTypeWithOptionsDto> optionTypes,
-        bool isCardOrder,
-        bool requiresOptionsComplete,
-        int minimumToppings = 0)
+        bool isCardOrder)
     {
-        bool primaryComplete = IsPrimaryItemComplete(state, optionTypes, requiresOptionsComplete, minimumToppings);
-        bool primaryStarted = IsPrimaryItemStarted(state, minimumToppings);
+        bool primaryComplete = IsPrimaryItemComplete(state, optionTypes);
+        bool primaryStarted = state.SelectedEntree != null;
 
         if (isCardOrder)
         {
@@ -31,13 +29,17 @@ public static class SelectionValidator
     {
         foreach (var optionType in optionTypes)
         {
-            if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+            var required = optionType.OptionType.RequiredAmount;
+            if (required == 0)
+                continue;
+
+            if (optionType.OptionType.MaxAmount > 1)
             {
                 var selected = state.MultiSelectOptions.TryGetValue(optionType.OptionType.Id, out var list)
                     ? list
                     : new List<string>();
 
-                if (selected.Count < optionType.OptionType.NumIncluded)
+                if (selected.Count < required)
                     return false;
             }
             else
@@ -53,26 +55,13 @@ public static class SelectionValidator
 
     private static bool IsPrimaryItemComplete(
         SelectionState state,
-        List<FoodOptionTypeWithOptionsDto> optionTypes,
-        bool requiresOptionsComplete,
-        int minimumToppings)
+        List<FoodOptionTypeWithOptionsDto> optionTypes)
     {
-        if (minimumToppings > 0)
-            return state.SelectedToppings.Count >= minimumToppings;
-
         if (state.SelectedEntree == null) return false;
 
-        if (requiresOptionsComplete && optionTypes.Any())
+        if (optionTypes.Any())
             return AreOptionsComplete(state, optionTypes);
 
         return true;
-    }
-
-    private static bool IsPrimaryItemStarted(SelectionState state, int minimumToppings)
-    {
-        if (minimumToppings > 0)
-            return state.SelectedToppings.Count > 0;
-
-        return state.SelectedEntree != null;
     }
 }

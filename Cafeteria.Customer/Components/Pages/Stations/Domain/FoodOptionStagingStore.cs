@@ -20,7 +20,7 @@ public class FoodOptionStagingStore
         foreach (var optionType in optionTypes)
         {
             var id = optionType.OptionType.Id;
-            if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+            if (optionType.OptionType.MaxAmount > 1)
             {
                 var existing = state.MultiSelectOptions.TryGetValue(id, out var list) ? list : new List<string>();
                 StagedSelections[id] = new HashSet<string>(existing);
@@ -59,7 +59,7 @@ public class FoodOptionStagingStore
 
         if (!StagedSelections[optionTypeId].Remove(name))
         {
-            if (!isCardOrder && StagedSelections[optionTypeId].Count >= optionType.OptionType.NumIncluded)
+            if (StagedSelections[optionTypeId].Count >= optionType.OptionType.MaxAmount)
                 return;
             StagedSelections[optionTypeId].Add(name);
         }
@@ -93,7 +93,7 @@ public class FoodOptionStagingStore
                 var id = optionType.OptionType.Id;
                 var staged = StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>();
 
-                if (OptionTypeHelper.IsMultiSelectOptionType(optionType))
+                if (optionType.OptionType.MaxAmount > 1)
                     state.MultiSelectOptions[id] = staged.ToList();
                 else
                 {

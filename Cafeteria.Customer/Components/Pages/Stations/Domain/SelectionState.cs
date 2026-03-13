@@ -13,8 +13,6 @@ public class SelectionState
 
     public Dictionary<int, List<string>> MultiSelectOptions { get; } = new();
 
-    public List<string> SelectedToppings { get; } = new();
-
     public Dictionary<int, HashSet<string>> SideOptions { get; } = new();
 
     public void Clear()
@@ -24,7 +22,6 @@ public class SelectionState
         SelectedDrink = null;
         SingleSelectOptions.Clear();
         MultiSelectOptions.Clear();
-        SelectedToppings.Clear();
         SideOptions.Clear();
     }
 
@@ -32,7 +29,6 @@ public class SelectionState
     {
         SingleSelectOptions.Clear();
         MultiSelectOptions.Clear();
-        SelectedToppings.Clear();
     }
 
     public bool HasAnySelection()

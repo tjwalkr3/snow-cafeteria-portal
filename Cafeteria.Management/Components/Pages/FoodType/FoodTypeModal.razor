@@ -1,4 +1,5 @@
 @rendermode InteractiveServer
+@using Cafeteria.Management.Components.Shared
 
 <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog" role="document">
@@ -16,9 +17,14 @@
                         <ValidationMessage For="@(() => FoodType.FoodOptionTypeName)" />
                     </div>
                     <div class="mb-3">
-                        <label for="numIncluded" class="form-label">Number Included</label>
-                        <InputNumber id="numIncluded" class="form-control" @bind-Value="FoodType.NumIncluded" />
-                        <ValidationMessage For="@(() => FoodType.NumIncluded)" />
+                        <label for="requiredAmount" class="form-label">Required Amount</label>
+                        <InputNumber id="requiredAmount" class="form-control" @bind-Value="FoodType.RequiredAmount" />
+                        <ValidationMessage For="@(() => FoodType.RequiredAmount)" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="includedAmount" class="form-label">Included Amount</label>
+                        <InputNumber id="includedAmount" class="form-control" @bind-Value="FoodType.IncludedAmount" />
+                        <ValidationMessage For="@(() => FoodType.IncludedAmount)" />
                     </div>
                     <div class="mb-3">
                         <label for="maxAmount" class="form-label">Max Amount</label>
@@ -51,6 +57,10 @@
                             }
                         </InputSelect>
                         <ValidationMessage For="@(() => FoodType.SideId)" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Icon</label>
+                        <IconPicker @bind-Value="FoodType.IconId" />
                     </div>
                     @if (!string.IsNullOrEmpty(ErrorMessage))
                     {
