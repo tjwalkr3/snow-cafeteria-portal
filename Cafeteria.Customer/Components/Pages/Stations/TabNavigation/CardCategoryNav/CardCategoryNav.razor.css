@@ -1,19 +1,20 @@
 .category-nav {
-    border-bottom: 2px solid #1e366c;
+    border-bottom: 2px solid #e2e6ed;
+    gap: 0;
 }
 
 .category-nav-card {
-    flex: 1;
-    min-width: 120px;
-    background: #edf0f7;
-    border: 1px solid #c5cad8;
-    border-bottom: none;
-    border-radius: 8px 8px 0 0;
+    flex: none;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
     cursor: pointer;
     position: relative;
-    margin-right: 4px;
-    padding: 10px 14px;
-    transition: background 0.15s ease;
+    margin-right: 0;
+    margin-bottom: -2px;
+    padding: 10px 20px;
+    transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .category-nav-card:last-child {
@@ -21,24 +22,22 @@
 }
 
 .category-nav-card:hover:not(.active) {
-    background: #dde3f0;
+    border-bottom-color: #c5cad8;
 }
 
 .category-nav-card.active {
-    background: white;
-    border-color: #1e366c;
-    border-top: 3px solid #1e366c;
+    border-bottom: 3px solid #1e366c;
     margin-bottom: -2px;
     z-index: 1;
 }
 
 .category-nav-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    background: #d6dcea;
+    width: 20px;
+    height: 20px;
+    border-radius: 0;
+    background: transparent;
     font-size: 1rem;
-    color: #4a5568;
+    color: #6c757d;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -46,8 +45,8 @@
 }
 
 .category-nav-card.active .category-nav-icon {
-    background: #1e366c;
-    color: white;
+    background: transparent;
+    color: #1e366c;
 }
 
 .category-nav-content {
@@ -56,20 +55,21 @@
 }
 
 .category-nav-title {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #374151;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #6c757d;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
 .category-nav-card.active .category-nav-title {
+    font-weight: 700;
     color: #1e366c;
 }
 
 .category-nav-selection {
     font-size: 0.75rem;
-    color: #6c757d;
+    color: #9ca3af;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -82,20 +82,13 @@
 
 @media (max-width: 576px) {
     .category-nav-card {
-        min-width: 0;
-        border-radius: 0;
-        border-bottom: 1px solid #c5cad8;
-        border-right: none;
-        margin-right: 0;
-    }
-
-    .category-nav-card:last-child {
-        border-right: none;
+        flex: 1;
+        padding: 10px 12px;
+        justify-content: center;
     }
 
     .category-nav-card.active {
-        border-left: 3px solid #1e366c;
-        border-top: 1px solid #1e366c;
-        margin-bottom: 0;
+        border-bottom: 3px solid #1e366c;
+        margin-bottom: -2px;
     }
 }
