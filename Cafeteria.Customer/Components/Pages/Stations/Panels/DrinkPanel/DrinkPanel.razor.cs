@@ -16,4 +16,10 @@ public partial class DrinkPanel : ComponentBase
 
     [Parameter, EditorRequired]
     public EventCallback<DrinkDto> OnDrinkSelected { get; set; }
+
+    [Parameter]
+    public int Quantity { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnQuantityChanged { get; set; }
 }

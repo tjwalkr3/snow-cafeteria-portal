@@ -16,7 +16,14 @@ public partial class EntreePanel : ComponentBase
 
     [Parameter, EditorRequired]
     public EventCallback<EntreeDto> OnEntreeSelected { get; set; }
+    
+    [Parameter]
+    public int Quantity { get; set; }
 
+    [Parameter]
+    public EventCallback<int> OnQuantityChanged { get; set; }
+
+    /// <summary>Chips displayed under the entree name when it is selected.</summary>
     [Parameter]
     public IReadOnlyList<string> SelectedBadges { get; set; } = Array.Empty<string>();
 
