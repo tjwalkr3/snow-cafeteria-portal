@@ -16,7 +16,7 @@ public partial class EntreePanel : ComponentBase
 
     [Parameter, EditorRequired]
     public EventCallback<EntreeDto> OnEntreeSelected { get; set; }
-    
+
     [Parameter]
     public int Quantity { get; set; }
 
