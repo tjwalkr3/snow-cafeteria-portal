@@ -16,7 +16,7 @@ public partial class EntreePanel : ComponentBase
 
     [Parameter, EditorRequired]
     public EventCallback<EntreeDto> OnEntreeSelected { get; set; }
-
+    
     [Parameter]
     public int Quantity { get; set; }
 
@@ -27,22 +27,5 @@ public partial class EntreePanel : ComponentBase
     [Parameter]
     public IReadOnlyList<string> SelectedBadges { get; set; } = Array.Empty<string>();
 
-    /// <summary>
-    /// When greater than zero, completion is determined by SelectionCount >= RequiredCount
-    /// rather than simply by whether the entree is selected.
-    /// </summary>
-    [Parameter]
-    public int SelectionCount { get; set; }
-
-    [Parameter]
-    public int RequiredCount { get; set; }
-
-    private bool IsComplete(EntreeDto entree)
-    {
-        if (SelectedEntree?.Id != entree.Id) return false;
-        return RequiredCount == 0 || SelectionCount >= RequiredCount;
-    }
-
-    private bool IsPending(EntreeDto entree) =>
-        SelectedEntree?.Id == entree.Id && RequiredCount > 0 && SelectionCount < RequiredCount;
+    private bool IsComplete(EntreeDto entree) => SelectedEntree?.Id == entree.Id;
 }

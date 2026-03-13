@@ -11,8 +11,12 @@ public class FoodOptionTypeDto
     public string FoodOptionTypeName { get; set; } = string.Empty;
 
     [Required]
-    [Range(0, short.MaxValue)]
-    public short NumIncluded { get; set; }
+    [Range(0, int.MaxValue)]
+    public int RequiredAmount { get; set; }
+
+    [Required]
+    [Range(0, int.MaxValue)]
+    public int IncludedAmount { get; set; }
 
     [Required]
     [Range(0, int.MaxValue)]
@@ -25,4 +29,8 @@ public class FoodOptionTypeDto
     public int? EntreeId { get; set; }
 
     public int? SideId { get; set; }
+
+    public int? IconId { get; set; }
+
+    public string? IconBootstrapName { get; set; }
 }

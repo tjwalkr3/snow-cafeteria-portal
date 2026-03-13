@@ -24,7 +24,8 @@ public class FoodOptionTypeServiceTests
         var foodTypeDto = new FoodOptionTypeDto
         {
             FoodOptionTypeName = "Pizza Toppings",
-            NumIncluded = 2,
+            RequiredAmount = 0,
+            IncludedAmount = 2,
             MaxAmount = 5,
             FoodOptionPrice = 1.50m,
             EntreeId = 1,
@@ -35,7 +36,8 @@ public class FoodOptionTypeServiceTests
         {
             Id = 1,
             FoodOptionTypeName = "Pizza Toppings",
-            NumIncluded = 2,
+            RequiredAmount = 0,
+            IncludedAmount = 2,
             MaxAmount = 5,
             FoodOptionPrice = 1.50m,
             EntreeId = 1,
@@ -56,7 +58,7 @@ public class FoodOptionTypeServiceTests
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
         Assert.Equal("Pizza Toppings", result.FoodOptionTypeName);
-        Assert.Equal(2, result.NumIncluded);
+        Assert.Equal(2, result.IncludedAmount);
         Assert.Equal(5, result.MaxAmount);
         Assert.Equal(1.50m, result.FoodOptionPrice);
         Assert.Equal(1, result.EntreeId);
@@ -70,7 +72,8 @@ public class FoodOptionTypeServiceTests
         {
             Id = 1,
             FoodOptionTypeName = "Pizza Toppings",
-            NumIncluded = 2,
+            RequiredAmount = 0,
+            IncludedAmount = 2,
             MaxAmount = 5,
             FoodOptionPrice = 1.50m,
             EntreeId = 1,
@@ -91,7 +94,7 @@ public class FoodOptionTypeServiceTests
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
         Assert.Equal("Pizza Toppings", result.FoodOptionTypeName);
-        Assert.Equal(2, result.NumIncluded);
+        Assert.Equal(2, result.IncludedAmount);
     }
 
     [Fact]
@@ -103,7 +106,8 @@ public class FoodOptionTypeServiceTests
             {
                 Id = 1,
                 FoodOptionTypeName = "Pizza Toppings",
-                NumIncluded = 2,
+                RequiredAmount = 0,
+                IncludedAmount = 2,
                 MaxAmount = 5,
                 FoodOptionPrice = 1.50m,
                 EntreeId = 1
@@ -112,7 +116,8 @@ public class FoodOptionTypeServiceTests
             {
                 Id = 2,
                 FoodOptionTypeName = "Burger Toppings",
-                NumIncluded = 3,
+                RequiredAmount = 0,
+                IncludedAmount = 3,
                 MaxAmount = 6,
                 FoodOptionPrice = 0.75m,
                 EntreeId = 2
@@ -121,7 +126,8 @@ public class FoodOptionTypeServiceTests
             {
                 Id = 3,
                 FoodOptionTypeName = "Side Add-ons",
-                NumIncluded = 1,
+                RequiredAmount = 0,
+                IncludedAmount = 1,
                 MaxAmount = 3,
                 FoodOptionPrice = 2.00m,
                 SideId = 1
@@ -152,7 +158,8 @@ public class FoodOptionTypeServiceTests
         var foodTypeDto = new FoodOptionTypeDto
         {
             FoodOptionTypeName = "Updated Toppings",
-            NumIncluded = 3,
+            RequiredAmount = 1,
+            IncludedAmount = 3,
             MaxAmount = 7,
             FoodOptionPrice = 2.00m,
             EntreeId = 1,
@@ -163,7 +170,8 @@ public class FoodOptionTypeServiceTests
         {
             Id = 1,
             FoodOptionTypeName = "Updated Toppings",
-            NumIncluded = 3,
+            RequiredAmount = 1,
+            IncludedAmount = 3,
             MaxAmount = 7,
             FoodOptionPrice = 2.00m,
             EntreeId = 1,
@@ -184,7 +192,7 @@ public class FoodOptionTypeServiceTests
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
         Assert.Equal("Updated Toppings", result.FoodOptionTypeName);
-        Assert.Equal(3, result.NumIncluded);
+        Assert.Equal(3, result.IncludedAmount);
         Assert.Equal(7, result.MaxAmount);
         Assert.Equal(2.00m, result.FoodOptionPrice);
     }

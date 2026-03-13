@@ -92,17 +92,21 @@ public class SideService : ISideService
                 s.in_stock AS InStock,
                 fot.id AS Id,
                 fot.food_option_type_name AS FoodOptionTypeName,
-                fot.num_included AS NumIncluded,
+                fot.required_amount AS RequiredAmount,
+                fot.included_amount AS IncludedAmount,
                 fot.max_amount AS MaxAmount,
                 fot.food_option_price AS FoodOptionPrice,
                 fot.entree_id AS EntreeId,
                 fot.side_id AS SideId,
+                fot.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName,
                 fo.id AS Id,
                 fo.food_option_name AS FoodOptionName,
                 fo.in_stock AS InStock,
                 fo.image_url AS ImageUrl
             FROM cafeteria.side s
             LEFT JOIN cafeteria.food_option_type fot ON fot.side_id = s.id
+            LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
             LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id
             LEFT JOIN cafeteria.food_option fo ON oot.food_option_id = fo.id
             WHERE s.station_id = @stationId

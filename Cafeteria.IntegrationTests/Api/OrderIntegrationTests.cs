@@ -45,12 +45,12 @@ public class OrderIntegrationTests : IDisposable
                         new SelectedFoodOption
                         {
                             Option = new FoodOptionDto { FoodOptionName = "Lettuce" },
-                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", NumIncluded = 10, MaxAmount = 10, FoodOptionPrice = 0 }
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", RequiredAmount = 0, IncludedAmount = 10, MaxAmount = 10, FoodOptionPrice = 0 }
                         },
                         new SelectedFoodOption
                         {
                             Option = new FoodOptionDto { FoodOptionName = "Tomato" },
-                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", NumIncluded = 10, MaxAmount = 10, FoodOptionPrice = 0 }
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", RequiredAmount = 0, IncludedAmount = 10, MaxAmount = 10, FoodOptionPrice = 0 }
                         }
                     }
                 }

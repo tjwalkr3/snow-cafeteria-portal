@@ -83,6 +83,11 @@ public partial class FoodBuilder : ComponentBase
 
         if (OptionTypes.Any())
             StagingStore.Open(entree, OptionTypes, State);
+        else
+        {
+            State.SelectedEntree = entree;
+            State.ClearOptionsOnly();
+        }
 
         StateHasChanged();
     }
@@ -150,7 +155,7 @@ public partial class FoodBuilder : ComponentBase
 
     private async Task AddToOrder()
     {
-        if (!SelectionValidator.IsValid(State, OptionTypes, IsCardOrder, requiresOptionsComplete: OptionTypes.Any()))
+        if (!SelectionValidator.IsValid(State, OptionTypes, IsCardOrder))
             return;
 
         var sideWithOptions = Sides.FirstOrDefault(s => s.Side.Id == State.SelectedSide?.Id);
