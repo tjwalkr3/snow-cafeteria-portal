@@ -51,7 +51,7 @@ public class LocationSelectVM : ILocationSelectVM
         }
     }
 
-    public async Task<bool> IsLocationOpenNow(int locationId)
+    public Task<bool> IsLocationOpenNow(int locationId)
     {
         // Check if location has any active exceptions
         if (_exceptionsCache.TryGetValue(locationId, out var exceptions))
@@ -62,7 +62,7 @@ public class LocationSelectVM : ILocationSelectVM
                 now <= e.EndExceptionDateTime);
 
             if (hasActiveException)
-                return false;
+                return Task.FromResult(false);
         }
 
         // Check business hours
@@ -78,13 +78,14 @@ public class LocationSelectVM : ILocationSelectVM
             var todayHours = businessHours.FirstOrDefault(h => h.WeekdayId == currentWeekday);
 
             if (todayHours == null)
-                return false; // No hours defined for today
+                return Task.FromResult(false); // No hours defined for today
 
-            return now.TimeOfDay >= todayHours.OpenTime.ToTimeSpan() &&
-                   now.TimeOfDay <= todayHours.CloseTime.ToTimeSpan();
+            return Task.FromResult(
+                now.TimeOfDay >= todayHours.OpenTime.ToTimeSpan() &&
+                now.TimeOfDay <= todayHours.CloseTime.ToTimeSpan());
         }
 
-        return false; // No business hours found
+        return Task.FromResult(false); // No business hours found
     }
 
     public bool ErrorOccurred()
