@@ -31,6 +31,18 @@
     z-index: 1;
 }
 
+.category-nav-card.active::after {
+    content: '';
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #1e366c;
+    z-index: 2;
+}
+
 .category-nav-icon {
     width: 20px;
     height: 20px;
