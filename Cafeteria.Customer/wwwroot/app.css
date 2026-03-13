@@ -134,14 +134,20 @@ body {
     }
 
 .select-btn {
-    padding: 0.3rem 0.75rem;
-    border: 1px solid #1e366c;
-    background: white;
-    border-radius: 10px;
+    padding: 0.3rem 1rem;
+    border: 1px solid #d1d5db;
+    background: #f3f4f6;
+    border-radius: 999px;
     color: #1e366c;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.select-btn:hover {
+    background: #e5e7eb;
 }
 
     .select-btn.added {
@@ -171,20 +177,21 @@ body {
     }
 
 .qty-stepper {
-    border: 1px solid #1e366c;
-    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
     overflow: hidden;
     height: 32px;
+    background: #f3f4f6;
 }
 
 .qty-btn {
-    background: white;
+    background: transparent;
     border: none;
     color: #1e366c;
-    width: 30px;
+    width: 32px;
     height: 100%;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,17 +199,16 @@ body {
 }
 
 .qty-btn:hover {
-    background: #edf0f7;
+    background: #e5e7eb;
 }
 
 .qty-value {
-    min-width: 28px;
+    min-width: 24px;
     text-align: center;
     font-size: 0.88rem;
     font-weight: 600;
     color: #1e366c;
-    border-left: 1px solid #1e366c;
-    border-right: 1px solid #1e366c;
+    background: transparent;
     height: 100%;
     display: flex;
     align-items: center;
