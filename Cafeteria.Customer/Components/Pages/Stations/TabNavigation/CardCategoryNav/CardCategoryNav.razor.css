@@ -95,12 +95,23 @@
 @media (max-width: 576px) {
     .category-nav-card {
         flex: 1;
-        padding: 10px 12px;
+        padding: 8px 6px;
         justify-content: center;
+        gap: 6px;
     }
 
-    .category-nav-card.active {
-        border-bottom: 3px solid #1e366c;
-        margin-bottom: -2px;
+    .category-nav-selection {
+        display: none;
+    }
+
+    .category-nav-title {
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+    .category-nav-icon {
+        width: 16px;
+        height: 16px;
+        font-size: 0.85rem;
     }
 }
