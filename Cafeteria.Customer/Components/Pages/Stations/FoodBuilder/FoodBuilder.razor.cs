@@ -196,7 +196,6 @@ public partial class FoodBuilder : ComponentBase
         var s = new SelectionState { SelectedEntree = State.SelectedEntree };
         foreach (var kv in State.SingleSelectOptions) s.SingleSelectOptions[kv.Key] = kv.Value;
         foreach (var kv in State.MultiSelectOptions) s.MultiSelectOptions[kv.Key] = new List<string>(kv.Value);
-        foreach (var t in State.SelectedToppings) s.SelectedToppings.Add(t);
         return s;
     }
 
