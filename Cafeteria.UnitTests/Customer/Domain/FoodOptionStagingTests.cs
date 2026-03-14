@@ -263,7 +263,7 @@ public class FoodOptionStagingStoreTests
         Assert.Equal(2, _store.StagedSelections[1].Count);
     }
 
-[Fact]
+    [Fact]
     public void Toggle_NonExistentOptionType_CreatesNewEntry()
     {
         // Arrange
