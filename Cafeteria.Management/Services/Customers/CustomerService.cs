@@ -20,6 +20,13 @@ public class CustomerService : ICustomerService
 
     public async Task<UserRoleDto?> GetCurrentUserRole()
     {
-        return await _client.GetAsync<UserRoleDto>("customer/role");
+        try
+        {
+            return await _client.GetAsync<UserRoleDto>("customer/role");
+        }
+        catch (HttpRequestException)
+        {
+            return null;
+        }
     }
 }
