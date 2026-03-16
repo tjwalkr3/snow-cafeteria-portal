@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Orders;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -31,6 +32,7 @@ public class OrderController(IOrderService orderService, ICreateOrderService cre
     }
 
     [HttpGet("with-customer")]
+    [RequireUserRole("admin", "food-service")]
     public async Task<ActionResult<List<OrderWithCustomerDto>>> GetAllOrdersWithCustomer()
     {
         var result = await _orderService.GetAllOrdersWithCustomer();
@@ -38,6 +40,7 @@ public class OrderController(IOrderService orderService, ICreateOrderService cre
     }
 
     [HttpGet("with-customer/{id}")]
+    [RequireUserRole("admin", "food-service")]
     public async Task<ActionResult<OrderWithCustomerDto>> GetOrderWithCustomerById(int id)
     {
         var result = await _orderService.GetOrderWithCustomerById(id);

@@ -359,7 +359,7 @@ public static class DBSql
                 ('test-2@example.com', 1000002, 'Test2 User', 'food-service'),
                 ('test-3@example.com', 1000003, 'Test3 User', NULL),
                 ('admin@example.com', 1000004, 'Admin User', 'admin'),
-                ('test@example.com', 1000005, 'Test User', NULL);
+                ('test@example.com', 1000005, 'Test User', 'admin');
 
             -- Sample customer swipe data
             INSERT INTO cafeteria.customer_swipe (badger_id, swipe_balance, end_date)

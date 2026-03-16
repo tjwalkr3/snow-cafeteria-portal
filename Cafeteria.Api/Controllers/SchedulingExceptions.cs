@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.SchedulingExceptions;
 using Cafeteria.Shared.DTOs.Menu;
 
@@ -38,6 +39,7 @@ public class SchedulingExceptionsController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost("location/{locationId:int}")]
     public async Task<IActionResult> AddLocationException(int locationId, [FromBody] SchedulingExceptionRequest request)
     {
@@ -51,6 +53,7 @@ public class SchedulingExceptionsController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("location/{exceptionId:int}")]
     public async Task<IActionResult> UpdateLocationException(int exceptionId, [FromBody] SchedulingExceptionRequest request)
     {
@@ -70,6 +73,7 @@ public class SchedulingExceptionsController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("location/{exceptionId:int}")]
     public async Task<IActionResult> DeleteLocationException(int exceptionId)
     {
@@ -105,6 +109,7 @@ public class SchedulingExceptionsController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost("station/{stationId:int}")]
     public async Task<IActionResult> AddStationException(int stationId, [FromBody] SchedulingExceptionRequest request)
     {
@@ -118,6 +123,7 @@ public class SchedulingExceptionsController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("station/{exceptionId:int}")]
     public async Task<IActionResult> UpdateStationException(int exceptionId, [FromBody] SchedulingExceptionRequest request)
     {
@@ -137,6 +143,7 @@ public class SchedulingExceptionsController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("station/{exceptionId:int}")]
     public async Task<IActionResult> DeleteStationException(int exceptionId)
     {

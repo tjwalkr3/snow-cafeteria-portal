@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Entrees;
 using Microsoft.AspNetCore.Authorization;
 
@@ -35,6 +36,7 @@ public class EntreeController(IEntreeService entreeService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost]
     public async Task<ActionResult<EntreeDto>> CreateEntree([FromBody] EntreeDto entreeDto)
     {
@@ -43,6 +45,7 @@ public class EntreeController(IEntreeService entreeService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}")]
     public async Task<ActionResult<EntreeDto>> UpdateEntreeById(int id, [FromBody] EntreeDto entreeDto)
     {
@@ -53,6 +56,7 @@ public class EntreeController(IEntreeService entreeService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}/stock")]
     public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
@@ -63,6 +67,7 @@ public class EntreeController(IEntreeService entreeService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEntreeById(int id)
     {

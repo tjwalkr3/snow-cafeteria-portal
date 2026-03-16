@@ -60,6 +60,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost]
     public async Task<IActionResult> CreateLocation([FromBody] LocationUpsertRequest request)
     {
@@ -68,6 +69,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{locationId:int}")]
     public async Task<IActionResult> UpdateLocationById(int locationId, [FromBody] LocationUpsertRequest request)
     {
@@ -76,6 +78,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("{locationId:int}")]
     public async Task<IActionResult> DeleteLocationById(int locationId)
     {
@@ -84,6 +87,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost("{locationId:int}/hours")]
     public async Task<IActionResult> AddLocationHoursByLocationId(int locationId, [FromBody] LocationHoursRequest request)
     {
@@ -98,6 +102,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("hours/{locationHrsId:int}")]
     public async Task<IActionResult> UpdateLocationHoursById(int locationHrsId, [FromBody] LocationHoursRequest request)
     {
@@ -112,6 +117,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("hours/{locationHrsId:int}")]
     public async Task<IActionResult> DeleteLocationHoursById(int locationHrsId)
     {
