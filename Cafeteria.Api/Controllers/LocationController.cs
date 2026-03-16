@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Locations;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
@@ -51,6 +52,7 @@ public class LocationController(ILocationService locationService) : ControllerBa
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpGet("authenticated")]
     public IActionResult GetAuthenticatedLocation()
     {
