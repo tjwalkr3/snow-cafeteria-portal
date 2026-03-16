@@ -1,3 +1,4 @@
+using Cafeteria.Shared.DTOs.Customer;
 using Cafeteria.Shared.DTOs.Swipe;
 using Cafeteria.Shared.Services.Auth;
 
@@ -15,5 +16,10 @@ public class CustomerService : ICustomerService
     public async Task<List<CustomerSwipeDto>> GetAllCustomers()
     {
         return await _client.GetAsync<List<CustomerSwipeDto>>("swipe/all-customers") ?? [];
+    }
+
+    public async Task<UserRoleDto?> GetCurrentUserRole()
+    {
+        return await _client.GetAsync<UserRoleDto>("customer/role");
     }
 }
