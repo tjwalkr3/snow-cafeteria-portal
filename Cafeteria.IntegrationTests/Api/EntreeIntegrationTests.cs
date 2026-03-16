@@ -178,4 +178,71 @@ public class EntreeIntegrationTests : IDisposable
         var response = await _client.DeleteAsync("/api/entree/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    [Fact]
+    public async Task SetStockStatusById_UpdatesInStockStatus()
+    {
+        // Create a new entree for this test
+        var entreeId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Entree To Stock Toggle",
+                EntreeDescription = "Testing stock status",
+                EntreePrice = 13.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
+
+        // Set stock status to false
+        var response = await _client.PutAsJsonAsync($"/api/entree/{entreeId}/stock", false);
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+
+        // Verify the stock status was updated by retrieving the entree
+        var getResponse = await _client.GetAsync($"/api/entree/{entreeId}");
+        getResponse.EnsureSuccessStatusCode();
+        var entree = await getResponse.Content.ReadFromJsonAsync<EntreeDto>();
+        
+        Assert.NotNull(entree);
+        Assert.False(entree.InStock);
+    }
+
+    [Fact]
+    public async Task SetStockStatusById_ToggesStockStatusToTrue()
+    {
+        // Create a new entree for this test
+        var entreeId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Entree To Stock Toggle True",
+                EntreeDescription = "Testing stock status toggle",
+                EntreePrice = 14.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
+
+        // Set stock status to true
+        var response = await _client.PutAsJsonAsync($"/api/entree/{entreeId}/stock", true);
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+
+        // Verify the stock status was updated
+        var getResponse = await _client.GetAsync($"/api/entree/{entreeId}");
+        getResponse.EnsureSuccessStatusCode();
+        var entree = await getResponse.Content.ReadFromJsonAsync<EntreeDto>();
+        
+        Assert.NotNull(entree);
+        Assert.True(entree.InStock);
+    }
+
+    [Fact]
+    public async Task SetStockStatusById_ReturnsNotFound_WhenEntreeDoesNotExist()
+    {
+        var response = await _client.PutAsJsonAsync("/api/entree/99999/stock", false);
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
