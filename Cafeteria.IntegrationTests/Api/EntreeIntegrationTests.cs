@@ -204,7 +204,7 @@ public class EntreeIntegrationTests : IDisposable
         var getResponse = await _client.GetAsync($"/api/entree/{entreeId}");
         getResponse.EnsureSuccessStatusCode();
         var entree = await getResponse.Content.ReadFromJsonAsync<EntreeDto>();
-        
+
         Assert.NotNull(entree);
         Assert.False(entree.InStock);
     }
@@ -234,7 +234,7 @@ public class EntreeIntegrationTests : IDisposable
         var getResponse = await _client.GetAsync($"/api/entree/{entreeId}");
         getResponse.EnsureSuccessStatusCode();
         var entree = await getResponse.Content.ReadFromJsonAsync<EntreeDto>();
-        
+
         Assert.NotNull(entree);
         Assert.True(entree.InStock);
     }

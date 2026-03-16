@@ -204,7 +204,7 @@ public class DrinkIntegrationTests : IDisposable
         var getResponse = await _client.GetAsync($"/api/drink/{drinkId}");
         getResponse.EnsureSuccessStatusCode();
         var drink = await getResponse.Content.ReadFromJsonAsync<DrinkDto>();
-        
+
         Assert.NotNull(drink);
         Assert.False(drink.InStock);
     }
@@ -234,7 +234,7 @@ public class DrinkIntegrationTests : IDisposable
         var getResponse = await _client.GetAsync($"/api/drink/{drinkId}");
         getResponse.EnsureSuccessStatusCode();
         var drink = await getResponse.Content.ReadFromJsonAsync<DrinkDto>();
-        
+
         Assert.NotNull(drink);
         Assert.True(drink.InStock);
     }
