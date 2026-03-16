@@ -1,4 +1,6 @@
 using System.Net.Http.Json;
+using System.Net;
+using Cafeteria.Shared.DTOs.Customer;
 using Dapper;
 using Npgsql;
 
@@ -198,5 +200,49 @@ public class CustomerIntegrationTests : IDisposable
         Assert.NotNull(customer);
         Assert.Equal("test@example.com", customer!.email);
         Assert.Equal("Test User", customer.custname);
+    }
+
+    [Fact]
+    public async Task GetCurrentUserRole_WithAdminUser_ReturnsAdminRole()
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/customer/role");
+        request.Headers.Add(MockAuthenticationHandler.TestEmailHeader, "admin@example.com");
+        request.Headers.Add(MockAuthenticationHandler.TestRoleHeader, "admin");
+
+        var response = await _client.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<UserRoleDto>();
+
+        Assert.NotNull(payload);
+        Assert.Equal("admin", payload.UserRole);
+    }
+
+    [Fact]
+    public async Task GetCurrentUserRole_WithFoodServiceUser_ReturnsFoodServiceRole()
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/customer/role");
+        request.Headers.Add(MockAuthenticationHandler.TestEmailHeader, "test-2@example.com");
+        request.Headers.Add(MockAuthenticationHandler.TestRoleHeader, "admin");
+
+        var response = await _client.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<UserRoleDto>();
+
+        Assert.NotNull(payload);
+        Assert.Equal("food-service", payload.UserRole);
+    }
+
+    [Fact]
+    public async Task GetCurrentUserRole_WithNoDatabaseRole_ReturnsUnauthorized()
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/customer/role");
+        request.Headers.Add(MockAuthenticationHandler.TestEmailHeader, "test-1@example.com");
+        request.Headers.Add(MockAuthenticationHandler.TestRoleHeader, "admin");
+
+        var response = await _client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }
