@@ -13,6 +13,7 @@ public partial class UserRoles : ComponentBase, IDisposable
     private List<CustomerRoleDto> customers = [];
     private bool isLoading = false;
     private string searchText = string.Empty;
+    private bool hasSearch => !string.IsNullOrWhiteSpace(searchText);
     private HashSet<string> togglingEmail = [];
     private string toastMessage = "";
     private ToastType toastType = ToastType.Success;

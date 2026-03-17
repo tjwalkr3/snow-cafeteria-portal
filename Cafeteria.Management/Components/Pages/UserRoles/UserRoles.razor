@@ -6,43 +6,25 @@
 
 <PageTitle>User Roles</PageTitle>
 
-@if (string.IsNullOrWhiteSpace(searchText) && !isLoading)
-{
-    <!-- ── Idle state: centered search ── -->
-    <div class="ur-idle">
-        <div class="ur-idle-card">
-            <i class="bi bi-person-badge-fill ur-idle-icon"></i>
-            <h1 class="ur-idle-title">User Roles</h1>
-            <p class="ur-idle-hint">Search for a user by name or email to view and manage their role.</p>
-            <div class="ur-idle-search">
-                <span class="ur-search-icon bi bi-search"></span>
-                <input class="ur-search-input"
-                       type="text"
-                       placeholder="Search by name or email..."
-                       @oninput="OnSearchInput"
-                       value="@searchText"
-                       autofocus />
-            </div>
-        </div>
+<div class="@(hasSearch ? "ur-results-layout" : "ur-idle-layout")">
+
+    <div class="ur-header">
+        <i class="bi bi-person-badge-fill ur-idle-icon"></i>
+        <h1 class="page-title fw-bold">User Roles</h1>
+        <p class="ur-idle-hint">Search for a user by name or email to view and manage their role.</p>
     </div>
-}
-else
-{
-    <!-- ── Results state: normal top layout ── -->
-    <div class="px-3">
-        <div class="d-flex justify-content-center align-items-center mb-3">
-            <h1 class="page-title fw-bold mb-0">User Roles</h1>
-        </div>
 
-        <div class="ur-top-search mb-4">
-            <span class="ur-search-icon bi bi-search"></span>
-            <input class="ur-search-input"
-                   type="text"
-                   placeholder="Search by name or email..."
-                   @oninput="OnSearchInput"
-                   value="@searchText" />
-        </div>
+    <div class="ur-search-wrap">
+        <span class="ur-search-icon bi bi-search"></span>
+        <input class="ur-search-input"
+               type="text"
+               placeholder="Search by name or email..."
+               @oninput="OnSearchInput"
+               value="@searchText"
+               autofocus />
+    </div>
 
+    <div class="ur-results">
         @if (isLoading)
         {
             <div class="text-center py-5">
@@ -52,7 +34,7 @@ else
                 <p class="mt-3 text-muted">Loading users...</p>
             </div>
         }
-        else if (customers.Any())
+        else if (hasSearch && customers.Any())
         {
             <div class="card border-1 rounded-3 shadow-sm mb-4">
                 <div class="table-responsive">
@@ -118,7 +100,7 @@ else
                 </div>
             </div>
         }
-        else
+        else if (hasSearch)
         {
             <div class="text-center p-5 bg-white rounded-3 shadow-sm">
                 <i class="bi bi-person-slash fs-1 mb-3 text-muted d-block"></i>
@@ -127,6 +109,6 @@ else
             </div>
         }
     </div>
-}
+</div>
 
 <Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />
