@@ -1,0 +1,27 @@
+.access-denied-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 1.5rem;
+}
+
+.access-denied-card {
+    max-width: 40rem;
+    width: 100%;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+
+.access-denied-card h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.access-denied-card p {
+    margin-bottom: 0.75rem;
+    color: #495057;
+}

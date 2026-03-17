@@ -1,4 +1,5 @@
 using Cafeteria.Api.Services.FoodOptionTypes;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,7 @@ public class FoodOptionTypeController(IFoodOptionTypeService foodTypeService) : 
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost]
     public async Task<FoodOptionTypeDto> CreateFoodOptionType([FromBody] FoodOptionTypeDto foodTypeDto)
     {
@@ -46,6 +48,7 @@ public class FoodOptionTypeController(IFoodOptionTypeService foodTypeService) : 
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}")]
     public async Task<ActionResult<FoodOptionTypeDto>> UpdateFoodOptionTypeById(int id, [FromBody] FoodOptionTypeDto foodTypeDto)
     {
@@ -56,6 +59,7 @@ public class FoodOptionTypeController(IFoodOptionTypeService foodTypeService) : 
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteFoodOptionTypeById(int id)
     {

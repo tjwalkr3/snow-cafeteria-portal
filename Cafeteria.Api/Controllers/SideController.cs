@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Sides;
 using Microsoft.AspNetCore.Authorization;
 
@@ -42,6 +43,7 @@ public class SideController(ISideService sideService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost]
     public async Task<ActionResult<SideDto>> CreateSide([FromBody] SideDto sideDto)
     {
@@ -50,6 +52,7 @@ public class SideController(ISideService sideService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}")]
     public async Task<ActionResult<SideDto>> UpdateSideById(int id, [FromBody] SideDto sideDto)
     {
@@ -60,6 +63,7 @@ public class SideController(ISideService sideService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}/stock")]
     public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
@@ -70,6 +74,7 @@ public class SideController(ISideService sideService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSideById(int id)
     {

@@ -185,4 +185,91 @@ public class OrderIntegrationTests : IDisposable
         Assert.Contains(orders, o => o.Id == orderId1);
         Assert.Contains(orders, o => o.Id == orderId2);
     }
+
+    [Fact]
+    public async Task GetAllOrdersWithCustomer_ReturnsOrdersWithCustomerInfo()
+    {
+        // Create a test order
+        var orderId = _connection.ExecuteScalar<int>(
+            InsertOrderSql + " RETURNING id",
+            new
+            {
+                CustomerBadgerId = 1000001,
+                TotalPrice = 12.99m,
+                Tax = 1.04m,
+                TotalSwipe = 0
+            }
+        );
+
+        var response = await _client.GetAsync("/api/order/with-customer");
+        response.EnsureSuccessStatusCode();
+        var orders = await response.Content.ReadFromJsonAsync<List<OrderWithCustomerDto>>();
+
+        Assert.NotNull(orders);
+        Assert.True(orders.Count >= 1);
+        // Verify that customer info is included
+        Assert.All(orders, order => Assert.NotNull(order.CustomerName));
+    }
+
+    [Fact]
+    public async Task GetOrderWithCustomerById_ReturnsOrderWithCustomerInfo()
+    {
+        // Create a test order
+        var orderId = _connection.ExecuteScalar<int>(
+            InsertOrderSql + " RETURNING id",
+            new
+            {
+                CustomerBadgerId = 1000001,
+                TotalPrice = 16.49m,
+                Tax = 1.32m,
+                TotalSwipe = 1
+            }
+        );
+
+        var response = await _client.GetAsync($"/api/order/with-customer/{orderId}");
+        response.EnsureSuccessStatusCode();
+        var order = await response.Content.ReadFromJsonAsync<OrderWithCustomerDto>();
+
+        Assert.NotNull(order);
+        Assert.Equal(orderId, order.Id);
+        Assert.NotNull(order.CustomerName);
+        Assert.NotNull(order.CustomerEmail);
+    }
+
+    [Fact]
+    public async Task GetOrderWithCustomerById_ReturnsNotFound_WhenOrderDoesNotExist()
+    {
+        var response = await _client.GetAsync("/api/order/with-customer/99999");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetOrdersByCustomer_ReturnsOrdersForSpecificBadgerId()
+    {
+        // Use pre-loaded customer with badge ID 1001234
+        var response = await _client.GetAsync("/api/order/customer/1001234");
+        response.EnsureSuccessStatusCode();
+        var orders = await response.Content.ReadFromJsonAsync<List<OrderWithCustomerDto>>();
+
+        Assert.NotNull(orders);
+        // Verify all orders belong to the requested customer
+        Assert.All(orders, order => Assert.Equal(1001234, order.CustomerBadgerId));
+    }
+
+    [Fact]
+    public async Task GetOrdersByCustomerEmail_ReturnsOrdersForAuthenticatedUser()
+    {
+        // The mock authentication handler provides email "test@example.com"
+        // First ensure the customer exists
+        var response = await _client.PostAsync("/api/customer/check", null);
+        response.EnsureSuccessStatusCode();
+
+        // Now retrieve orders for that customer
+        var ordersResponse = await _client.GetAsync("/api/order/customer-email");
+        ordersResponse.EnsureSuccessStatusCode();
+        var orders = await ordersResponse.Content.ReadFromJsonAsync<List<OrderDto>>();
+
+        Assert.NotNull(orders);
+        // Should be empty or contain orders, but shouldn't error
+    }
 }

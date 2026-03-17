@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Api.Services.Customer;
+using Cafeteria.Shared.DTOs.Customer;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -12,6 +13,23 @@ public class CustomerController(ICustomerService customerService, ILogger<Custom
 {
     private readonly ICustomerService _customerService = customerService;
     private readonly ILogger<CustomerController> _logger = logger;
+
+    [HttpGet("role")]
+    public async Task<ActionResult<UserRoleDto>> GetCurrentUserRole([FromServices] IUserRoleService userRoleService)
+    {
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return Unauthorized();
+        }
+
+        var role = await userRoleService.GetUserRoleAsync(User);
+        if (string.IsNullOrWhiteSpace(role))
+        {
+            return Unauthorized();
+        }
+
+        return Ok(new UserRoleDto { UserRole = role });
+    }
 
     [HttpPost("check")]
     public async Task<IActionResult> RegisterOrUpdate()

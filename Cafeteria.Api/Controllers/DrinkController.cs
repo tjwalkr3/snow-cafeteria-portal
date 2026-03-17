@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Drinks;
 using Microsoft.AspNetCore.Authorization;
 
@@ -35,6 +36,7 @@ public class DrinkController(IDrinkService drinkService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost]
     public async Task<ActionResult<DrinkDto>> CreateDrink([FromBody] DrinkDto drinkDto)
     {
@@ -43,6 +45,7 @@ public class DrinkController(IDrinkService drinkService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}")]
     public async Task<ActionResult<DrinkDto>> UpdateDrinkById(int id, [FromBody] DrinkDto drinkDto)
     {
@@ -53,6 +56,7 @@ public class DrinkController(IDrinkService drinkService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}/stock")]
     public async Task<IActionResult> SetStockStatusById(int id, [FromBody] bool inStock)
     {
@@ -63,6 +67,7 @@ public class DrinkController(IDrinkService drinkService) : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDrinkById(int id)
     {

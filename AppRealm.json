@@ -136,6 +136,25 @@
       "realmRoles": [
         "default-roles-apprealm"
       ]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "admin@example.com",
+      "firstName": "Admin",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-apprealm"
+      ]
     }
   ],
   "roles": {
