@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Api.Services.Customer;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Shared.DTOs.Customer;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -45,5 +46,24 @@ public class CustomerController(ICustomerService customerService, ILogger<Custom
         await _customerService.EnsureCustomerExists(email, name);
 
         return Ok(new { message = "Customer registered or already exists." });
+    }
+
+    [HttpGet("all")]
+    [RequireUserRole("admin")]
+    public async Task<ActionResult<List<CustomerRoleDto>>> GetAllCustomersWithRoles([FromQuery] string? search = null)
+    {
+        var customers = await _customerService.GetAllCustomersWithRoles(search);
+        return Ok(customers);
+    }
+
+    [HttpPut("{email}/food-service-role")]
+    [RequireUserRole("admin")]
+    public async Task<IActionResult> ToggleFoodServiceRole(string email)
+    {
+        var success = await _customerService.ToggleFoodServiceRole(email);
+        if (!success)
+            return BadRequest(new { message = "Cannot modify role for admin users." });
+
+        return Ok(new { message = "Role updated successfully." });
     }
 }
