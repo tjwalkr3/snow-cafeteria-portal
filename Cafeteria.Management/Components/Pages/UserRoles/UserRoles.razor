@@ -31,7 +31,7 @@
             <p class="mt-3 text-muted">Loading users...</p>
         </div>
     }
-    else if (customers.Any())
+    else if (!string.IsNullOrWhiteSpace(searchText) && customers.Any())
     {
         <div class="card border-1 rounded-3 shadow-sm mb-4">
             <div class="table-responsive">
@@ -97,12 +97,12 @@
             </div>
         </div>
     }
-    else
+    else if (!string.IsNullOrWhiteSpace(searchText))
     {
         <div class="empty-state text-center p-5 bg-white rounded-3 shadow-sm">
             <i class="bi bi-person-badge fs-1 mb-3 text-muted d-block"></i>
-            <p class="fs-5 mb-2">@(!string.IsNullOrWhiteSpace(searchText) ? "No users match your search." : "No users found.")</p>
-            <p class="text-muted small mb-0">@(!string.IsNullOrWhiteSpace(searchText) ? "Try adjusting your search criteria." : "Users will appear here once registered.")</p>
+            <p class="fs-5 mb-2">No users match your search.</p>
+            <p class="text-muted small mb-0">Try adjusting your search criteria.</p>
         </div>
     }
 </div>

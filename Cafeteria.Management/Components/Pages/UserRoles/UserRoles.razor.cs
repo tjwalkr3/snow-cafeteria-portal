@@ -20,18 +20,14 @@ public partial class UserRoles : ComponentBase, IDisposable
 
     private CancellationTokenSource? _debounceCts;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadCustomers();
-    }
-
     private async Task LoadCustomers(string? search = null)
     {
         isLoading = true;
         StateHasChanged();
         try
         {
-            customers = await CustomerService.GetAllCustomersWithRoles(search);
+            var results = await CustomerService.GetAllCustomersWithRoles(search);
+            customers = results.Take(5).ToList();
         }
         catch (Exception ex)
         {
@@ -56,7 +52,13 @@ public partial class UserRoles : ComponentBase, IDisposable
         try
         {
             await Task.Delay(350, _debounceCts.Token);
-            await LoadCustomers(string.IsNullOrWhiteSpace(searchText) ? null : searchText);
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                customers = [];
+                StateHasChanged();
+                return;
+            }
+            await LoadCustomers(searchText);
         }
         catch (TaskCanceledException)
         {
