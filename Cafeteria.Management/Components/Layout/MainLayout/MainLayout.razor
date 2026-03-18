@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject Cafeteria.Management.Services.Customers.ICustomerService CustomerService
 
 <div class="page">
     <div class="sidebar">
@@ -9,7 +11,22 @@
         <article class="content px-4">
             <AuthorizeView>
                 <Authorized>
-                    @Body
+                    @if (!_roleCheckCompleted)
+                    {
+                        <div class="d-flex justify-content-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else if (_isAdmin)
+                    {
+                        @Body
+                    }
+                    else
+                    {
+                        <NotAdminAccessDenied />
+                    }
                 </Authorized>
                 <NotAuthorized>
                     <NotSignedIn />
@@ -24,3 +41,21 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private bool _roleCheckCompleted;
+    private bool _isAdmin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (authenticationState.User.Identity?.IsAuthenticated == true)
+        {
+            var role = await CustomerService.GetCurrentUserRole();
+            _isAdmin = string.Equals(role?.UserRole, "admin", StringComparison.OrdinalIgnoreCase);
+        }
+
+        _roleCheckCompleted = true;
+    }
+}

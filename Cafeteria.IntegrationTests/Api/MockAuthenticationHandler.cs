@@ -13,6 +13,9 @@ namespace Cafeteria.IntegrationTests.Api;
 public class MockAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     public const string AuthenticationScheme = "TestScheme";
+    public const string TestEmailHeader = "X-Test-Email";
+    public const string TestNameHeader = "X-Test-Name";
+    public const string TestRoleHeader = "X-Test-Role";
 
     public MockAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -24,15 +27,19 @@ public class MockAuthenticationHandler : AuthenticationHandler<AuthenticationSch
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        var email = Request.Headers[TestEmailHeader].FirstOrDefault() ?? "test@example.com";
+        var name = Request.Headers[TestNameHeader].FirstOrDefault() ?? "Test User";
+        var role = Request.Headers[TestRoleHeader].FirstOrDefault() ?? "admin";
+
         var claims = new[]
         {
-            new Claim(ClaimTypes.Name, "Test User"),
-            new Claim("name", "Test User"),
+            new Claim(ClaimTypes.Name, name),
+            new Claim("name", name),
             new Claim(ClaimTypes.NameIdentifier, "test-user-id"),
-            new Claim(ClaimTypes.Email, "test@example.com"),
-            new Claim("email", "test@example.com"),
-            new Claim("preferred_username", "test@example.com"),
-            new Claim(ClaimTypes.Role, "admin")
+            new Claim(ClaimTypes.Email, email),
+            new Claim("email", email),
+            new Claim("preferred_username", email),
+            new Claim(ClaimTypes.Role, role)
         };
 
         var identity = new ClaimsIdentity(claims, AuthenticationScheme);

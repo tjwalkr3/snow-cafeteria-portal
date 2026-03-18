@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Stations;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.Enums;
@@ -62,6 +63,7 @@ public class StationController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost("location/{locationId:int}")]
     public async Task<IActionResult> CreateStationByLocationId(int locationId, [FromBody] StationUpsertRequest request)
     {
@@ -70,6 +72,7 @@ public class StationController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{stationId:int}")]
     public async Task<IActionResult> UpdateStationById(int stationId, [FromBody] StationUpsertRequest request)
     {
@@ -78,6 +81,7 @@ public class StationController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("{stationId:int}")]
     public async Task<IActionResult> DeleteStationById(int stationId)
     {
@@ -86,6 +90,7 @@ public class StationController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost("{stationId:int}/hours")]
     public async Task<IActionResult> AddStationHoursByStationId(int stationId, [FromBody] StationHoursRequest request)
     {
@@ -100,6 +105,7 @@ public class StationController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("hours/{stationHrsId:int}")]
     public async Task<IActionResult> UpdateStationHoursById(int stationHrsId, [FromBody] StationHoursRequest request)
     {
@@ -114,6 +120,7 @@ public class StationController : ControllerBase
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("hours/{stationHrsId:int}")]
     public async Task<IActionResult> DeleteStationHoursById(int stationHrsId)
     {

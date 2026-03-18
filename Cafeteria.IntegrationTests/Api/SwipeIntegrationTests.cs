@@ -140,9 +140,10 @@ public class SwipeIntegrationTests : IDisposable
         var response = await _client.GetAsync("/api/swipe/all-customers");
         response.EnsureSuccessStatusCode();
         var customers = await response.Content.ReadFromJsonAsync<List<CustomerSwipeDto>>();
+        var expectedCount = await _connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM cafeteria.customer");
 
         Assert.NotNull(customers);
-        Assert.Equal(6, customers.Count); // 6 pre-loaded customers
+        Assert.Equal(expectedCount, customers.Count);
 
         // Verify data structure and some sample data
         var johnDoe = customers.FirstOrDefault(c => c.BadgerId == 1001234);

@@ -1,4 +1,5 @@
 using Cafeteria.Api.Services.OptionOptionTypes;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class OptionOptionTypeController(IOptionOptionTypeService optionOptionTyp
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPost]
     public async Task<OptionOptionTypeDto> CreateOptionOptionType(
         [FromBody] OptionOptionTypeDto optionOptionTypeDto
@@ -36,6 +38,7 @@ public class OptionOptionTypeController(IOptionOptionTypeService optionOptionTyp
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpPut("{id}")]
     public async Task<ActionResult<OptionOptionTypeDto>> UpdateOptionOptionTypeById(
         int id,
@@ -52,6 +55,7 @@ public class OptionOptionTypeController(IOptionOptionTypeService optionOptionTyp
     }
 
     [Authorize]
+    [RequireUserRole("admin", "food-service")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOptionOptionTypeById(int id)
     {
