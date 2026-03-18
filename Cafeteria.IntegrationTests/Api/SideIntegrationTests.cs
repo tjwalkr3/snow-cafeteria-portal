@@ -178,4 +178,85 @@ public class SideIntegrationTests : IDisposable
         var response = await _client.DeleteAsync("/api/side/99999");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    [Fact]
+    public async Task SetStockStatusById_UpdatesInStockStatus()
+    {
+        // Create a new side for this test
+        var sideId = _connection.ExecuteScalar<int>(
+            InsertSideSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                SideName = "Side To Stock Toggle",
+                SideDescription = "Testing stock status",
+                SidePrice = 3.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
+
+        // Set stock status to false
+        var response = await _client.PutAsJsonAsync($"/api/side/{sideId}/stock", false);
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+
+        // Verify the stock status was updated by retrieving the side
+        var getResponse = await _client.GetAsync($"/api/side/{sideId}");
+        getResponse.EnsureSuccessStatusCode();
+        var side = await getResponse.Content.ReadFromJsonAsync<SideDto>();
+
+        Assert.NotNull(side);
+        Assert.False(side.InStock);
+    }
+
+    [Fact]
+    public async Task SetStockStatusById_ToggesStockStatusToTrue()
+    {
+        // Create a new side for this test
+        var sideId = _connection.ExecuteScalar<int>(
+            InsertSideSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                SideName = "Side To Stock Toggle True",
+                SideDescription = "Testing stock status toggle",
+                SidePrice = 3.99m,
+                ImageUrl = "https://example.com/img.jpg",
+            }
+        );
+
+        // Set stock status to true
+        var response = await _client.PutAsJsonAsync($"/api/side/{sideId}/stock", true);
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+
+        // Verify the stock status was updated
+        var getResponse = await _client.GetAsync($"/api/side/{sideId}");
+        getResponse.EnsureSuccessStatusCode();
+        var side = await getResponse.Content.ReadFromJsonAsync<SideDto>();
+
+        Assert.NotNull(side);
+        Assert.True(side.InStock);
+    }
+
+    [Fact]
+    public async Task SetStockStatusById_ReturnsNotFound_WhenSideDoesNotExist()
+    {
+        var response = await _client.PutAsJsonAsync("/api/side/99999/stock", false);
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetSidesByStationIdWithOptions_ReturnsSidesWithOptions()
+    {
+        // Test with station 1 which should have sides with options
+        var response = await _client.GetAsync("/api/side/station/1/with-options");
+        response.EnsureSuccessStatusCode();
+        var sidesWithOptions = await response.Content.ReadFromJsonAsync<List<SideWithOptionsDto>>();
+
+        Assert.NotNull(sidesWithOptions);
+        Assert.True(sidesWithOptions.Count >= 1);
+        // Verify each side has an options list
+        Assert.All(sidesWithOptions, side => Assert.NotNull(side.OptionTypes));
+    }
 }
