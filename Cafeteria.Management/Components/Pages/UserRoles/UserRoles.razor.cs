@@ -10,6 +10,9 @@ public partial class UserRoles : ComponentBase, IDisposable
     [Inject]
     private ICustomerService CustomerService { get; set; } = default!;
 
+    [CascadingParameter(Name = "UserRole")]
+    private string? UserRole { get; set; }
+
     private List<CustomerRoleDto> customers = [];
     private bool isLoading = false;
     private string searchText = string.Empty;

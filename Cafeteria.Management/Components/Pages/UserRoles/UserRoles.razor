@@ -6,6 +6,17 @@
 
 <PageTitle>User Roles</PageTitle>
 
+@if (!string.Equals(UserRole, "admin", StringComparison.OrdinalIgnoreCase))
+{
+    <section class="access-denied-wrap">
+        <div class="access-denied-card">
+            <h1>Access Restricted</h1>
+            <p>You do not have permission to manage user roles.</p>
+        </div>
+    </section>
+    return;
+}
+
 <div class="@(hasSearch ? "ur-results-layout" : "ur-idle-layout")">
 
     <div class="ur-header">
