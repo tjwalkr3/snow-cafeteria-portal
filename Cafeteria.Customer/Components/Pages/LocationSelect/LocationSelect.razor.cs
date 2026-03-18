@@ -1,7 +1,6 @@
 using Cafeteria.Customer.Services;
 using Cafeteria.Customer.Services.Cart;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace Cafeteria.Customer.Components.Pages.LocationSelect;
 
@@ -16,40 +15,54 @@ public partial class LocationSelect : ComponentBase
     [Inject]
     private ICartService CartService { get; set; } = default!;
 
-    [SupplyParameterFromQuery(Name = "payment")]
-    public string? Payment { get; set; }
     public bool IsInitialized { get; set; } = false;
 
-    public string CreateUrl(int locationId)
+    public int? CurrentLocationId { get; private set; }
+    public int? PendingLocationId { get; private set; }
+    public bool ShowConfirmModal { get; set; }
+
+    public async Task HandleLocationSelected(int locationId)
     {
-        Dictionary<string, string?> queryParameters = new() { };
-
-        if (!string.IsNullOrEmpty(Payment))
-            queryParameters.Add("payment", Payment);
-        queryParameters.Add("location", locationId.ToString());
-
-        return QueryHelpers.AddQueryString("/station-select", queryParameters);
+        if (CurrentLocationId.HasValue && CurrentLocationId.Value != locationId)
+        {
+            PendingLocationId = locationId;
+            ShowConfirmModal = true;
+            return;
+        }
+        CurrentLocationId = locationId;
+        var location = LocationSelectVM.Locations.FirstOrDefault(l => l.Id == locationId);
+        if (location == null) return;
+        await CartService.SetLocation("order", location);
+        Navigation.NavigateTo("/station-select");
     }
 
-    private string GetLocationIcon(string locationName)
+    public async Task ConfirmLocationChange()
     {
-        var lowerName = locationName.ToLower();
+        if (!PendingLocationId.HasValue) return;
+        // Preserve the payment method when changing locations
+        var currentOrder = await CartService.GetOrder("order");
+        bool preservedIsCardOrder = currentOrder?.IsCardOrder ?? false;
 
-        if (lowerName.Contains("den") || lowerName.Contains("badger"))
-            return "bi-house-door-fill";
-        else if (lowerName.Contains("bistro") || lowerName.Contains("busters"))
-            return "bi-building-fill";
-        else if (lowerName.Contains("library"))
-            return "bi-book-fill";
-        else if (lowerName.Contains("student") || lowerName.Contains("union"))
-            return "bi-people-fill";
-        else
-            return "bi-geo-alt-fill";
+        await CartService.ClearOrder("order");
+        var location = LocationSelectVM.Locations.FirstOrDefault(l => l.Id == PendingLocationId.Value);
+        if (location == null) return;
+
+        CurrentLocationId = PendingLocationId.Value;
+        PendingLocationId = null;
+        await CartService.SetLocation("order", location);
+        // Restore the payment method
+        await CartService.SetIsCardOrder("order", preservedIsCardOrder);
+        Navigation.NavigateTo("/station-select");
+    }
+
+    public void CancelLocationChange()
+    {
+        PendingLocationId = null;
+        ShowConfirmModal = false;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        LocationSelectVM.ValidatePaymentParameter(Payment);
         await LocationSelectVM.InitializeLocationsAsync();
         IsInitialized = true;
     }
@@ -60,7 +73,11 @@ public partial class LocationSelect : ComponentBase
         {
             await InvokeAsync(async () =>
             {
-                await CartService.ClearOrder("order");
+                var order = await CartService.GetOrder("order");
+                if (order?.Location != null)
+                {
+                    CurrentLocationId = order.Location.Id;
+                }
                 StateHasChanged();
             });
         }

@@ -1,0 +1,56 @@
+@using Cafeteria.Shared.DTOs.Menu
+
+<div class="row row-cols-1 row-cols-lg-3 g-3">
+    @foreach (var sideWithOptions in Sides)
+    {
+        var side = sideWithOptions.Side;
+        var hasOptions = sideWithOptions.OptionTypes.Any();
+        <div class="col">
+            <div class="meal-card h-100 d-flex flex-column" @onclick="() => HandleSideTap(sideWithOptions)">
+                <div class="flex-grow-1">
+                    <h5 class="mb-1 fw-600">@side.SideName</h5>
+                    @if (!string.IsNullOrEmpty(side.SideDescription))
+                    {
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">@side.SideDescription</p>
+                    }
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    @if (IsCardOrder)
+                    {
+                        <span class="price-badge">$@side.SidePrice.ToString("F2")</span>
+                    }
+                    else
+                    {
+                        <span></span>
+                    }
+                    @if (IsCardOrder && SelectedSide?.Id == side.Id && Quantity > 0)
+                    {
+                        <div class="qty-stepper d-inline-flex align-items-center" @onclick:stopPropagation="true">
+                            <button type="button" class="qty-btn" @onclick="() => OnQuantityChanged.InvokeAsync(Quantity - 1)">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <span class="qty-value">@Quantity</span>
+                            <button type="button" class="qty-btn" @onclick="() => OnQuantityChanged.InvokeAsync(Quantity + 1)">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    }
+                    else if (SelectedSide?.Id == side.Id)
+                    {
+                        <button type="button" class="select-btn added d-inline-flex align-items-center gap-1"
+                                @onclick="() => HandleSideTap(sideWithOptions)" @onclick:stopPropagation="true">
+                            <i class="bi bi-check-circle-fill"></i> Added
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="select-btn d-inline-flex align-items-center gap-1"
+                                @onclick="() => HandleSideTap(sideWithOptions)" @onclick:stopPropagation="true">
+                            <i class="bi bi-plus-circle"></i> @(hasOptions ? "Build" : "Add")
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

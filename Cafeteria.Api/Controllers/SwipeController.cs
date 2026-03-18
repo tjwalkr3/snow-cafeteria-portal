@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Swipe;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Swipes;
 using Microsoft.AspNetCore.Authorization;
 
@@ -46,17 +47,8 @@ public class SwipeController(ISwipeService swipeService, ILogger<SwipeController
         {
             _logger.LogInformation("Fetching swipes for email: {Email}", email);
             var result = await _swipeService.GetSwipesByEmail(email);
-            if (result == null)
-            {
-                _logger.LogWarning("No swipes found for email: {Email}", email);
-                return NotFound();
-            }
+            // Return OK with null result if no active swipes found (customer can pay with card)
             return Ok(result);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogWarning(ex, "No swipes found for email: {Email}", email);
-            return NotFound($"No swipes found for email {email}.");
         }
         catch (Exception ex)
         {
@@ -66,6 +58,7 @@ public class SwipeController(ISwipeService swipeService, ILogger<SwipeController
     }
 
     [HttpGet("all-customers")]
+    [RequireUserRole("admin", "food-service")]
     public async Task<ActionResult<List<CustomerSwipeDto>>> GetAllCustomers()
     {
         try

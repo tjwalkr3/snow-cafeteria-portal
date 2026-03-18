@@ -1,0 +1,82 @@
+.order-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.section-card {
+    transition: all 0.2s ease;
+}
+
+.section-header {
+    background-color: #1e366c;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    color: #6c757d;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+    margin-right: 1rem;
+}
+
+.total-amount {
+    color: #1e366c;
+}
+
+.customer-link {
+    color: var(--bs-primary);
+}
+
+.customer-link:hover {
+    text-decoration: underline !important;
+}
+
+.items-table thead th {
+    background-color: #f8f9fa;
+    color: #1e366c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+
+.items-table tbody td {
+    padding: 0.75rem 1rem;
+    vertical-align: top;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.items-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.swipe-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #1e366c;
+    margin-bottom: 0.5rem;
+}

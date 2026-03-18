@@ -1,0 +1,21 @@
+.exceptions-table {
+    margin-top: 0.5rem;
+}
+
+.exceptions-table thead {
+    background-color: #f8f9fa;
+}
+
+.exceptions-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.exceptions-table td {
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+.exceptions-table .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}

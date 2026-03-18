@@ -1,0 +1,128 @@
+.page-title {
+    color: #1e366c;
+    letter-spacing: -0.025em;
+}
+
+.ur-idle-layout,
+.ur-results-layout {
+    padding: 0 1rem;
+    transition: all 0.2s ease;
+}
+
+.ur-idle-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+}
+
+.ur-idle-layout .ur-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.ur-idle-layout .ur-idle-icon {
+    font-size: 3.5rem;
+    color: #1e366c;
+    opacity: 0.15;
+    display: block;
+    margin-bottom: 1.25rem;
+}
+
+.ur-idle-layout .ur-idle-hint {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+
+.ur-idle-layout .ur-search-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+}
+
+.ur-idle-layout .ur-search-input {
+    font-size: 1rem;
+    padding: 0.85rem 1rem 0.85rem 2.75rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.ur-idle-layout .ur-results {
+    display: none;
+}
+
+.ur-results-layout {
+    display: block;
+}
+
+.ur-results-layout .ur-idle-icon,
+.ur-results-layout .ur-idle-hint {
+    display: none;
+}
+
+.ur-results-layout .ur-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.ur-results-layout .ur-search-wrap {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.ur-results-layout .ur-search-input {
+    font-size: 0.95rem;
+    padding: 0.7rem 1rem 0.7rem 2.75rem;
+    border-radius: 0.625rem;
+}
+
+.ur-results-layout .ur-results {
+    display: block;
+}
+
+.ur-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.ur-search-input {
+    width: 100%;
+    border: 1.5px solid #dee2e6;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ur-search-input:focus {
+    border-color: #1e366c;
+    box-shadow: 0 0 0 3px rgba(30, 54, 108, 0.1);
+}
+
+.ur-table thead th {
+    background-color: #f8f9fa;
+    color: #1e366c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.875rem 1rem;
+}
+
+.ur-table tbody td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.ur-table tbody tr:last-child td {
+    border-bottom: none;
+}

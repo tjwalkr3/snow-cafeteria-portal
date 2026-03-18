@@ -89,7 +89,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location To Update",
                 LocationDescription = "Original description",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -120,7 +120,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location To Delete",
                 LocationDescription = "Will be deleted",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -142,7 +142,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location With Hours",
                 LocationDescription = "Has business hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -172,7 +172,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location For Hours Test",
                 LocationDescription = "Testing hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -209,7 +209,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location For Add Hours",
                 LocationDescription = "Adding hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -240,7 +240,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Bad Weekday",
                 LocationDescription = "Testing bad weekday",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -265,7 +265,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Update Hours",
                 LocationDescription = "Updating hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -304,7 +304,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Bad Update",
                 LocationDescription = "Testing bad update",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -337,7 +337,7 @@ public class LocationIntegrationTests : IDisposable
             {
                 LocationName = "Location Delete Hours",
                 LocationDescription = "Deleting hours",
-                ImageUrl = "https://example.com/img.jpg",
+                IconId = 1,
             }
         );
 
@@ -355,5 +355,18 @@ public class LocationIntegrationTests : IDisposable
 
         var getResponse = await _client.GetAsync($"/api/location/hours/{hoursId}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAuthenticatedLocation_ReturnsAuthenticatedUserInfo()
+    {
+        // The mock authentication handler provides a principal with preferred_username
+        var response = await _client.GetAsync("/api/location/authenticated");
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+
+        Assert.NotNull(result);
+        Assert.True(result!.ContainsKey("username"));
+        Assert.NotNull(result["username"]);
     }
 }

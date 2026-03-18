@@ -44,4 +44,24 @@ public class LocationService(IHttpClientAuth client) : ILocationService
         var response = await client.DeleteAsync<object>($"location/hours/{locationHrsId}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task CreateLocation(string name, string? description, int? iconId = null)
+    {
+        var body = new { Name = name, Description = description, IconId = iconId };
+        var response = await client.PostAsync("location", body);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateLocation(int locationId, string name, string? description, int? iconId = null)
+    {
+        var body = new { Name = name, Description = description, IconId = iconId };
+        var response = await client.PutAsync($"location/{locationId}", body);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<bool> DeleteLocation(int locationId)
+    {
+        var response = await client.DeleteAsync<object>($"location/{locationId}");
+        return response.IsSuccessStatusCode;
+    }
 }

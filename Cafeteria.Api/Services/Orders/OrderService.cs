@@ -4,135 +4,13 @@ using Cafeteria.Shared.DTOs.Order;
 
 namespace Cafeteria.Api.Services.Orders;
 
-public class OrderService : IOrderService
+public class GetOrderService : IOrderService
 {
     private readonly IDbConnection _dbConnection;
 
-    public OrderService(IDbConnection dbConnection)
+    public GetOrderService(IDbConnection dbConnection)
     {
         _dbConnection = dbConnection;
-    }
-
-    public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto, string customerEmail)
-    {
-        if (_dbConnection.State != ConnectionState.Open)
-            _dbConnection.Open();
-
-        using var transaction = _dbConnection.BeginTransaction();
-
-        try
-        {
-            // Get customer badger_id from email
-            const string getCustomerSql = @"
-                SELECT badger_id
-                FROM cafeteria.customer
-                WHERE email = @Email";
-
-            var customerBadgerId = await _dbConnection.QuerySingleOrDefaultAsync<int?>(
-                getCustomerSql,
-                new { Email = customerEmail },
-                transaction);
-
-            if (customerBadgerId == null)
-            {
-                throw new InvalidOperationException($"Customer with email {customerEmail} not found");
-            }
-
-            const string insertOrderSql = @"
-                INSERT INTO cafeteria.order (customer_badger_id, total_price, tax, total_swipe)
-                VALUES (@CustomerBadgerId, @TotalPrice, @Tax, @TotalSwipe)
-                RETURNING id AS Id, order_time AS OrderTime, total_price AS TotalPrice, tax AS Tax, total_swipe AS TotalSwipe;";
-
-            var order = await _dbConnection.QuerySingleAsync<OrderDto>(
-                insertOrderSql,
-                new { CustomerBadgerId = customerBadgerId.Value, createOrderDto.TotalPrice, createOrderDto.Tax, createOrderDto.TotalSwipe },
-                transaction);
-
-            bool isCardOrder = createOrderDto.FoodItems.Any() && createOrderDto.FoodItems[0].CardCost.HasValue;
-            int? saleCardId = null;
-            int? saleSwipeId = null;
-
-            if (isCardOrder)
-            {
-                const string insertSaleCardSql = @"
-                    INSERT INTO cafeteria.sale_card (order_id)
-                    VALUES (@OrderId)
-                    RETURNING id;";
-
-                saleCardId = await _dbConnection.QuerySingleAsync<int>(
-                    insertSaleCardSql,
-                    new { OrderId = order.Id },
-                    transaction);
-            }
-            else
-            {
-                const string insertSaleSwipeSql = @"
-                    INSERT INTO cafeteria.sale_swipe (order_id)
-                    VALUES (@OrderId)
-                    RETURNING id;";
-
-                saleSwipeId = await _dbConnection.QuerySingleAsync<int>(
-                    insertSaleSwipeSql,
-                    new { OrderId = order.Id },
-                    transaction);
-            }
-
-            foreach (var foodItem in createOrderDto.FoodItems)
-            {
-                const string insertFoodItemSql = @"
-                    INSERT INTO cafeteria.food_item
-                        (name, order_id, station_id, sale_card_id, sale_swipe_id, swipe_cost, card_cost, special)
-                    VALUES
-                        (@Name, @OrderId, @StationId, @SaleCardId, @SaleSwipeId, @SwipeCost, @CardCost, @Special)
-                    RETURNING id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
-                        sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
-                        swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special;";
-
-                var insertedFoodItem = await _dbConnection.QuerySingleAsync<FoodItemDto>(
-                    insertFoodItemSql,
-                    new
-                    {
-                        foodItem.Name,
-                        OrderId = order.Id,
-                        foodItem.StationId,
-                        SaleCardId = saleCardId,
-                        SaleSwipeId = saleSwipeId,
-                        foodItem.SwipeCost,
-                        foodItem.CardCost,
-                        foodItem.Special
-                    },
-                    transaction);
-
-                foreach (var option in foodItem.Options)
-                {
-                    const string insertOptionSql = @"
-                        INSERT INTO cafeteria.food_item_option (food_item_order_id, food_option_name)
-                        VALUES (@FoodItemId, @FoodOptionName)
-                        RETURNING id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName;";
-
-                    var insertedOption = await _dbConnection.QuerySingleAsync<FoodItemOptionDto>(
-                        insertOptionSql,
-                        new
-                        {
-                            FoodItemId = insertedFoodItem.Id,
-                            option.FoodOptionName
-                        },
-                        transaction);
-
-                    insertedFoodItem.Options.Add(insertedOption);
-                }
-
-                order.FoodItems.Add(insertedFoodItem);
-            }
-
-            transaction.Commit();
-            return order;
-        }
-        catch
-        {
-            transaction.Rollback();
-            throw;
-        }
     }
 
     public async Task<OrderDto?> GetOrderById(int id)
@@ -146,7 +24,7 @@ public class OrderService : IOrderService
         if (order == null) return null;
 
         const string foodItemsSql = @"
-            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                 sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                 swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
             FROM cafeteria.food_item
@@ -181,7 +59,7 @@ public class OrderService : IOrderService
         foreach (var order in orders)
         {
             const string foodItemsSql = @"
-                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                     sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                     swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
                 FROM cafeteria.food_item
@@ -217,8 +95,22 @@ public class OrderService : IOrderService
             LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
             ORDER BY o.order_time DESC";
 
-        var orders = await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql);
-        return orders.ToList();
+        var orders = (await _dbConnection.QueryAsync<OrderWithCustomerDto>(sql)).ToList();
+
+        const string foodItemsSql = @"
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
+                sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
+                swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
+            FROM cafeteria.food_item
+            WHERE order_id = @orderId;";
+
+        foreach (var order in orders)
+        {
+            var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = order.Id });
+            order.FoodItems = foodItems.ToList();
+        }
+
+        return orders;
     }
 
     public async Task<List<OrderWithCustomerDto>> GetOrdersByCustomer(int badgerId)
@@ -252,7 +144,7 @@ public class OrderService : IOrderService
         foreach (var order in orders)
         {
             const string foodItemsSql = @"
-                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId,
+                SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
                     sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
                     swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
                 FROM cafeteria.food_item
@@ -288,6 +180,30 @@ public class OrderService : IOrderService
             LEFT JOIN cafeteria.sale_card sc ON sc.order_id = o.id
             WHERE o.id = @Id";
 
-        return await _dbConnection.QuerySingleOrDefaultAsync<OrderWithCustomerDto>(sql, new { Id = id });
+        var order = await _dbConnection.QuerySingleOrDefaultAsync<OrderWithCustomerDto>(sql, new { Id = id });
+        if (order == null) return null;
+
+        const string foodItemsSql = @"
+            SELECT id AS Id, name AS Name, order_id AS OrderId, station_id AS StationId, location_id AS LocationId,
+                sale_card_id AS SaleCardId, sale_swipe_id AS SaleSwipeId,
+                swipe_cost AS SwipeCost, card_cost AS CardCost, special AS Special
+            FROM cafeteria.food_item
+            WHERE order_id = @orderId;";
+
+        var foodItems = await _dbConnection.QueryAsync<FoodItemDto>(foodItemsSql, new { orderId = id });
+        order.FoodItems = foodItems.ToList();
+
+        foreach (var foodItem in order.FoodItems)
+        {
+            const string optionsSql = @"
+                SELECT id AS Id, food_item_order_id AS FoodItemId, food_option_name AS FoodOptionName
+                FROM cafeteria.food_item_option
+                WHERE food_item_order_id = @foodItemId;";
+
+            var options = await _dbConnection.QueryAsync<FoodItemOptionDto>(optionsSql, new { foodItemId = foodItem.Id });
+            foodItem.Options = options.ToList();
+        }
+
+        return order;
     }
 }

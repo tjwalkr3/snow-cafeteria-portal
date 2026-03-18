@@ -22,12 +22,15 @@ public class StationService : IStationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                location_id AS LocationId,
-                station_name AS StationName,
-                station_description AS StationDescription
-            FROM cafeteria.station
-            ORDER BY station_name;";
+                s.id AS Id,
+                s.location_id AS LocationId,
+                s.station_name AS StationName,
+                s.station_description AS StationDescription,
+                s.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName
+            FROM cafeteria.station s
+            LEFT JOIN cafeteria.icon i ON s.icon_id = i.id
+            ORDER BY s.station_name;";
 
         var stations = await _dbConnection.QueryAsync<StationDto>(sql);
         return stations.ToList();
@@ -37,13 +40,16 @@ public class StationService : IStationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                location_id AS LocationId,
-                station_name AS StationName,
-                station_description AS StationDescription
-            FROM cafeteria.station
-            WHERE location_id = @location_id
-            ORDER BY station_name;";
+                s.id AS Id,
+                s.location_id AS LocationId,
+                s.station_name AS StationName,
+                s.station_description AS StationDescription,
+                s.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName
+            FROM cafeteria.station s
+            LEFT JOIN cafeteria.icon i ON s.icon_id = i.id
+            WHERE s.location_id = @location_id
+            ORDER BY s.station_name;";
 
         var stations = await _dbConnection.QueryAsync<StationDto>(sql, new { location_id = locationId });
         return stations.ToList();
@@ -53,46 +59,52 @@ public class StationService : IStationService
     {
         const string sql = @"
             SELECT
-                id AS Id,
-                location_id AS LocationId,
-                station_name AS StationName,
-                station_description AS StationDescription
-            FROM cafeteria.station
-            WHERE id = @id;";
+                s.id AS Id,
+                s.location_id AS LocationId,
+                s.station_name AS StationName,
+                s.station_description AS StationDescription,
+                s.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName
+            FROM cafeteria.station s
+            LEFT JOIN cafeteria.icon i ON s.icon_id = i.id
+            WHERE s.id = @id;";
 
         var station = await _dbConnection.QuerySingleOrDefaultAsync<StationDto>(sql, new { id = stationId });
         return station;
     }
 
-    public async Task CreateStationByLocationId(int locationId, string stationName, string? stationDescription = null)
+    public async Task CreateStationByLocationId(int locationId, string stationName, string? stationDescription = null, int? iconId = null)
     {
         const string sql = @"
-            INSERT INTO cafeteria.station (location_id, station_name, station_description)
-            VALUES (@location_id, @station_name, @station_description);";
+            INSERT INTO cafeteria.station (location_id, station_name, station_description, icon_id)
+            VALUES (@location_id, @station_name, @station_description, @icon_id);";
 
         var parameters = new
         {
             location_id = locationId,
             station_name = stationName,
-            station_description = stationDescription ?? string.Empty
+            station_description = stationDescription ?? string.Empty,
+            icon_id = iconId
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateStationById(int stationId, string name, string? description)
+    public async Task UpdateStationById(int stationId, string name, string? description, int? iconId = null)
     {
         const string sql = @"
             UPDATE cafeteria.station
             SET station_name = @station_name,
-                station_description = @station_description
+                station_description = @station_description,
+                icon_id = @icon_id
             WHERE id = @id;";
 
         var parameters = new
         {
             id = stationId,
             station_name = name,
-            station_description = description ?? string.Empty
+            station_description = description ?? string.Empty,
+            icon_id = iconId
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);

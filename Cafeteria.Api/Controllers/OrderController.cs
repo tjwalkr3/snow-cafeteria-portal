@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Api.Authorization;
 using Cafeteria.Api.Services.Orders;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -9,9 +10,10 @@ namespace Cafeteria.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class OrderController(IOrderService orderService) : ControllerBase
+public class OrderController(IOrderService orderService, ICreateOrderService createOrderService) : ControllerBase
 {
     private readonly IOrderService _orderService = orderService;
+    private readonly ICreateOrderService _createOrderService = createOrderService;
 
     [HttpGet("{id}")]
     public async Task<ActionResult<OrderDto>> GetOrderById(int id)
@@ -30,6 +32,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [HttpGet("with-customer")]
+    [RequireUserRole("admin", "food-service")]
     public async Task<ActionResult<List<OrderWithCustomerDto>>> GetAllOrdersWithCustomer()
     {
         var result = await _orderService.GetAllOrdersWithCustomer();
@@ -37,6 +40,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [HttpGet("with-customer/{id}")]
+    [RequireUserRole("admin", "food-service")]
     public async Task<ActionResult<OrderWithCustomerDto>> GetOrderWithCustomerById(int id)
     {
         var result = await _orderService.GetOrderWithCustomerById(id);
@@ -67,7 +71,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
+    public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] BrowserOrder browserOrder)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("preferred_username")?.Value;
 
@@ -76,7 +80,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
             return BadRequest("Email not found in token claims");
         }
 
-        var result = await _orderService.CreateOrder(createOrderDto, email);
+        var result = await _createOrderService.CreateOrder(browserOrder, email);
         return CreatedAtAction(nameof(GetOrderById), new { id = result.Id }, result);
     }
 }

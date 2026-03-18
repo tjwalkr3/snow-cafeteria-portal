@@ -14,6 +14,7 @@ builder.AddContainer("postgres", "postgres", "18-alpine")
     .WithEnvironment("POSTGRES_PASSWORD", postgresPassword)
     .WithEnvironment("POSTGRES_USER", postgresUser)
     .WithEnvironment("POSTGRES_DB", postgresDb)
+    .WithEnvironment("TZ", "America/Denver")
     .WithBindMount("../init.sql", "/docker-entrypoint-initdb.d/init.sql")
     .WithEndpoint(port: postgresPort, targetPort: postgresPort, name: "postgres")
     .WithLifetime(ContainerLifetime.Session);
@@ -23,6 +24,7 @@ builder.AddContainer(keycloakHost, "keycloak/keycloak", "26.5")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", "password123")
     .WithEnvironment("KC_HOSTNAME_STRICT", "false")
+    .WithEnvironment("TZ", "America/Denver")
     .WithHttpEndpoint(port: keycloakPort, targetPort: keycloakPort, name: "http")
     .WithArgs("start-dev", "--import-realm")
     .WithLifetime(ContainerLifetime.Session);
@@ -33,13 +35,15 @@ var keycloakAuthority = $"http://localhost:{keycloakPort}/realms/{keycloakRealm}
 var api = builder.AddProject<Projects.Cafeteria_Api>("api")
     .WithEnvironment("ConnectionStrings__cafeteria", connectionString)
     .WithEnvironment("Keycloak__Authority", keycloakAuthority)
-    .WithEnvironment("Keycloak__Audience", "cafeteria");
+    .WithEnvironment("Keycloak__Audience", "cafeteria")
+    .WithEnvironment("TZ", "America/Denver");
 
 builder.AddProject<Projects.Cafeteria_Customer>("customer")
     .WithReference(api)
     .WithEnvironment("ApiBaseUrl", "http://api/api/")
     .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
     .WithEnvironment("OpenIDConnectSettings__ClientId", "customer")
+    .WithEnvironment("TZ", "America/Denver")
     .WithExternalHttpEndpoints();
 
 builder.AddProject<Projects.Cafeteria_Management>("management")
@@ -47,6 +51,7 @@ builder.AddProject<Projects.Cafeteria_Management>("management")
     .WithEnvironment("ApiBaseUrl", "http://api/api/")
     .WithEnvironment("OpenIDConnectSettings__Authority", keycloakAuthority)
     .WithEnvironment("OpenIDConnectSettings__ClientId", "management")
+    .WithEnvironment("TZ", "America/Denver")
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

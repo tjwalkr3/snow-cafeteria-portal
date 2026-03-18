@@ -7,8 +7,8 @@ public static class SqlInsertQueries
     // SQL Insert Queries
     public const string InsertLocationSql =
         @"
-        INSERT INTO cafeteria.cafeteria_location (location_name, location_description, image_url)
-        VALUES (@LocationName, @LocationDescription, @ImageUrl)";
+        INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_id)
+        VALUES (@LocationName, @LocationDescription, @IconId)";
 
     public const string InsertStationSql =
         @"
@@ -37,8 +37,8 @@ public static class SqlInsertQueries
 
     public const string InsertFoodOptionTypeSql =
         @"
-        INSERT INTO cafeteria.food_option_type (food_option_type_name, num_included, max_amount, food_option_price, entree_id, side_id)
-        VALUES (@FoodOptionTypeName, @NumIncluded, @MaxAmount, @FoodOptionPrice, @EntreeId, @SideId)";
+        INSERT INTO cafeteria.food_option_type (food_option_type_name, required_amount, included_amount, max_amount, food_option_price, entree_id, side_id)
+        VALUES (@FoodOptionTypeName, @RequiredAmount, @IncludedAmount, @MaxAmount, @FoodOptionPrice, @EntreeId, @SideId)";
 
     public const string InsertOptionOptionTypeSql =
         @"

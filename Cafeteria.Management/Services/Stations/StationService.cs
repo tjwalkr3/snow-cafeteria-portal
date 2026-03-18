@@ -54,4 +54,24 @@ public class StationService(IHttpClientAuth client) : IStationService
         var response = await client.DeleteAsync<object>($"station/hours/{stationHrsId}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task CreateStation(int locationId, string name, string? description, int? iconId = null)
+    {
+        var body = new { Name = name, Description = description, IconId = iconId };
+        var response = await client.PostAsync($"station/location/{locationId}", body);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateStation(int stationId, string name, string? description, int? iconId = null)
+    {
+        var body = new { Name = name, Description = description, IconId = iconId };
+        var response = await client.PutAsync($"station/{stationId}", body);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<bool> DeleteStation(int stationId)
+    {
+        var response = await client.DeleteAsync<object>($"station/{stationId}");
+        return response.IsSuccessStatusCode;
+    }
 }

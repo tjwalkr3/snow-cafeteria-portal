@@ -16,9 +16,13 @@ public class FoodOptionTypeService : IFoodOptionTypeService
     public async Task<FoodOptionTypeDto> CreateFoodOptionType(FoodOptionTypeDto foodTypeDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.food_option_type (food_option_type_name, num_included, max_amount, food_option_price, entree_id, side_id)
-            VALUES (@FoodOptionTypeName, @NumIncluded, @MaxAmount, @FoodOptionPrice, @EntreeId, @SideId)
-            RETURNING id AS Id, food_option_type_name AS FoodOptionTypeName, num_included AS NumIncluded, max_amount AS MaxAmount, food_option_price AS FoodOptionPrice, entree_id AS EntreeId, side_id AS SideId;";
+            WITH inserted AS (
+                INSERT INTO cafeteria.food_option_type (food_option_type_name, required_amount, included_amount, max_amount, food_option_price, entree_id, side_id, icon_id)
+                VALUES (@FoodOptionTypeName, @RequiredAmount, @IncludedAmount, @MaxAmount, @FoodOptionPrice, @EntreeId, @SideId, @IconId)
+                RETURNING *)
+            SELECT inserted.id AS Id, inserted.food_option_type_name AS FoodOptionTypeName, inserted.required_amount AS RequiredAmount, inserted.included_amount AS IncludedAmount, inserted.max_amount AS MaxAmount, inserted.food_option_price AS FoodOptionPrice, inserted.entree_id AS EntreeId, inserted.side_id AS SideId, inserted.icon_id AS IconId, i.bootstrap_name AS IconBootstrapName
+            FROM inserted
+            LEFT JOIN cafeteria.icon i ON inserted.icon_id = i.id;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<FoodOptionTypeDto>(sql, foodTypeDto);
         return result ?? throw new InvalidOperationException("Failed to create food type");
@@ -28,15 +32,19 @@ public class FoodOptionTypeService : IFoodOptionTypeService
     {
         const string sql = @"
             SELECT 
-                id AS Id, 
-                food_option_type_name AS FoodOptionTypeName, 
-                num_included AS NumIncluded, 
-                max_amount AS MaxAmount, 
-                food_option_price AS FoodOptionPrice, 
-                entree_id AS EntreeId, 
-                side_id AS SideId
-            FROM cafeteria.food_option_type
-            WHERE id = @id;";
+                fot.id AS Id, 
+                fot.food_option_type_name AS FoodOptionTypeName, 
+                fot.required_amount AS RequiredAmount, 
+                fot.included_amount AS IncludedAmount, 
+                fot.max_amount AS MaxAmount, 
+                fot.food_option_price AS FoodOptionPrice, 
+                fot.entree_id AS EntreeId, 
+                fot.side_id AS SideId,
+                fot.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName
+            FROM cafeteria.food_option_type fot
+            LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
+            WHERE fot.id = @id;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<FoodOptionTypeDto>(sql, new { id });
         return result;
@@ -46,15 +54,19 @@ public class FoodOptionTypeService : IFoodOptionTypeService
     {
         const string sql = @"
             SELECT 
-                id AS Id, 
-                food_option_type_name AS FoodOptionTypeName, 
-                num_included AS NumIncluded, 
-                max_amount AS MaxAmount, 
-                food_option_price AS FoodOptionPrice, 
-                entree_id AS EntreeId, 
-                side_id AS SideId
-            FROM cafeteria.food_option_type
-            ORDER BY food_option_type_name;";
+                fot.id AS Id, 
+                fot.food_option_type_name AS FoodOptionTypeName, 
+                fot.required_amount AS RequiredAmount, 
+                fot.included_amount AS IncludedAmount, 
+                fot.max_amount AS MaxAmount, 
+                fot.food_option_price AS FoodOptionPrice, 
+                fot.entree_id AS EntreeId, 
+                fot.side_id AS SideId,
+                fot.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName
+            FROM cafeteria.food_option_type fot
+            LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
+            ORDER BY fot.food_option_type_name;";
 
         var result = await _dbConnection.QueryAsync<FoodOptionTypeDto>(sql);
         return result.ToList();
@@ -64,70 +76,99 @@ public class FoodOptionTypeService : IFoodOptionTypeService
     {
         string sql = @"
         SELECT 
-            id AS Id,
-            food_option_type_name AS FoodOptionTypeName,
-            num_included AS NumIncluded,
-            max_amount AS MaxAmount,
-            food_option_price AS FoodOptionPrice,
-            entree_id AS EntreeId,
-            side_id AS SideId
-        FROM cafeteria.food_option_type
-        WHERE entree_id = @entreeId;";
+            fot.id AS Id,
+            fot.food_option_type_name AS FoodOptionTypeName,
+            fot.required_amount AS RequiredAmount,
+            fot.included_amount AS IncludedAmount,
+            fot.max_amount AS MaxAmount,
+            fot.food_option_price AS FoodOptionPrice,
+            fot.entree_id AS EntreeId,
+            fot.side_id AS SideId,
+            fot.icon_id AS IconId,
+            i.bootstrap_name AS IconBootstrapName
+        FROM cafeteria.food_option_type fot
+        LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
+        WHERE fot.entree_id = @entreeId;";
         var result = await _dbConnection.QueryAsync<FoodOptionTypeDto>(sql, new { entreeId });
         return result.ToList();
     }
 
     public async Task<List<FoodOptionTypeWithOptionsDto>> GetFoodOptionTypesWithOptionsByEntreeId(int entreeId)
     {
-        var optionTypes = await GetFoodOptionTypesByEntreeId(entreeId);
-        var result = new List<FoodOptionTypeWithOptionsDto>();
-
-        foreach (var optionType in optionTypes)
-        {
-            string sql = @"
-            SELECT 
+        const string sql = @"
+            SELECT
+                fot.id AS Id,
+                fot.food_option_type_name AS FoodOptionTypeName,
+                fot.required_amount AS RequiredAmount,
+                fot.included_amount AS IncludedAmount,
+                fot.max_amount AS MaxAmount,
+                fot.food_option_price AS FoodOptionPrice,
+                fot.entree_id AS EntreeId,
+                fot.side_id AS SideId,
+                fot.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName,
                 fo.id AS Id,
-                fo.food_option_name AS FoodOptionName, 
-                fo.in_stock AS InStock, 
+                fo.food_option_name AS FoodOptionName,
+                fo.in_stock AS InStock,
                 fo.image_url AS ImageUrl
-            FROM cafeteria.food_option fo
-            INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
-            WHERE oot.food_option_type_id = @optionTypeId;";
+            FROM cafeteria.food_option_type fot
+            LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
+            LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id
+            LEFT JOIN cafeteria.food_option fo ON oot.food_option_id = fo.id
+            WHERE fot.entree_id = @entreeId
+            ORDER BY fot.id;";
 
-            var options = await _dbConnection.QueryAsync<FoodOptionDto>(sql, new { optionTypeId = optionType.Id });
+        var lookup = new Dictionary<int, FoodOptionTypeWithOptionsDto>();
 
-            result.Add(new FoodOptionTypeWithOptionsDto
+        await _dbConnection.QueryAsync<FoodOptionTypeDto, FoodOptionDto, FoodOptionTypeWithOptionsDto>(
+            sql,
+            (optionType, option) =>
             {
-                OptionType = optionType,
-                Options = options.ToList()
-            });
-        }
+                if (!lookup.TryGetValue(optionType.Id, out var withOptions))
+                {
+                    withOptions = new FoodOptionTypeWithOptionsDto { OptionType = optionType };
+                    lookup[optionType.Id] = withOptions;
+                }
+                if (option?.Id > 0)
+                    withOptions.Options.Add(option);
+                return withOptions;
+            },
+            new { entreeId },
+            splitOn: "Id");
 
-        return result;
+        return lookup.Values.ToList();
     }
 
     public async Task<FoodOptionTypeDto?> UpdateFoodOptionTypeById(int id, FoodOptionTypeDto foodTypeDto)
     {
         const string sql = @"
-            UPDATE cafeteria.food_option_type
-            SET food_option_type_name = @FoodOptionTypeName,
-                num_included = @NumIncluded,
-                max_amount = @MaxAmount,
-                food_option_price = @FoodOptionPrice,
-                entree_id = @EntreeId,
-                side_id = @SideId
-            WHERE id = @id
-            RETURNING id AS Id, food_option_type_name AS FoodOptionTypeName, num_included AS NumIncluded, max_amount AS MaxAmount, food_option_price AS FoodOptionPrice, entree_id AS EntreeId, side_id AS SideId;";
+            WITH updated AS (
+                UPDATE cafeteria.food_option_type
+                SET food_option_type_name = @FoodOptionTypeName,
+                    required_amount = @RequiredAmount,
+                    included_amount = @IncludedAmount,
+                    max_amount = @MaxAmount,
+                    food_option_price = @FoodOptionPrice,
+                    entree_id = @EntreeId,
+                    side_id = @SideId,
+                    icon_id = @IconId
+                WHERE id = @id
+                RETURNING *)
+            SELECT updated.id AS Id, updated.food_option_type_name AS FoodOptionTypeName, updated.required_amount AS RequiredAmount, updated.included_amount AS IncludedAmount, updated.max_amount AS MaxAmount, updated.food_option_price AS FoodOptionPrice, updated.entree_id AS EntreeId, updated.side_id AS SideId, updated.icon_id AS IconId, i.bootstrap_name AS IconBootstrapName
+            FROM updated
+            LEFT JOIN cafeteria.icon i ON updated.icon_id = i.id;";
 
         var parameters = new
         {
             id,
             foodTypeDto.FoodOptionTypeName,
-            foodTypeDto.NumIncluded,
+            foodTypeDto.RequiredAmount,
+            foodTypeDto.IncludedAmount,
             foodTypeDto.MaxAmount,
             foodTypeDto.FoodOptionPrice,
             foodTypeDto.EntreeId,
-            foodTypeDto.SideId
+            foodTypeDto.SideId,
+            foodTypeDto.IconId
         };
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<FoodOptionTypeDto>(sql, parameters);

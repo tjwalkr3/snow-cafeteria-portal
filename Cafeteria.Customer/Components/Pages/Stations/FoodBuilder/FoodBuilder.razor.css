@@ -1,0 +1,59 @@
+.category-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.category-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e366c;
+    margin: 0 0 0.15rem 0;
+}
+
+.category-requirement {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+    .category-requirement .extra-price {
+        color: #dc3545;
+        margin-left: 0.5rem;
+    }
+
+.swipe-info-banner {
+    background: #eef4fb;
+    color: #1e366c;
+    font-size: 0.85rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 8px;
+    border-left: 3px solid #1e366c;
+}
+
+.card-info-banner {
+    background: #fef9ee;
+    color: #7a5d1e;
+    font-size: 0.85rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 8px;
+    border-left: 3px solid #d4a843;
+}
+
+.step-hint {
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.content-area {
+    padding-bottom: 100px;
+    margin-top: 10px;
+}
+
+.card-tab-panel {
+    border: 2px solid #c5cad8;
+    border-radius: 0 0 8px 8px;
+    padding: 1.25rem;
+    margin-top: 16px;
+}

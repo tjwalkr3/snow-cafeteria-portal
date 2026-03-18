@@ -79,6 +79,70 @@ public class SideService : ISideService
         return result.ToList();
     }
 
+    public async Task<List<SideWithOptionsDto>> GetSidesByStationIdWithOptions(int stationId)
+    {
+        const string sql = @"
+            SELECT
+                s.id AS Id,
+                s.station_id AS StationId,
+                s.side_name AS SideName,
+                s.side_description AS SideDescription,
+                s.side_price AS SidePrice,
+                s.image_url AS ImageUrl,
+                s.in_stock AS InStock,
+                fot.id AS Id,
+                fot.food_option_type_name AS FoodOptionTypeName,
+                fot.required_amount AS RequiredAmount,
+                fot.included_amount AS IncludedAmount,
+                fot.max_amount AS MaxAmount,
+                fot.food_option_price AS FoodOptionPrice,
+                fot.entree_id AS EntreeId,
+                fot.side_id AS SideId,
+                fot.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName,
+                fo.id AS Id,
+                fo.food_option_name AS FoodOptionName,
+                fo.in_stock AS InStock,
+                fo.image_url AS ImageUrl
+            FROM cafeteria.side s
+            LEFT JOIN cafeteria.food_option_type fot ON fot.side_id = s.id
+            LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
+            LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id
+            LEFT JOIN cafeteria.food_option fo ON oot.food_option_id = fo.id
+            WHERE s.station_id = @stationId
+            ORDER BY s.side_name, s.id, fot.id;";
+
+        var sideLookup = new Dictionary<int, SideWithOptionsDto>();
+        var optionTypeLookup = new Dictionary<int, FoodOptionTypeWithOptionsDto>();
+
+        await _dbConnection.QueryAsync<SideDto, FoodOptionTypeDto, FoodOptionDto, SideWithOptionsDto>(
+            sql,
+            (side, optionType, option) =>
+            {
+                if (!sideLookup.TryGetValue(side.Id, out var sideWithOptions))
+                {
+                    sideWithOptions = new SideWithOptionsDto { Side = side };
+                    sideLookup[side.Id] = sideWithOptions;
+                }
+                if (optionType?.Id > 0)
+                {
+                    if (!optionTypeLookup.TryGetValue(optionType.Id, out var withOptions))
+                    {
+                        withOptions = new FoodOptionTypeWithOptionsDto { OptionType = optionType };
+                        optionTypeLookup[optionType.Id] = withOptions;
+                        sideWithOptions.OptionTypes.Add(withOptions);
+                    }
+                    if (option?.Id > 0)
+                        optionTypeLookup[optionType.Id].Options.Add(option);
+                }
+                return sideWithOptions;
+            },
+            new { stationId },
+            splitOn: "Id,Id");
+
+        return sideLookup.Values.ToList();
+    }
+
     public async Task<SideDto?> UpdateSideById(int id, SideDto sideDto)
     {
         const string sql = @"

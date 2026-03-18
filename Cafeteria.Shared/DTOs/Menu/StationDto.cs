@@ -16,4 +16,7 @@ public class StationDto
     [Required]
     [StringLength(200)]
     public string StationDescription { get; set; } = string.Empty;
+
+    public int? IconId { get; set; }
+    public string? IconBootstrapName { get; set; }
 }

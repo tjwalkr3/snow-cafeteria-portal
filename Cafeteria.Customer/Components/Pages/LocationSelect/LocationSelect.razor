@@ -1,8 +1,5 @@
 @page "/location-select"
 @rendermode InteractiveServer
-@using System.Text.Json
-@using Microsoft.AspNetCore.WebUtilities
-@using System.Text.Json.Nodes
 @using Microsoft.AspNetCore.Components.Authorization
 
 <PageTitle>Select Location</PageTitle>
@@ -17,6 +14,17 @@
     else if (IsInitialized == true && LocationSelectVM.ErrorOccurred())
     {
         Navigation.NavigateTo("/error", false);
+    }
+    else if (LocationSelectVM.Locations != null && LocationSelectVM.Locations.Count == 0)
+    {
+        <a href="/" class="btn text-decoration-none ps-0">
+            ❮ Back to Payment Method
+        </a>
+
+        <div class="text-center py-5">
+            <h2 class="mb-3">No Locations Currently Open</h2>
+            <p class="fs-6">All cafeteria locations are currently closed. Please try again later.</p>
+        </div>
     }
     else if (LocationSelectVM.Locations != null)
     {
@@ -33,21 +41,33 @@
             @foreach (var location in LocationSelectVM.Locations)
             {
                 <div class="col">
-                    <a href="@(CreateUrl(location.Id))" class="card-link text-decoration-none">
-                        <div class="card h-100 shadow-sm border-0">
+                    <button class="card-link text-decoration-none d-block w-100 p-0 border-0 bg-transparent"
+                            @onclick="() => HandleLocationSelected(location.Id)">
+                        <div class="card h-100 selection-card position-relative @(CurrentLocationId.HasValue && CurrentLocationId.Value == location.Id ? "card-selected" : "")">
+                            @if (CurrentLocationId.HasValue && CurrentLocationId.Value == location.Id)
+                            {
+                                <span class="card-selected-badge">Selected</span>
+                            }
                             <div class="card-body text-center p-4">
                                 <div class="mb-4">
                                     <div class="icon-circle">
-                                        <i class="bi @GetLocationIcon(location.LocationName) fs-2"></i>
+                                        <i class="bi @(location.IconBootstrapName ?? "bi-geo-alt-fill") fs-2"></i>
                                     </div>
                                 </div>
                                 <h3 class="card-title location-card-title mb-3 fs-4 fw-bold">@location.LocationName</h3>
                                 <p class="location-card-description mb-0 fs-6">@location.LocationDescription</p>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
             }
         </div>
     }
 </div>
+<ConfirmationModal
+    IsVisible="ShowConfirmModal"
+    Title="Change Location?"
+    Message="Changing your location will clear your current cart. Do you want to continue?"
+    ConfirmText="Yes, Change Location"
+    OnConfirm="ConfirmLocationChange"
+    OnCancel="CancelLocationChange" />

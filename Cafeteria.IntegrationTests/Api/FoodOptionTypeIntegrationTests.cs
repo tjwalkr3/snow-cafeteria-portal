@@ -45,7 +45,8 @@ public class FoodOptionTypeIntegrationTests : IDisposable
         var newType = new FoodOptionTypeDto
         {
             FoodOptionTypeName = "Test Sauces",
-            NumIncluded = 1,
+            RequiredAmount = 0,
+            IncludedAmount = 1,
             MaxAmount = 3,
             FoodOptionPrice = 0.50m,
             EntreeId = 1,
@@ -58,7 +59,7 @@ public class FoodOptionTypeIntegrationTests : IDisposable
 
         Assert.NotNull(createdType);
         Assert.Equal(newType.FoodOptionTypeName, createdType.FoodOptionTypeName);
-        Assert.Equal(newType.NumIncluded, createdType.NumIncluded);
+        Assert.Equal(newType.IncludedAmount, createdType.IncludedAmount);
         Assert.True(createdType.Id > 0);
     }
 
@@ -90,7 +91,8 @@ public class FoodOptionTypeIntegrationTests : IDisposable
             new
             {
                 FoodOptionTypeName = "Type To Update",
-                NumIncluded = 1,
+                RequiredAmount = 0,
+                IncludedAmount = 1,
                 MaxAmount = 5,
                 FoodOptionPrice = 0.00m,
                 EntreeId = 1,
@@ -102,7 +104,8 @@ public class FoodOptionTypeIntegrationTests : IDisposable
         {
             Id = typeId,
             FoodOptionTypeName = "Updated Type Name",
-            NumIncluded = 2,
+            RequiredAmount = 1,
+            IncludedAmount = 2,
             MaxAmount = 10,
             FoodOptionPrice = 1.00m,
             EntreeId = 1,
@@ -118,7 +121,7 @@ public class FoodOptionTypeIntegrationTests : IDisposable
 
         Assert.NotNull(result);
         Assert.Equal(updatedType.FoodOptionTypeName, result.FoodOptionTypeName);
-        Assert.Equal(updatedType.NumIncluded, result.NumIncluded);
+        Assert.Equal(updatedType.IncludedAmount, result.IncludedAmount);
         Assert.Equal(updatedType.MaxAmount, result.MaxAmount);
     }
 
@@ -129,7 +132,8 @@ public class FoodOptionTypeIntegrationTests : IDisposable
         {
             Id = 99999,
             FoodOptionTypeName = "Nonexistent",
-            NumIncluded = 1,
+            RequiredAmount = 0,
+            IncludedAmount = 1,
             MaxAmount = 5,
             FoodOptionPrice = 0.00m,
             EntreeId = 1,
@@ -149,7 +153,8 @@ public class FoodOptionTypeIntegrationTests : IDisposable
             new
             {
                 FoodOptionTypeName = "Type To Delete",
-                NumIncluded = 1,
+                RequiredAmount = 0,
+                IncludedAmount = 1,
                 MaxAmount = 5,
                 FoodOptionPrice = 0.00m,
                 EntreeId = 1,

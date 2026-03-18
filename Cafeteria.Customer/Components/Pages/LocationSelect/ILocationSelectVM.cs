@@ -6,6 +6,6 @@ public interface ILocationSelectVM
 {
     List<LocationDto> Locations { get; }
     Task InitializeLocationsAsync();
-    void ValidatePaymentParameter(string? payment);
     bool ErrorOccurred();
+    Task<bool> IsLocationOpenNow(int locationId);
 }

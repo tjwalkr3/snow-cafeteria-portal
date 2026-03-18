@@ -5,7 +5,8 @@ public class FoodItemDto
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public int OrderId { get; set; }
-    public int StationId { get; set; }
+    public int? StationId { get; set; }
+    public int? LocationId { get; set; }
     public int? SaleCardId { get; set; }
     public int? SaleSwipeId { get; set; }
     public int? SwipeCost { get; set; }

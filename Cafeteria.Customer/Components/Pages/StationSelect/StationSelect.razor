@@ -1,4 +1,5 @@
 ﻿@page "/station-select"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization
 
 <PageTitle>Select Station</PageTitle>
@@ -13,6 +14,17 @@
     else if (IsInitialized == true && StationSelectVM.ErrorOccurredWhileParsingSelectedLocation())
     {
         Navigation.NavigateTo("/error", false);
+    }
+    else if (StationSelectVM.Stations != null && StationSelectVM.Stations.Count == 0)
+    {
+        <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
+            ❮ Back to Location
+        </a>
+
+        <div class="text-center py-5">
+            <h2 class="mb-3">No Stations Currently Open</h2>
+            <p class="fs-6">All stations are currently closed. Please try again later.</p>
+        </div>
     }
     else if (StationSelectVM.Stations != null)
     {
@@ -29,12 +41,13 @@
             @foreach (var station in StationSelectVM.Stations)
             {
                 <div class="col">
-                    <a href="@(CreateUrl(station.Id))" class="card-link text-decoration-none">
-                        <div class="card h-100 shadow-sm border-0">
+                    <button class="card-link text-decoration-none d-block w-100 p-0 border-0 bg-transparent"
+                            @onclick="() => HandleStationSelected(station.Id)">
+                        <div class="card h-100 selection-card">
                             <div class="card-body text-center p-4">
                                 <div class="mb-4">
                                     <div class="icon-circle">
-                                        <i class="bi @GetStationIcon(station.StationName) fs-2"></i>
+                                        <i class="bi @(station.IconBootstrapName ?? "bi-shop") fs-2"></i>
                                     </div>
                                 </div>
                                 <h3 class="card-title station-card-title mb-3 fs-4 fw-bold">@station.StationName</h3>
@@ -42,7 +55,7 @@
                                 </p>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
             }
         </div>

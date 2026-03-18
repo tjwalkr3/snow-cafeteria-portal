@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
 using Dapper;
 using Npgsql;
@@ -28,34 +29,41 @@ public class OrderIntegrationTests : IDisposable
     [Fact]
     public async Task CreateOrder_AddsNewOrder()
     {
-        var newOrder = new CreateOrderDto
+        var newOrder = new BrowserOrder
         {
-            TotalPrice = 15.99m,
-            Tax = 1.24m,
-            TotalSwipe = 0,
-            FoodItems = new List<CreateFoodItemDto>
+            IsCardOrder = true,
+            Location = new LocationDto { Id = 1, LocationName = "Test Location", LocationDescription = "Test Location Description" },
+            StationId = 1,
+            StationName = "Test Station",
+            Entrees = new List<OrderEntreeItem>
             {
-                new CreateFoodItemDto
+                new OrderEntreeItem
                 {
-                    Name = "Test Entree",
-                    StationId = 1,
-                    CardCost = 10.99m,
-                    Special = false,
-                    Options = new List<CreateFoodItemOptionDto>
+                    Entree = new EntreeDto { Id = 1, EntreeName = "Test Entree", EntreePrice = 10.99m, StationId = 1 },
+                    SelectedOptions = new List<SelectedFoodOption>
                     {
-                        new CreateFoodItemOptionDto { FoodOptionName = "Lettuce" },
-                        new CreateFoodItemOptionDto { FoodOptionName = "Tomato" }
+                        new SelectedFoodOption
+                        {
+                            Option = new FoodOptionDto { FoodOptionName = "Lettuce" },
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", RequiredAmount = 0, IncludedAmount = 10, MaxAmount = 10, FoodOptionPrice = 0 }
+                        },
+                        new SelectedFoodOption
+                        {
+                            Option = new FoodOptionDto { FoodOptionName = "Tomato" },
+                            OptionType = new FoodOptionTypeDto { Id = 1, FoodOptionTypeName = "Toppings", RequiredAmount = 0, IncludedAmount = 10, MaxAmount = 10, FoodOptionPrice = 0 }
+                        }
                     }
-                },
-                new CreateFoodItemDto
-                {
-                    Name = "Test Side",
-                    StationId = 2,
-                    SwipeCost = 1,
-                    Special = true,
-                    Options = new List<CreateFoodItemOptionDto>()
                 }
-            }
+            },
+            Sides = new List<OrderSideItem>
+            {
+                new OrderSideItem
+                {
+                    Side = new SideDto { Id = 1, SideName = "Test Side", SidePrice = 5.00m, StationId = 2 },
+                    SelectedOptions = new List<SelectedFoodOption>()
+                }
+            },
+            Drinks = new List<DrinkDto>()
         };
 
         var response = await _client.PostAsJsonAsync("/api/order", newOrder);
@@ -64,7 +72,7 @@ public class OrderIntegrationTests : IDisposable
 
         Assert.NotNull(createdOrder);
         Assert.True(createdOrder.Id > 0);
-        Assert.Equal(newOrder.TotalPrice, createdOrder.TotalPrice);
+        Assert.Equal(15.99m, createdOrder.TotalPrice);
         Assert.Equal(2, createdOrder.FoodItems.Count);
         Assert.Equal(2, createdOrder.FoodItems[0].Options.Count);
         Assert.Equal("Lettuce", createdOrder.FoodItems[0].Options[0].FoodOptionName);
@@ -176,5 +184,92 @@ public class OrderIntegrationTests : IDisposable
         Assert.True(orders.Count >= 2);
         Assert.Contains(orders, o => o.Id == orderId1);
         Assert.Contains(orders, o => o.Id == orderId2);
+    }
+
+    [Fact]
+    public async Task GetAllOrdersWithCustomer_ReturnsOrdersWithCustomerInfo()
+    {
+        // Create a test order
+        var orderId = _connection.ExecuteScalar<int>(
+            InsertOrderSql + " RETURNING id",
+            new
+            {
+                CustomerBadgerId = 1000001,
+                TotalPrice = 12.99m,
+                Tax = 1.04m,
+                TotalSwipe = 0
+            }
+        );
+
+        var response = await _client.GetAsync("/api/order/with-customer");
+        response.EnsureSuccessStatusCode();
+        var orders = await response.Content.ReadFromJsonAsync<List<OrderWithCustomerDto>>();
+
+        Assert.NotNull(orders);
+        Assert.True(orders.Count >= 1);
+        // Verify that customer info is included
+        Assert.All(orders, order => Assert.NotNull(order.CustomerName));
+    }
+
+    [Fact]
+    public async Task GetOrderWithCustomerById_ReturnsOrderWithCustomerInfo()
+    {
+        // Create a test order
+        var orderId = _connection.ExecuteScalar<int>(
+            InsertOrderSql + " RETURNING id",
+            new
+            {
+                CustomerBadgerId = 1000001,
+                TotalPrice = 16.49m,
+                Tax = 1.32m,
+                TotalSwipe = 1
+            }
+        );
+
+        var response = await _client.GetAsync($"/api/order/with-customer/{orderId}");
+        response.EnsureSuccessStatusCode();
+        var order = await response.Content.ReadFromJsonAsync<OrderWithCustomerDto>();
+
+        Assert.NotNull(order);
+        Assert.Equal(orderId, order.Id);
+        Assert.NotNull(order.CustomerName);
+        Assert.NotNull(order.CustomerEmail);
+    }
+
+    [Fact]
+    public async Task GetOrderWithCustomerById_ReturnsNotFound_WhenOrderDoesNotExist()
+    {
+        var response = await _client.GetAsync("/api/order/with-customer/99999");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetOrdersByCustomer_ReturnsOrdersForSpecificBadgerId()
+    {
+        // Use pre-loaded customer with badge ID 1001234
+        var response = await _client.GetAsync("/api/order/customer/1001234");
+        response.EnsureSuccessStatusCode();
+        var orders = await response.Content.ReadFromJsonAsync<List<OrderWithCustomerDto>>();
+
+        Assert.NotNull(orders);
+        // Verify all orders belong to the requested customer
+        Assert.All(orders, order => Assert.Equal(1001234, order.CustomerBadgerId));
+    }
+
+    [Fact]
+    public async Task GetOrdersByCustomerEmail_ReturnsOrdersForAuthenticatedUser()
+    {
+        // The mock authentication handler provides email "test@example.com"
+        // First ensure the customer exists
+        var response = await _client.PostAsync("/api/customer/check", null);
+        response.EnsureSuccessStatusCode();
+
+        // Now retrieve orders for that customer
+        var ordersResponse = await _client.GetAsync("/api/order/customer-email");
+        ordersResponse.EnsureSuccessStatusCode();
+        var orders = await ordersResponse.Content.ReadFromJsonAsync<List<OrderDto>>();
+
+        Assert.NotNull(orders);
+        // Should be empty or contain orders, but shouldn't error
     }
 }
