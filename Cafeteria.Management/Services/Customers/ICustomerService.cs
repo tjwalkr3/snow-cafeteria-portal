@@ -7,4 +7,6 @@ public interface ICustomerService
 {
     Task<List<CustomerSwipeDto>> GetAllCustomers();
     Task<UserRoleDto?> GetCurrentUserRole();
+    Task<List<CustomerRoleDto>> GetAllCustomersWithRoles(string? search = null);
+    Task<bool> ToggleFoodServiceRole(string email);
 }
