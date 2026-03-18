@@ -111,7 +111,8 @@ jobs:
         BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
       run: |
         if [[ -z "${BASE_DOMAIN}" ]]; then
-          BASE_DOMAIN="dragonbytes.org"
+          echo "BASE_DOMAIN GitHub variable is required." >&2
+          exit 1
         fi
 
         kubectl apply -f kube/namespace.yml
