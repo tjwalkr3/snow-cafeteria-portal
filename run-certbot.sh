@@ -18,11 +18,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CERTBOT_IMAGE="certbot/certbot:latest"
 NAMESPACE="cafeteria"
 
-read -rp "Enter the domain to issue a certificate for: " DOMAIN
-if [[ -z "${DOMAIN}" ]]; then
+read -rp "Enter the base domain (example: dragonbytes.org): " INPUT_DOMAIN
+if [[ -z "${INPUT_DOMAIN}" ]]; then
   echo "Domain cannot be empty" >&2
   exit 1
 fi
+
+# Normalize input so both "dragonbytes.org" and "*.dragonbytes.org" work.
+DOMAIN="${INPUT_DOMAIN#*.}"
+if [[ "${INPUT_DOMAIN}" != "*."* ]]; then
+  DOMAIN="${INPUT_DOMAIN}"
+fi
+WILDCARD_DOMAIN="*.${DOMAIN}"
 
 read -rp "Enter the secret name: " SECRET_NAME
 if [[ -z "${SECRET_NAME}" ]]; then
@@ -35,6 +42,7 @@ OUTPUT_FILE="${SCRIPT_DIR}/${SECRET_NAME}.yml"
 echo "This will start a one-off certbot container."
 echo "When the DNS challenge appears, copy the TXT record and add it to your domain."
 echo "Return here and press Enter inside the container when ready."
+echo "Requested names: ${DOMAIN}, ${WILDCARD_DOMAIN}"
 echo
 
 SESSION_LOG=$(mktemp)
@@ -52,13 +60,16 @@ CONTAINER_SCRIPT_FILE=$(mktemp)
 cat > "${CONTAINER_SCRIPT_FILE}" <<'EOS'
 set -e
 DOMAIN="${CERT_DOMAIN}"
+WILDCARD_DOMAIN="${CERT_WILDCARD_DOMAIN}"
 echo "Using domain: ${DOMAIN}"
+echo "Using wildcard: ${WILDCARD_DOMAIN}"
 certbot certonly \
   --manual \
   --preferred-challenges dns \
   --agree-tos \
   --register-unsafely-without-email \
-  -d "${DOMAIN}"
+  -d "${DOMAIN}" \
+  -d "${WILDCARD_DOMAIN}"
 echo "__CERT_START__"
 base64 -w0 "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
 echo
@@ -70,7 +81,7 @@ echo "__KEY_END__"
 EOS
 
 script -q -f "${SESSION_LOG}" -c \
-  "docker run --rm -it --entrypoint sh -e CERT_DOMAIN='${DOMAIN}' -v '${CONTAINER_SCRIPT_FILE}:/tmp/certbot-script.sh' '${CERTBOT_IMAGE}' /tmp/certbot-script.sh"
+  "docker run --rm -it --entrypoint sh -e CERT_DOMAIN='${DOMAIN}' -e CERT_WILDCARD_DOMAIN='${WILDCARD_DOMAIN}' -v '${CONTAINER_SCRIPT_FILE}:/tmp/certbot-script.sh' '${CERTBOT_IMAGE}' /tmp/certbot-script.sh"
 
 rm -f "${CONTAINER_SCRIPT_FILE}"
 
