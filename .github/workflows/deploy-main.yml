@@ -67,27 +67,74 @@ jobs:
           .
         docker push -q ${{ vars.DOCKERHUB_USERNAME }}/cafeteria-management:${{ github.run_number }}.${{ github.run_attempt }}
 
-  # deploy_to_kubernetes:
-  #   needs: [build_and_push_containers_to_dockerhub]
-  #   runs-on: self-hosted
-  #   steps:
-  #   - name: Check out the code. 
-  #     uses: actions/checkout@v4
+  deploy_to_aks:
+    needs: [build_and_push_containers_to_dockerhub]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v4
 
-  #   - name: Deploy to Kubernetes
-  #     run: |
-  #       export KUBECONFIG=$HOME/.kube/config
-  #       kubectl apply -f kube/namespace.yml
-  #       export CONTAINER_VERSION=${{ github.run_number }}.${{ github.run_attempt }}
-  
-  #       for FILE in "kube"/*
-  #       do
-  #         cat "$FILE" | envsubst | kubectl apply -f -
-  #       done
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set AKS context
+      uses: azure/aks-set-context@v4
+      with:
+        resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
+        cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v4
+
+    - name: Install envsubst
+      run: sudo apt-get update && sudo apt-get install -y gettext-base
+
+    - name: Install ingress-nginx
+      run: |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.3/deploy/static/provider/cloud/deploy.yaml
+        kubectl -n ingress-nginx rollout status deployment/ingress-nginx-controller --timeout=300s
+
+    - name: Install cert-manager
+      run: |
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.3/cert-manager.yaml
+        kubectl -n cert-manager rollout status deployment/cert-manager --timeout=180s
+        kubectl -n cert-manager rollout status deployment/cert-manager-cainjector --timeout=180s
+        kubectl -n cert-manager rollout status deployment/cert-manager-webhook --timeout=180s
+
+    - name: Deploy to AKS
+      env:
+        CONTAINER_VERSION: ${{ github.run_number }}.${{ github.run_attempt }}
+        ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+      run: |
+        if [[ -z "${BASE_DOMAIN}" ]]; then
+          BASE_DOMAIN="dragonbytes.org"
+        fi
+
+        kubectl apply -f kube/namespace.yml
+
+        kubectl -n cert-manager create secret generic cloudflare-api-token-secret \
+          --from-literal=api-token="${CLOUDFLARE_API_TOKEN}" \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+        envsubst < kube/cert-manager-clusterissuer.yml | kubectl apply -f -
+
+        for FILE in kube/*.yml
+        do
+          BASE_NAME="$(basename "$FILE")"
+          if [[ "$BASE_NAME" == "namespace.yml" || "$BASE_NAME" == "cert-manager-clusterissuer.yml" ]]; then
+            continue
+          fi
+
+          envsubst < "$FILE" | kubectl apply -f -
+        done
 
   notify_discord:
     runs-on: ubuntu-latest
-    needs: [build_and_push_containers_to_dockerhub]
+    needs: [deploy_to_aks]
     if: always()
     steps:
     - name: Send Discord notification

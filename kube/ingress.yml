@@ -1,0 +1,57 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cafeteria-ingress
+  namespace: cafeteria
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.${BASE_DOMAIN}
+        - food.${BASE_DOMAIN}
+        - admin.${BASE_DOMAIN}
+        - auth.${BASE_DOMAIN}
+      secretName: dragonbytes-wildcard-tls
+  rules:
+    - host: api.${BASE_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cafeteria-api-svc
+                port:
+                  number: 8080
+    - host: food.${BASE_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cafeteria-customer-svc
+                port:
+                  number: 8080
+    - host: admin.${BASE_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cafeteria-management-svc
+                port:
+                  number: 8080
+    - host: auth.${BASE_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cafeteria-keycloak-svc
+                port:
+                  number: 8080

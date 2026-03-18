@@ -20,10 +20,10 @@ spec:
           env:
             - name: ApiBaseUrl
               value: "http://cafeteria-api-svc:8080/api/"
-            - name: Keycloak__Authority
+            - name: OpenIDConnectSettings__Authority
               value: "https://auth.dragonbytes.org/realms/AppRealm"
-            - name: Keycloak__ClientId
-              value: "ham-exam"
+            - name: OpenIDConnectSettings__ClientId
+              value: "customer"
           ports:
             - containerPort: 8080
 
@@ -40,29 +40,3 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: cafeteria-customer-ingress
-  namespace: cafeteria
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - customer.dragonbytes.org
-      secretName: customer-tls
-  rules:
-    - host: customer.dragonbytes.org
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: cafeteria-customer-svc
-                port:
-                  number: 8080
