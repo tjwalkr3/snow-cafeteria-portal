@@ -6,7 +6,7 @@
 
 <PageTitle>User Roles</PageTitle>
 
-@if (!string.Equals(UserRole, "admin", StringComparison.OrdinalIgnoreCase))
+@if (!_isAdmin)
 {
     <section class="access-denied-wrap">
         <div class="access-denied-card">
@@ -14,9 +14,9 @@
             <p>You do not have permission to manage user roles.</p>
         </div>
     </section>
-    return;
 }
-
+else
+{
 <div class="@(hasSearch ? "ur-results-layout" : "ur-idle-layout")">
 
     <div class="ur-header">
@@ -123,3 +123,4 @@
 </div>
 
 <Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />
+}
