@@ -25,19 +25,9 @@ spec:
             - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               value: "password123"
             - name: KC_HOSTNAME
-              value: "auth.dragonbytes.org"
-            - name: KC_HOSTNAME_URL
-              value: "https://auth.dragonbytes.org"
-            - name: KC_HOSTNAME_ADMIN_URL
-              value: "https://auth.dragonbytes.org"
+              value: "http://cafeteria-keycloak-svc:8080"
             - name: KC_HOSTNAME_STRICT
               value: "false"
-            - name: KC_PROXY_HEADERS
-              value: "xforwarded"
-            - name: KC_PROXY
-              value: "edge"
-            - name: KC_PROXY_HEADERS
-              value: "xforwarded"
             - name: KC_HTTP_ENABLED
               value: "true"
             - name: KC_HTTP_RELATIVE_PATH
@@ -78,7 +68,7 @@ data:
     {
       "realm": "AppRealm",
       "enabled": true,
-      "sslRequired": "external",
+      "sslRequired": "none",
       "registrationAllowed": false,
       "loginWithEmailAllowed": true,
       "duplicateEmailsAllowed": false,

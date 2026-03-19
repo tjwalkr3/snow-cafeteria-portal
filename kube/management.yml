@@ -19,7 +19,7 @@ spec:
           image: tjwalkr3/cafeteria-management:$CONTAINER_VERSION
           env:
             - name: OpenIDConnectSettings__Authority
-              value: "https://auth.dragonbytes.org/realms/AppRealm"
+              value: "http://cafeteria-keycloak-svc:8080/realms/AppRealm"
             - name: OpenIDConnectSettings__ClientId
               value: "management"
             - name: OpenIDConnectSettings__ClientSecret
