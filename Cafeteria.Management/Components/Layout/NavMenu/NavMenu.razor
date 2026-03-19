@@ -73,12 +73,15 @@
             </NavLink>
         </div>
 
-        <div class="nav-item">
-            <NavLink class="nav-link" href="user-roles" title="User Roles">
-                <span class="bi bi-person-badge" aria-hidden="true"></span>
-                <span class="nav-label">User Roles</span>
-            </NavLink>
-        </div>
+        @if (string.Equals(UserRole, "admin", StringComparison.OrdinalIgnoreCase))
+        {
+            <div class="nav-item">
+                <NavLink class="nav-link" href="user-roles" title="User Roles">
+                    <span class="bi bi-person-badge" aria-hidden="true"></span>
+                    <span class="nav-label">User Roles</span>
+                </NavLink>
+            </div>
+        }
     </nav>
 
     <div class="sidebar-footer">
@@ -91,6 +94,9 @@
 @code {
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
+
+    [CascadingParameter(Name = "UserRole")]
+    private string? UserRole { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

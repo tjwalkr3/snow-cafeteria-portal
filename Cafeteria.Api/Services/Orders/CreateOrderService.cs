@@ -45,6 +45,8 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
                 var saleSwipeId = await InsertSaleSwipeAsync(order.Id, transaction);
                 int swipeCount = OrderCalculations.CalculateTotalSwipe(browserOrder);
 
+                await DeductSwipeBalanceAsync(customerBadgerId, swipeCount, transaction);
+
                 for (int i = 0; i < swipeCount; i++)
                 {
                     order.FoodItems.Add(await InsertEntreeAsync(browserOrder.Entrees[i], order.Id, null, saleSwipeId, transaction, swipeCost: 1));
@@ -184,6 +186,17 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
                     Special = special
                 },
                 transaction);
+    }
+
+    private async Task DeductSwipeBalanceAsync(int badgerId, int swipeCount, IDbTransaction transaction)
+    {
+        const string sql = @"
+                        UPDATE cafeteria.customer_swipe
+                        SET swipe_balance = swipe_balance - @SwipeCount
+                        WHERE badger_id = @BadgerId
+                        AND (end_date IS NULL OR end_date >= CURRENT_DATE)";
+
+        await _dbConnection.ExecuteAsync(sql, new { BadgerId = badgerId, SwipeCount = swipeCount }, transaction);
     }
 
     private async Task<FoodItemOptionDto> InsertFoodItemOptionAsync(int foodItemId, string optionName, IDbTransaction transaction)
