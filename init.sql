@@ -952,23 +952,17 @@ VALUES
 -- Jalapenos -> Fillings
 -- Sample customer data
 INSERT INTO
-  cafeteria.customer (email, badger_id, cust_name)
+  cafeteria.customer (email, badger_id, cust_name, user_role)
 VALUES
-  ('john.doe@snow.edu', 1001234, 'John Doe'),
-  ('jane.smith@snow.edu', 1005678, 'Jane Smith'),
-  ('bob.johnson@snow.edu', 1009012, 'Bob Johnson'),
-  (
-    'alice.williams@snow.edu',
-    1003456,
-    'Alice Williams'
-  ),
-  (
-    'charlie.brown@snow.edu',
-    1007890,
-    'Charlie Brown'
-  ),
-  ('test-1@example.com', 1000001, 'Test1 User'),
-  ('test-2@example.com', 1000002, 'Test2 User');
+  ('john.doe@snow.edu', 1001234, 'John Doe', NULL),
+  ('jane.smith@snow.edu', 1005678, 'Jane Smith', NULL),
+  ('bob.johnson@snow.edu', 1009012, 'Bob Johnson', NULL),
+  ('alice.williams@snow.edu', 1003456, 'Alice Williams', NULL),
+  ('charlie.brown@snow.edu', 1007890, 'Charlie Brown', NULL),
+  ('test-1@example.com', 1000001, 'Test1 User', NULL),
+  ('test-2@example.com', 1000002, 'Test2 User', 'food-service'),
+  ('test-3@example.com', 1000003, 'Test3 User', NULL),
+  ('admin@example.com', 1000004, 'Admin User', 'admin');
 
 -- Sample customer swipe data
 INSERT INTO
