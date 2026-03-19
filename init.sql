@@ -400,8 +400,7 @@ INSERT INTO
     station_id,
     entree_name,
     entree_description,
-    entree_price,
-    image_url
+    entree_price
   )
 VALUES
   (
@@ -409,63 +408,54 @@ VALUES
     'Breakfast Burrito',
     'Scrambled eggs, cheese, and your choice of meat wrapped in a warm tortilla',
     4.99,
-    'https://picsum.photos/id/488/150/150'
   ),
   (
     1,
     'Breakfast Sandwich',
     'Scrambled eggs, cheese, and your choice of meat on a toasted English muffin',
     4.29,
-    'https://picsum.photos/id/431/150/150'
   ),
   (
     1,
     'Breakfast Plate',
     'Breakfast sides including eggs, toast, and your choice of meat',
     4.29,
-    'https://picsum.photos/id/431/150/150'
   ),
   (
     3,
     'Chicken Quesadilla',
     'Grilled chicken and cheese in a warm tortilla',
     5.29,
-    'https://picsum.photos/id/431/150/150'
   ),
   (
     3,
     'Steak Quesadilla',
     'Grilled steak and cheese in a warm tortilla',
     5.49,
-    'https://picsum.photos/id/431/150/150'
   ),
   (
     3,
     'Cheese Quesadilla',
     'Grilled cheese in a warm tortilla',
     3.99,
-    'https://picsum.photos/id/431/150/150'
   ),
   (
     4,
     'Two Toppings Pizza',
     'Small pizza with two toppings',
     5.69,
-    'https://picsum.photos/id/365/150/150'
   ),
   (
     2,
     'Deli Sandwich',
     'A sandwich with your choice of meat, cheese, toppings, and dressing',
     6.79,
-    'https://picsum.photos/id/431/150/150'
   ),
   (
     5,
     'Custom Wrap',
     'Fresh wrap with your choice of fillings',
     5.69,
-    'https://picsum.photos/id/365/150/150'
   );
 
 INSERT INTO
@@ -473,8 +463,7 @@ INSERT INTO
     station_id,
     side_name,
     side_description,
-    side_price,
-    image_url
+    side_price
   )
 VALUES
   (
@@ -482,56 +471,48 @@ VALUES
     'Hashbrowns',
     'Crispy golden hashbrowns',
     1.49,
-    'https://picsum.photos/id/550/150/150'
   ),
   (
     2,
     'Chips',
     'Your choice of crispy chips from the selection on the shelf',
     0.89,
-    'https://picsum.photos/id/1010/150/150'
   ),
   (
     3,
     'Rice',
     'Steamed white rice',
     1.79,
-    'https://picsum.photos/id/550/150/150'
   ),
   (
     3,
     'Vegetables',
     'Steamed mixed vegetables',
     1.79,
-    'https://picsum.photos/id/550/150/150'
   ),
   (
     3,
     'Waffle Fries',
     'Crispy golden waffle fries',
     2.29,
-    'https://picsum.photos/id/550/150/150'
   ),
   (
     5,
     'Side Salad',
     'Fresh side salad with mixed greens and vegetables',
     2.29,
-    'https://picsum.photos/id/550/150/150'
   ),
   (
     5,
     'Fruit Cup',
     'Fresh fruit cup with a variety of seasonal fruits',
     2.29,
-    'https://picsum.photos/id/550/150/150'
   ),
   (
     4,
     'Chips',
     'Crispy chips',
     0.89,
-    'https://picsum.photos/id/1010/150/150'
   );
 
 INSERT INTO
@@ -539,8 +520,7 @@ INSERT INTO
     location_id,
     drink_name,
     drink_description,
-    drink_price,
-    image_url
+    drink_price
   )
 VALUES
   (
@@ -548,309 +528,250 @@ VALUES
     'Slushies',
     'Assorted soft drinks',
     1.49,
-    'https://picsum.photos/id/163/150/150'
   ),
   (
     2,
     'Tea/Coffee Machine',
     'Freshly brewed iced tea',
     1.49,
-    'https://picsum.photos/id/225/150/150'
   );
 
 INSERT INTO
-  cafeteria.food_option (food_option_name, in_stock, image_url)
+  cafeteria.food_option (food_option_name, in_stock)
 VALUES
   (
     'Extra Cheese',
     true,
-    'https://picsum.photos/id/312/150/150'
   ),
   (
     'Pepperoni',
     true,
-    'https://picsum.photos/id/326/150/150'
   ),
   (
     'Sausage',
     true,
-    'https://picsum.photos/id/340/150/150'
   ),
   (
     'Bacon',
     true,
-    'https://picsum.photos/id/352/150/150'
   ),
   (
     'Chicken',
     true,
-    'https://picsum.photos/id/361/150/150'
   ),
   (
     'Ham',
     true,
-    'https://picsum.photos/id/372/150/150'
   ),
   (
     'Olives',
     true,
-    'https://picsum.photos/id/384/150/150'
   ),
   (
     'Mushrooms',
     true,
-    'https://picsum.photos/id/395/150/150'
   ),
   (
     'Onions',
     true,
-    'https://picsum.photos/id/408/150/150'
   ),
   (
     'Pineapple',
     true,
-    'https://picsum.photos/id/419/150/150'
   ),
   (
     'Bell Peppers',
     true,
-    'https://picsum.photos/id/428/150/150'
   ),
   (
     'Banana Peppers',
     true,
-    'https://picsum.photos/id/437/150/150'
   ),
   (
     'Scrambled Eggs',
     true,
-    'https://picsum.photos/id/445/150/150'
   ),
   (
     'Potatoes',
     true,
-    'https://picsum.photos/id/446/150/150'
   ),
   (
     'One Slice of Toast',
     true,
-    'https://picsum.photos/id/447/150/150'
   ),
   (
     'Breakfast Bacon',
     true,
-    'https://picsum.photos/id/478/150/150'
   ),
   (
     'Breakfast Sausage',
     true,
-    'https://picsum.photos/id/489/150/150'
   ),
   (
     'Breakfast Ham',
     true,
-    'https://picsum.photos/id/490/150/150'
   ),
   (
     'White Bread',
     true,
-    'https://picsum.photos/id/490/150/150'
   ),
   (
     'Wheat',
     true,
-    'https://picsum.photos/id/490/150/150'
   ),
   (
     'Marble Rye',
     true,
-    'https://picsum.photos/id/490/150/150'
   ),
   (
     'Sourdough',
     true,
-    'https://picsum.photos/id/490/150/150'
   ),
   (
     'American',
     true,
-    'https://picsum.photos/id/491/150/150'
   ),
   (
     'Cheddar',
     true,
-    'https://picsum.photos/id/492/150/150'
   ),
   (
     'Provolone',
     true,
-    'https://picsum.photos/id/493/150/150'
   ),
   (
     'Pepper Jack',
     true,
-    'https://picsum.photos/id/494/150/150'
   ),
   (
     'Swiss',
     true,
-    'https://picsum.photos/id/495/150/150'
   ),
   (
     'Mozzarella',
     true,
-    'https://picsum.photos/id/496/150/150'
   ),
   -- Deli Meats
   (
     'Turkey',
     true,
-    'https://picsum.photos/id/497/150/150'
   ),
   (
     'Roast Beef',
     true,
-    'https://picsum.photos/id/498/150/150'
   ),
   (
     'Tuna Salad',
     true,
-    'https://picsum.photos/id/499/150/150'
   ),
   (
     'Grilled Chicken',
     true,
-    'https://picsum.photos/id/500/150/150'
   ),
   -- Deli Toppings
   (
     'Lettuce',
     true,
-    'https://picsum.photos/id/501/150/150'
   ),
   (
     'Tomato',
     true,
-    'https://picsum.photos/id/502/150/150'
   ),
   (
     'Pickles',
     true,
-    'https://picsum.photos/id/503/150/150'
   ),
   (
     'Red Onion',
     true,
-    'https://picsum.photos/id/504/150/150'
   ),
   (
     'Cucumber',
     true,
-    'https://picsum.photos/id/505/150/150'
   ),
   (
     'Spinach',
     true,
-    'https://picsum.photos/id/506/150/150'
   ),
   (
     'Green Peppers',
     true,
-    'https://picsum.photos/id/507/150/150'
   ),
   -- Deli Dressings
   (
     'Mayo',
     true,
-    'https://picsum.photos/id/508/150/150'
   ),
   (
     'Mustard',
     true,
-    'https://picsum.photos/id/509/150/150'
   ),
   (
     'Ranch',
     true,
-    'https://picsum.photos/id/510/150/150'
   ),
   (
     'Italian Dressing',
     true,
-    'https://picsum.photos/id/511/150/150'
   ),
   (
     'Honey Mustard',
     true,
-    'https://picsum.photos/id/512/150/150'
   ),
   (
     'Oil and Vinegar',
     true,
-    'https://picsum.photos/id/513/150/150'
   ),
   -- Wrap Tortillas
   (
     'Flour Tortilla',
     true,
-    'https://picsum.photos/id/514/150/150'
   ),
   (
     'Wheat Tortilla',
     true,
-    'https://picsum.photos/id/515/150/150'
   ),
   (
     'Spinach Tortilla',
     true,
-    'https://picsum.photos/id/516/150/150'
   ),
   -- Wrap Proteins
   (
     'Grilled Steak',
     true,
-    'https://picsum.photos/id/517/150/150'
   ),
   (
     'Carnitas',
     true,
-    'https://picsum.photos/id/518/150/150'
   ),
   -- Wrap Fillings
   (
     'Rice',
     true,
-    'https://picsum.photos/id/519/150/150'
   ),
   (
     'Black Beans',
     true,
-    'https://picsum.photos/id/520/150/150'
   ),
   (
     'Corn',
     true,
-    'https://picsum.photos/id/521/150/150'
   ),
   (
     'Sour Cream',
     true,
-    'https://picsum.photos/id/522/150/150'
   ),
   (
     'Guacamole',
     true,
-    'https://picsum.photos/id/523/150/150'
   ),
   (
     'Salsa',
     true,
-    'https://picsum.photos/id/524/150/150'
   ),
   (
     'Jalapenos',
     true,
-    'https://picsum.photos/id/525/150/150'
   );
 
 INSERT INTO
