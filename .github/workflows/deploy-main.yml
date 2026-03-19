@@ -69,7 +69,7 @@ jobs:
 
   deploy_to_aks:
     needs: [build_and_push_containers_to_dockerhub]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, kube]
     steps:
     - name: Check out the code
       uses: actions/checkout@v4
