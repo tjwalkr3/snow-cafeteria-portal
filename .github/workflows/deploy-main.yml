@@ -69,13 +69,26 @@ jobs:
 
   deploy_to_aks:
     needs: [build_and_push_containers_to_dockerhub]
-    runs-on: [self-hosted, kube]
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: ${{ github.workspace }}/.kube/config
     steps:
     - name: Check out the code
       uses: actions/checkout@v4
 
-    - name: Export nix bin directory to PATH
-      run: echo "$HOME/.nix-profile/bin" >> $GITHUB_PATH
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v4
+
+    - name: Configure kubeconfig from secret
+      run: |
+        if [[ -z "${{ secrets.KUBE_CONFIG }}" ]]; then
+          echo "KUBE_CONFIG secret is required." >&2
+          exit 1
+        fi
+
+        mkdir -p "$(dirname "$KUBECONFIG")"
+        printf '%s' "${{ secrets.KUBE_CONFIG }}" > "$KUBECONFIG"
+        chmod 600 "$KUBECONFIG"
 
     - name: Verify kubectl access
       run: |
