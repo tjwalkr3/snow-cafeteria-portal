@@ -27,6 +27,7 @@ To run the deploy workflow in [.github/workflows/deploy-main.yml](.github/workfl
 ### GitHub Secrets (required)
 | Secret | Purpose |
 |---|---|
+| `KUBE_CONFIG` | The kubernetes configuration. |
 | `DOCKERHUB_TOKEN` | Token used to push application images to Docker Hub. |
 | `ACME_EMAIL` | Email used by Let's Encrypt ACME registration in cert-manager. |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API token used by cert-manager DNS-01 challenge. |
