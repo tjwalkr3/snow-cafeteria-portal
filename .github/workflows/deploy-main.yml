@@ -74,19 +74,14 @@ jobs:
     - name: Check out the code
       uses: actions/checkout@v4
 
-    - name: Azure login
-      uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Export nix bin directory to PATH
+      run: echo "$HOME/.nix-profile/bin" >> $GITHUB_PATH
 
-    - name: Set AKS context
-      uses: azure/aks-set-context@v4
-      with:
-        resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
-        cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
-
-    - name: Setup kubectl
-      uses: azure/setup-kubectl@v4
+    - name: Verify kubectl access
+      run: |
+        kubectl version --client
+        kubectl config current-context
+        kubectl get nodes
 
     - name: Install envsubst
       run: sudo apt-get update && sudo apt-get install -y gettext-base
