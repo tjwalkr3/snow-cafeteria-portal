@@ -20,3 +20,23 @@
 ```bash
 ./start-aspire.sh
 ```
+
+## CI/CD Deployment Configuration (GitHub Actions)
+To run the deploy workflow in [.github/workflows/deploy-main.yml](.github/workflows/deploy-main.yml), configure the following repository settings.
+
+### GitHub Secrets (required)
+| Secret | Purpose |
+|---|---|
+| `AZURE_CREDENTIALS` | Azure service principal JSON used by `azure/login` for AKS access. |
+| `DOCKERHUB_TOKEN` | Token used to push application images to Docker Hub. |
+| `ACME_EMAIL` | Email used by Let's Encrypt ACME registration in cert-manager. |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token used by cert-manager DNS-01 challenge. |
+| `DEPLOY_MAIN_DISCORD` | Discord webhook URL used by the deployment notification step. |
+
+### GitHub Variables (required)
+| Variable | Purpose |
+|---|---|
+| `DOCKERHUB_USERNAME` | Docker Hub namespace used for image tags and login username. |
+| `AKS_RESOURCE_GROUP` | Azure resource group containing the target AKS cluster. |
+| `AKS_CLUSTER_NAME` | AKS cluster name used by the workflow context step. |
+| `BASE_DOMAIN` | Base DNS zone used by ingress and wildcard cert resources (example: `dragonbytes.org`). |
