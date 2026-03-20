@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dragonbytes-wildcard
+  namespace: cafeteria
+spec:
+  secretName: dragonbytes-wildcard-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - ${BASE_DOMAIN}
+    - '*.${BASE_DOMAIN}'

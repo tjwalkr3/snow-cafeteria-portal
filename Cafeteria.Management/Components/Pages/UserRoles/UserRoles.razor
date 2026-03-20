@@ -6,6 +6,17 @@
 
 <PageTitle>User Roles</PageTitle>
 
+@if (!_isAdmin)
+{
+    <section class="access-denied-wrap">
+        <div class="access-denied-card">
+            <h1>Access Restricted</h1>
+            <p>You do not have permission to manage user roles.</p>
+        </div>
+    </section>
+}
+else
+{
 <div class="@(hasSearch ? "ur-results-layout" : "ur-idle-layout")">
 
     <div class="ur-header">
@@ -112,3 +123,4 @@
 </div>
 
 <Toast Message="@toastMessage" Type="@toastType" IsVisible="@showToast" OnClose="@(() => showToast = false)" />
+}
