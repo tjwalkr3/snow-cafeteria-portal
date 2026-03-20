@@ -6,8 +6,10 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from DTOs.PrintOrderDto import PrintOrderDto
-from DTOs.FoodItemDto import FoodItemDto
-from DTOs.FoodItemOptionDto import FoodItemOptionDto
+from DTOs.OrderEntreeItem import OrderEntreeItem
+from DTOs.OrderSideItem import OrderSideItem
+from DTOs.DrinkDto import DrinkDto
+from DTOs.SelectedFoodOption import SelectedFoodOption
 
 
 RECEIPT_WIDTH = 48
@@ -38,27 +40,43 @@ def format_header(order_id: int, order_time: datetime) -> List[str]:
     return lines
 
 
-def format_food_item_option(option: FoodItemOptionDto) -> str:
-    """Format a food item option (indented under the food item)."""
-    option_name = option.foodOptionName or "Unknown Option"
+def format_selected_option(option: SelectedFoodOption) -> str:
+    """Format a selected food option (indented under the food item)."""
+    option_name = option.option.foodOptionName or "Unknown Option"
     indented_text = f"    - {option_name}"
     return pad_line(indented_text)
 
 
-def format_food_item(item: FoodItemDto) -> List[str]:
-    """Format a food item with its options."""
+def format_entree_item(item: OrderEntreeItem) -> List[str]:
+    """Format an entree with its selected options."""
     lines = []
 
-    item_name = item.name or f"Item #{item.id}"
-    if item.special:
-        item_name += " (Special)"
-
+    item_name = item.entree.entreeName or f"Entree #{item.entree.id}"
     lines.append(pad_line(item_name))
 
-    for option in item.options:
-        lines.append(format_food_item_option(option))
+    for option in item.selectedOptions:
+        lines.append(format_selected_option(option))
 
     return lines
+
+
+def format_side_item(item: OrderSideItem) -> List[str]:
+    """Format a side with its selected options."""
+    lines = []
+
+    item_name = item.side.sideName or f"Side #{item.side.id}"
+    lines.append(pad_line(item_name))
+
+    for option in item.selectedOptions:
+        lines.append(format_selected_option(option))
+
+    return lines
+
+
+def format_drink_item(drink: DrinkDto) -> str:
+    """Format a drink."""
+    drink_name = drink.drinkName or f"Drink #{drink.id}"
+    return pad_line(drink_name)
 
 
 def format_footer() -> List[str]:
@@ -85,8 +103,14 @@ def format_order(order: PrintOrderDto) -> List[str]:
 
     receipt_lines.extend(format_header(order.id, order.orderTime))
 
-    for food_item in order.foodItems:
-        receipt_lines.extend(format_food_item(food_item))
+    for entree in order.entrees:
+        receipt_lines.extend(format_entree_item(entree))
+
+    for side in order.sides:
+        receipt_lines.extend(format_side_item(side))
+
+    for drink in order.drinks:
+        receipt_lines.append(format_drink_item(drink))
 
     receipt_lines.extend(format_footer())
 
