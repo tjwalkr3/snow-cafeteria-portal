@@ -113,6 +113,8 @@ CREATE TABLE cafeteria.drink (
   drink_price decimal NOT NULL,
   image_url varchar(500),
   in_stock boolean NOT NULL DEFAULT true,
+  swipe_only boolean NOT NULL DEFAULT false,
+  card_only boolean NOT NULL DEFAULT false,
   PRIMARY KEY (id),
   FOREIGN KEY (location_id) REFERENCES cafeteria.cafeteria_location (id)
 );
@@ -409,7 +411,9 @@ INSERT INTO
     station_id,
     entree_name,
     entree_description,
-    entree_price
+    entree_price,
+    swipe_only,
+    card_only
   )
 VALUES
 -- Breakfast Station Entrees
@@ -417,94 +421,173 @@ VALUES
     1,
     'Breakfast Burrito',
     'Scrambled eggs, potatoes, and cheese wrapped in a warm tortilla',
-    4.99
+    4.99,
+    false,
+    false
   ),
   (
     1, -- Id 2 needs meat option types configured
     'Breakfast Burrito With Meat',
     'Scrambled eggs, potatoes, cheese, and your choice of meat wrapped in a warm tortilla',
-    5.99
+    5.99,
+    false,
+    false
   ),
   (
     1, -- Id 3 needs bread options configured
     'Breakfast Sandwich Muffin / Biscuit',
     'Scrambled eggs and cheese on a toasted English muffin or biscuit',
-    3.49
+    3.49,
+    false,
+    false
   ),
   (
     1, -- Id 4 needs bread and meat options configured
     'Breakfast Sandwich Muffin / Biscuit With Meat',
     'Scrambled eggs, cheese and your choice of meat on a toasted English muffin or biscuit',
-    4.19
+    4.19,
+    false,
+    false
   ),
   (
     1, -- Id 5 needs bread options configured
     'Breakfast Sandwich Bagel / Croissant',
     'Scrambled eggs and cheese on a toasted English muffin or biscuit',
-    4.29
+    4.29,
+    false,
+    true
   ),
   (
     1, -- Id 6 needs bread and meat options configured
     'Breakfast Sandwich Bagel / Croissant With Meat',
     'Scrambled eggs, cheese and your choice of meat on a toasted English muffin or biscuit',
-    4.89
+    4.89,
+    false,
+    true
   ),
   (
     1, -- Id 7 needs plate base and meat options configured
     'Breakfast Plate',
     'Breakfast sides including eggs, toast, potatoes, and your choice of meat',
-    4.29
+    4.29,
+    false,
+    false
   ),
   (
     1, 
     'Cheese Omelet',
     'Made to order omelet with your choice of cheese',
-    3.89
+    3.89,
+    false,
+    true
   ),
   (
     1, -- Id 9 needs meat options configured
     'Omelet with meat',
     'Made to order omelet with your choice of meat and cheese',
-    5.19
+    5.19,
+    false,
+    true
   ),
   (
     1, -- Id 10 needs meat options configured
     'Omelet combo',
     'Made to order omelet with only cheese and eggs, with a side of hashbrowns and toast',
-    5.99
+    5.99,
+    false,
+    true
   ),
   (1, 
     'French Toast',
     'Crispy golden French toast',
-    3.29
+    3.29,
+    false,
+    true
   ),
   (1, 
     '1 Pancake',
     'Single large crispy pancake',
-    2.49 -- NOTE Not on screen 
+    2.49,
+    false,
+    true-- NOTE Not on screen 
   ),
   (1, 
     '2 Pancakes',
     'Two large crispy pancakes',
-    3.99
+    3.99,
+    false,
+    true
   ),
   (1, 
     'Biscuits and Gravy',
     'Crispy biscuits with savory gravy',
-    4.89
+    4.89,
+    false,
+    true
+  ),
+  (
+    1,
+    '1 Pancake with Potatoes',
+    'One large crispy pancake served with a side of golden potatoes',
+    0.00,
+    true,
+    false
+  ),
+  (
+    1, -- Id 16 needs meat options configured
+    '1 Pancake with Meat',
+    'One large crispy pancake served with a side of your choice of meat',
+    0.00,
+    true,
+    false
+  ),
+  (
+    1,
+    'French Toast with Potatoes',
+    'Crispy golden French toast served with a side of golden potatoes',
+    0.00,
+    true,
+    false
+  ),
+  (
+    1,
+    '1 Biscuit and Gravy with potatoes',
+    'Crispy biscuits with savory gravy served with a side of golden potatoes',
+    0.00,
+    true,
+    false
   ),
 
 -- Deli Station Entrees
   (
-    2, -- Id 15 needs bread, meat, cheese, toppings, and dressing options configured
+    2, -- Id 19 needs bread, meat, cheese, toppings, and dressing options configured
     'Deli Sandwich',
     'A sandwich with your choice of meat, cheese, toppings, and dressing',
-    5.99
+    5.99,
+    false,
+    true
   ),
-  (2, -- Id 16 needs meat, cheese, toppings, and dressing options configured
+  (2, -- Id 20 needs meat, cheese, toppings, and dressing options configured
     'Deli Salad',
     'A salad with your choice of meat, cheese, toppings, and dressing',
-    5.99
+    5.99,
+    false,
+    false
+  ),
+  (
+    2, -- Id 21 needs bread, meat, cheese, toppings, and dressing options configured
+    'Swipe Deli Sandwich',
+    'A sandwich with your choice of meat, cheese, toppings, and dressing',
+    0.00,
+    true,
+    false
+  ),
+  (2, -- Id 22 needs meat, cheese, toppings, and dressing options configured
+    'Swipe Deli Salad',
+    'A salad with your choice of meat, cheese, toppings, and dressing',
+    5.99,
+    false,
+    false
   ),
 
   -- Grill Station Entrees
@@ -512,269 +595,310 @@ VALUES
     3,
     'Hamburger', 
     'A classic hamburger with a juicy beef patty',
-    4.49
+    4.49,
+    false,
+    false
   ),
   (
     3,
     'Cheeseburger', 
     'A classic cheeseburger with a juicy beef patty and melted cheese',
-    4.99
+    4.99,
+    false,
+    false
   ),
   (
     3,
     'Double Cheeseburger', 
     'A classic double cheeseburger with two juicy beef patties and melted cheese',
-    6.29
+    6.29,
+    false,
+    true
   ),
   (
     3,
     'Bacon Cheeseburger', 
     'A classic bacon cheeseburger with a juicy beef patty, melted cheese, and crispy bacon',
-    5.49
+    5.49,
+    false,
+    true
   ),
   (
     3,
     'Double Bacon Cheeseburger', 
     'A classic double bacon cheeseburger with two juicy beef patties, melted cheese, and crispy bacon',
-    6.89
+    6.89,
+    false,
+    true
   ),
   (
     3,
     'Turkey Burger', 
     'A classic turkey burger with a juicy turkey patty',
-    5.29
+    5.29,
+    false,
+    true
   ),
   (
     3,
     'Veggie Burger', 
     'A classic veggie burger with a juicy veggie patty',
-    4.89
+    4.89,
+    false,
+    false
   ),
   (
     3,
-    'Grilled Chicken Sandwich', 
+    'Grilled Chicken Sandwich', -- id 30
     'A delicious grilled chicken sandwich',
-    5.19
+    5.19,
+    false,
+    true
   ),
   (
     3,
     'Grilled Chicken Breast', 
     'A delicious grilled chicken breast',
-    4.89 -- NOTE Not on screen
+    4.89,
+    false,
+    true -- NOTE Not on screen
   ),
   (
     3,
     'Breaded Chicken Sandwich', 
     'A delicious breaded chicken sandwich',
-    5.19
+    5.19,
+    false,
+    false
   ),
   (
     3,
     'Philly Cheesesteak', 
     'Thinly sliced steak with grilled onions and peppers, topped with melted cheese on a hoagie bun',
-    6.89
+    6.89,
+    false,
+    false
   ),
   (
     3,
     'Chicken Cheesesteak', 
     'Grilled chicken with melted cheese on a hoagie bun',
-    6.79
+    6.79,
+    false,
+    true
   ),
   (
     3,
     'Badger Burger', 
     'A hamburger topped with a fried egg, crispy bacon, and melted cheese',
-    5.49
+    5.49,
+    false,
+    false
   ),
   (
     3,
     'BLT', 
     'Bacon, Lettuce, and Tomato on toasted bread',
-    4.89
+    4.89,
+    false,
+    false
   ),
   (
     3,
     'Fish Fillets', 
     '2 pieces of crispy breaded fish fillets',
-    5.49
+    5.49,
+    false,
+    true
   ),
   (
     3,
     'Fish Fillet Sandwich',
     'A sandwich with a crispy breaded fish fillet',
-    5.99
+    5.99,
+    false,
+    true
   ),
   (
     3,
     'Grilled Cheese Sandwich',
     'A delicious golden grilled cheese sandwich',
-    3.29
+    3.29,
+    false,
+    false
   ),
   (
-    3,
+    3, -- ID 40
     'Grilled Cheese and Ham Sandwich',
     'A delicious golden grilled cheese sandwich with ham',
-    4.29
+    4.29,
+    false,
+    true
   ),
   (
     3,
     'Cheese Quesadilla',
     'Grilled cheese in a warm tortilla',
     3.99,
+    false,
+    false
   ),
   (
     3,
     'Chicken Quesadilla',
     'Grilled chicken and cheese in a warm tortilla',
     5.29,
+    false,
+    false
   ),
   (
     3,
     'Steak Quesadilla',
     'Grilled steak and cheese in a warm tortilla',
     5.49,
+    false,
+    false
   ),
   (
     3,
     'Corn Dog',
     'A classic corn dog, a hot dog on a stick coated in a thick layer of cornmeal batter and deep-fried to golden perfection',
-    2.89
+    2.89,
+    false,
+    false
   ),
   (
     3,
     'Chicken Tenders',
     'Crispy breaded chicken tenders',
-    4.99
+    4.99,
+    false,
+    false
   ),
   (
     3,
     'Vegetarian Chicken Tenders',
     'Crispy breaded vegetarian chicken tenders',
-    4.89  -- NOTE Not on screen!
+    4.89,
+    false,
+    false -- NOTE Not on screen!
   ),
 
   -- Pizza Station Entrees
   (
-    4,
+    4, -- ID 47 needs pizza topping options configured
     'Personal Cheese Pizza', -- No toppings included
     'A small pizza with cheese',
     4.89,
+    false,
+    false
   ),
   (
-    4,
+    4, -- ID 48 needs pizza topping options configured
     'Personal One Topping Pizza', 
     'A small pizza with one topping included',
     5.29,
+    false,
+    false
   ),
   (
-    4,
+    4, -- ID 49 needs pizza topping options configured
     'Personal Two Toppings Pizza',
     'A small pizza with two toppings included',
     5.69,
+    false,
+    false
   ),
   (
-    4,
+    4, -- ID 50 needs pizza topping options configured
     'Personal Three Toppings Pizza',
     'A small pizza with three toppings included',
     5.89,
+    false,
+    false
   ),
   (
     4,
     'Personal Veggie Lovers Pizza',
     'A small pizza with a variety of fresh vegetables',
     5.49,
+    false,
+    false
   ),
   (
     4,
     'Personal Meat Lovers Pizza',
     'A small pizza with a variety of meats',
     5.99,
+    false,
+    false
   ),
   (
     4,
     'Large Cheese Pizza', -- No toppings included
     'A large pizza with cheese',
     9.49,
+    false,
+    false
   ),
   (
-    4,
+    4, -- ID 54 needs pizza topping options configured
     'Large One Topping Pizza',
     'A large pizza with one topping included',
     11.29,
+    false,
+    false
   ),
   (
-    4,
+    4, -- ID 55 needs pizza topping options configured
     'Large Two Toppings Pizza',
     'A large pizza with two toppings included',
     12.49,
+    false,
+    false
   ),
   (
     4, -- The additional large Pizza Toppings are 1.99
-    'Large Three Toppings Pizza',
+    'Large Three Toppings Pizza', -- ID 56 needs pizza topping options configured
     'A large pizza with three toppings included',
     13.49,
+    false,
+    false
   ),
   (
     4,
-    '',
-    '',
-
+    'Swipe Pizza', -- ID 57 needs pizza topping options configured
+    'A small pizza with cheese and your choice of up to two toppings',
+    0.00,
+    true,
+    false
+  ),
+  -- Bistro Station Entrees
+  (
+    5, -- ID 58 needs wrap filling and sauce options configured
+    'Wrap',
+    'Your choice of fresh wrap with a variety of fillings and sauces',
+    5.99,
+    false, 
+    false
   ),
   (
-    4,
-    '',
-    '',
-
-  ),
-  (
-    4,
-    '',
-    '',
-
-  ),
-  -- (
-  --   3,
-  --   'Chicken Quesadilla',
-  --   'Grilled chicken and cheese in a warm tortilla',
-  --   5.29,
-  -- ),
-  -- (
-  --   3,
-  --   'Steak Quesadilla',
-  --   'Grilled steak and cheese in a warm tortilla',
-  --   5.49,
-  -- ),
-  -- (
-  --   3,
-  --   'Cheese Quesadilla',
-  --   'Grilled cheese in a warm tortilla',
-  --   3.99,
-  -- ),
-  -- (
-  --   4,
-  --   'Two Toppings Pizza',
-  --   'Small pizza with two toppings',
-  --   5.69,
-  -- ),
-  -- (
-  --   2,
-  --   'Deli Sandwich',
-  --   'A sandwich with your choice of meat, cheese, toppings, and dressing',
-  --   6.79,
-  -- ),
-  -- (
-  --   5,
-  --   'Custom Wrap',
-  --   'Fresh wrap with your choice of fillings',
-  --   5.69,
-  -- );
+    5, -- ID 59 needs salad base, topping, and dressing options configured
+    'Salad',
+    'A fresh salad with your choice of dressing and toppings',
+    5.99,
+    false,
+    false
+  );
 
 INSERT INTO
   cafeteria.side (
     station_id,
     side_name,
     side_description,
-    side_price
+    side_price,
+    swipe_only,
+    card_only
   )
 VALUES
 -- Breakfast Sides
@@ -783,48 +907,64 @@ VALUES
     'Hashbrowns',
     'Crispy golden hashbrowns',
     1.99,
+    false,
+    true
   ),
   (
     1,
     'Toast',
     'Crispy golden toast, made from a thick slice of white bread',
     1.49,
+    false,
+    true
   ),
   (
     1,
     'Sausage Patty',
     'Crispy sausage patty',
     1.49,
+    false,
+    true
   ),
   (
     1,
     'Bacon',
     'Several strips of crispy bacon',
     1.49,
+    false,
+    true
   ),
   (
     1,
     'Ham',
     'A slice of savory ham',
     1.49,
+    false,
+    true
   ),
   (
     1,
     '1 Egg',
     'A single cooked egg',
     0.99, -- NOTE Not on screen but on standard paper menu
+    false,
+    true
   ),
   (
     1,
     '2 Eggs',
     'Two cooked eggs',
     1.75, -- NOTE Not on screen but on standard paper menu
+    false,
+    true
   ),
   (
     1,
     '2 Eggs with toast',
     'Two cooked eggs with 2 slices of toast',
-    2.89
+    2.89,
+    false,
+    true
   )
 -- Deli Station Sides
   (
@@ -832,82 +972,115 @@ VALUES
     'Chips',
     'Your choice of crispy chips from the selection on the shelf',
     0.89,
+    false,
+    false
   ),
--- Grill Station Sides
   (
-    3,
+    2,
+    'Side Salad',
+    'A small side salad from the salad bar',
+    0.00, 
+    true,
+    false
+  ),
+  (
+    2,
     'Rice',
     'Steamed white rice',
-    1.79,
+    0.00,
+    true,
+    false
   ),
   (
-    3,
+    2,
     'Vegetables',
     'Steamed mixed vegetables',
-    1.79,
+    0.00,
+    true,
+    false
   ),
+-- Grill Station Sides
   (
     3, 
     'French Fries',
     'Crispy golden French fries',
-    1.99
+    1.99,
+    false,
+    false
   ),
   (
     3,
     'Waffle Fries',
     'Crispy golden waffle fries',
     2.29,
+    false,
+    false
   ),
   (
     3,
     'Onion Rings',
     'Crispy golden onion rings',
     2.49,
+    false,
+    false
   ),
   (
     3,
     'Tater Tots',
     'Crispy golden tater tots',
     1.99,
+    false,
+    false
   ),
   (
     3,
     'Curly Fries',
     'Crispy golden curly fries',
     2.29,
+    false,
+    false
   ),
   (
     3,
     'Side Salad',
-    'A built side salad from the salad bar',
-    2.29, -- NOTE Not on screen but on swipe paper menu
+    'A small side salad from the salad bar',
+    0.00, 
+    true,
+    false
   ),
-  
-  -- (
-  --   5,
-  --   'Side Salad',
-  --   'Fresh side salad with mixed greens and vegetables',
-  --   2.29,
-  -- ),
-  -- (
-  --   5,
-  --   'Fruit Cup',
-  --   'Fresh fruit cup with a variety of seasonal fruits',
-  --   2.29,
-  -- ),
-  -- (
-  --   4,
-  --   'Chips',
-  --   'Crispy chips',
-  --   0.89,
-  -- );
+  (
+    3,
+    'Rice',
+    'Steamed white rice',
+    0.00,
+    true,
+    false
+  ),
+  (
+    3,
+    'Vegetables',
+    'Steamed mixed vegetables',
+    0.00,
+    true,
+    false
+  ),
+  (
+    5,
+    'Chips',
+    'Crispy chips',
+    0.89,
+    false,
+    false
+  );
 
 INSERT INTO
   cafeteria.drink (
     location_id,
     drink_name,
     drink_description,
-    drink_price
+    drink_price,
+    swipe_only,
+    card_only
   )
 VALUES
   (
@@ -915,24 +1088,40 @@ VALUES
     'Slushies',
     'Assorted flavors of icy slushies',
     1.49,
+    false,
+    false
   ),
   (
     1,
-    'Fountain Soda',
+    'Fountain Drink',
     'Coca-cola products, and other fountain drinks of your choice',
     1.49,
+    false,
+    false
   ),
   (
     1,
     'Tea/Coffee Machine',
     'Freshly brewed iced tea',
     1.49,
-  )
+    false, 
+    true
+  ),
   (
     2,
-    'Bottled Drinks',
-    'Assorted bottled drinks including select water, juice, and soda',
+    'Bottled Water',
+    'Bottled water including Aquifina or Aquivista',
     1.49,
+    false,
+    false
+  ),
+  (
+    2,
+    '12oz Canned Soda',
+    'Assorted canned sodas',
+    1.49,
+    true,
+    false
   );
 
 INSERT INTO
@@ -950,65 +1139,70 @@ VALUES
   ("Pepperoni", true),-- id = 9
 
   -- Bread Options
-  ("Croissant", true), -- id = 
-  ("English Muffin", true), -- id = 
-  ("Biscuit", true), -- id = 
-  ("Bagel", true), -- id = 
-  ("Pretzel Bun", true), -- id = 
-  ("Marble Rye", true), -- id = 
-  ("Sourdough", true), -- id =
-  ("Pita Bread", true), -- id = 
-  ("Wheat", true), -- id = 
-  ("Garlic Flat Bread", true), -- id =
-  ("White Bread", true), -- id =
+  ("Croissant", true), -- id = 10
+  ("English Muffin", true), -- id = 11
+  ("Biscuit", true), -- id = 12
+  ("Bagel", true), -- id = 13
+  ("Pretzel Bun", true), -- id = 14
+  ("Marble Rye", true), -- id = 15
+  ("Sourdough", true), -- id = 16
+  ("Pita Bread", true), -- id = 17
+  ("Wheat", true), -- id = 18
+  ("Garlic Flat Bread", true), -- id = 19
+  ("White Bread", true), -- id = 20
+  ("Gluten Free Bread", true), -- id = 21
 
   -- Cheese Options
-  ("American", true), -- id = 
-  ("Cheddar", true), -- id = 
-  ("Pepper Jack", true), -- id = 
-  ("Swiss", true), -- id = 
-  ("Provolone", true), -- id = 
-  ("Mozzarella", true), -- id = 
-  ("Extra Cheese", true), -- id =
-  ("Extra Picked Cheese", true), -- id = 
+  ("American", true), -- id = 22
+  ("Cheddar", true), -- id = 23
+  ("Pepper Jack", true), -- id = 24
+  ("Swiss", true), -- id = 25
+  ("Provolone", true), -- id = 26
+  ("Mozzarella", true), -- id = 27
+  ("Extra Cheese", true), -- id = 28
+  ("Extra Picked Cheese", true), -- id = 29
 
   -- Topping/inclusion options
-  ("Bell Peppers", true), -- id = 
-  ("Potatoes", true), -- id =
-  ("Onions", true), -- id = 
-  ("Mushrooms", true), -- id = 
-  ("Spinach", true), -- id = 
-  ("Romaine Lettuce", true), -- id = 
-  ("Green Leaf Lettuce", true), -- id = 
-  ("Black Olives", true), -- id =
-  ("Cucumbers", true), -- id =
-  ("Tomatoes", true), -- id =
-  ("Sprouts", true), -- id =
-  ("Pickles", true), -- id =
-  ("Banana Peppers", true), -- id =
-  ("Pineapple", true), -- id =
+  ("Bell Peppers", true), -- id = 30
+  ("Potatoes", true), -- id = 31
+  ("Onions", true), -- id = 32
+  ("Mushrooms", true), -- id = 33
+  ("Spinach", true), -- id = 34
+  ("Romaine Lettuce", true), -- id = 35
+  ("Green Leaf Lettuce", true), -- id = 36
+  ("Black Olives", true), -- id = 37
+  ("Cucumbers", true), -- id = 38
+  ("Tomatoes", true), -- id = 39
+  ("Sprouts", true), -- id = 40
+  ("Pickles", true), -- id = 41
+  ("Banana Peppers", true), -- id = 42
+  ("Pineapple", true), -- id = 43
+  ("Lettuce", true), -- id = 44
   
 
   -- Egg Options
-  ("Scrambled", true), -- id = 
-  ("Over Easy", false), -- id = 
-  ("Over Hard", true), -- id =
-  ("Sunny Side Up", false), -- id = 
+  ("Scrambled", true), -- id = 45
+  ("Over Easy", false), -- id = 46
+  ("Over Hard", true), -- id = 47
+  ("Sunny Side Up", false), -- id = 48
 
   -- Dressing Options
-  ("Oil", true), -- id =
-  ("Vinegar", true), -- id =
-  ("Ranch", true), -- id =
-  ("1000 Island", true), -- id =
-  ("Italian", true), -- id =
-  ("Ceasar", true), -- id =
-  ("Raspberry Vinaigrette", true), -- id =
-  ("Honey Mustard", true), -- id =
-  ("Mayonnaise", true), -- id =
-  ("Yellow Mustard", true), -- id =
+  ("Oil", true), -- id = 49
+  ("Vinegar", true), -- id = 50
+  ("Ranch", true), -- id = 51
+  ("1000 Island", true), -- id = 52
+  ("Italian", true), -- id = 53
+  ("Ceasar", true), -- id = 54
+  ("Raspberry Vinaigrette", true), -- id = 55
+  ("Honey Mustard", true), -- id = 56
+  ("Mayonnaise", true), -- id = 57
+  ("Yellow Mustard", true), -- id = 58
 
-  ();
+  --Grilled Options
+  ("Grilled", true), -- id = 59
+  ("Not Grilled", true); -- id = 60
 
+  
 INSERT INTO
   cafeteria.food_option_type (
     food_option_type_name,
@@ -1045,19 +1239,37 @@ VALUES
   ('Breakfast Plate Meat', 1, 1, 1, 0.00, 7, NULL), -- id=12: must pick exactly 1 meat option for the plate
   ('Breakfast Plate Eggs', 1, 1, 1, 0.00, 7, NULL); -- id=13: must pick exactly 1 egg option for the plate
 
+  -- Breakfast Swipe Pancake with meat options (entree_id 16)
+  ('Pancake Meat', 1, 1, 1, 0.00, 16, NULL), -- id=14: pick exactly 1 meat option for the pancake combo, extra charge applies
 
-  -- Deli Sandwich options (entree_id 15)
-  ('Deli Sandwich Bread', 1, 1, 1, 0.00, 15, NULL), -- id=14: pick exactly 1 bread option for the
-  ('Deli Sandwich Meat', 0, 1, 5, 1.99, 15, NULL), -- id=15: pick exactly 1 meat option for the sandwich, extra charge applies
-  ('Deli Sandwich Cheese', 0, 1, 3, 0.75, 15, NULL), -- id=16: pick exactly 1 cheese option for the sandwich
-  ('Deli Sandwich Toppings', 0, 3, 10, 0.50, 15, NULL), -- id=17: optional toppings for the sandwich, first 3 free, up to 10
-  ('Deli Sandwich Dressing', 0, 1, 1, 0.00, 15, NULL); -- id=18: pick exactly 1 dressing option for the sandwich
+  -- Deli Sandwich options (entree_id 19)
+  ('Deli Sandwich Bread', 1, 1, 1, 0.00, 19, NULL), -- id=15: pick exactly 1 bread option for the
+  ('Deli Sandwich Meat', 0, 1, 5, 1.99, 19, NULL), -- id=16: pick exactly 1 meat option for the sandwich, extra charge applies
+  ('Deli Sandwich Cheese', 0, 1, 3, 0.75, 19, NULL), -- id=17: pick exactly 1 cheese option for the sandwich
+  ('Deli Sandwich Toppings', 0, 3, 10, 0.50, 19, NULL), -- id=18: optional toppings for the sandwich, first 3 free, up to 10
+  ('Deli Sandwich Dressing', 0, 1, 1, 0.00, 19, NULL); -- id=19: pick exactly 1 dressing option for the sandwich
+  ('Deli Sandwich Grilled', 1, 1, 1, 0.00, 19, NULL); -- id=20: option to grill the sandwich for no extra charge
 
-  -- Deli Salad options (entree_id 16)
-  ('Deli Salad Meat', 0, 1, 5, 1.99, 16, NULL), -- id=19: pick exactly 1 meat option for the salad, extra charge applies
-  ('Deli Salad Cheese', 0, 1, 3, 0.75, 16, NULL), -- id=20: pick exactly 1 cheese option for the salad
-  ('Deli Salad Toppings', 0, 3, 10, 0.50, 16, NULL), -- id=21: optional toppings for the salad, first 3 free, up to 10
-  ('Deli Salad Dressing', 0, 1, 1, 0.00, 16, NULL); -- id=22: pick exactly 1 dressing option for the salad
+  -- Deli Salad options (entree_id 20)
+  ('Deli Salad Meat', 0, 1, 5, 1.99, 20, NULL), -- id=21: pick exactly 1 meat option for the salad, extra charge applies
+  ('Deli Salad Cheese', 0, 1, 3, 0.75, 20, NULL), -- id=22: pick exactly 1 cheese option for the salad
+  ('Deli Salad Toppings', 0, 3, 10, 0.50, 20, NULL), -- id=23: optional toppings for the salad, first 3 free, up to 10
+  ('Deli Salad Dressing', 0, 1, 1, 0.00, 20, NULL); -- id=24: pick exactly 1 dressing option for the salad
+
+-- Swipe Deli Sandwich options (entree_id 21)
+  ('Deli Sandwich Bread', 1, 1, 1, 0.00, 21, NULL), -- id=25: pick exactly 1 bread option for the
+  ('Deli Sandwich Meat', 0, 1, 5, 1.99, 21, NULL), -- id=26: pick exactly 1 meat option for the sandwich, extra charge applies
+  ('Deli Sandwich Cheese', 0, 1, 3, 0.75, 21, NULL), -- id=27: pick exactly 1 cheese option for the sandwich
+  ('Deli Sandwich Toppings', 0, 3, 10, 0.50, 21, NULL), -- id=28: optional toppings for the sandwich, first 3 free, up to 10
+  ('Deli Sandwich Dressing', 0, 1, 1, 0.00, 21, NULL); -- id=29: pick exactly 1 dressing option for the sandwich
+
+  -- Swipe Deli Salad options (entree_id 22)
+  ('Deli Salad Meat', 0, 1, 5, 1.99, 22, NULL), -- id=30: pick exactly 1 meat option for the salad, extra charge applies
+  ('Deli Salad Cheese', 0, 1, 3, 0.75, 22, NULL), -- id=31: pick exactly 1 cheese option for the salad
+  ('Deli Salad Toppings', 0, 3, 10, 0.50, 22, NULL), -- id=32: optional toppings for the salad, first 3 free, up to 10
+  ('Deli Salad Dressing', 0, 1, 1, 0.00, 22, NULL); -- id=33: pick exactly 1 dressing option for the salad
+
+
 
   -- -- Breakfast Plate options (entree_id 3)
   -- ('Plate Base', 1, 1, 1, 0.00, 3, NULL), -- id=1:  pick exactly 1
