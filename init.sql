@@ -791,7 +791,7 @@ VALUES
     'A small pizza with cheese',
     4.89,
     false,
-    false
+    true
   ),
   (
     4, -- ID 48 needs pizza topping options configured
@@ -799,7 +799,7 @@ VALUES
     'A small pizza with one topping included',
     5.29,
     false,
-    false
+    true
   ),
   (
     4, -- ID 49 needs pizza topping options configured
@@ -807,7 +807,7 @@ VALUES
     'A small pizza with two toppings included',
     5.69,
     false,
-    false
+    true
   ),
   (
     4, -- ID 50 needs pizza topping options configured
@@ -815,7 +815,7 @@ VALUES
     'A small pizza with three toppings included',
     5.89,
     false,
-    false
+    true
   ),
   (
     4,
@@ -823,7 +823,7 @@ VALUES
     'A small pizza with a variety of fresh vegetables',
     5.49,
     false,
-    false
+    true
   ),
   (
     4,
@@ -831,7 +831,7 @@ VALUES
     'A small pizza with a variety of meats',
     5.99,
     false,
-    false
+    true
   ),
   (
     4,
@@ -839,7 +839,7 @@ VALUES
     'A large pizza with cheese',
     9.49,
     false,
-    false
+    true
   ),
   (
     4, -- ID 54 needs pizza topping options configured
@@ -847,7 +847,7 @@ VALUES
     'A large pizza with one topping included',
     11.29,
     false,
-    false
+    true
   ),
   (
     4, -- ID 55 needs pizza topping options configured
@@ -855,7 +855,7 @@ VALUES
     'A large pizza with two toppings included',
     12.49,
     false,
-    false
+    true
   ),
   (
     4, -- The additional large Pizza Toppings are 1.99
@@ -863,7 +863,7 @@ VALUES
     'A large pizza with three toppings included',
     13.49,
     false,
-    false
+    true
   ),
   (
     4,
