@@ -959,7 +959,7 @@ VALUES
     true
   ),
   (
-    1,
+    1,-- Id 6 needs egg options configured
     '1 Egg',
     'A single cooked egg',
     0.99, -- NOTE Not on screen but on standard paper menu
@@ -967,7 +967,7 @@ VALUES
     true
   ),
   (
-    1,
+    1, -- Id 7 needs egg options configured
     '2 Eggs',
     'Two cooked eggs',
     1.75, -- NOTE Not on screen but on standard paper menu
@@ -975,7 +975,7 @@ VALUES
     true
   ),
   (
-    1,
+    1, -- Id 8 needs egg options configured
     '2 Eggs with toast',
     'Two cooked eggs with 2 slices of toast',
     2.89,
@@ -1345,7 +1345,12 @@ VALUES
   ('Salad Meat', 0, 1, 4, 0.50, 59, NULL), -- id=69: optional meat toppings for the salad, up to 5 with an extra charge for each
   ('Salad Cheese', 0, 3, 5, 0.50, 59, NULL), -- id=70: optional cheese toppings for the salad, up to 5 with an extra charge for each
   ('Salad Toppings', 0, 3, 10, 0.50, 59, NULL), -- id=71: optional toppings for the salad, first 3 free up to 10 with an extra charge for each after the first three
-  ('Salad Dressing', 0, 1, 1, 0.00, 59, NULL); -- id=72: pick exactly one dressing for the salad
+  ('Salad Dressing', 0, 1, 1, 0.00, 59, NULL), -- id=72: pick exactly one dressing for the salad
+
+  -- Egg side options (side_id 6-8)
+  ('Egg Side Cook', 1, 1, 1, 0.00, NULL, 6), -- id=73: must pick exactly 1 egg option for the egg side
+  ('Egg Side Cook', 1, 1, 1, 1.99, NULL, 7), -- id=74: optional meat for the egg side, extra charge applies
+  ('Egg Side Cook', 1, 1, 1, 0.89, NULL, 8); -- id=75: optional toast for the egg side, extra charge applies
 
 
 INSERT INTO
@@ -1818,7 +1823,24 @@ VALUES
   (72, 55), -- Raspberry Vinaigrette
   (72, 56), -- Honey Mustard
   (72, 57), -- Mayonnaise
-  (72, 58); -- Yellow Mustard
+  (72, 58), -- Yellow Mustard
+
+  -- Egg side options
+  (73, 45), -- Scrambled Eggs
+  (73, 46), -- Over Easy Eggs
+  (73, 47), -- Over Hard Eggs
+  (73, 48), -- Sunny Side Up Eggs
+
+  (74, 45), -- Scrambled Eggs
+  (74, 46), -- Over Easy Eggs
+  (74, 47), -- Over Hard Eggs
+  (74, 48), -- Sunny Side Up Eggs
+  
+  (75, 45), -- Scrambled Eggs
+  (75, 46), -- Over Easy Eggs
+  (75, 47), -- Over Hard Eggs
+  (75, 48); -- Sunny Side Up Eggs
+  
 
 
 -- Sample customer data
