@@ -1,5 +1,5 @@
 using System.Data;
-using System.Net.Http.Json;
+using Cafeteria.Api.Services.Print;
 using Dapper;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
@@ -7,11 +7,10 @@ using Cafeteria.Shared.Utilities;
 
 namespace Cafeteria.Api.Services.Orders;
 
-public class CreateOrderService(IDbConnection dbConnection, IHttpClientFactory httpClientFactory, ILogger<CreateOrderService> logger) : ICreateOrderService
+public class CreateOrderService(IDbConnection dbConnection, IPrintService printService) : ICreateOrderService
 {
     private readonly IDbConnection _dbConnection = dbConnection;
-    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-    private readonly ILogger<CreateOrderService> _logger = logger;
+    private readonly IPrintService _printService = printService;
 
     public async Task<OrderDto> CreateOrder(BrowserOrder browserOrder, string customerEmail)
     {
@@ -56,7 +55,7 @@ public class CreateOrderService(IDbConnection dbConnection, IHttpClientFactory h
             }
 
             transaction.Commit();
-            await PrintOrderAfterPersistAsync(browserOrder);
+            await _printService.PrintOrder(browserOrder);
             return order;
         }
         catch
@@ -223,37 +222,5 @@ public class CreateOrderService(IDbConnection dbConnection, IHttpClientFactory h
             Tax = OrderCalculations.CalculateTax(browserOrder),
             TotalSwipe = browserOrder.IsCardOrder ? null : OrderCalculations.CalculateTotalSwipe(browserOrder)
         };
-    }
-
-    private async Task PrintOrderAfterPersistAsync(BrowserOrder browserOrder)
-    {
-        var locationId = browserOrder.Location?.Id;
-        if (!locationId.HasValue || locationId.Value < 1)
-            return;
-
-        var printerUrl = await GetPrinterUrlAsync(locationId.Value);
-        if (string.IsNullOrWhiteSpace(printerUrl))
-            return;
-
-        try
-        {
-            var client = _httpClientFactory.CreateClient();
-            var fullUrl = printerUrl.TrimEnd('/') + "/print-order";
-            await client.PostAsJsonAsync(fullUrl, browserOrder);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to print order for location {LocationId}", locationId.Value);
-        }
-    }
-
-    private async Task<string?> GetPrinterUrlAsync(int locationId)
-    {
-        const string sql = @"
-                        SELECT printer_url
-                        FROM cafeteria.cafeteria_location
-                        WHERE id = @LocationId";
-
-        return await _dbConnection.QuerySingleOrDefaultAsync<string?>(sql, new { LocationId = locationId });
     }
 }
