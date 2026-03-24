@@ -73,6 +73,23 @@ public class OrderIntegrationTests : IDisposable
         Assert.NotNull(createdOrder);
         Assert.True(createdOrder.Id > 0);
         Assert.Equal(15.99m, createdOrder.TotalPrice);
+
+        var persistedOrder = await _connection.QuerySingleAsync<OrderDto>(
+            @"SELECT id AS Id,
+                     order_time AS OrderTime,
+                     total_price AS TotalPrice,
+                     tax AS Tax,
+                     total_swipe AS TotalSwipe
+              FROM cafeteria.order
+              WHERE id = @Id",
+            new { createdOrder.Id }
+        );
+
+        Assert.Equal(createdOrder.Id, persistedOrder.Id);
+        Assert.Equal(createdOrder.TotalPrice, persistedOrder.TotalPrice);
+        Assert.Equal(createdOrder.Tax, persistedOrder.Tax);
+        Assert.Equal(createdOrder.TotalSwipe, persistedOrder.TotalSwipe);
+
         Assert.Equal(2, createdOrder.FoodItems.Count);
         Assert.Equal(2, createdOrder.FoodItems[0].Options.Count);
         Assert.Equal("Lettuce", createdOrder.FoodItems[0].Options[0].FoodOptionName);
