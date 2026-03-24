@@ -16,8 +16,7 @@ public class EntreeDto
     [StringLength(200)]
     public string? EntreeDescription { get; set; }
 
-    [Required]
-    [Range(0.01, double.MaxValue)]
+    [Range(0, double.MaxValue)]
     public decimal EntreePrice { get; set; }
 
     public bool InStock { get; set; } = true;

@@ -3,10 +3,17 @@
 
 <PageTitle>Thank You</PageTitle>
 
-<div class="container px-3 py-2">
-    <div class="empty-state text-center mx-auto my-5">
-        <h1 class="order-title mb-3">Thank You for Your Order!</h1>
-        <p class="order-subtitle mb-4">It should be ready in about 5-10 minutes.</p>
-        <a href="/" class="btn btn-primary">Place Another Order</a>
+<div class="thankyou-wrapper text-center">
+    <div class="text-center">
+        <h1 class="thankyou-title mb-2">Thank You for Your Order!</h1>
+        <p class="thankyou-subtitle mb-5">Your order has been placed successfully.<br />It should be ready in about <strong>5–10 minutes</strong>.</p>
+        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+            <a href="/" class="thankyou-btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Place Another Order
+            </a>
+            <a href="/order-history" class="thankyou-btn-secondary">
+                <i class="bi bi-clock-history me-2"></i>View Order History
+            </a>
+        </div>
     </div>
 </div>

@@ -5,9 +5,6 @@ install:
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install python-escpos pyusb pytest pylint requests fastapi uvicorn
 
-test-print:
-	LD_LIBRARY_PATH=$$HOME/.nix-profile/lib:$$LD_LIBRARY_PATH $(VENV)/bin/python test_print.py
-
 test:
 	$(VENV)/bin/pytest -v
 

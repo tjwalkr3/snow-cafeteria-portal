@@ -4,7 +4,9 @@
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu />
+        <CascadingValue Value="_userRole" Name="UserRole">
+            <NavMenu />
+        </CascadingValue>
     </div>
 
     <main>
@@ -19,9 +21,11 @@
                             </div>
                         </div>
                     }
-                    else if (_isAdmin)
+                    else if (_hasAccess)
                     {
-                        @Body
+                        <CascadingValue Value="_userRole" Name="UserRole">
+                            @Body
+                        </CascadingValue>
                     }
                     else
                     {
@@ -44,7 +48,8 @@
 
 @code {
     private bool _roleCheckCompleted;
-    private bool _isAdmin;
+    private bool _hasAccess;
+    private string? _userRole;
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,7 +58,9 @@
         if (authenticationState.User.Identity?.IsAuthenticated == true)
         {
             var role = await CustomerService.GetCurrentUserRole();
-            _isAdmin = string.Equals(role?.UserRole, "admin", StringComparison.OrdinalIgnoreCase);
+            _userRole = role?.UserRole;
+            _hasAccess = string.Equals(_userRole, "admin", StringComparison.OrdinalIgnoreCase)
+                      || string.Equals(_userRole, "food-service", StringComparison.OrdinalIgnoreCase);
         }
 
         _roleCheckCompleted = true;

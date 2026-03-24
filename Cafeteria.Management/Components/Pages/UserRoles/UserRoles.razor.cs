@@ -10,6 +10,8 @@ public partial class UserRoles : ComponentBase, IDisposable
     [Inject]
     private ICustomerService CustomerService { get; set; } = default!;
 
+    private bool _isAdmin;
+
     private List<CustomerRoleDto> customers = [];
     private bool isLoading = false;
     private string searchText = string.Empty;
@@ -20,6 +22,12 @@ public partial class UserRoles : ComponentBase, IDisposable
     private bool showToast = false;
 
     private CancellationTokenSource? _debounceCts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var role = await CustomerService.GetCurrentUserRole();
+        _isAdmin = string.Equals(role?.UserRole, "admin", StringComparison.OrdinalIgnoreCase);
+    }
 
     private async Task LoadCustomers(string? search = null)
     {
