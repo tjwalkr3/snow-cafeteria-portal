@@ -19,8 +19,5 @@ public class DrinkDto
     [Range(0, double.MaxValue)]
     public decimal DrinkPrice { get; set; }
 
-    [StringLength(500)]
-    public string? ImageUrl { get; set; }
-
     public bool InStock { get; set; } = true;
 }

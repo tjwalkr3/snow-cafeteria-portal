@@ -35,7 +35,6 @@ public class DrinkIntegrationTests : IDisposable
             DrinkName = "Test Sprite",
             DrinkDescription = "Lemon-lime soda for testing",
             DrinkPrice = 1.99m,
-            ImageUrl = "https://picsum.photos/id/100/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/drink", newDrink);
@@ -107,7 +106,6 @@ public class DrinkIntegrationTests : IDisposable
                 DrinkName = "Drink To Update",
                 DrinkDescription = "Original",
                 DrinkPrice = 1.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -118,7 +116,6 @@ public class DrinkIntegrationTests : IDisposable
             DrinkName = "Updated Drink",
             DrinkDescription = "Updated description",
             DrinkPrice = 3.99m,
-            ImageUrl = "https://picsum.photos/id/101/300/200",
         };
 
         var response = await _client.PutAsJsonAsync($"/api/drink/{drinkId}", updatedDrink);
@@ -141,7 +138,6 @@ public class DrinkIntegrationTests : IDisposable
             DrinkName = "Nonexistent",
             DrinkDescription = "Description",
             DrinkPrice = 1.99m,
-            ImageUrl = "https://picsum.photos/id/102/300/200",
         };
 
         var response = await _client.PutAsJsonAsync("/api/drink/99999", updatedDrink);
@@ -160,7 +156,6 @@ public class DrinkIntegrationTests : IDisposable
                 DrinkName = "Drink To Delete",
                 DrinkDescription = "Will be deleted",
                 DrinkPrice = 1.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -191,7 +186,6 @@ public class DrinkIntegrationTests : IDisposable
                 DrinkName = "Drink To Stock Toggle",
                 DrinkDescription = "Testing stock status",
                 DrinkPrice = 2.49m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -221,7 +215,6 @@ public class DrinkIntegrationTests : IDisposable
                 DrinkName = "Drink To Stock Toggle True",
                 DrinkDescription = "Testing stock status toggle",
                 DrinkPrice = 2.49m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 

@@ -16,9 +16,9 @@ public class DrinkService : IDrinkService
     public async Task<DrinkDto> CreateDrink(DrinkDto drinkDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, image_url, in_stock)
-            VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl, @InStock)
-            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
+            INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, in_stock)
+            VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @InStock)
+            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, in_stock AS InStock;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<DrinkDto>(sql, drinkDto);
         return result ?? throw new InvalidOperationException("Failed to create drink");
@@ -32,8 +32,7 @@ public class DrinkService : IDrinkService
                 location_id AS LocationId, 
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
-                drink_price AS DrinkPrice, 
-                image_url AS ImageUrl,
+                drink_price AS DrinkPrice,
                 in_stock AS InStock
             FROM cafeteria.drink
             WHERE id = @id;";
@@ -51,7 +50,6 @@ public class DrinkService : IDrinkService
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.drink
             ORDER BY drink_name, id;";
@@ -69,7 +67,6 @@ public class DrinkService : IDrinkService
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.drink
             WHERE location_id = @locationId
@@ -87,10 +84,9 @@ public class DrinkService : IDrinkService
                 drink_name = @DrinkName,
                 drink_description = @DrinkDescription,
                 drink_price = @DrinkPrice,
-                image_url = @ImageUrl,
                 in_stock = @InStock
             WHERE id = @id
-            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
+            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, in_stock AS InStock;";
 
         var parameters = new
         {
@@ -99,7 +95,6 @@ public class DrinkService : IDrinkService
             drinkDto.DrinkName,
             drinkDto.DrinkDescription,
             drinkDto.DrinkPrice,
-            drinkDto.ImageUrl,
             drinkDto.InStock
         };
 

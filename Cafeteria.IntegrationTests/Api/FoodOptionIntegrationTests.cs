@@ -46,7 +46,6 @@ public class FoodOptionIntegrationTests : IDisposable
         {
             FoodOptionName = "Test Pickles",
             InStock = true,
-            ImageUrl = "https://picsum.photos/id/10/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/FoodOption", newOption);
@@ -88,7 +87,6 @@ public class FoodOptionIntegrationTests : IDisposable
             {
                 FoodOptionName = "Option To Update",
                 InStock = true,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -97,7 +95,6 @@ public class FoodOptionIntegrationTests : IDisposable
             Id = optionId,
             FoodOptionName = "Updated Option Name",
             InStock = false,
-            ImageUrl = "https://picsum.photos/id/20/300/200",
         };
 
         var response = await _client.PutAsJsonAsync(
@@ -120,7 +117,6 @@ public class FoodOptionIntegrationTests : IDisposable
             Id = 99999,
             FoodOptionName = "Nonexistent",
             InStock = true,
-            ImageUrl = "https://example.com/img.jpg",
         };
 
         var response = await _client.PutAsJsonAsync(
@@ -140,7 +136,6 @@ public class FoodOptionIntegrationTests : IDisposable
             {
                 FoodOptionName = "Option To Delete",
                 InStock = true,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
