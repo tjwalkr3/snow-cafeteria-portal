@@ -1337,11 +1337,11 @@ VALUES
   ('Wrap Dressings', 0, 3, 3, 0.00, 60, NULL), -- id=67: optional sauces for the wrap, up to 3 sauces with an extra charge for each
   ('Wrap Grilled', 1, 1, 1, 0.00, 60, NULL), -- id=68: option to grill the wrap for no extra charge
 
-  -- Swipe Bistro Salad Base, Topping, and Dressing Options (entree_id 59)
-  ('Salad Meat', 0, 1, 4, 0.50, 59, NULL), -- id=69: optional meat toppings for the salad, up to 5 with an extra charge for each
-  ('Salad Cheese', 0, 3, 5, 0.50, 59, NULL), -- id=70: optional cheese toppings for the salad, up to 5 with an extra charge for each
-  ('Salad Toppings', 0, 3, 10, 0.50, 59, NULL), -- id=71: optional toppings for the salad, first 3 free up to 10 with an extra charge for each after the first three
-  ('Salad Dressing', 0, 1, 1, 0.00, 59, NULL), -- id=72: pick exactly one dressing for the salad
+  -- Swipe Bistro Salad Base, Topping, and Dressing Options (entree_id 61)
+  ('Salad Meat', 0, 1, 4, 0.50, 61, NULL), -- id=69: optional meat toppings for the salad, up to 5 with an extra charge for each
+  ('Salad Cheese', 0, 3, 5, 0.50, 61, NULL), -- id=70: optional cheese toppings for the salad, up to 5 with an extra charge for each
+  ('Salad Toppings', 0, 3, 10, 0.50, 61, NULL), -- id=71: optional toppings for the salad, first 3 free up to 10 with an extra charge for each after the first three
+  ('Salad Dressing', 0, 1, 1, 0.00, 61, NULL), -- id=72: pick exactly one dressing for the salad
 
   -- Egg side options (side_id 6-8)
   ('Egg Side Cook', 1, 1, 1, 0.00, NULL, 6), -- id=73: must pick exactly 1 egg option for the egg side
