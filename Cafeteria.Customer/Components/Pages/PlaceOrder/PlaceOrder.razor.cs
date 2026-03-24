@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
-using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Swipe;
 using Cafeteria.Shared.Utilities;
@@ -23,9 +22,6 @@ public partial class PlaceOrder : ComponentBase
 
     [Inject]
     private CartNotificationService CartNotification { get; set; } = default!;
-
-    [Inject]
-    private IPrinterService PrinterService { get; set; } = default!;
 
     [Inject]
     private IApiOrderService OrderService { get; set; } = default!;
@@ -129,31 +125,11 @@ public partial class PlaceOrder : ComponentBase
             return;
         }
 
-        var createdOrder = await OrderService.CreateOrder(Order);
+        await OrderService.CreateOrder(Order);
 
         await Cart.ClearOrder("order");
 
-        if (Order?.Location != null)
-        {
-            _ = PrintPlacedOrder(Order.Location.Id, createdOrder);
-        }
-
         Navigation.NavigateTo("/thank-you", true);
-    }
-
-    private async Task PrintPlacedOrder(int locationId, OrderDto createdOrder)
-    {
-        var printerUrl = await PrinterService.GetPrinterUrl(locationId);
-        if (!string.IsNullOrWhiteSpace(printerUrl))
-        {
-            var printOrderData = new PrintOrderDto
-            {
-                Id = createdOrder.Id,
-                OrderTime = createdOrder.OrderTime,
-                FoodItems = createdOrder.FoodItems
-            };
-            await PrinterService.PrintOrder(printerUrl, printOrderData);
-        }
     }
 
     private int GetTotalItemCount()
