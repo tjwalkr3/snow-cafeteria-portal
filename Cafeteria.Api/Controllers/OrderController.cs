@@ -10,7 +10,7 @@ namespace Cafeteria.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class OrderController(IOrderService orderService, ICreateOrderService createOrderService) : ControllerBase
+public class OrderController(IOrderService orderService, ICreateOrderService createOrderService, ILogger<OrderController> logger) : ControllerBase
 {
     private readonly IOrderService _orderService = orderService;
     private readonly ICreateOrderService _createOrderService = createOrderService;
@@ -77,7 +77,8 @@ public class OrderController(IOrderService orderService, ICreateOrderService cre
 
         if (string.IsNullOrEmpty(email))
         {
-            return BadRequest("Email not found in token claims");
+            var claimNames = string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"));
+            return BadRequest($"Email not found in token claims. Available: [{claimNames}]");
         }
 
         var result = await _createOrderService.CreateOrder(browserOrder, email);
