@@ -17,7 +17,7 @@ public class EntreeDto
     public string? EntreeDescription { get; set; }
 
     [Required]
-    [Range(0.01, double.MaxValue)]
+    [Range(0, double.MaxValue)]
     public decimal EntreePrice { get; set; }
 
     [StringLength(500)]
