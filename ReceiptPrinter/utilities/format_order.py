@@ -34,7 +34,7 @@ def format_header(user_name: str, location_name: str) -> List[str]:
     lines.append(pad_line(f"Location: {display_location}"))
 
     time_str = datetime.now().strftime("%m/%d/%Y %I:%M %p")
-    lines.append(pad_line(time_str.center(RECEIPT_WIDTH)))
+    lines.append(pad_line(time_str))
 
     lines.append(pad_line("=" * RECEIPT_WIDTH))
     lines.append(pad_line(""))

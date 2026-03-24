@@ -80,6 +80,7 @@ class TestFormatHeader:
         assert all(len(line) == RECEIPT_WIDTH for line in result)
         assert "Customer: Taylor Jordan" in result[1]
         assert "Location: Main Cafeteria" in result[2]
+        assert result[3] == result[3].lstrip()
         assert "=" * RECEIPT_WIDTH == result[0].strip()
 
     def test_format_header_long_user_name(self):
