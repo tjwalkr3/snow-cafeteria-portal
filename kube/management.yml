@@ -26,6 +26,8 @@ spec:
               value: ""
             - name: ApiBaseUrl
               value: "http://cafeteria-api-svc:8080/api/"
+            - name: TZ
+              value: "America/Denver"
           ports:
             - containerPort: 8080
 

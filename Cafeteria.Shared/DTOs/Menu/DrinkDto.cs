@@ -16,6 +16,7 @@ public class DrinkDto
     [StringLength(200)]
     public string? DrinkDescription { get; set; }
 
+    [Required]
     [Range(0, double.MaxValue)]
     public decimal DrinkPrice { get; set; }
 

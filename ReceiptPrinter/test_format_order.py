@@ -14,7 +14,7 @@ from utilities.format_order import (
     format_order,
     RECEIPT_WIDTH,
 )
-from DTOs.PrintOrderDto import PrintOrderDto
+from DTOs.BrowserOrder import BrowserOrder
 from DTOs.OrderEntreeItem import OrderEntreeItem
 from DTOs.OrderSideItem import OrderSideItem
 from DTOs.DrinkDto import DrinkDto
@@ -23,6 +23,7 @@ from DTOs.SideDto import SideDto
 from DTOs.SelectedFoodOption import SelectedFoodOption
 from DTOs.FoodOptionDto import FoodOptionDto
 from DTOs.FoodOptionTypeDto import FoodOptionTypeDto
+from DTOs.LocationDto import LocationDto
 
 
 def make_option_type(**kwargs) -> FoodOptionTypeDto:
@@ -73,32 +74,30 @@ class TestFormatHeader:
 
     def test_format_header_basic(self):
         """Test basic header formatting."""
-        order_id = 12345
-        order_time = datetime(2026, 1, 25, 14, 30, 0)
-        result = format_header(order_id, order_time)
+        result = format_header("Taylor Jordan", "Main Cafeteria")
 
-        assert len(result) == 5  # separator, order ID, time, separator, blank line
+        assert len(result) == 6
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        assert "ORDER #12345" in result[1]
-        assert "01/25/2026 02:30 PM" in result[2]
+        assert "Customer: Taylor Jordan" in result[1]
+        assert "Location: Main Cafeteria" in result[2]
+        assert result[3] == result[3].lstrip()
         assert "=" * RECEIPT_WIDTH == result[0].strip()
 
-    def test_format_header_large_order_id(self):
-        """Test header with a large order ID."""
-        order_id = 999999
-        order_time = datetime(2026, 12, 31, 23, 59, 59)
-        result = format_header(order_id, order_time)
+    def test_format_header_long_user_name(self):
+        """Test header with a long user name."""
+        result = format_header(
+            "A Very Long User Name That Is Longer Than The Printer Width",
+            "Main Cafeteria",
+        )
 
-        assert "ORDER #999999" in result[1]
-        assert "12/31/2026 11:59 PM" in result[2]
+        assert len(result[1]) == RECEIPT_WIDTH
 
-    def test_format_header_single_digit_order_id(self):
-        """Test header with single digit order ID."""
-        order_id = 1
-        order_time = datetime(2026, 1, 1, 0, 0, 0)
-        result = format_header(order_id, order_time)
+    def test_format_header_empty_user_name(self):
+        """Test header falls back when user name is empty."""
+        result = format_header("", "")
 
-        assert "ORDER #1" in result[1]
+        assert "Customer: Unknown User" in result[1]
+        assert "Location: Unknown Location" in result[2]
         assert all(len(line) == RECEIPT_WIDTH for line in result)
 
 
@@ -145,7 +144,10 @@ class TestFormatEntreeItem:
         """Test formatting an entree without options."""
         item = OrderEntreeItem(
             entree=EntreeDto(
-                id=1, stationId=1, entreeName="Cheeseburger", entreePrice=Decimal("5.99")
+                id=1,
+                stationId=1,
+                entreeName="Cheeseburger",
+                entreePrice=Decimal("5.99"),
             ),
             selectedOptions=[],
         )
@@ -159,7 +161,10 @@ class TestFormatEntreeItem:
         """Test formatting an entree with options."""
         item = OrderEntreeItem(
             entree=EntreeDto(
-                id=1, stationId=1, entreeName="Deli Sandwich", entreePrice=Decimal("6.99")
+                id=1,
+                stationId=1,
+                entreeName="Deli Sandwich",
+                entreePrice=Decimal("6.99"),
             ),
             selectedOptions=[
                 SelectedFoodOption(
@@ -188,7 +193,9 @@ class TestFormatEntreeItem:
     def test_format_entree_item_empty_name(self):
         """Test formatting an entree with no name."""
         item = OrderEntreeItem(
-            entree=EntreeDto(id=42, stationId=1, entreeName="", entreePrice=Decimal("0")),
+            entree=EntreeDto(
+                id=42, stationId=1, entreeName="", entreePrice=Decimal("0")
+            ),
             selectedOptions=[],
         )
         result = format_entree_item(item)
@@ -202,7 +209,9 @@ class TestFormatSideItem:
     def test_format_side_item_no_options(self):
         """Test formatting a side without options."""
         item = OrderSideItem(
-            side=SideDto(id=1, stationId=1, sideName="Fries", sidePrice=Decimal("2.99")),
+            side=SideDto(
+                id=1, stationId=1, sideName="Fries", sidePrice=Decimal("2.99")
+            ),
             selectedOptions=[],
         )
         result = format_side_item(item)
@@ -214,7 +223,9 @@ class TestFormatSideItem:
     def test_format_side_item_with_options(self):
         """Test formatting a side with options."""
         item = OrderSideItem(
-            side=SideDto(id=1, stationId=1, sideName="Salad", sidePrice=Decimal("3.99")),
+            side=SideDto(
+                id=1, stationId=1, sideName="Salad", sidePrice=Decimal("3.99")
+            ),
             selectedOptions=[
                 SelectedFoodOption(
                     option=FoodOptionDto(id=1, foodOptionName="Ranch"),
@@ -244,7 +255,9 @@ class TestFormatDrinkItem:
 
     def test_format_drink_item_basic(self):
         """Test basic drink formatting."""
-        drink = DrinkDto(id=1, locationId=1, drinkName="Coke", drinkPrice=Decimal("1.99"))
+        drink = DrinkDto(
+            id=1, locationId=1, drinkName="Coke", drinkPrice=Decimal("1.99")
+        )
         result = format_drink_item(drink)
 
         assert len(result) == RECEIPT_WIDTH
@@ -277,12 +290,12 @@ class TestFormatOrder:
 
     def test_format_order_complete(self):
         """Test formatting a complete order with entrees, sides, and drinks."""
-        order = PrintOrderDto(
-            id=12345,
-            orderTime=datetime(2026, 1, 25, 14, 30, 0),
+        order = BrowserOrder(
             isCardOrder=True,
+            location=LocationDto(id=1, locationName="Main Cafeteria"),
             stationId=1,
             stationName="Main Station",
+            userName="Taylor Jordan",
             entrees=[
                 OrderEntreeItem(
                     entree=EntreeDto(
@@ -302,7 +315,9 @@ class TestFormatOrder:
                         ),
                         SelectedFoodOption(
                             option=FoodOptionDto(id=2, foodOptionName="No Onions"),
-                            optionType=make_option_type(id=2, foodOptionTypeName="Toppings"),
+                            optionType=make_option_type(
+                                id=2, foodOptionTypeName="Toppings"
+                            ),
                         ),
                     ],
                 ),
@@ -316,17 +331,21 @@ class TestFormatOrder:
                 ),
             ],
             drinks=[
-                DrinkDto(id=1, locationId=1, drinkName="Coke", drinkPrice=Decimal("1.99")),
+                DrinkDto(
+                    id=1, locationId=1, drinkName="Coke", drinkPrice=Decimal("1.99")
+                ),
             ],
         )
         result = format_order(order)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (5) + entree (3) + side (1) + drink (1) + footer (2) = 12
-        assert len(result) == 12
+        # header (6) + entree (3) + side (1) + drink (1) + footer (2) = 13
+        assert len(result) == 13
 
         receipt_text = "\n".join(result)
-        assert "ORDER #12345" in receipt_text
+        assert "Customer: Taylor Jordan" in receipt_text
+        assert "Location: Main Cafeteria" in receipt_text
+        assert "Taylor Jordan" in receipt_text
         assert "Cheeseburger" in receipt_text
         assert "Extra Cheese" in receipt_text
         assert "No Onions" in receipt_text
@@ -335,28 +354,32 @@ class TestFormatOrder:
 
     def test_format_order_empty(self):
         """Test formatting an order with no items."""
-        order = PrintOrderDto(id=1, orderTime=datetime(2026, 1, 1, 0, 0, 0))
+        order = BrowserOrder(userName="Taylor Jordan")
         result = format_order(order)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (5) + footer (2) = 7
-        assert len(result) == 7
+        # header (6) + footer (2) = 8
+        assert len(result) == 8
 
     def test_format_order_only_drinks(self):
         """Test formatting an order with only drinks."""
-        order = PrintOrderDto(
-            id=2,
-            orderTime=datetime(2026, 3, 10, 9, 0, 0),
+        order = BrowserOrder(
+            userName="Taylor Jordan",
+            location=LocationDto(id=1, locationName="Main Cafeteria"),
             drinks=[
-                DrinkDto(id=1, locationId=1, drinkName="Water", drinkPrice=Decimal("0")),
-                DrinkDto(id=2, locationId=1, drinkName="OJ", drinkPrice=Decimal("2.49")),
+                DrinkDto(
+                    id=1, locationId=1, drinkName="Water", drinkPrice=Decimal("0")
+                ),
+                DrinkDto(
+                    id=2, locationId=1, drinkName="OJ", drinkPrice=Decimal("2.49")
+                ),
             ],
         )
         result = format_order(order)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (5) + 2 drinks + footer (2) = 9
-        assert len(result) == 9
+        # header (6) + 2 drinks + footer (2) = 10
+        assert len(result) == 10
 
         receipt_text = "\n".join(result)
         assert "Water" in receipt_text

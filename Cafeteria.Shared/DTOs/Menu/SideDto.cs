@@ -16,6 +16,7 @@ public class SideDto
     [StringLength(200)]
     public string? SideDescription { get; set; }
 
+    [Required]
     [Range(0, double.MaxValue)]
     public decimal SidePrice { get; set; }
 

@@ -45,6 +45,32 @@ public class ApiOrderServiceTests
     }
 
     [Fact]
+    public async Task CreateOrder_PostsBrowserOrderToOrderEndpoint()
+    {
+        var browserOrder = new BrowserOrder { IsCardOrder = true };
+        var expectedOrder = new OrderDto
+        {
+            Id = 2,
+            OrderTime = DateTime.Now
+        };
+
+        var mockClient = new Mock<IHttpClientAuth>();
+        mockClient.Setup(x => x.PostAsync("order", browserOrder))
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(JsonSerializer.Serialize(expectedOrder))
+            });
+
+        var service = new ApiOrderService(mockClient.Object);
+
+        var result = await service.CreateOrder(browserOrder);
+
+        Assert.Equal(2, result.Id);
+        mockClient.Verify(x => x.PostAsync("order", browserOrder), Times.Once);
+    }
+
+    [Fact]
     public async Task CreateOrder_ThrowsException_WhenResponseIsUnsuccessful()
     {
         var browserOrder = new BrowserOrder { IsCardOrder = true };

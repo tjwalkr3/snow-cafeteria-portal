@@ -6,6 +6,7 @@ using Cafeteria.Api.Services.FoodOptionTypes;
 using Cafeteria.Api.Services.Orders;
 using Cafeteria.Api.Services.Sides;
 using Cafeteria.Api.Services.Stations;
+using Cafeteria.Api.Services.Print;
 using Cafeteria.Api.Services.FoodOptions;
 using Cafeteria.Api.Services.Icons;
 using Cafeteria.Api.Services.Locations;
@@ -14,7 +15,6 @@ using Cafeteria.Api.Services.Swipes;
 using Cafeteria.Api.Services.Customer;
 using Cafeteria.Api.Services.SchedulingExceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +33,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDbConnection>(provider => provider.GetRequiredService<NpgsqlDataSource>().CreateConnection());
 builder.Services.AddScoped<IIconService, IconService>();
 builder.Services.AddScoped<IFoodOptionService, FoodOptionService>();
@@ -45,6 +46,7 @@ builder.Services.AddScoped<IEntreeService, EntreeService>();
 builder.Services.AddScoped<ISideService, SideService>();
 builder.Services.AddScoped<IOrderService, GetOrderService>();
 builder.Services.AddScoped<ICreateOrderService, CreateOrderService>();
+builder.Services.AddScoped<IPrintService, PrintService>();
 builder.Services.AddScoped<ISwipeService, SwipeService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();

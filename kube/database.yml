@@ -34,6 +34,8 @@ spec:
               value: "cafeteria_password"
             - name: POSTGRES_DB
               value: "cafeteriadb"
+            - name: TZ
+              value: "America/Denver"
 
 ---
 apiVersion: v1

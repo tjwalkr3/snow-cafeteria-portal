@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
-using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Swipe;
 using Cafeteria.Shared.Utilities;
@@ -23,9 +22,6 @@ public partial class PlaceOrder : ComponentBase
 
     [Inject]
     private CartNotificationService CartNotification { get; set; } = default!;
-
-    [Inject]
-    private IPrinterService PrinterService { get; set; } = default!;
 
     [Inject]
     private IApiOrderService OrderService { get; set; } = default!;
@@ -129,31 +125,38 @@ public partial class PlaceOrder : ComponentBase
             return;
         }
 
-        var createdOrder = await OrderService.CreateOrder(Order);
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        Order.UserName = GetDisplayName(user);
+
+        await OrderService.CreateOrder(Order);
 
         await Cart.ClearOrder("order");
-
-        if (Order?.Location != null)
-        {
-            _ = PrintPlacedOrder(Order.Location.Id, createdOrder);
-        }
 
         Navigation.NavigateTo("/thank-you", true);
     }
 
-    private async Task PrintPlacedOrder(int locationId, OrderDto createdOrder)
+    private static string GetDisplayName(ClaimsPrincipal user)
     {
-        var printerUrl = await PrinterService.GetPrinterUrl(locationId);
-        if (!string.IsNullOrWhiteSpace(printerUrl))
-        {
-            var printOrderData = new PrintOrderDto
-            {
-                Id = createdOrder.Id,
-                OrderTime = createdOrder.OrderTime,
-                FoodItems = createdOrder.FoodItems
-            };
-            await PrinterService.PrintOrder(printerUrl, printOrderData);
-        }
+        var explicitName = user.FindFirst("name")?.Value;
+        if (!string.IsNullOrWhiteSpace(explicitName))
+            return explicitName;
+
+        var givenName = user.FindFirst("given_name")?.Value;
+        var familyName = user.FindFirst("family_name")?.Value;
+        var fullName = $"{givenName} {familyName}".Trim();
+        if (!string.IsNullOrWhiteSpace(fullName))
+            return fullName;
+
+        var preferredUserName = user.FindFirst("preferred_username")?.Value;
+        if (!string.IsNullOrWhiteSpace(preferredUserName))
+            return preferredUserName;
+
+        var email = user.FindFirst(ClaimTypes.Email)?.Value ?? user.FindFirst("email")?.Value;
+        if (!string.IsNullOrWhiteSpace(email))
+            return email;
+
+        return "Unknown User";
     }
 
     private int GetTotalItemCount()

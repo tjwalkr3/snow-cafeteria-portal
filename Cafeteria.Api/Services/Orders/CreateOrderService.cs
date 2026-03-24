@@ -1,4 +1,5 @@
 using System.Data;
+using Cafeteria.Api.Services.Print;
 using Dapper;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
@@ -6,9 +7,10 @@ using Cafeteria.Shared.Utilities;
 
 namespace Cafeteria.Api.Services.Orders;
 
-public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderService
+public class CreateOrderService(IDbConnection dbConnection, IPrintService printService) : ICreateOrderService
 {
     private readonly IDbConnection _dbConnection = dbConnection;
+    private readonly IPrintService _printService = printService;
 
     public async Task<OrderDto> CreateOrder(BrowserOrder browserOrder, string customerEmail)
     {
@@ -21,11 +23,8 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
         {
             var customerBadgerId = await GetCustomerBadgerIdAsync(customerEmail, transaction);
 
-            decimal? totalPrice = browserOrder.IsCardOrder ? OrderCalculations.CalculateTotalPrice(browserOrder) : null;
-            decimal tax = OrderCalculations.CalculateTax(browserOrder);
-            int? totalSwipe = browserOrder.IsCardOrder ? null : OrderCalculations.CalculateTotalSwipe(browserOrder);
-
-            var order = await InsertOrderAsync(customerBadgerId, totalPrice, tax, totalSwipe, transaction);
+            var convertedOrder = ConvertToOrderDto(browserOrder);
+            var order = await InsertOrderAsync(customerBadgerId, convertedOrder.TotalPrice, convertedOrder.Tax, convertedOrder.TotalSwipe, transaction);
 
             if (browserOrder.IsCardOrder)
             {
@@ -56,6 +55,7 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
             }
 
             transaction.Commit();
+            await _printService.PrintOrder(browserOrder);
             return order;
         }
         catch
@@ -210,5 +210,17 @@ public class CreateOrderService(IDbConnection dbConnection) : ICreateOrderServic
                 sql,
                 new { FoodItemId = foodItemId, FoodOptionName = optionName },
                 transaction);
+    }
+
+    private static OrderDto ConvertToOrderDto(BrowserOrder browserOrder)
+    {
+        ArgumentNullException.ThrowIfNull(browserOrder);
+
+        return new OrderDto
+        {
+            TotalPrice = browserOrder.IsCardOrder ? OrderCalculations.CalculateTotalPrice(browserOrder) : null,
+            Tax = OrderCalculations.CalculateTax(browserOrder),
+            TotalSwipe = browserOrder.IsCardOrder ? null : OrderCalculations.CalculateTotalSwipe(browserOrder)
+        };
     }
 }

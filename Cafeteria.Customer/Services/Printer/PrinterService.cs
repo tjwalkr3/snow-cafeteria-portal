@@ -16,7 +16,7 @@ public class PrinterService(IHttpClientAuth client, IApiMenuService menuService,
         return location?.PrinterUrl;
     }
 
-    public async Task<bool> PrintOrder(string printerUrl, PrintOrderDto orderData)
+    public async Task<bool> PrintOrder(string printerUrl, BrowserOrder orderData)
     {
         if (string.IsNullOrWhiteSpace(printerUrl))
             throw new ArgumentNullException(nameof(printerUrl));
