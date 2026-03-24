@@ -70,7 +70,7 @@ public class PrinterServiceTests
     public async Task PrintOrder_ThrowsWhenPrinterUrlIsNull()
     {
         var service = new PrinterService(_mockHttpClient.Object, _mockMenuService.Object, _mockLogger.Object);
-        var orderData = new PrintOrderDto();
+        var orderData = new BrowserOrder();
 
         await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.PrintOrder(null!, orderData));
     }
@@ -86,14 +86,14 @@ public class PrinterServiceTests
     [Fact]
     public async Task PrintOrder_ReturnsTrueOnSuccessfulPost()
     {
-        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<PrintOrderDto>()))
+        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<BrowserOrder>()))
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK
             });
 
         var service = new PrinterService(_mockHttpClient.Object, _mockMenuService.Object, _mockLogger.Object);
-        var orderData = new PrintOrderDto { Id = 1 };
+        var orderData = new BrowserOrder();
 
         var result = await service.PrintOrder("http://printer.local", orderData);
 
@@ -103,14 +103,14 @@ public class PrinterServiceTests
     [Fact]
     public async Task PrintOrder_ReturnsFalseOnFailedPost()
     {
-        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<PrintOrderDto>()))
+        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<BrowserOrder>()))
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.InternalServerError
             });
 
         var service = new PrinterService(_mockHttpClient.Object, _mockMenuService.Object, _mockLogger.Object);
-        var orderData = new PrintOrderDto { Id = 1 };
+        var orderData = new BrowserOrder();
 
         var result = await service.PrintOrder("http://printer.local", orderData);
 
@@ -120,11 +120,11 @@ public class PrinterServiceTests
     [Fact]
     public async Task PrintOrder_ReturnsFalseOnException()
     {
-        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<PrintOrderDto>()))
+        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<BrowserOrder>()))
             .ThrowsAsync(new HttpRequestException("Network error"));
 
         var service = new PrinterService(_mockHttpClient.Object, _mockMenuService.Object, _mockLogger.Object);
-        var orderData = new PrintOrderDto { Id = 1 };
+        var orderData = new BrowserOrder();
 
         var result = await service.PrintOrder("http://printer.local", orderData);
 
@@ -135,15 +135,15 @@ public class PrinterServiceTests
     public async Task PrintOrder_AppendsCorrectEndpointToUrl()
     {
         string? capturedUrl = null;
-        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<PrintOrderDto>()))
-            .Callback<string, PrintOrderDto>((url, data) => capturedUrl = url)
+        _mockHttpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<BrowserOrder>()))
+            .Callback<string, BrowserOrder>((url, data) => capturedUrl = url)
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK
             });
 
         var service = new PrinterService(_mockHttpClient.Object, _mockMenuService.Object, _mockLogger.Object);
-        var orderData = new PrintOrderDto { Id = 1 };
+        var orderData = new BrowserOrder();
 
         await service.PrintOrder("http://printer.local", orderData);
 
