@@ -26,6 +26,12 @@ public partial class SidePanel : ComponentBase
     [Parameter]
     public EventCallback<int> OnQuantityChanged { get; set; }
 
+    [Parameter]
+    public IReadOnlyDictionary<int, int>? CardQuantities { get; set; }
+
+    [Parameter]
+    public EventCallback<(int SideId, int NewQty)> OnCardQtyChanged { get; set; }
+
     private Task HandleSideTap(SideWithOptionsDto sideWithOptions)
     {
         if (sideWithOptions.OptionTypes.Any())

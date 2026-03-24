@@ -1,6 +1,10 @@
 .category-nav {
     border-bottom: 2px solid #e2e6ed;
     gap: 0;
+    position: sticky;
+    top: 74px;
+    z-index: 100;
+    background-color: #f3f4f6;
 }
 
 .category-nav-card {
