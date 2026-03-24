@@ -16,9 +16,9 @@ public class SideService : ISideService
     public async Task<SideDto> CreateSide(SideDto sideDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, image_url, in_stock)
-            VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @ImageUrl, @InStock)
-            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl, in_stock AS InStock;";
+            INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, in_stock)
+            VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @InStock)
+            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, in_stock AS InStock;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<SideDto>(sql, sideDto);
         return result ?? throw new InvalidOperationException("Failed to create side");
@@ -33,7 +33,6 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.side
             WHERE id = @id;";
@@ -51,7 +50,6 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.side
             ORDER BY side_name, id;";
@@ -69,7 +67,6 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.side
             WHERE station_id = @stationId
@@ -88,7 +85,6 @@ public class SideService : ISideService
                 s.side_name AS SideName,
                 s.side_description AS SideDescription,
                 s.side_price AS SidePrice,
-                s.image_url AS ImageUrl,
                 s.in_stock AS InStock,
                 fot.id AS Id,
                 fot.food_option_type_name AS FoodOptionTypeName,
@@ -102,8 +98,7 @@ public class SideService : ISideService
                 i.bootstrap_name AS IconBootstrapName,
                 fo.id AS Id,
                 fo.food_option_name AS FoodOptionName,
-                fo.in_stock AS InStock,
-                fo.image_url AS ImageUrl
+                fo.in_stock AS InStock
             FROM cafeteria.side s
             LEFT JOIN cafeteria.food_option_type fot ON fot.side_id = s.id
             LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
@@ -151,10 +146,9 @@ public class SideService : ISideService
                 side_name = @SideName,
                 side_description = @SideDescription,
                 side_price = @SidePrice,
-                image_url = @ImageUrl,
                 in_stock = @InStock
             WHERE id = @id
-            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl, in_stock AS InStock;";
+            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, in_stock AS InStock;";
 
         var parameters = new
         {
@@ -163,7 +157,6 @@ public class SideService : ISideService
             sideDto.SideName,
             sideDto.SideDescription,
             sideDto.SidePrice,
-            sideDto.ImageUrl,
             sideDto.InStock
         };
 

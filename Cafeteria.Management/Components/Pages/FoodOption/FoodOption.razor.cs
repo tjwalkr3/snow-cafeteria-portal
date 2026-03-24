@@ -192,8 +192,7 @@ public partial class FoodOption : ComponentBase
         {
             Id = foodOption.Id,
             FoodOptionName = foodOption.FoodOptionName,
-            InStock = foodOption.InStock,
-            ImageUrl = foodOption.ImageUrl
+            InStock = foodOption.InStock
         };
         ShowOptionModal = true;
     }
@@ -212,8 +211,7 @@ public partial class FoodOption : ComponentBase
         {
             Id = foodOption.Id,
             FoodOptionName = foodOption.FoodOptionName,
-            InStock = foodOption.InStock,
-            ImageUrl = foodOption.ImageUrl
+            InStock = foodOption.InStock
         };
         ShowOptionModal = true;
     }

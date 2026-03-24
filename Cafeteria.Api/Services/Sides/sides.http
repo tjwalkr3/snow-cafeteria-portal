@@ -10,8 +10,7 @@ Content-Type: application/json
   "stationId": 1,
   "sideName": "Hash Browns",
   "sideDescription": "Crispy hash browns",
-  "sidePrice": 2.99,
-  "imageUrl": "https://picsum.photos/id/550/150/150"
+  "sidePrice": 2.99
 }
 
 ### Get all sides
@@ -31,8 +30,7 @@ Content-Type: application/json
   "stationId": 1,
   "sideName": "Hash Browns Supreme",
   "sideDescription": "Crispy hash browns with cheese and bacon",
-  "sidePrice": 3.99,
-  "imageUrl": "https://picsum.photos/id/550/150/150"
+  "sidePrice": 3.99
 }
 
 ### Delete a side

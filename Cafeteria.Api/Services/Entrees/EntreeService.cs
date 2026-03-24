@@ -16,9 +16,9 @@ public class EntreeService : IEntreeService
     public async Task<EntreeDto> CreateEntree(EntreeDto entreeDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price, image_url, in_stock)
-            VALUES (@StationId, @EntreeName, @EntreeDescription, @EntreePrice, @ImageUrl, @InStock)
-            RETURNING id AS Id, station_id AS StationId, entree_name AS EntreeName, entree_description AS EntreeDescription, entree_price AS EntreePrice, image_url AS ImageUrl, in_stock AS InStock;";
+            INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price, in_stock)
+            VALUES (@StationId, @EntreeName, @EntreeDescription, @EntreePrice, @InStock)
+            RETURNING id AS Id, station_id AS StationId, entree_name AS EntreeName, entree_description AS EntreeDescription, entree_price AS EntreePrice, in_stock AS InStock;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<EntreeDto>(sql, entreeDto);
         return result ?? throw new InvalidOperationException("Failed to create entree");
@@ -33,7 +33,6 @@ public class EntreeService : IEntreeService
                 entree_name AS EntreeName, 
                 entree_description AS EntreeDescription, 
                 entree_price AS EntreePrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.entree
             WHERE id = @id;";
@@ -51,7 +50,6 @@ public class EntreeService : IEntreeService
                 entree_name AS EntreeName, 
                 entree_description AS EntreeDescription, 
                 entree_price AS EntreePrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.entree
             ORDER BY entree_name, id;";
@@ -69,7 +67,6 @@ public class EntreeService : IEntreeService
                 entree_name AS EntreeName, 
                 entree_description AS EntreeDescription, 
                 entree_price AS EntreePrice, 
-                image_url AS ImageUrl,
                 in_stock AS InStock
             FROM cafeteria.entree
             WHERE station_id = @stationId
@@ -87,10 +84,9 @@ public class EntreeService : IEntreeService
                 entree_name = @EntreeName,
                 entree_description = @EntreeDescription,
                 entree_price = @EntreePrice,
-                image_url = @ImageUrl,
                 in_stock = @InStock
             WHERE id = @id
-            RETURNING id AS Id, station_id AS StationId, entree_name AS EntreeName, entree_description AS EntreeDescription, entree_price AS EntreePrice, image_url AS ImageUrl, in_stock AS InStock;";
+            RETURNING id AS Id, station_id AS StationId, entree_name AS EntreeName, entree_description AS EntreeDescription, entree_price AS EntreePrice, in_stock AS InStock;";
 
         var parameters = new
         {
@@ -99,7 +95,6 @@ public class EntreeService : IEntreeService
             entreeDto.EntreeName,
             entreeDto.EntreeDescription,
             entreeDto.EntreePrice,
-            entreeDto.ImageUrl,
             entreeDto.InStock
         };
 

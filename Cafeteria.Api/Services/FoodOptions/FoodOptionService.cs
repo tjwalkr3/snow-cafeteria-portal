@@ -16,9 +16,9 @@ public class FoodOptionService : IFoodOptionService
     public async Task<FoodOptionDto> CreateFoodOption(FoodOptionDto foodOptionDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.food_option (food_option_name, in_stock, image_url)
-            VALUES (@FoodOptionName, @InStock, @ImageUrl)
-            RETURNING id AS Id, food_option_name AS FoodOptionName, in_stock AS InStock, image_url AS ImageUrl;";
+            INSERT INTO cafeteria.food_option (food_option_name, in_stock)
+            VALUES (@FoodOptionName, @InStock)
+            RETURNING id AS Id, food_option_name AS FoodOptionName, in_stock AS InStock;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<FoodOptionDto>(sql, foodOptionDto);
         return result ?? throw new InvalidOperationException("Failed to create food option");
@@ -30,8 +30,7 @@ public class FoodOptionService : IFoodOptionService
             SELECT 
                 id AS Id, 
                 food_option_name AS FoodOptionName, 
-                in_stock AS InStock, 
-                image_url AS ImageUrl
+                in_stock AS InStock
             FROM cafeteria.food_option
             WHERE id = @id;";
 
@@ -45,8 +44,7 @@ public class FoodOptionService : IFoodOptionService
             SELECT 
                 id AS Id, 
                 food_option_name AS FoodOptionName, 
-                in_stock AS InStock, 
-                image_url AS ImageUrl
+                in_stock AS InStock
             FROM cafeteria.food_option
             ORDER BY food_option_name;";
 
@@ -60,8 +58,7 @@ public class FoodOptionService : IFoodOptionService
             SELECT 
                 fo.id AS Id,
                 fo.food_option_name AS FoodOptionName, 
-                fo.in_stock AS InStock, 
-                fo.image_url AS ImageUrl
+                fo.in_stock AS InStock
             FROM cafeteria.food_option fo
             INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
             INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
@@ -76,8 +73,7 @@ public class FoodOptionService : IFoodOptionService
         SELECT 
             fo.id AS Id, 
             fo.food_option_name AS FoodOptionName, 
-            fo.in_stock AS InStock, 
-            fo.image_url AS ImageUrl
+            fo.in_stock AS InStock
         FROM cafeteria.food_option fo
         INNER JOIN cafeteria.option_option_type oot ON fo.id = oot.food_option_id
         INNER JOIN cafeteria.food_option_type fot ON oot.food_option_type_id = fot.id
@@ -91,17 +87,15 @@ public class FoodOptionService : IFoodOptionService
         const string sql = @"
             UPDATE cafeteria.food_option
             SET food_option_name = @FoodOptionName,
-                in_stock = @InStock,
-                image_url = @ImageUrl
+                in_stock = @InStock
             WHERE id = @id
-            RETURNING id AS Id, food_option_name AS FoodOptionName, in_stock AS InStock, image_url AS ImageUrl;";
+            RETURNING id AS Id, food_option_name AS FoodOptionName, in_stock AS InStock;";
 
         var parameters = new
         {
             id,
             foodOptionDto.FoodOptionName,
-            foodOptionDto.InStock,
-            foodOptionDto.ImageUrl
+            foodOptionDto.InStock
         };
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<FoodOptionDto>(sql, parameters);

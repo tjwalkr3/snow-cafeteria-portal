@@ -35,7 +35,6 @@ public class SideIntegrationTests : IDisposable
             SideName = "Test Onion Rings",
             SideDescription = "Crispy fried onion rings for testing",
             SidePrice = 3.49m,
-            ImageUrl = "https://picsum.photos/id/300/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/side", newSide);
@@ -107,7 +106,6 @@ public class SideIntegrationTests : IDisposable
                 SideName = "Side To Update",
                 SideDescription = "Original",
                 SidePrice = 2.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -118,7 +116,6 @@ public class SideIntegrationTests : IDisposable
             SideName = "Updated Side",
             SideDescription = "Updated description",
             SidePrice = 4.49m,
-            ImageUrl = "https://picsum.photos/id/301/300/200",
         };
 
         var response = await _client.PutAsJsonAsync($"/api/side/{sideId}", updatedSide);
@@ -141,7 +138,6 @@ public class SideIntegrationTests : IDisposable
             SideName = "Nonexistent",
             SideDescription = "Description",
             SidePrice = 2.99m,
-            ImageUrl = "https://picsum.photos/id/302/300/200",
         };
 
         var response = await _client.PutAsJsonAsync("/api/side/99999", updatedSide);
@@ -160,7 +156,6 @@ public class SideIntegrationTests : IDisposable
                 SideName = "Side To Delete",
                 SideDescription = "Will be deleted",
                 SidePrice = 2.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -191,7 +186,6 @@ public class SideIntegrationTests : IDisposable
                 SideName = "Side To Stock Toggle",
                 SideDescription = "Testing stock status",
                 SidePrice = 3.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -221,7 +215,6 @@ public class SideIntegrationTests : IDisposable
                 SideName = "Side To Stock Toggle True",
                 SideDescription = "Testing stock status toggle",
                 SidePrice = 3.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
