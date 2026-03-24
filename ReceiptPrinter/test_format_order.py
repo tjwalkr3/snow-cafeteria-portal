@@ -23,6 +23,7 @@ from DTOs.SideDto import SideDto
 from DTOs.SelectedFoodOption import SelectedFoodOption
 from DTOs.FoodOptionDto import FoodOptionDto
 from DTOs.FoodOptionTypeDto import FoodOptionTypeDto
+from DTOs.LocationDto import LocationDto
 
 
 def make_option_type(**kwargs) -> FoodOptionTypeDto:
@@ -73,26 +74,29 @@ class TestFormatHeader:
 
     def test_format_header_basic(self):
         """Test basic header formatting."""
-        result = format_header("Taylor Jordan")
+        result = format_header("Taylor Jordan", "Main Cafeteria")
 
-        assert len(result) == 5
+        assert len(result) == 6
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        assert "Taylor Jordan" in result[1]
+        assert "Customer: Taylor Jordan" in result[1]
+        assert "Location: Main Cafeteria" in result[2]
         assert "=" * RECEIPT_WIDTH == result[0].strip()
 
     def test_format_header_long_user_name(self):
         """Test header with a long user name."""
         result = format_header(
-            "A Very Long User Name That Is Longer Than The Printer Width"
+            "A Very Long User Name That Is Longer Than The Printer Width",
+            "Main Cafeteria",
         )
 
         assert len(result[1]) == RECEIPT_WIDTH
 
     def test_format_header_empty_user_name(self):
         """Test header falls back when user name is empty."""
-        result = format_header("")
+        result = format_header("", "")
 
-        assert "Unknown User" in result[1]
+        assert "Customer: Unknown User" in result[1]
+        assert "Location: Unknown Location" in result[2]
         assert all(len(line) == RECEIPT_WIDTH for line in result)
 
 
@@ -287,6 +291,7 @@ class TestFormatOrder:
         """Test formatting a complete order with entrees, sides, and drinks."""
         order = BrowserOrder(
             isCardOrder=True,
+            location=LocationDto(id=1, locationName="Main Cafeteria"),
             stationId=1,
             stationName="Main Station",
             userName="Taylor Jordan",
@@ -333,10 +338,12 @@ class TestFormatOrder:
         result = format_order(order)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (5) + entree (3) + side (1) + drink (1) + footer (2) = 12
-        assert len(result) == 12
+        # header (6) + entree (3) + side (1) + drink (1) + footer (2) = 13
+        assert len(result) == 13
 
         receipt_text = "\n".join(result)
+        assert "Customer: Taylor Jordan" in receipt_text
+        assert "Location: Main Cafeteria" in receipt_text
         assert "Taylor Jordan" in receipt_text
         assert "Cheeseburger" in receipt_text
         assert "Extra Cheese" in receipt_text
@@ -350,13 +357,14 @@ class TestFormatOrder:
         result = format_order(order)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (5) + footer (2) = 7
-        assert len(result) == 7
+        # header (6) + footer (2) = 8
+        assert len(result) == 8
 
     def test_format_order_only_drinks(self):
         """Test formatting an order with only drinks."""
         order = BrowserOrder(
             userName="Taylor Jordan",
+            location=LocationDto(id=1, locationName="Main Cafeteria"),
             drinks=[
                 DrinkDto(
                     id=1, locationId=1, drinkName="Water", drinkPrice=Decimal("0")
@@ -369,8 +377,8 @@ class TestFormatOrder:
         result = format_order(order)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (5) + 2 drinks + footer (2) = 9
-        assert len(result) == 9
+        # header (6) + 2 drinks + footer (2) = 10
+        assert len(result) == 10
 
         receipt_text = "\n".join(result)
         assert "Water" in receipt_text
