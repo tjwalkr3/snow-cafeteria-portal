@@ -5,7 +5,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from DTOs.PrintOrderDto import PrintOrderDto
+from DTOs.BrowserOrder import BrowserOrder
 from DTOs.OrderEntreeItem import OrderEntreeItem
 from DTOs.OrderSideItem import OrderSideItem
 from DTOs.DrinkDto import DrinkDto
@@ -22,16 +22,16 @@ def pad_line(line: str) -> str:
     return line.ljust(RECEIPT_WIDTH)
 
 
-def format_header(order_id: int, order_time: datetime) -> List[str]:
-    """Format the receipt header with order ID and time."""
+def format_header(user_name: str) -> List[str]:
+    """Format the receipt header with user name and time."""
     lines = []
 
     lines.append(pad_line("=" * RECEIPT_WIDTH))
 
-    order_id_text = f"ORDER #{order_id}"
-    lines.append(pad_line(order_id_text.center(RECEIPT_WIDTH)))
+    display_name = user_name if user_name else "Unknown User"
+    lines.append(pad_line(display_name.center(RECEIPT_WIDTH)))
 
-    time_str = order_time.strftime("%m/%d/%Y %I:%M %p")
+    time_str = datetime.now().strftime("%m/%d/%Y %I:%M %p")
     lines.append(pad_line(time_str.center(RECEIPT_WIDTH)))
 
     lines.append(pad_line("=" * RECEIPT_WIDTH))
@@ -89,19 +89,19 @@ def format_footer() -> List[str]:
     return lines
 
 
-def format_order(order: PrintOrderDto) -> List[str]:
+def format_order(order: BrowserOrder) -> List[str]:
     """
     Main function to format a complete order for receipt printing.
 
     Args:
-        order: PrintOrderDto containing all order information
+        order: BrowserOrder containing all order information
 
     Returns:
         List of strings, each exactly 48 characters long, ready for printing
     """
     receipt_lines = []
 
-    receipt_lines.extend(format_header(order.id, order.orderTime))
+    receipt_lines.extend(format_header(order.userName))
 
     for entree in order.entrees:
         receipt_lines.extend(format_entree_item(entree))

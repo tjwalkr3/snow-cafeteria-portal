@@ -125,11 +125,38 @@ public partial class PlaceOrder : ComponentBase
             return;
         }
 
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        Order.UserName = GetDisplayName(user);
+
         await OrderService.CreateOrder(Order);
 
         await Cart.ClearOrder("order");
 
         Navigation.NavigateTo("/thank-you", true);
+    }
+
+    private static string GetDisplayName(ClaimsPrincipal user)
+    {
+        var explicitName = user.FindFirst("name")?.Value;
+        if (!string.IsNullOrWhiteSpace(explicitName))
+            return explicitName;
+
+        var givenName = user.FindFirst("given_name")?.Value;
+        var familyName = user.FindFirst("family_name")?.Value;
+        var fullName = $"{givenName} {familyName}".Trim();
+        if (!string.IsNullOrWhiteSpace(fullName))
+            return fullName;
+
+        var preferredUserName = user.FindFirst("preferred_username")?.Value;
+        if (!string.IsNullOrWhiteSpace(preferredUserName))
+            return preferredUserName;
+
+        var email = user.FindFirst(ClaimTypes.Email)?.Value ?? user.FindFirst("email")?.Value;
+        if (!string.IsNullOrWhiteSpace(email))
+            return email;
+
+        return "Unknown User";
     }
 
     private int GetTotalItemCount()
