@@ -109,8 +109,7 @@ public class FoodOptionTypeService : IFoodOptionTypeService
                 i.bootstrap_name AS IconBootstrapName,
                 fo.id AS Id,
                 fo.food_option_name AS FoodOptionName,
-                fo.in_stock AS InStock,
-                fo.image_url AS ImageUrl
+                fo.in_stock AS InStock
             FROM cafeteria.food_option_type fot
             LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
             LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id

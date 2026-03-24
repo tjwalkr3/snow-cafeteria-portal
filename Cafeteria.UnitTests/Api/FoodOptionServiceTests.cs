@@ -24,16 +24,14 @@ public class FoodOptionServiceTests
         var foodOptionDto = new FoodOptionDto
         {
             FoodOptionName = "Pepperoni",
-            InStock = true,
-            ImageUrl = "https://example.com/pepperoni.jpg"
+            InStock = true
         };
 
         var expectedResult = new FoodOptionDto
         {
             Id = 1,
             FoodOptionName = "Pepperoni",
-            InStock = true,
-            ImageUrl = "https://example.com/pepperoni.jpg"
+            InStock = true
         };
 
         _mockDbConnection
@@ -51,7 +49,6 @@ public class FoodOptionServiceTests
         Assert.Equal(1, result.Id);
         Assert.Equal("Pepperoni", result.FoodOptionName);
         Assert.True(result.InStock);
-        Assert.Equal("https://example.com/pepperoni.jpg", result.ImageUrl);
     }
 
     [Fact]
@@ -61,8 +58,7 @@ public class FoodOptionServiceTests
         {
             Id = 1,
             FoodOptionName = "Pepperoni",
-            InStock = true,
-            ImageUrl = "https://example.com/pepperoni.jpg"
+            InStock = true
         };
 
         _mockDbConnection
@@ -115,16 +111,14 @@ public class FoodOptionServiceTests
         var foodOptionDto = new FoodOptionDto
         {
             FoodOptionName = "Updated Pepperoni",
-            InStock = false,
-            ImageUrl = "https://example.com/updated.jpg"
+            InStock = false
         };
 
         var expectedResult = new FoodOptionDto
         {
             Id = 1,
             FoodOptionName = "Updated Pepperoni",
-            InStock = false,
-            ImageUrl = "https://example.com/updated.jpg"
+            InStock = false
         };
 
         _mockDbConnection

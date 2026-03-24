@@ -35,7 +35,6 @@ public class EntreeIntegrationTests : IDisposable
             EntreeName = "Test Steak",
             EntreeDescription = "Grilled ribeye steak for testing",
             EntreePrice = 15.99m,
-            ImageUrl = "https://picsum.photos/id/200/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/entree", newEntree);
@@ -107,7 +106,6 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Update",
                 EntreeDescription = "Original",
                 EntreePrice = 10.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -118,7 +116,6 @@ public class EntreeIntegrationTests : IDisposable
             EntreeName = "Updated Entree",
             EntreeDescription = "Updated description",
             EntreePrice = 12.99m,
-            ImageUrl = "https://picsum.photos/id/201/300/200",
         };
 
         var response = await _client.PutAsJsonAsync($"/api/entree/{entreeId}", updatedEntree);
@@ -141,7 +138,6 @@ public class EntreeIntegrationTests : IDisposable
             EntreeName = "Nonexistent",
             EntreeDescription = "Description",
             EntreePrice = 9.99m,
-            ImageUrl = "https://picsum.photos/id/202/300/200",
         };
 
         var response = await _client.PutAsJsonAsync("/api/entree/99999", updatedEntree);
@@ -160,7 +156,6 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Delete",
                 EntreeDescription = "Will be deleted",
                 EntreePrice = 8.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -191,7 +186,6 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Stock Toggle",
                 EntreeDescription = "Testing stock status",
                 EntreePrice = 13.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 
@@ -221,7 +215,6 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Stock Toggle True",
                 EntreeDescription = "Testing stock status toggle",
                 EntreePrice = 14.99m,
-                ImageUrl = "https://example.com/img.jpg",
             }
         );
 

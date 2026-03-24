@@ -22,4 +22,10 @@ public partial class DrinkPanel : ComponentBase
 
     [Parameter]
     public EventCallback<int> OnQuantityChanged { get; set; }
+
+    [Parameter]
+    public IReadOnlyDictionary<int, int>? CardQuantities { get; set; }
+
+    [Parameter]
+    public EventCallback<(int DrinkId, int NewQty)> OnCardQtyChanged { get; set; }
 }

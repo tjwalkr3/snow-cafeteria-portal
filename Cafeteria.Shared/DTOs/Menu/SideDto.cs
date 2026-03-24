@@ -20,8 +20,5 @@ public class SideDto
     [Range(0, double.MaxValue)]
     public decimal SidePrice { get; set; }
 
-    [StringLength(500)]
-    public string? ImageUrl { get; set; }
-
     public bool InStock { get; set; } = true;
 }

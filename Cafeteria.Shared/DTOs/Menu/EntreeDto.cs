@@ -20,8 +20,5 @@ public class EntreeDto
     [Range(0, double.MaxValue)]
     public decimal EntreePrice { get; set; }
 
-    [StringLength(500)]
-    public string? ImageUrl { get; set; }
-
     public bool InStock { get; set; } = true;
 }
