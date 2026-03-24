@@ -10,7 +10,7 @@ namespace Cafeteria.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class OrderController(IOrderService orderService, ICreateOrderService createOrderService, ILogger<OrderController> logger) : ControllerBase
+public class OrderController(IOrderService orderService, ICreateOrderService createOrderService) : ControllerBase
 {
     private readonly IOrderService _orderService = orderService;
     private readonly ICreateOrderService _createOrderService = createOrderService;
