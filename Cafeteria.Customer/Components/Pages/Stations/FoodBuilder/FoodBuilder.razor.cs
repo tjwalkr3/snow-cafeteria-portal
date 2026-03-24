@@ -34,9 +34,20 @@ public partial class FoodBuilder : ComponentBase
     private bool IsCardOrder { get; set; }
 
     private bool _isLoading = true;
+
     private int _entreeQuantity = 0;
     private int _sideQuantity = 0;
     private int _drinkQuantity = 0;
+
+    private Dictionary<int, int> _cardEntreeQtys = new();
+    private Dictionary<int, int> _cardSideQtys = new();
+    private Dictionary<int, int> _cardDrinkQtys = new();
+
+    private Dictionary<int, Dictionary<int, string>> _cardEntreeSingleOpts = new();
+    private Dictionary<int, Dictionary<int, List<string>>> _cardEntreeMultiOpts = new();
+    private Dictionary<int, List<FoodOptionTypeWithOptionsDto>> _cardEntreeOptionTypes = new();
+
+    private Dictionary<int, Dictionary<int, HashSet<string>>> _cardSideOpts = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -76,11 +87,28 @@ public partial class FoodBuilder : ComponentBase
 
     private async Task SelectEntree(EntreeDto entree)
     {
+        if (IsCardOrder)
+        {
+            if (_cardEntreeQtys.ContainsKey(entree.Id))
+            {
+                _cardEntreeQtys[entree.Id]++;
+                StateHasChanged();
+                return;
+            }
+            OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(entree.Id);
+            _cardEntreeOptionTypes[entree.Id] = OptionTypes;
+            if (OptionTypes.Any())
+                StagingStore.Open(entree, OptionTypes, new SelectionState());
+            else
+                _cardEntreeQtys[entree.Id] = 1;
+            StateHasChanged();
+            return;
+        }
+
         State.SelectedEntree = entree;
         State.ClearOptionsOnly();
         _entreeQuantity = 1;
         OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(entree.Id);
-
         if (OptionTypes.Any())
             StagingStore.Open(entree, OptionTypes, State);
         else
@@ -88,12 +116,51 @@ public partial class FoodBuilder : ComponentBase
             State.SelectedEntree = entree;
             State.ClearOptionsOnly();
         }
-
         StateHasChanged();
     }
 
     private void ConfirmOptions()
     {
+        if (IsCardOrder)
+        {
+            if (StagingStore.StagedSide != null)
+            {
+                var sideId = StagingStore.StagedSide.Side.Id;
+                _cardSideOpts[sideId] = new Dictionary<int, HashSet<string>>();
+                foreach (var ot in StagingStore.StagedSide.OptionTypes)
+                {
+                    var id = ot.OptionType.Id;
+                    _cardSideOpts[sideId][id] = new HashSet<string>(
+                        StagingStore.StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>());
+                }
+                if (!_cardSideQtys.ContainsKey(sideId))
+                    _cardSideQtys[sideId] = 1;
+            }
+            else if (StagingStore.StagedEntree != null)
+            {
+                var entreeId = StagingStore.StagedEntree.Id;
+                _cardEntreeSingleOpts[entreeId] = new Dictionary<int, string>();
+                _cardEntreeMultiOpts[entreeId] = new Dictionary<int, List<string>>();
+                foreach (var ot in OptionTypes)
+                {
+                    var id = ot.OptionType.Id;
+                    var staged = StagingStore.StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>();
+                    if (ot.OptionType.MaxAmount > 1)
+                        _cardEntreeMultiOpts[entreeId][id] = staged.ToList();
+                    else
+                    {
+                        var first = staged.FirstOrDefault();
+                        if (first != null) _cardEntreeSingleOpts[entreeId][id] = first;
+                    }
+                }
+                if (!_cardEntreeQtys.ContainsKey(entreeId))
+                    _cardEntreeQtys[entreeId] = 1;
+            }
+            StagingStore.Discard();
+            StateHasChanged();
+            return;
+        }
+
         var optionTypes = StagingStore.StagedSide?.OptionTypes ?? OptionTypes;
         StagingStore.Confirm(State, optionTypes);
         StateHasChanged();
@@ -107,6 +174,12 @@ public partial class FoodBuilder : ComponentBase
 
     private void SelectSide(SideDto side)
     {
+        if (IsCardOrder)
+        {
+            _cardSideQtys[side.Id] = _cardSideQtys.GetValueOrDefault(side.Id, 0) + 1;
+            StateHasChanged();
+            return;
+        }
         State.SelectedSide = side;
         _sideQuantity = 1;
         StateHasChanged();
@@ -114,6 +187,21 @@ public partial class FoodBuilder : ComponentBase
 
     private void SelectSideWithOptions(SideWithOptionsDto side)
     {
+        if (IsCardOrder)
+        {
+            if (_cardSideQtys.ContainsKey(side.Side.Id))
+            {
+                _cardSideQtys[side.Side.Id]++;
+                StateHasChanged();
+                return;
+            }
+            var tempState = new SelectionState();
+            if (_cardSideOpts.TryGetValue(side.Side.Id, out var existing))
+                foreach (var kv in existing) tempState.SideOptions[kv.Key] = new HashSet<string>(kv.Value);
+            StagingStore.OpenForSide(side, tempState);
+            StateHasChanged();
+            return;
+        }
         StagingStore.OpenForSide(side, State);
         _sideQuantity = 1;
         StateHasChanged();
@@ -121,8 +209,49 @@ public partial class FoodBuilder : ComponentBase
 
     private void SelectDrink(DrinkDto drink)
     {
+        if (IsCardOrder)
+        {
+            _cardDrinkQtys[drink.Id] = _cardDrinkQtys.GetValueOrDefault(drink.Id, 0) + 1;
+            StateHasChanged();
+            return;
+        }
         State.SelectedDrink = drink;
         _drinkQuantity = 1;
+        StateHasChanged();
+    }
+
+    private void ChangeCardEntreeQty(int entreeId, int newQty)
+    {
+        if (newQty <= 0)
+        {
+            _cardEntreeQtys.Remove(entreeId);
+            _cardEntreeSingleOpts.Remove(entreeId);
+            _cardEntreeMultiOpts.Remove(entreeId);
+            _cardEntreeOptionTypes.Remove(entreeId);
+        }
+        else
+            _cardEntreeQtys[entreeId] = newQty;
+        StateHasChanged();
+    }
+
+    private void ChangeCardSideQty(int sideId, int newQty)
+    {
+        if (newQty <= 0)
+        {
+            _cardSideQtys.Remove(sideId);
+            _cardSideOpts.Remove(sideId);
+        }
+        else
+            _cardSideQtys[sideId] = newQty;
+        StateHasChanged();
+    }
+
+    private void ChangeCardDrinkQty(int drinkId, int newQty)
+    {
+        if (newQty <= 0)
+            _cardDrinkQtys.Remove(drinkId);
+        else
+            _cardDrinkQtys[drinkId] = newQty;
         StateHasChanged();
     }
 
@@ -155,32 +284,59 @@ public partial class FoodBuilder : ComponentBase
 
     private async Task AddToOrder()
     {
-        if (!SelectionValidator.IsValid(State, OptionTypes, IsCardOrder))
+        if (!IsCardOrder && !SelectionValidator.IsValid(State, OptionTypes, false))
             return;
-
-        var sideWithOptions = Sides.FirstOrDefault(s => s.Side.Id == State.SelectedSide?.Id);
+        if (IsCardOrder && !HasAnySelection())
+            return;
 
         if (!IsCardOrder)
         {
+            var sideWithOptions = Sides.FirstOrDefault(s => s.Side.Id == State.SelectedSide?.Id);
             await CartSubmitter.SubmitAsync(State, OptionTypes, new List<FoodOptionDto>(), sideWithOptions?.OptionTypes);
         }
         else
         {
-            for (int i = 0; i < _entreeQuantity && State.SelectedEntree != null; i++)
-                await CartSubmitter.SubmitAsync(EntreeOnlyState(), OptionTypes, new List<FoodOptionDto>(), null);
-
-            for (int i = 0; i < _sideQuantity && State.SelectedSide != null; i++)
+            foreach (var (entreeId, qty) in _cardEntreeQtys)
             {
-                var sideState = new SelectionState { SelectedSide = State.SelectedSide };
-                foreach (var kv in State.SideOptions)
-                    sideState.SideOptions[kv.Key] = new HashSet<string>(kv.Value);
-                await CartSubmitter.SubmitAsync(sideState, new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), sideWithOptions?.OptionTypes);
+                var entree = Entrees.FirstOrDefault(e => e.Id == entreeId);
+                if (entree == null) continue;
+                var entreeState = new SelectionState { SelectedEntree = entree };
+                if (_cardEntreeSingleOpts.TryGetValue(entreeId, out var single))
+                    foreach (var kv in single) entreeState.SingleSelectOptions[kv.Key] = kv.Value;
+                if (_cardEntreeMultiOpts.TryGetValue(entreeId, out var multi))
+                    foreach (var kv in multi) entreeState.MultiSelectOptions[kv.Key] = new List<string>(kv.Value);
+                var optTypes = _cardEntreeOptionTypes.GetValueOrDefault(entreeId) ?? new List<FoodOptionTypeWithOptionsDto>();
+                for (int i = 0; i < qty; i++)
+                    await CartSubmitter.SubmitAsync(entreeState, optTypes, new List<FoodOptionDto>(), null);
             }
 
-            for (int i = 0; i < _drinkQuantity && State.SelectedDrink != null; i++)
-                await CartSubmitter.SubmitAsync(
-                    new SelectionState { SelectedDrink = State.SelectedDrink },
-                    new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), null);
+            foreach (var (sideId, qty) in _cardSideQtys)
+            {
+                var sideWithOpts = Sides.FirstOrDefault(s => s.Side.Id == sideId);
+                if (sideWithOpts == null) continue;
+                var sideState = new SelectionState { SelectedSide = sideWithOpts.Side };
+                if (_cardSideOpts.TryGetValue(sideId, out var sideOpts))
+                    foreach (var kv in sideOpts) sideState.SideOptions[kv.Key] = new HashSet<string>(kv.Value);
+                for (int i = 0; i < qty; i++)
+                    await CartSubmitter.SubmitAsync(sideState, new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), sideWithOpts.OptionTypes);
+            }
+
+            foreach (var (drinkId, qty) in _cardDrinkQtys)
+            {
+                var drink = Drinks.FirstOrDefault(d => d.Id == drinkId);
+                if (drink == null) continue;
+                var drinkState = new SelectionState { SelectedDrink = drink };
+                for (int i = 0; i < qty; i++)
+                    await CartSubmitter.SubmitAsync(drinkState, new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), null);
+            }
+
+            _cardEntreeQtys.Clear();
+            _cardSideQtys.Clear();
+            _cardDrinkQtys.Clear();
+            _cardEntreeSingleOpts.Clear();
+            _cardEntreeMultiOpts.Clear();
+            _cardEntreeOptionTypes.Clear();
+            _cardSideOpts.Clear();
         }
 
         State.Clear();
@@ -232,6 +388,8 @@ public partial class FoodBuilder : ComponentBase
 
     private bool HasAnySelection()
     {
+        if (IsCardOrder)
+            return _cardEntreeQtys.Any() || _cardSideQtys.Any() || _cardDrinkQtys.Any();
         return State.SelectedEntree != null ||
                State.SelectedSide != null ||
                State.SelectedDrink != null ||
@@ -267,6 +425,14 @@ public partial class FoodBuilder : ComponentBase
 
     private bool HasSelectionForTab(string tabId)
     {
+        if (IsCardOrder)
+            return tabId switch
+            {
+                "entrees" => _cardEntreeQtys.Any(),
+                "sides" => _cardSideQtys.Any(),
+                "drinks" => _cardDrinkQtys.Any(),
+                _ => false
+            };
         return tabId switch
         {
             "entrees" => State.SelectedEntree != null,
@@ -278,6 +444,16 @@ public partial class FoodBuilder : ComponentBase
 
     private string GetSelectionTextForTab(string tabId)
     {
+        if (IsCardOrder)
+        {
+            return tabId switch
+            {
+                "entrees" => _cardEntreeQtys.Values.Sum() is int ec and > 0 ? $"{ec} added" : "",
+                "sides" => _cardSideQtys.Values.Sum() is int sc and > 0 ? $"{sc} added" : "",
+                "drinks" => _cardDrinkQtys.Values.Sum() is int dc and > 0 ? $"{dc} added" : "",
+                _ => ""
+            };
+        }
         return tabId switch
         {
             "entrees" => State.SelectedEntree?.EntreeName ?? "",

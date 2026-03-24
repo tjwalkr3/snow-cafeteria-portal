@@ -78,7 +78,9 @@ else
                              IsCardOrder="@IsCardOrder"
                              SelectedBadges="@allSelections"
                              Quantity="@_entreeQuantity"
+                             CardQuantities="@_cardEntreeQtys"
                              OnQuantityChanged="@ChangeEntreeQuantity"
+                             OnCardQtyChanged="@((args) => ChangeCardEntreeQty(args.Item1, args.Item2))"
                              OnEntreeSelected="@SelectEntree" />
             }
 
@@ -88,7 +90,9 @@ else
                            SelectedSide="@State.SelectedSide"
                            IsCardOrder="@IsCardOrder"
                            Quantity="@_sideQuantity"
+                           CardQuantities="@_cardSideQtys"
                            OnQuantityChanged="@ChangeSideQuantity"
+                           OnCardQtyChanged="@((args) => ChangeCardSideQty(args.Item1, args.Item2))"
                            OnSideSelected="@SelectSide"
                            OnSideWithOptionsSelected="@SelectSideWithOptions" />
             }
@@ -99,7 +103,9 @@ else
                             SelectedDrink="@State.SelectedDrink"
                             IsCardOrder="@IsCardOrder"
                             Quantity="@_drinkQuantity"
+                            CardQuantities="@_cardDrinkQtys"
                             OnQuantityChanged="@ChangeDrinkQuantity"
+                            OnCardQtyChanged="@((args) => ChangeCardDrinkQty(args.Item1, args.Item2))"
                             OnDrinkSelected="@SelectDrink" />
             }
         </div>
