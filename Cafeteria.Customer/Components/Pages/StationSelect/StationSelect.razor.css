@@ -20,14 +20,3 @@
     font-size: 1rem;
     color: #856404;
 }
-
-.disabled-card {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background-color: #f8f9fa;
-}
-
-.disabled-card .icon-circle,
-.disabled-card .payment-card-title {
-    color: #999;
-}

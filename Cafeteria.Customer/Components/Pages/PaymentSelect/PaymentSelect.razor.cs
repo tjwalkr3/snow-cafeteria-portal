@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Cafeteria.Customer.Components.Pages.LocationSelect;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Components;
@@ -27,8 +28,12 @@ public partial class PaymentSelect : ComponentBase
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
+    [Inject]
+    private ILocationSelectVM LocationVM { get; set; } = default!;
+
     public int SwipeBalance { get; set; } = 0;
     public bool HasSwipes => SwipeBalance > 0;
+    public bool AnyLocationsOpen { get; private set; } = true;
 
     public bool? CurrentIsCardOrder { get; private set; }
     public bool? PendingIsCardOrder { get; private set; }
@@ -66,6 +71,9 @@ public partial class PaymentSelect : ComponentBase
                 Logger.LogWarning("Email claim is missing for authenticated user");
             }
         }
+
+        await LocationVM.InitializeLocationsAsync();
+        AnyLocationsOpen = LocationVM.Locations.Any();
     }
 
     public async Task HandlePaymentSelected(bool isCard)

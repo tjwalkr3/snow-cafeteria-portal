@@ -105,16 +105,16 @@ public partial class FoodBuilder : ComponentBase
             return;
         }
 
-        State.SelectedEntree = entree;
-        State.ClearOptionsOnly();
-        _entreeQuantity = 1;
         OptionTypes = await MenuService.GetOptionTypesWithOptionsByEntree(entree.Id);
         if (OptionTypes.Any())
+        {
             StagingStore.Open(entree, OptionTypes, State);
+        }
         else
         {
             State.SelectedEntree = entree;
             State.ClearOptionsOnly();
+            _entreeQuantity = 1;
         }
         StateHasChanged();
     }
@@ -161,8 +161,15 @@ public partial class FoodBuilder : ComponentBase
             return;
         }
 
+        bool isSide = StagingStore.StagedSide != null;
+        if (!isSide)
+            State.ClearOptionsOnly();
         var optionTypes = StagingStore.StagedSide?.OptionTypes ?? OptionTypes;
         StagingStore.Confirm(State, optionTypes);
+        if (isSide)
+            _sideQuantity = 1;
+        else
+            _entreeQuantity = 1;
         StateHasChanged();
     }
 
@@ -203,7 +210,6 @@ public partial class FoodBuilder : ComponentBase
             return;
         }
         StagingStore.OpenForSide(side, State);
-        _sideQuantity = 1;
         StateHasChanged();
     }
 

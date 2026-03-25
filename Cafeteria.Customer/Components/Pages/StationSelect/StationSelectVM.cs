@@ -24,6 +24,15 @@ public class StationSelectVM : IStationSelectVM
     {
         try
         {
+            // If the location itself is closed, all stations are closed
+            var locationBusinessHours = await _menuService.GetLocationBusinessHours(locationId);
+            var locationExceptions = await _menuService.GetLocationExceptions(locationId);
+            if (!IsLocationOpenNow(locationBusinessHours, locationExceptions))
+            {
+                Stations = new List<StationDto>();
+                return;
+            }
+
             var allStations = await _menuService.GetStationsByLocation(locationId);
             var openStations = new List<StationDto>();
 
@@ -49,6 +58,29 @@ public class StationSelectVM : IStationSelectVM
         {
             urlParsingFailed = true;
         }
+    }
+
+    private bool IsLocationOpenNow(List<LocationBusinessHoursDto> businessHours, List<LocationExceptionHoursDto> exceptions)
+    {
+        var now = DateTime.Now;
+
+        var hasActiveException = exceptions.Any(e =>
+            now >= e.StartExceptionDateTime &&
+            now <= e.EndExceptionDateTime);
+
+        if (hasActiveException)
+            return false;
+
+        int currentWeekday = (int)now.DayOfWeek;
+        if (currentWeekday == 0)
+            currentWeekday = 7;
+
+        var todayHours = businessHours.FirstOrDefault(h => h.WeekdayId == currentWeekday);
+        if (todayHours == null)
+            return false;
+
+        return now.TimeOfDay >= todayHours.OpenTime.ToTimeSpan() &&
+               now.TimeOfDay <= todayHours.CloseTime.ToTimeSpan();
     }
 
     public Task<bool> IsStationOpenNow(int stationId)
