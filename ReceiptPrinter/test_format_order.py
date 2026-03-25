@@ -74,13 +74,14 @@ class TestFormatHeader:
 
     def test_format_header_basic(self):
         """Test basic header formatting."""
-        result = format_header("Taylor Jordan", "Main Cafeteria")
+        result = format_header("Taylor Jordan", "Main Cafeteria", 123)
 
-        assert len(result) == 6
+        assert len(result) == 7
         assert all(len(line) == RECEIPT_WIDTH for line in result)
         assert "Customer: Taylor Jordan" in result[1]
-        assert "Location: Main Cafeteria" in result[2]
-        assert result[3] == result[3].lstrip()
+        assert "Order Id: 123" in result[2]
+        assert "Location: Main Cafeteria" in result[3]
+        assert result[4] == result[4].lstrip()
         assert "=" * RECEIPT_WIDTH == result[0].strip()
 
     def test_format_header_long_user_name(self):
@@ -88,16 +89,18 @@ class TestFormatHeader:
         result = format_header(
             "A Very Long User Name That Is Longer Than The Printer Width",
             "Main Cafeteria",
+            123,
         )
 
         assert len(result[1]) == RECEIPT_WIDTH
 
     def test_format_header_empty_user_name(self):
         """Test header falls back when user name is empty."""
-        result = format_header("", "")
+        result = format_header("", "", 123)
 
         assert "Customer: Unknown User" in result[1]
-        assert "Location: Unknown Location" in result[2]
+        assert "Order Id: 123" in result[2]
+        assert "Location: Unknown Location" in result[3]
         assert all(len(line) == RECEIPT_WIDTH for line in result)
 
 
@@ -336,14 +339,15 @@ class TestFormatOrder:
                 ),
             ],
         )
-        result = format_order(order)
+        result = format_order(order, 999)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (6) + entree (3) + side (1) + drink (1) + footer (2) = 13
-        assert len(result) == 13
+        # header (7) + entree (3) + side (1) + drink (1) + footer (2) = 14
+        assert len(result) == 14
 
         receipt_text = "\n".join(result)
         assert "Customer: Taylor Jordan" in receipt_text
+        assert "Order Id: 999" in receipt_text
         assert "Location: Main Cafeteria" in receipt_text
         assert "Taylor Jordan" in receipt_text
         assert "Cheeseburger" in receipt_text
@@ -355,11 +359,11 @@ class TestFormatOrder:
     def test_format_order_empty(self):
         """Test formatting an order with no items."""
         order = BrowserOrder(userName="Taylor Jordan")
-        result = format_order(order)
+        result = format_order(order, 999)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (6) + footer (2) = 8
-        assert len(result) == 8
+        # header (7) + footer (2) = 9
+        assert len(result) == 9
 
     def test_format_order_only_drinks(self):
         """Test formatting an order with only drinks."""
@@ -375,11 +379,11 @@ class TestFormatOrder:
                 ),
             ],
         )
-        result = format_order(order)
+        result = format_order(order, 999)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (6) + 2 drinks + footer (2) = 10
-        assert len(result) == 10
+        # header (7) + 2 drinks + footer (2) = 11
+        assert len(result) == 11
 
         receipt_text = "\n".join(result)
         assert "Water" in receipt_text

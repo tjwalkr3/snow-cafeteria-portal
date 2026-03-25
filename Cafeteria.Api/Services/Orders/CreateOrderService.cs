@@ -55,7 +55,8 @@ public class CreateOrderService(IDbConnection dbConnection, IPrintService printS
             }
 
             transaction.Commit();
-            await _printService.PrintOrder(browserOrder);
+            var orderId = order.Id;
+            await _printService.PrintOrder(browserOrder, orderId);
             return order;
         }
         catch
