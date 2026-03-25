@@ -38,11 +38,11 @@ public class CreateOrEditLocationVM : ICreateOrEditLocationVM
 
         if (IsEditing)
         {
-            await _locationService.UpdateLocation(CurrentLocation.Id, CurrentLocation.LocationName, CurrentLocation.LocationDescription, CurrentLocation.IconId);
+            await _locationService.UpdateLocation(CurrentLocation.Id, CurrentLocation.LocationName, CurrentLocation.LocationDescription, CurrentLocation.IconId, CurrentLocation.PrinterUrl);
         }
         else
         {
-            await _locationService.CreateLocation(CurrentLocation.LocationName, CurrentLocation.LocationDescription, CurrentLocation.IconId);
+            await _locationService.CreateLocation(CurrentLocation.LocationName, CurrentLocation.LocationDescription, CurrentLocation.IconId, CurrentLocation.PrinterUrl);
         }
 
         IsVisible = false;
