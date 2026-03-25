@@ -75,12 +75,10 @@ public partial class FoodBuilder : ComponentBase
             }
 
             OptionTypes = new List<FoodOptionTypeWithOptionsDto>();
-            Tabs = new List<TabDefinition>
-            {
-                new("entrees", "Entrees", isDefault: true),
-                new("sides", "Sides"),
-                new("drinks", "Drinks")
-            };
+            Tabs = new List<TabDefinition> { new("entrees", "Entrees", isDefault: true) };
+            if (Sides.Any())
+                Tabs.Add(new("sides", "Sides"));
+            Tabs.Add(new("drinks", "Drinks"));
             ActiveTab = "entrees";
 
             _isLoading = false;
