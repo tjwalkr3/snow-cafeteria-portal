@@ -17,23 +17,23 @@ public static class SqlInsertQueries
 
     public const string InsertEntreeSql =
         @"
-        INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price, image_url)
-        VALUES (@StationId, @EntreeName, @EntreeDescription, @EntreePrice, @ImageUrl)";
+        INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price, card_only, swipe_only)
+        VALUES (@StationId, @EntreeName, @EntreeDescription, @EntreePrice, @CardOnly, @SwipeOnly)";
 
     public const string InsertSideSql =
         @"
-        INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, image_url)
-        VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @ImageUrl)";
+        INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, card_only, swipe_only)
+        VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @CardOnly, @SwipeOnly)";
 
     public const string InsertDrinkSql =
         @"
-        INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, image_url)
-        VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl)";
+        INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, card_only, swipe_only)
+        VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @CardOnly, @SwipeOnly)";
 
     public const string InsertFoodOptionSql =
         @"
-        INSERT INTO cafeteria.food_option (food_option_name, in_stock, image_url)
-        VALUES (@FoodOptionName, @InStock, @ImageUrl)";
+        INSERT INTO cafeteria.food_option (food_option_name, in_stock)
+        VALUES (@FoodOptionName, @InStock)";
 
     public const string InsertFoodOptionTypeSql =
         @"

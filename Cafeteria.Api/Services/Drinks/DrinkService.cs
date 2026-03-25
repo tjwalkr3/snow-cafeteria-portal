@@ -16,9 +16,9 @@ public class DrinkService : IDrinkService
     public async Task<DrinkDto> CreateDrink(DrinkDto drinkDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, image_url, in_stock)
-            VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @ImageUrl, @InStock)
-            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
+            INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, in_stock, card_only, swipe_only)
+            VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @InStock, @CardOnly, @SwipeOnly)
+            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, in_stock AS InStock, card_only AS CardOnly, swipe_only AS SwipeOnly;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<DrinkDto>(sql, drinkDto);
         return result ?? throw new InvalidOperationException("Failed to create drink");
@@ -32,9 +32,10 @@ public class DrinkService : IDrinkService
                 location_id AS LocationId, 
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
-                drink_price AS DrinkPrice, 
-                image_url AS ImageUrl,
-                in_stock AS InStock
+                drink_price AS DrinkPrice,
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
             FROM cafeteria.drink
             WHERE id = @id;";
 
@@ -51,8 +52,9 @@ public class DrinkService : IDrinkService
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
-                image_url AS ImageUrl,
-                in_stock AS InStock
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
             FROM cafeteria.drink
             ORDER BY drink_name, id;";
 
@@ -69,10 +71,51 @@ public class DrinkService : IDrinkService
                 drink_name AS DrinkName, 
                 drink_description AS DrinkDescription, 
                 drink_price AS DrinkPrice, 
-                image_url AS ImageUrl,
-                in_stock AS InStock
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
             FROM cafeteria.drink
             WHERE location_id = @locationId
+            ORDER BY drink_name, id;";
+
+        var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
+        return result.ToList();
+    }
+
+    public async Task<List<DrinkDto>> GetSwipeDrinksByLocationId(int locationId)
+    {
+        const string sql = @"
+            SELECT 
+                id AS Id, 
+                location_id AS LocationId, 
+                drink_name AS DrinkName, 
+                drink_description AS DrinkDescription, 
+                drink_price AS DrinkPrice, 
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
+            FROM cafeteria.drink
+            WHERE location_id = @locationId AND (swipe_only = true OR (card_only = false AND swipe_only = false))
+            ORDER BY drink_name, id;";
+
+        var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
+        return result.ToList();
+    }
+
+    public async Task<List<DrinkDto>> GetCardDrinksByLocationId(int locationId)
+    {
+        const string sql = @"
+            SELECT 
+                id AS Id, 
+                location_id AS LocationId, 
+                drink_name AS DrinkName, 
+                drink_description AS DrinkDescription, 
+                drink_price AS DrinkPrice, 
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
+            FROM cafeteria.drink
+            WHERE location_id = @locationId AND (card_only = true OR (card_only = false AND swipe_only = false))
             ORDER BY drink_name, id;";
 
         var result = await _dbConnection.QueryAsync<DrinkDto>(sql, new { locationId });
@@ -87,10 +130,11 @@ public class DrinkService : IDrinkService
                 drink_name = @DrinkName,
                 drink_description = @DrinkDescription,
                 drink_price = @DrinkPrice,
-                image_url = @ImageUrl,
-                in_stock = @InStock
+                in_stock = @InStock,
+                card_only = @CardOnly,
+                swipe_only = @SwipeOnly
             WHERE id = @id
-            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, image_url AS ImageUrl, in_stock AS InStock;";
+            RETURNING id AS Id, location_id AS LocationId, drink_name AS DrinkName, drink_description AS DrinkDescription, drink_price AS DrinkPrice, in_stock AS InStock, card_only AS CardOnly, swipe_only AS SwipeOnly;";
 
         var parameters = new
         {
@@ -99,8 +143,9 @@ public class DrinkService : IDrinkService
             drinkDto.DrinkName,
             drinkDto.DrinkDescription,
             drinkDto.DrinkPrice,
-            drinkDto.ImageUrl,
-            drinkDto.InStock
+            drinkDto.InStock,
+            drinkDto.CardOnly,
+            drinkDto.SwipeOnly
         };
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<DrinkDto>(sql, parameters);

@@ -13,6 +13,7 @@ public class LocationDto
     public string LocationDescription { get; set; } = string.Empty;
     public int? IconId { get; set; }
     public string? IconBootstrapName { get; set; }
+    [Url]
     [StringLength(500)]
     public string? PrinterUrl { get; set; }
 }

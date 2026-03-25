@@ -10,8 +10,7 @@ Content-Type: application/json
   "stationId": 1,
   "drinkName": "Coca Cola",
   "drinkDescription": "Classic Coca Cola",
-  "drinkPrice": 2.50,
-  "imageUrl": "https://picsum.photos/id/163/150/150"
+  "drinkPrice": 2.50
 }
 
 ### Get all drinks
@@ -31,8 +30,7 @@ Content-Type: application/json
   "stationId": 1,
   "drinkName": "Coca Cola Zero",
   "drinkDescription": "Coca Cola Zero Sugar",
-  "drinkPrice": 2.75,
-  "imageUrl": "https://picsum.photos/id/163/150/150"
+  "drinkPrice": 2.75
 }
 
 ### Delete a drink

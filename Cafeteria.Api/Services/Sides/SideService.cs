@@ -16,9 +16,9 @@ public class SideService : ISideService
     public async Task<SideDto> CreateSide(SideDto sideDto)
     {
         const string sql = @"
-            INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, image_url, in_stock)
-            VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @ImageUrl, @InStock)
-            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl, in_stock AS InStock;";
+            INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, in_stock, card_only, swipe_only)
+            VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @InStock, @CardOnly, @SwipeOnly)
+            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, in_stock AS InStock, card_only AS CardOnly, swipe_only AS SwipeOnly;";
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<SideDto>(sql, sideDto);
         return result ?? throw new InvalidOperationException("Failed to create side");
@@ -33,8 +33,9 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl,
-                in_stock AS InStock
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
             FROM cafeteria.side
             WHERE id = @id;";
 
@@ -51,8 +52,9 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl,
-                in_stock AS InStock
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
             FROM cafeteria.side
             ORDER BY side_name, id;";
 
@@ -69,8 +71,9 @@ public class SideService : ISideService
                 side_name AS SideName, 
                 side_description AS SideDescription, 
                 side_price AS SidePrice, 
-                image_url AS ImageUrl,
-                in_stock AS InStock
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
             FROM cafeteria.side
             WHERE station_id = @stationId
             ORDER BY side_name, id;";
@@ -88,8 +91,9 @@ public class SideService : ISideService
                 s.side_name AS SideName,
                 s.side_description AS SideDescription,
                 s.side_price AS SidePrice,
-                s.image_url AS ImageUrl,
                 s.in_stock AS InStock,
+                s.card_only AS CardOnly,
+                s.swipe_only AS SwipeOnly,
                 fot.id AS Id,
                 fot.food_option_type_name AS FoodOptionTypeName,
                 fot.required_amount AS RequiredAmount,
@@ -102,14 +106,181 @@ public class SideService : ISideService
                 i.bootstrap_name AS IconBootstrapName,
                 fo.id AS Id,
                 fo.food_option_name AS FoodOptionName,
-                fo.in_stock AS InStock,
-                fo.image_url AS ImageUrl
+                fo.in_stock AS InStock
             FROM cafeteria.side s
             LEFT JOIN cafeteria.food_option_type fot ON fot.side_id = s.id
             LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
             LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id
             LEFT JOIN cafeteria.food_option fo ON oot.food_option_id = fo.id
             WHERE s.station_id = @stationId
+            ORDER BY s.side_name, s.id, fot.id;";
+
+        var sideLookup = new Dictionary<int, SideWithOptionsDto>();
+        var optionTypeLookup = new Dictionary<int, FoodOptionTypeWithOptionsDto>();
+
+        await _dbConnection.QueryAsync<SideDto, FoodOptionTypeDto, FoodOptionDto, SideWithOptionsDto>(
+            sql,
+            (side, optionType, option) =>
+            {
+                if (!sideLookup.TryGetValue(side.Id, out var sideWithOptions))
+                {
+                    sideWithOptions = new SideWithOptionsDto { Side = side };
+                    sideLookup[side.Id] = sideWithOptions;
+                }
+                if (optionType?.Id > 0)
+                {
+                    if (!optionTypeLookup.TryGetValue(optionType.Id, out var withOptions))
+                    {
+                        withOptions = new FoodOptionTypeWithOptionsDto { OptionType = optionType };
+                        optionTypeLookup[optionType.Id] = withOptions;
+                        sideWithOptions.OptionTypes.Add(withOptions);
+                    }
+                    if (option?.Id > 0)
+                        optionTypeLookup[optionType.Id].Options.Add(option);
+                }
+                return sideWithOptions;
+            },
+            new { stationId },
+            splitOn: "Id,Id");
+
+        return sideLookup.Values.ToList();
+    }
+
+    public async Task<List<SideDto>> GetSwipeSidesByStationId(int stationId)
+    {
+        const string sql = @"
+            SELECT 
+                id AS Id, 
+                station_id AS StationId, 
+                side_name AS SideName, 
+                side_description AS SideDescription, 
+                side_price AS SidePrice, 
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
+            FROM cafeteria.side
+            WHERE station_id = @stationId AND (swipe_only = true OR (card_only = false AND swipe_only = false))
+            ORDER BY side_name, id;";
+
+        var result = await _dbConnection.QueryAsync<SideDto>(sql, new { stationId });
+        return result.ToList();
+    }
+
+    public async Task<List<SideDto>> GetCardSidesByStationId(int stationId)
+    {
+        const string sql = @"
+            SELECT 
+                id AS Id, 
+                station_id AS StationId, 
+                side_name AS SideName, 
+                side_description AS SideDescription, 
+                side_price AS SidePrice, 
+                in_stock AS InStock,
+                card_only AS CardOnly,
+                swipe_only AS SwipeOnly
+            FROM cafeteria.side
+            WHERE station_id = @stationId AND (card_only = true OR (card_only = false AND swipe_only = false))
+            ORDER BY side_name, id;";
+
+        var result = await _dbConnection.QueryAsync<SideDto>(sql, new { stationId });
+        return result.ToList();
+    }
+
+    public async Task<List<SideWithOptionsDto>> GetSwipeSidesByStationIdWithOptions(int stationId)
+    {
+        const string sql = @"
+            SELECT
+                s.id AS Id,
+                s.station_id AS StationId,
+                s.side_name AS SideName,
+                s.side_description AS SideDescription,
+                s.side_price AS SidePrice,
+                s.in_stock AS InStock,
+                s.card_only AS CardOnly,
+                s.swipe_only AS SwipeOnly,
+                fot.id AS Id,
+                fot.food_option_type_name AS FoodOptionTypeName,
+                fot.required_amount AS RequiredAmount,
+                fot.included_amount AS IncludedAmount,
+                fot.max_amount AS MaxAmount,
+                fot.food_option_price AS FoodOptionPrice,
+                fot.entree_id AS EntreeId,
+                fot.side_id AS SideId,
+                fot.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName,
+                fo.id AS Id,
+                fo.food_option_name AS FoodOptionName,
+                fo.in_stock AS InStock
+            FROM cafeteria.side s
+            LEFT JOIN cafeteria.food_option_type fot ON fot.side_id = s.id
+            LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
+            LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id
+            LEFT JOIN cafeteria.food_option fo ON oot.food_option_id = fo.id
+            WHERE s.station_id = @stationId AND (s.swipe_only = true OR (s.card_only = false AND s.swipe_only = false))
+            ORDER BY s.side_name, s.id, fot.id;";
+
+        var sideLookup = new Dictionary<int, SideWithOptionsDto>();
+        var optionTypeLookup = new Dictionary<int, FoodOptionTypeWithOptionsDto>();
+
+        await _dbConnection.QueryAsync<SideDto, FoodOptionTypeDto, FoodOptionDto, SideWithOptionsDto>(
+            sql,
+            (side, optionType, option) =>
+            {
+                if (!sideLookup.TryGetValue(side.Id, out var sideWithOptions))
+                {
+                    sideWithOptions = new SideWithOptionsDto { Side = side };
+                    sideLookup[side.Id] = sideWithOptions;
+                }
+                if (optionType?.Id > 0)
+                {
+                    if (!optionTypeLookup.TryGetValue(optionType.Id, out var withOptions))
+                    {
+                        withOptions = new FoodOptionTypeWithOptionsDto { OptionType = optionType };
+                        optionTypeLookup[optionType.Id] = withOptions;
+                        sideWithOptions.OptionTypes.Add(withOptions);
+                    }
+                    if (option?.Id > 0)
+                        optionTypeLookup[optionType.Id].Options.Add(option);
+                }
+                return sideWithOptions;
+            },
+            new { stationId },
+            splitOn: "Id,Id");
+
+        return sideLookup.Values.ToList();
+    }
+
+    public async Task<List<SideWithOptionsDto>> GetCardSidesByStationIdWithOptions(int stationId)
+    {
+        const string sql = @"
+            SELECT
+                s.id AS Id,
+                s.station_id AS StationId,
+                s.side_name AS SideName,
+                s.side_description AS SideDescription,
+                s.side_price AS SidePrice,
+                s.in_stock AS InStock,
+                s.card_only AS CardOnly,
+                s.swipe_only AS SwipeOnly,
+                fot.id AS Id,
+                fot.food_option_type_name AS FoodOptionTypeName,
+                fot.required_amount AS RequiredAmount,
+                fot.included_amount AS IncludedAmount,
+                fot.max_amount AS MaxAmount,
+                fot.food_option_price AS FoodOptionPrice,
+                fot.entree_id AS EntreeId,
+                fot.side_id AS SideId,
+                fot.icon_id AS IconId,
+                i.bootstrap_name AS IconBootstrapName,
+                fo.id AS Id,
+                fo.food_option_name AS FoodOptionName,
+                fo.in_stock AS InStock
+            FROM cafeteria.side s
+            LEFT JOIN cafeteria.food_option_type fot ON fot.side_id = s.id
+            LEFT JOIN cafeteria.icon i ON fot.icon_id = i.id
+            LEFT JOIN cafeteria.option_option_type oot ON fot.id = oot.food_option_type_id
+            LEFT JOIN cafeteria.food_option fo ON oot.food_option_id = fo.id
+            WHERE s.station_id = @stationId AND (s.card_only = true OR (s.card_only = false AND s.swipe_only = false))
             ORDER BY s.side_name, s.id, fot.id;";
 
         var sideLookup = new Dictionary<int, SideWithOptionsDto>();
@@ -151,10 +322,11 @@ public class SideService : ISideService
                 side_name = @SideName,
                 side_description = @SideDescription,
                 side_price = @SidePrice,
-                image_url = @ImageUrl,
-                in_stock = @InStock
+                in_stock = @InStock,
+                card_only = @CardOnly,
+                swipe_only = @SwipeOnly
             WHERE id = @id
-            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, image_url AS ImageUrl, in_stock AS InStock;";
+            RETURNING id AS Id, station_id AS StationId, side_name AS SideName, side_description AS SideDescription, side_price AS SidePrice, in_stock AS InStock, card_only AS CardOnly, swipe_only AS SwipeOnly;";
 
         var parameters = new
         {
@@ -163,8 +335,9 @@ public class SideService : ISideService
             sideDto.SideName,
             sideDto.SideDescription,
             sideDto.SidePrice,
-            sideDto.ImageUrl,
-            sideDto.InStock
+            sideDto.InStock,
+            sideDto.CardOnly,
+            sideDto.SwipeOnly
         };
 
         var result = await _dbConnection.QuerySingleOrDefaultAsync<SideDto>(sql, parameters);

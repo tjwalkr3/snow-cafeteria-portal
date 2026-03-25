@@ -2,18 +2,40 @@
 
 import pytest
 from datetime import datetime
+from decimal import Decimal
 from utilities.format_order import (
     pad_line,
     format_header,
-    format_food_item_option,
-    format_food_item,
+    format_selected_option,
+    format_entree_item,
+    format_side_item,
+    format_drink_item,
     format_footer,
     format_order,
     RECEIPT_WIDTH,
 )
-from DTOs.PrintOrderDto import PrintOrderDto
-from DTOs.FoodItemDto import FoodItemDto
-from DTOs.FoodItemOptionDto import FoodItemOptionDto
+from DTOs.BrowserOrder import BrowserOrder
+from DTOs.OrderEntreeItem import OrderEntreeItem
+from DTOs.OrderSideItem import OrderSideItem
+from DTOs.DrinkDto import DrinkDto
+from DTOs.EntreeDto import EntreeDto
+from DTOs.SideDto import SideDto
+from DTOs.SelectedFoodOption import SelectedFoodOption
+from DTOs.FoodOptionDto import FoodOptionDto
+from DTOs.FoodOptionTypeDto import FoodOptionTypeDto
+from DTOs.LocationDto import LocationDto
+
+
+def make_option_type(**kwargs) -> FoodOptionTypeDto:
+    defaults = dict(
+        id=1,
+        foodOptionTypeName="Type",
+        requiredAmount=0,
+        includedAmount=0,
+        maxAmount=1,
+        foodOptionPrice=Decimal("0"),
+    )
+    return FoodOptionTypeDto(**{**defaults, **kwargs})
 
 
 class TestPadLine:
@@ -52,109 +74,205 @@ class TestFormatHeader:
 
     def test_format_header_basic(self):
         """Test basic header formatting."""
-        order_id = 12345
-        order_time = datetime(2026, 1, 25, 14, 30, 0)
-        result = format_header(order_id, order_time)
+        result = format_header("Taylor Jordan", "Main Cafeteria", 123)
 
-        assert len(result) == 5  # separator, order ID, time, separator, blank line
+        assert len(result) == 7
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        assert "ORDER #12345" in result[1]
-        assert "01/25/2026 02:30 PM" in result[2]
+        assert "Customer: Taylor Jordan" in result[1]
+        assert "Order Id: 123" in result[2]
+        assert "Location: Main Cafeteria" in result[3]
+        assert result[4] == result[4].lstrip()
         assert "=" * RECEIPT_WIDTH == result[0].strip()
 
-    def test_format_header_large_order_id(self):
-        """Test header with a large order ID."""
-        order_id = 999999
-        order_time = datetime(2026, 12, 31, 23, 59, 59)
-        result = format_header(order_id, order_time)
+    def test_format_header_long_user_name(self):
+        """Test header with a long user name."""
+        result = format_header(
+            "A Very Long User Name That Is Longer Than The Printer Width",
+            "Main Cafeteria",
+            123,
+        )
 
-        assert "ORDER #999999" in result[1]
-        assert "12/31/2026 11:59 PM" in result[2]
+        assert len(result[1]) == RECEIPT_WIDTH
 
-    def test_format_header_single_digit_order_id(self):
-        """Test header with single digit order ID."""
-        order_id = 1
-        order_time = datetime(2026, 1, 1, 0, 0, 0)
-        result = format_header(order_id, order_time)
+    def test_format_header_empty_user_name(self):
+        """Test header falls back when user name is empty."""
+        result = format_header("", "", 123)
 
-        assert "ORDER #1" in result[1]
+        assert "Customer: Unknown User" in result[1]
+        assert "Order Id: 123" in result[2]
+        assert "Location: Unknown Location" in result[3]
         assert all(len(line) == RECEIPT_WIDTH for line in result)
 
 
-class TestFormatFoodItemOption:
-    """Tests for format_food_item_option function."""
+class TestFormatSelectedOption:
+    """Tests for format_selected_option function."""
 
-    def test_format_food_item_option_basic(self):
+    def test_format_selected_option_basic(self):
         """Test basic option formatting."""
-        option = FoodItemOptionDto(id=1, foodItemId=100, foodOptionName="Extra Cheese")
-        result = format_food_item_option(option)
+        option = SelectedFoodOption(
+            option=FoodOptionDto(id=1, foodOptionName="Extra Cheese"),
+            optionType=make_option_type(),
+        )
+        result = format_selected_option(option)
 
         assert len(result) == RECEIPT_WIDTH
         assert "    - Extra Cheese" in result
 
-    def test_format_food_item_option_long_name(self):
+    def test_format_selected_option_long_name(self):
         """Test option with a very long name."""
-        option = FoodItemOptionDto(id=1, foodItemId=100, foodOptionName="x" * 100)
-        result = format_food_item_option(option)
+        option = SelectedFoodOption(
+            option=FoodOptionDto(id=1, foodOptionName="x" * 100),
+            optionType=make_option_type(),
+        )
+        result = format_selected_option(option)
 
         assert len(result) == RECEIPT_WIDTH
 
-    def test_format_food_item_option_none_name(self):
-        """Test option with None as name."""
-        option = FoodItemOptionDto(id=1, foodItemId=100, foodOptionName=None)
-        result = format_food_item_option(option)
+    def test_format_selected_option_empty_name(self):
+        """Test option with empty string as name falls back to Unknown Option."""
+        option = SelectedFoodOption(
+            option=FoodOptionDto(id=1, foodOptionName=""),
+            optionType=make_option_type(),
+        )
+        result = format_selected_option(option)
 
         assert len(result) == RECEIPT_WIDTH
         assert "Unknown Option" in result
 
 
-class TestFormatFoodItem:
-    """Tests for format_food_item function."""
+class TestFormatEntreeItem:
+    """Tests for format_entree_item function."""
 
-    def test_format_food_item_no_options(self):
-        """Test formatting a food item without options."""
-        item = FoodItemDto(id=1, name="Cheeseburger", special=False, options=[])
-        result = format_food_item(item)
+    def test_format_entree_item_no_options(self):
+        """Test formatting an entree without options."""
+        item = OrderEntreeItem(
+            entree=EntreeDto(
+                id=1,
+                stationId=1,
+                entreeName="Cheeseburger",
+                entreePrice=Decimal("5.99"),
+            ),
+            selectedOptions=[],
+        )
+        result = format_entree_item(item)
 
         assert len(result) == 1
         assert "Cheeseburger" in result[0]
         assert all(len(line) == RECEIPT_WIDTH for line in result)
 
-    def test_format_food_item_with_options(self):
-        """Test formatting a food item with options."""
-        item = FoodItemDto(
-            id=1,
-            name="Deli Sandwich",
-            special=False,
-            options=[
-                FoodItemOptionDto(id=1, foodItemId=1, foodOptionName="White Bread"),
-                FoodItemOptionDto(id=2, foodItemId=1, foodOptionName="Ham"),
-                FoodItemOptionDto(id=3, foodItemId=1, foodOptionName="Lettuce"),
+    def test_format_entree_item_with_options(self):
+        """Test formatting an entree with options."""
+        item = OrderEntreeItem(
+            entree=EntreeDto(
+                id=1,
+                stationId=1,
+                entreeName="Deli Sandwich",
+                entreePrice=Decimal("6.99"),
+            ),
+            selectedOptions=[
+                SelectedFoodOption(
+                    option=FoodOptionDto(id=1, foodOptionName="White Bread"),
+                    optionType=make_option_type(id=1, foodOptionTypeName="Bread"),
+                ),
+                SelectedFoodOption(
+                    option=FoodOptionDto(id=2, foodOptionName="Ham"),
+                    optionType=make_option_type(id=2, foodOptionTypeName="Protein"),
+                ),
+                SelectedFoodOption(
+                    option=FoodOptionDto(id=3, foodOptionName="Lettuce"),
+                    optionType=make_option_type(id=3, foodOptionTypeName="Toppings"),
+                ),
             ],
         )
-        result = format_food_item(item)
+        result = format_entree_item(item)
 
-        assert len(result) == 4  # item name + 3 options
+        assert len(result) == 4  # entree name + 3 options
         assert "Deli Sandwich" in result[0]
         assert "White Bread" in result[1]
         assert "Ham" in result[2]
         assert "Lettuce" in result[3]
         assert all(len(line) == RECEIPT_WIDTH for line in result)
 
-    def test_format_food_item_special(self):
-        """Test formatting a special food item."""
-        item = FoodItemDto(id=1, name="Pizza", special=True, options=[])
-        result = format_food_item(item)
+    def test_format_entree_item_empty_name(self):
+        """Test formatting an entree with no name."""
+        item = OrderEntreeItem(
+            entree=EntreeDto(
+                id=42, stationId=1, entreeName="", entreePrice=Decimal("0")
+            ),
+            selectedOptions=[],
+        )
+        result = format_entree_item(item)
 
-        assert "(Special)" in result[0]
-        assert "Pizza" in result[0]
+        assert "Entree #42" in result[0]
 
-    def test_format_food_item_empty_name(self):
-        """Test formatting a food item with no name."""
-        item = FoodItemDto(id=42, name="", special=False, options=[])
-        result = format_food_item(item)
 
-        assert "Item #42" in result[0]
+class TestFormatSideItem:
+    """Tests for format_side_item function."""
+
+    def test_format_side_item_no_options(self):
+        """Test formatting a side without options."""
+        item = OrderSideItem(
+            side=SideDto(
+                id=1, stationId=1, sideName="Fries", sidePrice=Decimal("2.99")
+            ),
+            selectedOptions=[],
+        )
+        result = format_side_item(item)
+
+        assert len(result) == 1
+        assert "Fries" in result[0]
+        assert all(len(line) == RECEIPT_WIDTH for line in result)
+
+    def test_format_side_item_with_options(self):
+        """Test formatting a side with options."""
+        item = OrderSideItem(
+            side=SideDto(
+                id=1, stationId=1, sideName="Salad", sidePrice=Decimal("3.99")
+            ),
+            selectedOptions=[
+                SelectedFoodOption(
+                    option=FoodOptionDto(id=1, foodOptionName="Ranch"),
+                    optionType=make_option_type(id=1, foodOptionTypeName="Dressing"),
+                ),
+            ],
+        )
+        result = format_side_item(item)
+
+        assert len(result) == 2
+        assert "Salad" in result[0]
+        assert "Ranch" in result[1]
+
+    def test_format_side_item_empty_name(self):
+        """Test formatting a side with no name."""
+        item = OrderSideItem(
+            side=SideDto(id=7, stationId=1, sideName="", sidePrice=Decimal("0")),
+            selectedOptions=[],
+        )
+        result = format_side_item(item)
+
+        assert "Side #7" in result[0]
+
+
+class TestFormatDrinkItem:
+    """Tests for format_drink_item function."""
+
+    def test_format_drink_item_basic(self):
+        """Test basic drink formatting."""
+        drink = DrinkDto(
+            id=1, locationId=1, drinkName="Coke", drinkPrice=Decimal("1.99")
+        )
+        result = format_drink_item(drink)
+
+        assert len(result) == RECEIPT_WIDTH
+        assert "Coke" in result
+
+    def test_format_drink_item_empty_name(self):
+        """Test formatting a drink with no name."""
+        drink = DrinkDto(id=5, locationId=1, drinkName="", drinkPrice=Decimal("0"))
+        result = format_drink_item(drink)
+
+        assert len(result) == RECEIPT_WIDTH
+        assert "Drink #5" in result
 
 
 class TestFormatFooter:
@@ -174,83 +292,99 @@ class TestFormatOrder:
     """Tests for format_order function."""
 
     def test_format_order_complete(self):
-        """Test formatting a complete order."""
-        order = PrintOrderDto(
-            id=12345,
-            orderTime=datetime(2026, 1, 25, 14, 30, 0),
-            foodItems=[
-                FoodItemDto(
-                    id=1,
-                    name="Cheeseburger",
-                    special=False,
-                    options=[
-                        FoodItemOptionDto(
-                            id=1, foodItemId=1, foodOptionName="Extra Cheese"
+        """Test formatting a complete order with entrees, sides, and drinks."""
+        order = BrowserOrder(
+            isCardOrder=True,
+            location=LocationDto(id=1, locationName="Main Cafeteria"),
+            stationId=1,
+            stationName="Main Station",
+            userName="Taylor Jordan",
+            entrees=[
+                OrderEntreeItem(
+                    entree=EntreeDto(
+                        id=1,
+                        stationId=1,
+                        entreeName="Cheeseburger",
+                        entreePrice=Decimal("5.99"),
+                    ),
+                    selectedOptions=[
+                        SelectedFoodOption(
+                            option=FoodOptionDto(id=1, foodOptionName="Extra Cheese"),
+                            optionType=make_option_type(
+                                id=1,
+                                foodOptionTypeName="Cheese",
+                                foodOptionPrice=Decimal("0.50"),
+                            ),
                         ),
-                        FoodItemOptionDto(
-                            id=2, foodItemId=1, foodOptionName="No Onions"
+                        SelectedFoodOption(
+                            option=FoodOptionDto(id=2, foodOptionName="No Onions"),
+                            optionType=make_option_type(
+                                id=2, foodOptionTypeName="Toppings"
+                            ),
                         ),
                     ],
                 ),
-                FoodItemDto(id=2, name="Fries", special=False, options=[]),
+            ],
+            sides=[
+                OrderSideItem(
+                    side=SideDto(
+                        id=1, stationId=1, sideName="Fries", sidePrice=Decimal("2.99")
+                    ),
+                    selectedOptions=[],
+                ),
+            ],
+            drinks=[
+                DrinkDto(
+                    id=1, locationId=1, drinkName="Coke", drinkPrice=Decimal("1.99")
+                ),
             ],
         )
-        result = format_order(order)
+        result = format_order(order, 999)
 
-        # Check all lines are correct width
         assert all(len(line) == RECEIPT_WIDTH for line in result)
+        # header (7) + entree (3) + side (1) + drink (1) + footer (2) = 14
+        assert len(result) == 14
 
-        # Check structure: header (5) + item1 (3) + item2 (1) + footer (2) = 11
-        assert len(result) == 11
-
-        # Verify content
         receipt_text = "\n".join(result)
-        assert "ORDER #12345" in receipt_text
+        assert "Customer: Taylor Jordan" in receipt_text
+        assert "Order Id: 999" in receipt_text
+        assert "Location: Main Cafeteria" in receipt_text
+        assert "Taylor Jordan" in receipt_text
         assert "Cheeseburger" in receipt_text
         assert "Extra Cheese" in receipt_text
         assert "No Onions" in receipt_text
         assert "Fries" in receipt_text
+        assert "Coke" in receipt_text
 
-    def test_format_order_empty_items(self):
+    def test_format_order_empty(self):
         """Test formatting an order with no items."""
-        order = PrintOrderDto(
-            id=1, orderTime=datetime(2026, 1, 1, 0, 0, 0), foodItems=[]
-        )
-        result = format_order(order)
+        order = BrowserOrder(userName="Taylor Jordan")
+        result = format_order(order, 999)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
-        # header (5) + footer (2) = 7
-        assert len(result) == 7
+        # header (7) + footer (2) = 9
+        assert len(result) == 9
 
-    def test_format_order_multiple_special_items(self):
-        """Test formatting an order with multiple special items."""
-        order = PrintOrderDto(
-            id=777,
-            orderTime=datetime(2026, 6, 15, 12, 0, 0),
-            foodItems=[
-                FoodItemDto(
-                    id=1,
-                    name="Custom Pizza",
-                    special=True,
-                    options=[
-                        FoodItemOptionDto(
-                            id=1, foodItemId=1, foodOptionName="Pepperoni"
-                        ),
-                        FoodItemOptionDto(
-                            id=2, foodItemId=1, foodOptionName="Mushrooms"
-                        ),
-                        FoodItemOptionDto(id=3, foodItemId=1, foodOptionName="Olives"),
-                    ],
+    def test_format_order_only_drinks(self):
+        """Test formatting an order with only drinks."""
+        order = BrowserOrder(
+            userName="Taylor Jordan",
+            location=LocationDto(id=1, locationName="Main Cafeteria"),
+            drinks=[
+                DrinkDto(
+                    id=1, locationId=1, drinkName="Water", drinkPrice=Decimal("0")
                 ),
-                FoodItemDto(id=2, name="Special Salad", special=True, options=[]),
+                DrinkDto(
+                    id=2, locationId=1, drinkName="OJ", drinkPrice=Decimal("2.49")
+                ),
             ],
         )
-        result = format_order(order)
+        result = format_order(order, 999)
 
         assert all(len(line) == RECEIPT_WIDTH for line in result)
+        # header (7) + 2 drinks + footer (2) = 11
+        assert len(result) == 11
+
         receipt_text = "\n".join(result)
-        assert "Custom Pizza (Special)" in receipt_text
-        assert "Special Salad (Special)" in receipt_text
-        assert "Pepperoni" in receipt_text
-        assert "Mushrooms" in receipt_text
-        assert "Olives" in receipt_text
+        assert "Water" in receipt_text
+        assert "OJ" in receipt_text

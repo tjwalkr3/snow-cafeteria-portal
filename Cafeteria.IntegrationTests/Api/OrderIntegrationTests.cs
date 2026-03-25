@@ -1,4 +1,7 @@
 using System.Net.Http.Json;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
 using Dapper;
@@ -73,9 +76,113 @@ public class OrderIntegrationTests : IDisposable
         Assert.NotNull(createdOrder);
         Assert.True(createdOrder.Id > 0);
         Assert.Equal(15.99m, createdOrder.TotalPrice);
+
+        var persistedOrder = await _connection.QuerySingleAsync<OrderDto>(
+            @"SELECT id AS Id,
+                     order_time AS OrderTime,
+                     total_price AS TotalPrice,
+                     tax AS Tax,
+                     total_swipe AS TotalSwipe
+              FROM cafeteria.order
+              WHERE id = @Id",
+            new { createdOrder.Id }
+        );
+
+        Assert.Equal(createdOrder.Id, persistedOrder.Id);
+        Assert.Equal(createdOrder.TotalPrice, persistedOrder.TotalPrice);
+        Assert.Equal(createdOrder.Tax, persistedOrder.Tax);
+        Assert.Equal(createdOrder.TotalSwipe, persistedOrder.TotalSwipe);
+
         Assert.Equal(2, createdOrder.FoodItems.Count);
         Assert.Equal(2, createdOrder.FoodItems[0].Options.Count);
         Assert.Equal("Lettuce", createdOrder.FoodItems[0].Options[0].FoodOptionName);
+    }
+
+    [Fact]
+    public async Task CreateOrder_TriggersPrintAfterPersistence()
+    {
+        var printerListener = new TcpListener(IPAddress.Loopback, 0);
+        printerListener.Start();
+        var port = ((IPEndPoint)printerListener.LocalEndpoint).Port;
+
+        var initialOrderId = await _connection.QuerySingleAsync<int>("SELECT COALESCE(MAX(id), 0) FROM cafeteria.order");
+        var originalPrinterUrl = await _connection.QuerySingleOrDefaultAsync<string?>(
+            "SELECT printer_url FROM cafeteria.cafeteria_location WHERE id = @LocationId",
+            new { LocationId = 1 }
+        );
+
+        await _connection.ExecuteAsync(
+            "UPDATE cafeteria.cafeteria_location SET printer_url = @PrinterUrl WHERE id = @LocationId",
+            new { PrinterUrl = $"http://127.0.0.1:{port}", LocationId = 1 }
+        );
+
+        try
+        {
+            var newOrder = new BrowserOrder
+            {
+                IsCardOrder = true,
+                Location = new LocationDto { Id = 1, LocationName = "Test Location", LocationDescription = "Test Location Description" },
+                StationId = 1,
+                StationName = "Test Station",
+                Entrees =
+                [
+                    new OrderEntreeItem
+                    {
+                        Entree = new EntreeDto { Id = 1, EntreeName = "Print Test Entree", EntreePrice = 7.25m, StationId = 1 }
+                    }
+                ],
+                Sides =
+                [
+                    new OrderSideItem
+                    {
+                        Side = new SideDto { Id = 1, SideName = "Print Test Side", SidePrice = 2.10m, StationId = 2 }
+                    }
+                ],
+                Drinks = []
+            };
+
+            var printCaptureTask = Task.Run(async () =>
+            {
+                using var tcpClient = await printerListener.AcceptTcpClientAsync();
+                using var stream = tcpClient.GetStream();
+                var buffer = new byte[8192];
+                var bytesRead = await stream.ReadAsync(buffer);
+                var requestText = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                using var verificationConnection = _fixture.GetConnection();
+                var committedOrderCount = await verificationConnection.QuerySingleAsync<int>(
+                    "SELECT COUNT(*) FROM cafeteria.order WHERE id > @InitialOrderId",
+                    new { InitialOrderId = initialOrderId }
+                );
+
+                const string responseText = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+                var responseBytes = Encoding.UTF8.GetBytes(responseText);
+                await stream.WriteAsync(responseBytes);
+                await stream.FlushAsync();
+
+                return (requestText, committedOrderCount);
+            });
+
+            var response = await _client.PostAsJsonAsync("/api/order", newOrder);
+            response.EnsureSuccessStatusCode();
+
+            var completedTask = await Task.WhenAny(printCaptureTask, Task.Delay(TimeSpan.FromSeconds(10)));
+            Assert.Same(printCaptureTask, completedTask);
+
+            var (requestText, committedOrderCount) = await printCaptureTask;
+
+            Assert.Contains("POST /print-order", requestText);
+            Assert.True(committedOrderCount >= 1);
+        }
+        finally
+        {
+            await _connection.ExecuteAsync(
+                "UPDATE cafeteria.cafeteria_location SET printer_url = @PrinterUrl WHERE id = @LocationId",
+                new { PrinterUrl = originalPrinterUrl, LocationId = 1 }
+            );
+
+            printerListener.Stop();
+        }
     }
 
     [Fact]

@@ -4,8 +4,10 @@
 <div class="row row-cols-1 row-cols-lg-3 g-3">
     @foreach (var entree in Entrees)
     {
+        var cardQty = IsCardOrder ? (CardQuantities?.GetValueOrDefault(entree.Id, 0) ?? 0) : 0;
+        var isHighlighted = IsCardOrder ? cardQty > 0 : SelectedEntree?.Id == entree.Id;
         <div class="col">
-            <div class="meal-card d-flex flex-column @(SelectedEntree?.Id == entree.Id ? "selected" : "")"
+            <div class="meal-card d-flex flex-column @(isHighlighted ? "selected" : "")"
                  @onclick="() => OnEntreeSelected.InvokeAsync(entree)">
                 <div class="flex-grow-1">
                     <h5 class="mb-1 fw-600">@entree.EntreeName</h5>
@@ -13,7 +15,7 @@
                     {
                         <p class="text-muted mb-0" style="font-size: 0.9rem;">@entree.EntreeDescription</p>
                     }
-                    @if (SelectedEntree?.Id == entree.Id && SelectedBadges.Any())
+                    @if (!IsCardOrder && SelectedEntree?.Id == entree.Id && SelectedBadges.Any())
                     {
                         <div class="d-flex flex-wrap gap-1 mt-2">
                             @foreach (var badge in SelectedBadges)
@@ -32,19 +34,19 @@
                     {
                         <span></span>
                     }
-                    @if (IsCardOrder && SelectedEntree?.Id == entree.Id && Quantity > 0)
+                    @if (IsCardOrder && cardQty > 0)
                     {
                         <div class="qty-stepper d-inline-flex align-items-center" @onclick:stopPropagation="true">
-                            <button type="button" class="qty-btn" @onclick="() => OnQuantityChanged.InvokeAsync(Quantity - 1)">
+                            <button type="button" class="qty-btn" @onclick="() => OnCardQtyChanged.InvokeAsync((entree.Id, cardQty - 1))">
                                 <i class="bi bi-dash"></i>
                             </button>
-                            <span class="qty-value">@Quantity</span>
-                            <button type="button" class="qty-btn" @onclick="() => OnQuantityChanged.InvokeAsync(Quantity + 1)">
+                            <span class="qty-value">@cardQty</span>
+                            <button type="button" class="qty-btn" @onclick="() => OnCardQtyChanged.InvokeAsync((entree.Id, cardQty + 1))">
                                 <i class="bi bi-plus"></i>
                             </button>
                         </div>
                     }
-                    else if (IsComplete(entree))
+                    else if (!IsCardOrder && IsComplete(entree))
                     {
                         <button type="button" class="select-btn added d-inline-flex align-items-center gap-1"
                                 @onclick="() => OnEntreeSelected.InvokeAsync(entree)" @onclick:stopPropagation="true">

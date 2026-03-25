@@ -46,11 +46,6 @@
                             <InputTextArea class="form-control" @bind-Value="ViewModel.CurrentSide.SideDescription" />
                             <ValidationMessage For="@(() => ViewModel.CurrentSide.SideDescription)" />
                         </div>
-                        <div class="form-group">
-                            <label>Image URL:</label>
-                            <InputText class="form-control" @bind-Value="ViewModel.CurrentSide.ImageUrl" />
-                            <ValidationMessage For="@(() => ViewModel.CurrentSide.ImageUrl)" />
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @onclick="HandleClose">Close</button>

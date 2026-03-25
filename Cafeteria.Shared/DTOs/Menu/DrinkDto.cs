@@ -17,11 +17,12 @@ public class DrinkDto
     public string? DrinkDescription { get; set; }
 
     [Required]
-    [Range(0.01, double.MaxValue)]
+    [Range(0, double.MaxValue)]
     public decimal DrinkPrice { get; set; }
 
-    [StringLength(500)]
-    public string? ImageUrl { get; set; }
-
     public bool InStock { get; set; } = true;
+
+    public bool CardOnly { get; set; } = false;
+
+    public bool SwipeOnly { get; set; } = false;
 }

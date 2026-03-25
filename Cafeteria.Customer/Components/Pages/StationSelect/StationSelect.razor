@@ -21,9 +21,12 @@
             ❮ Back to Location
         </a>
 
-        <div class="text-center py-5">
-            <h2 class="mb-3">No Stations Currently Open</h2>
-            <p class="fs-6">All stations are currently closed. Please try again later.</p>
+        <div class="closed-banner text-center mt-4">
+            <div class="closed-banner-icon mb-3">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <h2 class="closed-banner-title fw-bold mb-2">No Stations Currently Open</h2>
+            <p class="closed-banner-subtitle mb-0">All stations are currently closed. Please try again later.</p>
         </div>
     }
     else if (StationSelectVM.Stations != null)

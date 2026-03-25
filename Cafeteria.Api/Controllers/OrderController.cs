@@ -77,7 +77,8 @@ public class OrderController(IOrderService orderService, ICreateOrderService cre
 
         if (string.IsNullOrEmpty(email))
         {
-            return BadRequest("Email not found in token claims");
+            var claimNames = string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"));
+            return BadRequest($"Email not found in token claims. Available: [{claimNames}]");
         }
 
         var result = await _createOrderService.CreateOrder(browserOrder, email);

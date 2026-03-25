@@ -35,7 +35,6 @@ public class DrinkIntegrationTests : IDisposable
             DrinkName = "Test Sprite",
             DrinkDescription = "Lemon-lime soda for testing",
             DrinkPrice = 1.99m,
-            ImageUrl = "https://picsum.photos/id/100/300/200",
         };
 
         var response = await _client.PostAsJsonAsync("/api/drink", newDrink);
@@ -107,7 +106,8 @@ public class DrinkIntegrationTests : IDisposable
                 DrinkName = "Drink To Update",
                 DrinkDescription = "Original",
                 DrinkPrice = 1.99m,
-                ImageUrl = "https://example.com/img.jpg",
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -118,7 +118,6 @@ public class DrinkIntegrationTests : IDisposable
             DrinkName = "Updated Drink",
             DrinkDescription = "Updated description",
             DrinkPrice = 3.99m,
-            ImageUrl = "https://picsum.photos/id/101/300/200",
         };
 
         var response = await _client.PutAsJsonAsync($"/api/drink/{drinkId}", updatedDrink);
@@ -141,7 +140,6 @@ public class DrinkIntegrationTests : IDisposable
             DrinkName = "Nonexistent",
             DrinkDescription = "Description",
             DrinkPrice = 1.99m,
-            ImageUrl = "https://picsum.photos/id/102/300/200",
         };
 
         var response = await _client.PutAsJsonAsync("/api/drink/99999", updatedDrink);
@@ -160,7 +158,8 @@ public class DrinkIntegrationTests : IDisposable
                 DrinkName = "Drink To Delete",
                 DrinkDescription = "Will be deleted",
                 DrinkPrice = 1.99m,
-                ImageUrl = "https://example.com/img.jpg",
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -182,7 +181,7 @@ public class DrinkIntegrationTests : IDisposable
     [Fact]
     public async Task SetStockStatusById_UpdatesInStockStatus()
     {
-        // Create a new drink for this test with inStock = true
+        // Create a new drink for this test
         var drinkId = _connection.ExecuteScalar<int>(
             InsertDrinkSql + " RETURNING id",
             new
@@ -190,8 +189,9 @@ public class DrinkIntegrationTests : IDisposable
                 LocationId = 1,
                 DrinkName = "Drink To Stock Toggle",
                 DrinkDescription = "Testing stock status",
-                DrinkPrice = 2.49m,
-                ImageUrl = "https://example.com/img.jpg",
+                DrinkPrice = 1.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -210,33 +210,115 @@ public class DrinkIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task SetStockStatusById_ToggesStockStatusToTrue()
+    public async Task GetSwipeDrinksByLocationID_ReturnsOnlySwipeEligibleDrinks()
     {
-        // Create a new drink for this test
-        var drinkId = _connection.ExecuteScalar<int>(
+        // Create test drinks with different card/swipe flags
+        var swipeOnlyId = _connection.ExecuteScalar<int>(
             InsertDrinkSql + " RETURNING id",
             new
             {
                 LocationId = 1,
-                DrinkName = "Drink To Stock Toggle True",
-                DrinkDescription = "Testing stock status toggle",
-                DrinkPrice = 2.49m,
-                ImageUrl = "https://example.com/img.jpg",
+                DrinkName = "Swipe Only Drink",
+                DrinkDescription = "Available for swipe orders only",
+                DrinkPrice = 1.49m,
+                CardOnly = false,
+                SwipeOnly = true
             }
         );
 
-        // Set stock status to true
-        var response = await _client.PutAsJsonAsync($"/api/drink/{drinkId}/stock", true);
+        var cardOnlyId = _connection.ExecuteScalar<int>(
+            InsertDrinkSql + " RETURNING id",
+            new
+            {
+                LocationId = 1,
+                DrinkName = "Card Only Drink",
+                DrinkDescription = "Available for card orders only",
+                DrinkPrice = 1.99m,
+                CardOnly = true,
+                SwipeOnly = false
+            }
+        );
+
+        var bothId = _connection.ExecuteScalar<int>(
+            InsertDrinkSql + " RETURNING id",
+            new
+            {
+                LocationId = 1,
+                DrinkName = "Both Cards And Swipes Drink",
+                DrinkDescription = "Available for both payment types",
+                DrinkPrice = 2.49m,
+                CardOnly = false,
+                SwipeOnly = false
+            }
+        );
+
+        // Get swipe-eligible drinks
+        var response = await _client.GetAsync("/api/drink/location/1/swipe");
         response.EnsureSuccessStatusCode();
-        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+        var drinks = await response.Content.ReadFromJsonAsync<List<DrinkDto>>();
 
-        // Verify the stock status was updated
-        var getResponse = await _client.GetAsync($"/api/drink/{drinkId}");
-        getResponse.EnsureSuccessStatusCode();
-        var drink = await getResponse.Content.ReadFromJsonAsync<DrinkDto>();
+        Assert.NotNull(drinks);
+        // Should include swipe-only and both
+        Assert.Contains(drinks, d => d.Id == swipeOnlyId && d.SwipeOnly);
+        Assert.Contains(drinks, d => d.Id == bothId && !d.CardOnly && !d.SwipeOnly);
+        // Should NOT include card-only
+        Assert.DoesNotContain(drinks, d => d.Id == cardOnlyId);
+    }
 
-        Assert.NotNull(drink);
-        Assert.True(drink.InStock);
+    [Fact]
+    public async Task GetCardDrinksByLocationID_ReturnsOnlyCardEligibleDrinks()
+    {
+        // Create test drinks with different card/swipe flags
+        var swipeOnlyId = _connection.ExecuteScalar<int>(
+            InsertDrinkSql + " RETURNING id",
+            new
+            {
+                LocationId = 1,
+                DrinkName = "Swipe Only For Card Filter Test",
+                DrinkDescription = "Available for swipe orders only",
+                DrinkPrice = 1.49m,
+                CardOnly = false,
+                SwipeOnly = true
+            }
+        );
+
+        var cardOnlyId = _connection.ExecuteScalar<int>(
+            InsertDrinkSql + " RETURNING id",
+            new
+            {
+                LocationId = 1,
+                DrinkName = "Card Only For Card Filter Test",
+                DrinkDescription = "Available for card orders only",
+                DrinkPrice = 1.99m,
+                CardOnly = true,
+                SwipeOnly = false
+            }
+        );
+
+        var bothId = _connection.ExecuteScalar<int>(
+            InsertDrinkSql + " RETURNING id",
+            new
+            {
+                LocationId = 1,
+                DrinkName = "Both For Card Filter Test",
+                DrinkDescription = "Available for both payment types",
+                DrinkPrice = 2.49m,
+                CardOnly = false,
+                SwipeOnly = false
+            }
+        );
+
+        // Get card-eligible drinks
+        var response = await _client.GetAsync("/api/drink/location/1/card");
+        response.EnsureSuccessStatusCode();
+        var drinks = await response.Content.ReadFromJsonAsync<List<DrinkDto>>();
+
+        Assert.NotNull(drinks);
+        // Should include card-only and both
+        Assert.Contains(drinks, d => d.Id == cardOnlyId && d.CardOnly);
+        Assert.Contains(drinks, d => d.Id == bothId && !d.CardOnly && !d.SwipeOnly);
+        // Should NOT include swipe-only
+        Assert.DoesNotContain(drinks, d => d.Id == swipeOnlyId);
     }
 
     [Fact]

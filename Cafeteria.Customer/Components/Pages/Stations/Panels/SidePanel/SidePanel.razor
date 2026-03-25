@@ -5,8 +5,10 @@
     {
         var side = sideWithOptions.Side;
         var hasOptions = sideWithOptions.OptionTypes.Any();
+        var cardQty = IsCardOrder ? (CardQuantities?.GetValueOrDefault(side.Id, 0) ?? 0) : 0;
+        var isHighlighted = IsCardOrder ? cardQty > 0 : SelectedSide?.Id == side.Id;
         <div class="col">
-            <div class="meal-card h-100 d-flex flex-column" @onclick="() => HandleSideTap(sideWithOptions)">
+            <div class="meal-card h-100 d-flex flex-column @(isHighlighted ? "selected" : "")" @onclick="() => HandleSideTap(sideWithOptions)">
                 <div class="flex-grow-1">
                     <h5 class="mb-1 fw-600">@side.SideName</h5>
                     @if (!string.IsNullOrEmpty(side.SideDescription))
@@ -23,19 +25,19 @@
                     {
                         <span></span>
                     }
-                    @if (IsCardOrder && SelectedSide?.Id == side.Id && Quantity > 0)
+                    @if (IsCardOrder && cardQty > 0)
                     {
                         <div class="qty-stepper d-inline-flex align-items-center" @onclick:stopPropagation="true">
-                            <button type="button" class="qty-btn" @onclick="() => OnQuantityChanged.InvokeAsync(Quantity - 1)">
+                            <button type="button" class="qty-btn" @onclick="() => OnCardQtyChanged.InvokeAsync((side.Id, cardQty - 1))">
                                 <i class="bi bi-dash"></i>
                             </button>
-                            <span class="qty-value">@Quantity</span>
-                            <button type="button" class="qty-btn" @onclick="() => OnQuantityChanged.InvokeAsync(Quantity + 1)">
+                            <span class="qty-value">@cardQty</span>
+                            <button type="button" class="qty-btn" @onclick="() => OnCardQtyChanged.InvokeAsync((side.Id, cardQty + 1))">
                                 <i class="bi bi-plus"></i>
                             </button>
                         </div>
                     }
-                    else if (SelectedSide?.Id == side.Id)
+                    else if (!IsCardOrder && SelectedSide?.Id == side.Id)
                     {
                         <button type="button" class="select-btn added d-inline-flex align-items-center gap-1"
                                 @onclick="() => HandleSideTap(sideWithOptions)" @onclick:stopPropagation="true">
