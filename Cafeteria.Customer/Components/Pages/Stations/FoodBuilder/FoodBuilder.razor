@@ -23,51 +23,54 @@
 else
 {
     <div class="container py-2 px-1">
-        <div class="mb-">
-            <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
-                &#10094; Back to Station Selection
-            </a>
-        </div>
-
-        @if (!IsCardOrder)
-        {
-            <div class="swipe-info-banner d-flex align-items-start gap-2 my-3">
-                <i class="bi bi-info-circle flex-shrink-0" style="margin-top: 2px;"></i>
-                <span>Your meal swipe includes one entree, one side, and a drink. Follow the steps below to build your meal.</span>
-            </div>
-        }
-
-        @if (IsCardOrder)
-        {
-            <div class="card-info-banner d-flex align-items-start gap-2 my-3">
-                <i class="bi bi-credit-card flex-shrink-0" style="margin-top: 2px;"></i>
-                <span>Pay per item. Browse the categories below and add what you'd like to your cart.</span>
+        <div class="sticky-header">
+            <div>
+                <a href="@CreateBackUrl()" class="btn text-decoration-none ps-0">
+                    &#10094; Back to Station Selection
+                </a>
             </div>
 
-            <CardCategoryNav Tabs="@Tabs"
-                             ActiveTab="@ActiveTab"
-                             HasSelectionForTab="@HasSelectionForTab"
-                             GetSelectionText="@GetSelectionTextForTab"
-                             GetTabIcon="@GetTabIcon"
-                             OnTabSelected="@SetActiveTab" />
-        }
-        else
-        {
-            <SwipeStepper Tabs="@Tabs"
-                          ActiveTab="@ActiveTab"
-                          IsTabCompleted="@IsTabCompleted"
-                          OnTabSelected="@SetActiveTab" />
-        }
-
-        <div class="content-area @(IsCardOrder ? "card-tab-panel" : "")">
             @if (!IsCardOrder)
             {
-                <p class="step-hint text-muted mb-3">@GetStepHint()</p>
+                <div class="swipe-info-banner d-flex align-items-start gap-2 my-3">
+                    <i class="bi bi-info-circle flex-shrink-0" style="margin-top: 2px;"></i>
+                    <span>Your meal swipe includes one entree, one side, and a drink. Follow the steps below to build your meal.</span>
+                </div>
+            }
+
+            @if (IsCardOrder)
+            {
+                <div class="card-info-banner d-flex align-items-start gap-2 my-3">
+                    <i class="bi bi-credit-card flex-shrink-0" style="margin-top: 2px;"></i>
+                    <span>Pay per item. Browse the categories below and add what you'd like to your cart.</span>
+                </div>
+
+                <CardCategoryNav Tabs="@Tabs"
+                                 ActiveTab="@ActiveTab"
+                                 HasSelectionForTab="@HasSelectionForTab"
+                                 GetSelectionText="@GetSelectionTextForTab"
+                                 GetTabIcon="@GetTabIcon"
+                                 OnTabSelected="@SetActiveTab" />
             }
             else
             {
-                <p class="step-hint text-muted mb-3">@GetCardStepHint()</p>
+                <SwipeStepper Tabs="@Tabs"
+                              ActiveTab="@ActiveTab"
+                              IsTabCompleted="@IsTabCompleted"
+                              OnTabSelected="@SetActiveTab" />
             }
+
+            @if (!IsCardOrder)
+            {
+                <p class="step-hint text-muted mt-4 mb-0">@GetStepHint()</p>
+            }
+            else
+            {
+                <p class="step-hint text-muted mt-4 mb-0">@GetCardStepHint()</p>
+            }
+        </div>
+
+        <div class="content-area @(IsCardOrder ? "card-tab-panel" : "")">
 
             @if (ActiveTab == "entrees")
             {
