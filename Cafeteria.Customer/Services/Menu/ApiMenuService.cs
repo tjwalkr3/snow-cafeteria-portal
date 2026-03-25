@@ -66,12 +66,44 @@ public class ApiMenuService(IHttpClientAuth client) : IApiMenuService
         return await client.GetAsync<List<EntreeDto>>($"entree/station/{stationId}") ?? new List<EntreeDto>();
     }
 
-    public async Task<List<SideDto>> GetSidesByStation(int stationId)
+    public async Task<List<EntreeDto>> GetCardEntreesByStation(int stationId)
     {
         if (stationId < 1)
             throw new ArgumentOutOfRangeException(nameof(stationId));
 
-        return await client.GetAsync<List<SideDto>>($"side/station/{stationId}") ?? new List<SideDto>();
+        return await client.GetAsync<List<EntreeDto>>($"entree/station/{stationId}/card") ?? new List<EntreeDto>();
+    }
+
+    public async Task<List<EntreeDto>> GetSwipeEntreesByStation(int stationId)
+    {
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
+
+        return await client.GetAsync<List<EntreeDto>>($"entree/station/{stationId}/swipe") ?? new List<EntreeDto>();
+    }
+
+    public async Task<List<SideWithOptionsDto>> GetSidesByStation(int stationId)
+    {
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
+
+        return await client.GetAsync<List<SideWithOptionsDto>>($"side/station/{stationId}/with-options") ?? new List<SideWithOptionsDto>();
+    }
+
+    public async Task<List<SideWithOptionsDto>> GetCardSidesByStation(int stationId)
+    {
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
+
+        return await client.GetAsync<List<SideWithOptionsDto>>($"side/station/{stationId}/card/with-options") ?? new List<SideWithOptionsDto>();
+    }
+
+    public async Task<List<SideWithOptionsDto>> GetSwipeSidesByStation(int stationId)
+    {
+        if (stationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(stationId));
+
+        return await client.GetAsync<List<SideWithOptionsDto>>($"side/station/{stationId}/swipe/with-options") ?? new List<SideWithOptionsDto>();
     }
 
     public async Task<List<SideWithOptionsDto>> GetSidesWithOptionsByStation(int stationId)
@@ -88,6 +120,22 @@ public class ApiMenuService(IHttpClientAuth client) : IApiMenuService
             throw new ArgumentOutOfRangeException(nameof(locationId));
 
         return await client.GetAsync<List<DrinkDto>>($"drink/location/{locationId}") ?? new List<DrinkDto>();
+    }
+
+    public async Task<List<DrinkDto>> GetCardDrinksByLocation(int locationId)
+    {
+        if (locationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(locationId));
+
+        return await client.GetAsync<List<DrinkDto>>($"drink/location/{locationId}/card") ?? new List<DrinkDto>();
+    }
+
+    public async Task<List<DrinkDto>> GetSwipeDrinksByLocation(int locationId)
+    {
+        if (locationId < 1)
+            throw new ArgumentOutOfRangeException(nameof(locationId));
+
+        return await client.GetAsync<List<DrinkDto>>($"drink/location/{locationId}/swipe") ?? new List<DrinkDto>();
     }
 
     public async Task<List<FoodOptionDto>> GetOptionsByEntree(int entreeId)

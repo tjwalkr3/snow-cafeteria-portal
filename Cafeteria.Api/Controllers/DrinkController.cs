@@ -35,6 +35,20 @@ public class DrinkController(IDrinkService drinkService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("location/{locationId}/swipe")]
+    public async Task<ActionResult<List<DrinkDto>>> GetSwipeDrinksByLocationId(int locationId)
+    {
+        var result = await _drinkService.GetSwipeDrinksByLocationId(locationId);
+        return Ok(result);
+    }
+
+    [HttpGet("location/{locationId}/card")]
+    public async Task<ActionResult<List<DrinkDto>>> GetCardDrinksByLocationId(int locationId)
+    {
+        var result = await _drinkService.GetCardDrinksByLocationId(locationId);
+        return Ok(result);
+    }
+
     [Authorize]
     [RequireUserRole("admin", "food-service")]
     [HttpPost]

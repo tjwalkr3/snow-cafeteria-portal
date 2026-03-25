@@ -21,4 +21,8 @@ public class DrinkDto
     public decimal DrinkPrice { get; set; }
 
     public bool InStock { get; set; } = true;
+
+    public bool CardOnly { get; set; } = false;
+
+    public bool SwipeOnly { get; set; } = false;
 }

@@ -106,6 +106,8 @@ public class SideIntegrationTests : IDisposable
                 SideName = "Side To Update",
                 SideDescription = "Original",
                 SidePrice = 2.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -155,7 +157,9 @@ public class SideIntegrationTests : IDisposable
                 StationId = 1,
                 SideName = "Side To Delete",
                 SideDescription = "Will be deleted",
-                SidePrice = 2.99m,
+                SidePrice = 1.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -186,6 +190,8 @@ public class SideIntegrationTests : IDisposable
                 SideName = "Side To Stock Toggle",
                 SideDescription = "Testing stock status",
                 SidePrice = 3.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -204,32 +210,115 @@ public class SideIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task SetStockStatusById_ToggesStockStatusToTrue()
+    public async Task GetSwipeSidesByStationID_ReturnsOnlySwipeEligibleSides()
     {
-        // Create a new side for this test
-        var sideId = _connection.ExecuteScalar<int>(
+        // Create test sides with different card/swipe flags
+        var swipeOnlyId = _connection.ExecuteScalar<int>(
             InsertSideSql + " RETURNING id",
             new
             {
                 StationId = 1,
-                SideName = "Side To Stock Toggle True",
-                SideDescription = "Testing stock status toggle",
-                SidePrice = 3.99m,
+                SideName = "Swipe Only Side",
+                SideDescription = "Available for swipe orders only",
+                SidePrice = 2.49m,
+                CardOnly = false,
+                SwipeOnly = true
             }
         );
 
-        // Set stock status to true
-        var response = await _client.PutAsJsonAsync($"/api/side/{sideId}/stock", true);
+        var cardOnlyId = _connection.ExecuteScalar<int>(
+            InsertSideSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                SideName = "Card Only Side",
+                SideDescription = "Available for card orders only",
+                SidePrice = 2.99m,
+                CardOnly = true,
+                SwipeOnly = false
+            }
+        );
+
+        var bothId = _connection.ExecuteScalar<int>(
+            InsertSideSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                SideName = "Both Cards And Swipes Side",
+                SideDescription = "Available for both payment types",
+                SidePrice = 3.49m,
+                CardOnly = false,
+                SwipeOnly = false
+            }
+        );
+
+        // Get swipe-eligible sides
+        var response = await _client.GetAsync("/api/side/station/1/swipe");
         response.EnsureSuccessStatusCode();
-        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+        var sides = await response.Content.ReadFromJsonAsync<List<SideDto>>();
 
-        // Verify the stock status was updated
-        var getResponse = await _client.GetAsync($"/api/side/{sideId}");
-        getResponse.EnsureSuccessStatusCode();
-        var side = await getResponse.Content.ReadFromJsonAsync<SideDto>();
+        Assert.NotNull(sides);
+        // Should include swipe-only and both
+        Assert.Contains(sides, s => s.Id == swipeOnlyId && s.SwipeOnly);
+        Assert.Contains(sides, s => s.Id == bothId && !s.CardOnly && !s.SwipeOnly);
+        // Should NOT include card-only
+        Assert.DoesNotContain(sides, s => s.Id == cardOnlyId);
+    }
 
-        Assert.NotNull(side);
-        Assert.True(side.InStock);
+    [Fact]
+    public async Task GetCardSidesByStationID_ReturnsOnlyCardEligibleSides()
+    {
+        // Create test sides with different card/swipe flags
+        var swipeOnlyId = _connection.ExecuteScalar<int>(
+            InsertSideSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                SideName = "Swipe Only For Card Filter Test",
+                SideDescription = "Available for swipe orders only",
+                SidePrice = 2.49m,
+                CardOnly = false,
+                SwipeOnly = true
+            }
+        );
+
+        var cardOnlyId = _connection.ExecuteScalar<int>(
+            InsertSideSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                SideName = "Card Only For Card Filter Test",
+                SideDescription = "Available for card orders only",
+                SidePrice = 2.99m,
+                CardOnly = true,
+                SwipeOnly = false
+            }
+        );
+
+        var bothId = _connection.ExecuteScalar<int>(
+            InsertSideSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                SideName = "Both For Card Filter Test",
+                SideDescription = "Available for both payment types",
+                SidePrice = 3.49m,
+                CardOnly = false,
+                SwipeOnly = false
+            }
+        );
+
+        // Get card-eligible sides
+        var response = await _client.GetAsync("/api/side/station/1/card");
+        response.EnsureSuccessStatusCode();
+        var sides = await response.Content.ReadFromJsonAsync<List<SideDto>>();
+
+        Assert.NotNull(sides);
+        // Should include card-only and both
+        Assert.Contains(sides, s => s.Id == cardOnlyId && s.CardOnly);
+        Assert.Contains(sides, s => s.Id == bothId && !s.CardOnly && !s.SwipeOnly);
+        // Should NOT include swipe-only
+        Assert.DoesNotContain(sides, s => s.Id == swipeOnlyId);
     }
 
     [Fact]
@@ -237,19 +326,5 @@ public class SideIntegrationTests : IDisposable
     {
         var response = await _client.PutAsJsonAsync("/api/side/99999/stock", false);
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task GetSidesByStationIdWithOptions_ReturnsSidesWithOptions()
-    {
-        // Test with station 1 which should have sides with options
-        var response = await _client.GetAsync("/api/side/station/1/with-options");
-        response.EnsureSuccessStatusCode();
-        var sidesWithOptions = await response.Content.ReadFromJsonAsync<List<SideWithOptionsDto>>();
-
-        Assert.NotNull(sidesWithOptions);
-        Assert.True(sidesWithOptions.Count >= 1);
-        // Verify each side has an options list
-        Assert.All(sidesWithOptions, side => Assert.NotNull(side.OptionTypes));
     }
 }

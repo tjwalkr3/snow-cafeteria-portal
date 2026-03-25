@@ -42,6 +42,34 @@ public class SideController(ISideService sideService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("station/{stationId}/swipe")]
+    public async Task<ActionResult<List<SideDto>>> GetSwipeSidesByStationId(int stationId)
+    {
+        var result = await _sideService.GetSwipeSidesByStationId(stationId);
+        return Ok(result);
+    }
+
+    [HttpGet("station/{stationId}/swipe/with-options")]
+    public async Task<ActionResult<List<SideWithOptionsDto>>> GetSwipeSidesByStationIdWithOptions(int stationId)
+    {
+        var result = await _sideService.GetSwipeSidesByStationIdWithOptions(stationId);
+        return Ok(result);
+    }
+
+    [HttpGet("station/{stationId}/card")]
+    public async Task<ActionResult<List<SideDto>>> GetCardSidesByStationId(int stationId)
+    {
+        var result = await _sideService.GetCardSidesByStationId(stationId);
+        return Ok(result);
+    }
+
+    [HttpGet("station/{stationId}/card/with-options")]
+    public async Task<ActionResult<List<SideWithOptionsDto>>> GetCardSidesByStationIdWithOptions(int stationId)
+    {
+        var result = await _sideService.GetCardSidesByStationIdWithOptions(stationId);
+        return Ok(result);
+    }
+
     [Authorize]
     [RequireUserRole("admin", "food-service")]
     [HttpPost]
