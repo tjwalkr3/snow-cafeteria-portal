@@ -35,6 +35,20 @@ public class EntreeController(IEntreeService entreeService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("station/{stationId}/swipe")]
+    public async Task<ActionResult<List<EntreeDto>>> GetSwipeEntreesByStationId(int stationId)
+    {
+        var result = await _entreeService.GetSwipeEntreesByStationId(stationId);
+        return Ok(result);
+    }
+
+    [HttpGet("station/{stationId}/card")]
+    public async Task<ActionResult<List<EntreeDto>>> GetCardEntreesByStationId(int stationId)
+    {
+        var result = await _entreeService.GetCardEntreesByStationId(stationId);
+        return Ok(result);
+    }
+
     [Authorize]
     [RequireUserRole("admin", "food-service")]
     [HttpPost]

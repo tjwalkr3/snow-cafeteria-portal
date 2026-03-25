@@ -59,7 +59,14 @@ public class ApiMenuServiceTests
     [InlineData(1)]
     public async Task GetSidesByStation_ValidatesIdAndReturnsListWhenValid(int id)
     {
-        var mockClient = CreateMockHttpClient(new List<SideDto> { new SideDto { Id = 1 } });
+        var mockClient = CreateMockHttpClient(new List<SideWithOptionsDto> 
+        { 
+            new SideWithOptionsDto 
+            { 
+                Side = new SideDto { Id = 1 },
+                OptionTypes = new List<FoodOptionTypeWithOptionsDto>()
+            } 
+        });
         var service = new ApiMenuService(mockClient.Object);
 
         if (id < 1)

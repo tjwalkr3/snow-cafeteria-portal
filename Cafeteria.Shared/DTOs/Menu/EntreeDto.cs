@@ -21,4 +21,8 @@ public class EntreeDto
     public decimal EntreePrice { get; set; }
 
     public bool InStock { get; set; } = true;
+
+    public bool CardOnly { get; set; } = false;
+
+    public bool SwipeOnly { get; set; } = false;
 }

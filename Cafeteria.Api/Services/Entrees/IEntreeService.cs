@@ -8,6 +8,8 @@ public interface IEntreeService
     Task<EntreeDto?> GetEntreeById(int id);
     Task<List<EntreeDto>> GetAllEntrees();
     Task<List<EntreeDto>> GetEntreesByStationId(int stationId);
+    Task<List<EntreeDto>> GetSwipeEntreesByStationId(int stationId);
+    Task<List<EntreeDto>> GetCardEntreesByStationId(int stationId);
     Task<EntreeDto?> UpdateEntreeById(int id, EntreeDto entreeDto);
     Task<bool> DeleteEntreeById(int id);
     Task<bool> SetStockStatusById(int id, bool inStock);

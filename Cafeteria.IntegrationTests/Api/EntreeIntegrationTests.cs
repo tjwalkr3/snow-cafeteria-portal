@@ -106,6 +106,8 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Update",
                 EntreeDescription = "Original",
                 EntreePrice = 10.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -156,6 +158,8 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Delete",
                 EntreeDescription = "Will be deleted",
                 EntreePrice = 8.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -186,6 +190,8 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Stock Toggle",
                 EntreeDescription = "Testing stock status",
                 EntreePrice = 13.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -215,6 +221,8 @@ public class EntreeIntegrationTests : IDisposable
                 EntreeName = "Entree To Stock Toggle True",
                 EntreeDescription = "Testing stock status toggle",
                 EntreePrice = 14.99m,
+                CardOnly = false,
+                SwipeOnly = false
             }
         );
 
@@ -230,6 +238,118 @@ public class EntreeIntegrationTests : IDisposable
 
         Assert.NotNull(entree);
         Assert.True(entree.InStock);
+    }
+
+    [Fact]
+    public async Task GetSwipeEntreesByStationID_ReturnsOnlySwipeEligibleEntrees()
+    {
+        // Create test entrees with different card/swipe flags
+        var swipeOnlyId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Swipe Only Entree",
+                EntreeDescription = "Available for swipe orders only",
+                EntreePrice = 11.99m,
+                CardOnly = false,
+                SwipeOnly = true
+            }
+        );
+
+        var cardOnlyId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Card Only Entree",
+                EntreeDescription = "Available for card orders only",
+                EntreePrice = 12.99m,
+                CardOnly = true,
+                SwipeOnly = false
+            }
+        );
+
+        var bothId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Both Cards And Swipes Entree",
+                EntreeDescription = "Available for both payment types",
+                EntreePrice = 13.99m,
+                CardOnly = false,
+                SwipeOnly = false
+            }
+        );
+
+        // Get swipe-eligible entrees
+        var response = await _client.GetAsync("/api/entree/station/1/swipe");
+        response.EnsureSuccessStatusCode();
+        var entrees = await response.Content.ReadFromJsonAsync<List<EntreeDto>>();
+
+        Assert.NotNull(entrees);
+        // Should include swipe-only and both
+        Assert.Contains(entrees, e => e.Id == swipeOnlyId && e.SwipeOnly);
+        Assert.Contains(entrees, e => e.Id == bothId && !e.CardOnly && !e.SwipeOnly);
+        // Should NOT include card-only
+        Assert.DoesNotContain(entrees, e => e.Id == cardOnlyId);
+    }
+
+    [Fact]
+    public async Task GetCardEntreesByStationID_ReturnsOnlyCardEligibleEntrees()
+    {
+        // Create test entrees with different card/swipe flags
+        var swipeOnlyId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Swipe Only For Card Filter Test",
+                EntreeDescription = "Available for swipe orders only",
+                EntreePrice = 11.99m,
+                CardOnly = false,
+                SwipeOnly = true
+            }
+        );
+
+        var cardOnlyId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Card Only For Card Filter Test",
+                EntreeDescription = "Available for card orders only",
+                EntreePrice = 12.99m,
+                CardOnly = true,
+                SwipeOnly = false
+            }
+        );
+
+        var bothId = _connection.ExecuteScalar<int>(
+            InsertEntreeSql + " RETURNING id",
+            new
+            {
+                StationId = 1,
+                EntreeName = "Both For Card Filter Test",
+                EntreeDescription = "Available for both payment types",
+                EntreePrice = 13.99m,
+                CardOnly = false,
+                SwipeOnly = false
+            }
+        );
+
+        // Get card-eligible entrees
+        var response = await _client.GetAsync("/api/entree/station/1/card");
+        response.EnsureSuccessStatusCode();
+        var entrees = await response.Content.ReadFromJsonAsync<List<EntreeDto>>();
+
+        Assert.NotNull(entrees);
+        // Should include card-only and both
+        Assert.Contains(entrees, e => e.Id == cardOnlyId && e.CardOnly);
+        Assert.Contains(entrees, e => e.Id == bothId && !e.CardOnly && !e.SwipeOnly);
+        // Should NOT include swipe-only
+        Assert.DoesNotContain(entrees, e => e.Id == swipeOnlyId);
     }
 
     [Fact]

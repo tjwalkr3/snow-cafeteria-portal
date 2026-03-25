@@ -17,18 +17,18 @@ public static class SqlInsertQueries
 
     public const string InsertEntreeSql =
         @"
-        INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price)
-        VALUES (@StationId, @EntreeName, @EntreeDescription, @EntreePrice)";
+        INSERT INTO cafeteria.entree (station_id, entree_name, entree_description, entree_price, card_only, swipe_only)
+        VALUES (@StationId, @EntreeName, @EntreeDescription, @EntreePrice, @CardOnly, @SwipeOnly)";
 
     public const string InsertSideSql =
         @"
-        INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price)
-        VALUES (@StationId, @SideName, @SideDescription, @SidePrice)";
+        INSERT INTO cafeteria.side (station_id, side_name, side_description, side_price, card_only, swipe_only)
+        VALUES (@StationId, @SideName, @SideDescription, @SidePrice, @CardOnly, @SwipeOnly)";
 
     public const string InsertDrinkSql =
         @"
-        INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price)
-        VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice)";
+        INSERT INTO cafeteria.drink (location_id, drink_name, drink_description, drink_price, card_only, swipe_only)
+        VALUES (@LocationId, @DrinkName, @DrinkDescription, @DrinkPrice, @CardOnly, @SwipeOnly)";
 
     public const string InsertFoodOptionSql =
         @"

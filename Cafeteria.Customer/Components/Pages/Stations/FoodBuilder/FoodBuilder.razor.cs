@@ -60,9 +60,17 @@ public partial class FoodBuilder : ComponentBase
             PageTitle = string.IsNullOrEmpty(order?.StationName) ? "Station" : order.StationName;
 
             State.Clear();
-            Entrees = await MenuService.GetEntreesByStation(stationId);
-            Sides = await MenuService.GetSidesWithOptionsByStation(stationId);
-            Drinks = await MenuService.GetDrinksByLocation(locationId);
+            
+            if (IsCardOrder){
+                Entrees = await MenuService.GetCardEntreesByStation(stationId);
+                Sides = await MenuService.GetCardSidesByStation(stationId);
+                Drinks = await MenuService.GetCardDrinksByLocation(locationId);
+            }else{
+                Entrees = await MenuService.GetSwipeEntreesByStation(stationId);
+                Sides = await MenuService.GetSwipeSidesByStation(stationId);
+                Drinks = await MenuService.GetSwipeDrinksByLocation(locationId);
+            }
+
             OptionTypes = new List<FoodOptionTypeWithOptionsDto>();
             Tabs = new List<TabDefinition>
             {
