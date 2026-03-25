@@ -4,5 +4,5 @@ namespace Cafeteria.Api.Services.Print;
 
 public interface IPrintService
 {
-    Task PrintOrder(BrowserOrder browserOrder);
+    Task PrintOrder(BrowserOrder browserOrder, int orderId);
 }

@@ -54,29 +54,31 @@ public class LocationService : ILocationService
         return location;
     }
 
-    public async Task CreateLocation(string name, string? description = null, int? iconId = null)
+    public async Task CreateLocation(string name, string? description = null, int? iconId = null, string? printerUrl = null)
     {
         const string sql = @"
-            INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_id)
-            VALUES (@location_name, @location_description, @icon_id);";
+            INSERT INTO cafeteria.cafeteria_location (location_name, location_description, icon_id, printer_url)
+            VALUES (@location_name, @location_description, @icon_id, @printer_url);";
 
         var parameters = new
         {
             location_name = name,
             location_description = description ?? string.Empty,
-            icon_id = iconId
+            icon_id = iconId,
+            printer_url = printerUrl
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task UpdateLocationById(int locationId, string name, string? description, int? iconId = null)
+    public async Task UpdateLocationById(int locationId, string name, string? description, int? iconId = null, string? printerUrl = null)
     {
         const string sql = @"
             UPDATE cafeteria.cafeteria_location
             SET location_name = @location_name,
                 location_description = @location_description,
-                icon_id = @icon_id
+                icon_id = @icon_id,
+                printer_url = @printer_url
             WHERE id = @id;";
 
         var parameters = new
@@ -84,7 +86,8 @@ public class LocationService : ILocationService
             id = locationId,
             location_name = name,
             location_description = description ?? string.Empty,
-            icon_id = iconId
+            icon_id = iconId,
+            printer_url = printerUrl
         };
 
         await _dbConnection.ExecuteAsync(sql, parameters);

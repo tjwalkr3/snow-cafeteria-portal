@@ -45,16 +45,16 @@ public class LocationService(IHttpClientAuth client) : ILocationService
         return response.IsSuccessStatusCode;
     }
 
-    public async Task CreateLocation(string name, string? description, int? iconId = null)
+    public async Task CreateLocation(string name, string? description, int? iconId = null, string? printerUrl = null)
     {
-        var body = new { Name = name, Description = description, IconId = iconId };
+        var body = new { Name = name, Description = description, IconId = iconId, PrinterUrl = printerUrl };
         var response = await client.PostAsync("location", body);
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task UpdateLocation(int locationId, string name, string? description, int? iconId = null)
+    public async Task UpdateLocation(int locationId, string name, string? description, int? iconId = null, string? printerUrl = null)
     {
-        var body = new { Name = name, Description = description, IconId = iconId };
+        var body = new { Name = name, Description = description, IconId = iconId, PrinterUrl = printerUrl };
         var response = await client.PutAsync($"location/{locationId}", body);
         response.EnsureSuccessStatusCode();
     }

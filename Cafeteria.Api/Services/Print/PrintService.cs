@@ -11,7 +11,7 @@ public class PrintService(IDbConnection dbConnection, IHttpClientFactory httpCli
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
     private readonly ILogger<PrintService> _logger = logger;
 
-    public async Task PrintOrder(BrowserOrder browserOrder)
+    public async Task PrintOrder(BrowserOrder browserOrder, int orderId)
     {
         try
         {
@@ -25,7 +25,12 @@ public class PrintService(IDbConnection dbConnection, IHttpClientFactory httpCli
 
             var client = _httpClientFactory.CreateClient();
             var fullUrl = printerUrl.TrimEnd('/') + "/print-order";
-            var response = await client.PostAsJsonAsync(fullUrl, browserOrder);
+            var payload = new
+            {
+                BrowserOrder = browserOrder,
+                OrderId = orderId
+            };
+            var response = await client.PostAsJsonAsync(fullUrl, payload);
 
             if (!response.IsSuccessStatusCode)
             {

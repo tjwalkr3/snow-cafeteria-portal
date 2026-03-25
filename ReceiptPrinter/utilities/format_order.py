@@ -22,7 +22,7 @@ def pad_line(line: str) -> str:
     return line.ljust(RECEIPT_WIDTH)
 
 
-def format_header(user_name: str, location_name: str) -> List[str]:
+def format_header(user_name: str, location_name: str, order_id: int) -> List[str]:
     """Format the receipt header with customer, location, and time."""
     lines = []
 
@@ -31,6 +31,7 @@ def format_header(user_name: str, location_name: str) -> List[str]:
     display_name = user_name if user_name else "Unknown User"
     display_location = location_name if location_name else "Unknown Location"
     lines.append(pad_line(f"Customer: {display_name}"))
+    lines.append(pad_line(f"Order Id: {order_id}"))
     lines.append(pad_line(f"Location: {display_location}"))
 
     time_str = datetime.now().strftime("%m/%d/%Y %I:%M %p")
@@ -91,7 +92,7 @@ def format_footer() -> List[str]:
     return lines
 
 
-def format_order(order: BrowserOrder) -> List[str]:
+def format_order(order: BrowserOrder, order_id: int) -> List[str]:
     """
     Main function to format a complete order for receipt printing.
 
@@ -104,7 +105,7 @@ def format_order(order: BrowserOrder) -> List[str]:
     receipt_lines = []
 
     location_name = order.location.locationName if order.location else ""
-    receipt_lines.extend(format_header(order.userName, location_name))
+    receipt_lines.extend(format_header(order.userName, location_name, order_id))
 
     for entree in order.entrees:
         receipt_lines.extend(format_entree_item(entree))
