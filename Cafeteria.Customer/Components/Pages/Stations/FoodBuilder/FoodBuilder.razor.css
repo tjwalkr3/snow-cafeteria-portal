@@ -46,15 +46,22 @@
     font-weight: 500;
 }
 
-.sticky-header {
-    position: sticky;
-    top: 68px;
-    z-index: 100;
+.builder-shell {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 68px);
+}
+
+.builder-top {
+    flex: 0 0 auto;
     background-color: #f3f4f6;
+    padding-top: 1rem;
     padding-bottom: 0.25rem;
 }
 
 .content-area {
+    flex: 1;
+    overflow-y: auto;
     padding-bottom: 100px;
 }
 
