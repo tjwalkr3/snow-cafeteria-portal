@@ -116,6 +116,7 @@ jobs:
         CONTAINER_VERSION: ${{ github.run_number }}.${{ github.run_attempt }}
         ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        TAILSCALE_KEY: ${{ secrets.TAILSCALE_KEY }}
         BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
       run: |
         if [[ -z "${BASE_DOMAIN}" ]]; then
@@ -123,10 +124,19 @@ jobs:
           exit 1
         fi
 
+        if [[ -z "${TAILSCALE_KEY}" ]]; then
+          echo "TAILSCALE_KEY GitHub secret is required." >&2
+          exit 1
+        fi
+
         kubectl apply -f kube/namespace.yml
 
         kubectl -n cert-manager create secret generic cloudflare-api-token-secret \
           --from-literal=api-token="${CLOUDFLARE_API_TOKEN}" \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+        kubectl -n cafeteria create secret generic tailscale-auth \
+          --from-literal=TS_AUTHKEY="${TAILSCALE_KEY}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
         envsubst < kube/cert-manager-clusterissuer.yml | kubectl apply -f -
