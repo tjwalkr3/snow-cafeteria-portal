@@ -31,6 +31,7 @@ To run the deploy workflow in [.github/workflows/deploy-main.yml](.github/workfl
 | `DOCKERHUB_TOKEN` | Token used to push application images to Docker Hub. |
 | `ACME_EMAIL` | Email used by Let's Encrypt ACME registration in cert-manager. |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API token used by cert-manager DNS-01 challenge. |
+| `TAILSCALE_KEY` | Tailscale auth key used by the API pod sidecar to join your Tailnet and reach printers. |
 | `DEPLOY_MAIN_DISCORD` | Discord webhook URL used by the deployment notification step. |
 
 ### GitHub Variables (required)
