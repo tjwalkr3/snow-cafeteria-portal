@@ -28,6 +28,42 @@ spec:
               value: "America/Denver"
           ports:
             - containerPort: 8080
+        - name: tailscale-sidecar
+          image: tailscale/tailscale:stable
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+          env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-auth
+                  key: TS_AUTHKEY
+            - name: TS_KUBE_SECRET
+              value: ""
+            - name: TS_STATE_DIR
+              value: /var/lib/tailscale
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_ACCEPT_DNS
+              value: "false"
+            - name: TS_EXTRA_ARGS
+              value: "--accept-routes --reset"
+          volumeMounts:
+            - name: tailscale-state
+              mountPath: /var/lib/tailscale
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
+      volumes:
+        - name: tailscale-state
+          emptyDir: {}
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
 
 ---
 apiVersion: v1
