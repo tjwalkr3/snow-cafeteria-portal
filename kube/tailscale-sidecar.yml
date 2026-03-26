@@ -1,3 +1,40 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tailscale-sidecar
+  namespace: cafeteria
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tailscale-sidecar
+  namespace: cafeteria
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["tailscale"]
+    verbs: ["get", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "create", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tailscale-sidecar
+  namespace: cafeteria
+subjects:
+  - kind: ServiceAccount
+    name: tailscale-sidecar
+    namespace: cafeteria
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tailscale-sidecar
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,6 +49,7 @@ spec:
       labels:
         app: cafeteria-api
     spec:
+      serviceAccountName: tailscale-sidecar
       containers:
         - name: tailscale-sidecar
           image: tailscale/tailscale:stable
@@ -27,6 +65,16 @@ spec:
                 secretKeyRef:
                   name: tailscale-auth
                   key: TS_AUTHKEY
+            - name: TS_KUBE_SECRET
+              value: tailscale
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
             - name: TS_STATE_DIR
               value: /var/lib/tailscale
             - name: TS_USERSPACE
