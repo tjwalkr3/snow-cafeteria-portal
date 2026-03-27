@@ -12,6 +12,10 @@ public interface ICreateOrEditSideVM
     string ToastMessage { get; set; }
     Toast.ToastType ToastType { get; set; }
     List<StationDto> Stations { get; set; }
+    List<LocationDto> Locations { get; set; }
+    int SelectedLocationId { get; set; }
     Task LoadStations();
+    Task LoadLocations();
+    List<StationDto> GetFilteredStations();
     Task<bool> SaveSide();
 }

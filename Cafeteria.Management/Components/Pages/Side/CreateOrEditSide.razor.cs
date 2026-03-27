@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Services.Sides;
 using Cafeteria.Management.Services.Stations;
+using Cafeteria.Management.Services.Locations;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Management.Components.Pages.Side;
 
@@ -15,12 +17,15 @@ public partial class CreateOrEditSide : ComponentBase
     [Inject]
     public IStationService StationService { get; set; } = default!;
 
+    [Inject]
+    public ILocationService LocationService { get; set; } = default!;
+
     public ICreateOrEditSideVM? ViewModel { get; set; }
     private Side? parentComponent;
 
     protected override async Task OnInitializedAsync()
     {
-        ViewModel = new CreateOrEditSideVM(SideService, ParentVM, StationService);
+        ViewModel = new CreateOrEditSideVM(SideService, ParentVM, StationService, LocationService);
         if (ParentVM is SideVM sideVM)
         {
             sideVM.SetCreateOrEditVM(ViewModel);
@@ -29,6 +34,7 @@ public partial class CreateOrEditSide : ComponentBase
         if (ViewModel is CreateOrEditSideVM vm)
         {
             await vm.LoadStations();
+            await vm.LoadLocations();
         }
     }
 
@@ -73,5 +79,44 @@ public partial class CreateOrEditSide : ComponentBase
     public void SetParentComponent(Side parent)
     {
         parentComponent = parent;
+    }
+
+    private void SetItemType(SideDto side, string itemType)
+    {
+        side.CardOnly = false;
+        side.SwipeOnly = false;
+
+        switch (itemType)
+        {
+            case "cardonly":
+                side.CardOnly = true;
+                break;
+            case "swipeonly":
+                side.SwipeOnly = true;
+                break;
+            case "both":
+            default:
+                // Both means neither flag is set
+                break;
+        }
+    }
+
+    private void OnLocationChanged(int locationId)
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.SelectedLocationId = locationId;
+            // Reset station selection when location changes
+            ViewModel.CurrentSide.StationId = 0;
+            StateHasChanged();
+        }
+    }
+
+    private void OnLocationSelectionChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int locationId))
+        {
+            OnLocationChanged(locationId);
+        }
     }
 }
