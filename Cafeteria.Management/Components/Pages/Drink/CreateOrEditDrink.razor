@@ -26,6 +26,25 @@
                             <ValidationMessage For="@(() => ViewModel.CurrentDrink.DrinkName)" />
                         </div>
                         <div class="form-group">
+                            <label>Item Type:</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="itemType" id="itemType1" value="both" 
+                                    checked="@(!ViewModel.CurrentDrink.CardOnly && !ViewModel.CurrentDrink.SwipeOnly)" 
+                                    @onchange="@((ChangeEventArgs e) => SetItemType(ViewModel.CurrentDrink, e.Value?.ToString() ?? "both"))" />
+                                <label class="btn btn-outline-primary" for="itemType1">Both</label>
+                                
+                                <input type="radio" class="btn-check" name="itemType" id="itemType2" value="cardonly" 
+                                    checked="@(ViewModel.CurrentDrink.CardOnly && !ViewModel.CurrentDrink.SwipeOnly)" 
+                                    @onchange="@((ChangeEventArgs e) => SetItemType(ViewModel.CurrentDrink, e.Value?.ToString() ?? "both"))" />
+                                <label class="btn btn-outline-primary" for="itemType2">Card Only</label>
+                                
+                                <input type="radio" class="btn-check" name="itemType" id="itemType3" value="swipeonly" 
+                                    checked="@(ViewModel.CurrentDrink.SwipeOnly && !ViewModel.CurrentDrink.CardOnly)" 
+                                    @onchange="@((ChangeEventArgs e) => SetItemType(ViewModel.CurrentDrink, e.Value?.ToString() ?? "both"))" />
+                                <label class="btn btn-outline-primary" for="itemType3">Swipe Only</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label>Location:</label>
                             <InputSelect @bind-Value="ViewModel.CurrentDrink.LocationId" class="form-control">
                                 <option value="0">-- Select a Location --</option>

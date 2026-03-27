@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Services.Drinks;
 using Cafeteria.Management.Services.Locations;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Management.Components.Pages.Drink;
 
@@ -73,5 +74,24 @@ public partial class CreateOrEditDrink : ComponentBase
     public void SetParentComponent(Drink parent)
     {
         parentComponent = parent;
+    }
+
+    private void SetItemType(DrinkDto drink, string itemType)
+    {
+        drink.CardOnly = false;
+        drink.SwipeOnly = false;
+
+        switch (itemType)
+        {
+            case "cardonly":
+                drink.CardOnly = true;
+                break;
+            case "swipeonly":
+                drink.SwipeOnly = true;
+                break;
+            case "both":
+            default:
+                break;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Cafeteria.Management.Services.Entrees;
 using Cafeteria.Management.Services.Stations;
+using Cafeteria.Shared.DTOs.Menu;
 
 namespace Cafeteria.Management.Components.Pages.Entree;
 
@@ -73,5 +74,24 @@ public partial class CreateOrEditEntree : ComponentBase
     public void SetParentComponent(Entree parent)
     {
         parentComponent = parent;
+    }
+
+    private void SetItemType(EntreeDto entree, string itemType)
+    {
+        entree.CardOnly = false;
+        entree.SwipeOnly = false;
+
+        switch (itemType)
+        {
+            case "cardonly":
+                entree.CardOnly = true;
+                break;
+            case "swipeonly":
+                entree.SwipeOnly = true;
+                break;
+            case "both":
+            default:
+                break;
+        }
     }
 }
