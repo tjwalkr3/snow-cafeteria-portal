@@ -49,19 +49,18 @@ def print_logo(printer, logo_path=LOGO_PATH):
         logo_path = os.path.join(os.path.dirname(current_dir), logo_path)
 
     if os.path.exists(logo_path):
-        printer.text("\n" * 2)
         img = Image.open(logo_path)
         printer.set(align="center")
         printer.image(img)
         printer.set(align="left")
-        printer.text("\n" * 1)
+        printer.text("\n")
     else:
-        printer.text("\n" * 8)
+        printer.text("\n")
 
 
 def print_lines(printer, lines):
     print_logo(printer)
-    printer.text("\n".join(lines) + "\n\n")
+    printer.text("\n".join(lines))
     try:
         printer.cut(mode="PART")
     except Exception:
