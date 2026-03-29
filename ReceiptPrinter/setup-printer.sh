@@ -7,6 +7,45 @@ PRODUCT_ID="${PRINTER_PRODUCT_ID:-}"
 RULE_FILE="/etc/udev/rules.d/99-escpos.rules"
 BLACKLIST_FILE="/etc/modprobe.d/blacklist-usblp.conf"
 
+write_vendor_product_rule() {
+  local product_id="$1"
+  cat > "$RULE_FILE" <<EOF
+# Epson TM printer access (USB)
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="$VENDOR_ID", ATTR{idProduct}=="$product_id", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="$VENDOR_ID", ATTRS{idProduct}=="$product_id", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+EOF
+}
+
+write_vendor_rule() {
+  cat > "$RULE_FILE" <<EOF
+# Epson TM printer access (USB, vendor-wide fallback)
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="$VENDOR_ID", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="$VENDOR_ID", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+EOF
+}
+
+print_detected_usb_nodes() {
+  if ! command -v lsusb >/dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "Current Epson USB devices and permissions:"
+  while IFS= read -r line; do
+    local bus
+    local dev
+    local node
+
+    bus=$(awk '{print $2}' <<< "$line")
+    dev=$(awk '{print $4}' <<< "$line" | tr -d ':')
+    node="/dev/bus/usb/$bus/$dev"
+
+    echo "  $line"
+    if [ -e "$node" ]; then
+      ls -l "$node"
+    fi
+  done < <(lsusb -d "${VENDOR_ID,,}:")
+}
+
 detect_product_id() {
   if [ -n "$PRODUCT_ID" ]; then
     echo "${PRODUCT_ID,,}"
@@ -55,16 +94,16 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 if detected_product_id="$(detect_product_id)"; then
-  echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"$VENDOR_ID\", ATTRS{idProduct}==\"$detected_product_id\", MODE=\"0666\"" > "$RULE_FILE"
+  write_vendor_product_rule "$detected_product_id"
   echo "Configured udev rule for Epson vendor $VENDOR_ID product $detected_product_id"
 else
-  echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"$VENDOR_ID\", MODE=\"0666\"" > "$RULE_FILE"
+  write_vendor_rule
   echo "Could not auto-detect product ID. Configured vendor-wide Epson rule for $VENDOR_ID."
   echo "Set PRINTER_PRODUCT_ID if you want to target a single USB product ID."
 fi
 
 udevadm control --reload-rules
-udevadm trigger
+udevadm trigger --subsystem-match=usb --action=add
 
 if lsmod | grep -q "usblp"; then
   rmmod usblp
@@ -78,5 +117,7 @@ if [ ! -f "$BLACKLIST_FILE" ] || ! grep -q "^blacklist usblp$" "$BLACKLIST_FILE"
     echo "update-initramfs not found; reboot may be required for blacklist changes to apply."
   fi
 fi
+
+print_detected_usb_nodes
 
 echo "Setup complete! Unplug and replug the printer if needed."
