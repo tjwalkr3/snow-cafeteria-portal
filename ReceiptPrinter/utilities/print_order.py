@@ -1,14 +1,41 @@
 import os
 from PIL import Image
 from escpos.printer import Usb
+import usb.core
 
-DEFAULT_VENDOR_ID = int(os.environ.get("PRINTER_VENDOR_ID", "04b8"), 16)
-DEFAULT_PRODUCT_ID = int(os.environ.get("PRINTER_PRODUCT_ID", "0202"), 16)
+
+def _parse_hex_id(value, fallback=None):
+    if value is None or value == "":
+        return fallback
+    normalized = value.lower().removeprefix("0x")
+    return int(normalized, 16)
+
+
+DEFAULT_VENDOR_ID = _parse_hex_id(os.environ.get("PRINTER_VENDOR_ID", "04b8"))
+DEFAULT_PRODUCT_ID = _parse_hex_id(os.environ.get("PRINTER_PRODUCT_ID"), None)
 LINE_WIDTH = int(os.environ.get("PRINTER_LINE_WIDTH", "48"))
 LOGO_PATH = os.environ.get("PRINTER_LOGO_PATH", "snow_logo.bmp")
 
 
 def open_printer(vendor_id=DEFAULT_VENDOR_ID, product_id=DEFAULT_PRODUCT_ID):
+    if product_id is None:
+        detected = usb.core.find(idVendor=vendor_id)
+        if detected is None:
+            raise RuntimeError(
+                "Could not auto-detect Epson printer product ID. "
+                "Set PRINTER_PRODUCT_ID to the printer USB product ID in hex (from lsusb)."
+            )
+
+        # pyusb's runtime Device exposes idProduct, but type stubs may not.
+        # Use getattr so static analyzers do not fail on missing stub attributes.
+        product_id_value = getattr(detected, "idProduct", None)
+        if product_id_value is None:
+            raise RuntimeError(
+                "Detected USB device but could not read idProduct. "
+                "Set PRINTER_PRODUCT_ID to the printer USB product ID in hex (from lsusb)."
+            )
+        product_id = int(product_id_value)
+
     return Usb(vendor_id, product_id)
 
 
