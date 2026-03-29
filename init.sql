@@ -296,13 +296,13 @@ VALUES
     'Badger Den',
     'Located on the main floor of the Greenwood Student Center',
     5,
-    'http://cafeteria-2:8000'
+    'http://100.120.223.50:8000'
   ),
   (
     'Busters Bistro',
     'Located on the main floor of the Karen H Huntsman Library',
     30,
-    'http://cafeteria-3:8000'
+    'http://100.68.32.58:8000'
   );
 
 INSERT INTO
