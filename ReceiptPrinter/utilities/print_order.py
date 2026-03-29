@@ -51,10 +51,8 @@ def print_logo(printer, logo_path=LOGO_PATH):
     if os.path.exists(logo_path):
         printer.text("\n" * 2)
         img = Image.open(logo_path)
-        new_height = img.height // 2
-        img_resized = img.resize((img.width, new_height), Image.Resampling.LANCZOS)
         printer.set(align="center")
-        printer.image(img_resized)
+        printer.image(img)
         printer.set(align="left")
         printer.text("\n" * 1)
     else:
@@ -62,8 +60,8 @@ def print_logo(printer, logo_path=LOGO_PATH):
 
 
 def print_lines(printer, lines):
-    printer.text("\n".join(lines) + "\n\n")
     print_logo(printer)
+    printer.text("\n".join(lines) + "\n\n")
     try:
         printer.cut(mode="PART")
     except Exception:
