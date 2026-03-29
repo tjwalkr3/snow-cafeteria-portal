@@ -64,7 +64,11 @@ def print_logo(printer, logo_path=LOGO_PATH):
 def print_lines(printer, lines):
     printer.text("\n".join(lines) + "\n\n")
     print_logo(printer)
-    printer.text("\x0c")
+    try:
+        printer.cut(mode="PART")
+    except Exception:
+        # Fallback for printers/drivers that do not implement cut() cleanly.
+        printer._raw(b"\x1d\x56\x01")
 
 
 def print_receipt(lines, vendor_id=DEFAULT_VENDOR_ID, product_id=DEFAULT_PRODUCT_ID):
