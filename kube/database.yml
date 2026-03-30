@@ -6,41 +6,41 @@ metadata:
 spec:
   replicas: 1
   selector:
-  matchLabels:
-    app: cafeteria-db
+    matchLabels:
+      app: cafeteria-db
 
   template:
-  metadata:
-    labels:
-    app: cafeteria-db
-  spec:
-    volumes:
-    - name: schema-init
-      configMap:
-      name: cafeteria-db-init-sql
-    - name: postgres-data
-      persistentVolumeClaim:
-      claimName: cafeteria-db-pvc
-    containers:
-    - name: cafeteria-postgres
-      volumeMounts:
-      - mountPath: /docker-entrypoint-initdb.d/init.sql
-        subPath: init.sql
-        name: schema-init
-      - mountPath: /var/lib/postgresql
-        name: postgres-data
-      image: postgres:18-alpine
-      ports:
-      - containerPort: 5432
-      env:
-      - name: POSTGRES_USER
-        value: "cafeteria_user"
-      - name: POSTGRES_PASSWORD
-        value: "cafeteria_password"
-      - name: POSTGRES_DB
-        value: "cafeteriadb"
-      - name: TZ
-        value: "America/Denver"
+    metadata:
+      labels:
+        app: cafeteria-db
+    spec:
+      volumes:
+      - name: schema-init
+        configMap:
+          name: cafeteria-db-init-sql
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: cafeteria-db-pvc
+      containers:
+      - name: cafeteria-postgres
+        volumeMounts:
+        - mountPath: /docker-entrypoint-initdb.d/init.sql
+          subPath: init.sql
+          name: schema-init
+        - mountPath: /var/lib/postgresql
+          name: postgres-data
+        image: postgres:18-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "cafeteria_user"
+        - name: POSTGRES_PASSWORD
+          value: "cafeteria_password"
+        - name: POSTGRES_DB
+          value: "cafeteriadb"
+        - name: TZ
+          value: "America/Denver"
 
 ---
 apiVersion: v1
@@ -50,7 +50,7 @@ metadata:
   namespace: cafeteria
 spec:
   selector:
-  app: cafeteria-db
+    app: cafeteria-db
   ports:
   - protocol: TCP
     port: 5432
