@@ -18,12 +18,17 @@ spec:
         - name: schema-init
           configMap:
             name: cafeteria-db-init-sql
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: cafeteria-db-pvc
       containers:
         - name: cafeteria-postgres
           volumeMounts:
             - mountPath: /docker-entrypoint-initdb.d/init.sql
               subPath: init.sql
               name: schema-init
+            - mountPath: /var/lib/postgresql
+              name: postgres-data
           image: postgres:18-alpine
           ports:
             - containerPort: 5432

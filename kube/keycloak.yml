@@ -13,6 +13,8 @@ spec:
       labels:
         app: cafeteria-keycloak
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: cafeteria-keycloak-container
           image: keycloak/keycloak:26.5
@@ -40,10 +42,15 @@ spec:
             - name: realm-config
               mountPath: /opt/keycloak/data/import
               readOnly: true
+            - name: keycloak-data
+              mountPath: /opt/keycloak/data
       volumes:
         - name: realm-config
           configMap:
             name: cafeteria-keycloak-realm
+        - name: keycloak-data
+          persistentVolumeClaim:
+            claimName: cafeteria-keycloak-pvc
 
 ---
 apiVersion: v1
