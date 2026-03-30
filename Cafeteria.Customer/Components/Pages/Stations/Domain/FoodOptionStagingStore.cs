@@ -67,7 +67,10 @@ public class FoodOptionStagingStore
 
     public void Set(int optionTypeId, string name)
     {
-        StagedSelections[optionTypeId] = new HashSet<string> { name };
+        if (StagedSelections.TryGetValue(optionTypeId, out var current) && current.Contains(name))
+            StagedSelections[optionTypeId] = new HashSet<string>();
+        else
+            StagedSelections[optionTypeId] = new HashSet<string> { name };
     }
 
     public void Confirm(SelectionState state, List<FoodOptionTypeWithOptionsDto> optionTypes)
