@@ -6,6 +6,7 @@ public sealed class CardOrderAutoSyncCoordinator : IDisposable
     private readonly int _debounceMs;
     private CancellationTokenSource? _debounceCts;
     private readonly SemaphoreSlim _syncLock = new(1, 1);
+    private bool _isDisposed;
 
     public CardOrderAutoSyncCoordinator(Func<Task> syncAction, int debounceMs = 250)
     {
@@ -15,6 +16,7 @@ public sealed class CardOrderAutoSyncCoordinator : IDisposable
 
     public void Schedule()
     {
+        ThrowIfDisposed();
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
         _debounceCts = new CancellationTokenSource();
@@ -23,14 +25,28 @@ public sealed class CardOrderAutoSyncCoordinator : IDisposable
 
     public async Task FlushAsync()
     {
+        ThrowIfDisposed();
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
         _debounceCts = null;
         await ExecuteSyncAsync();
     }
 
+    public async Task FlushAndDisposeAsync()
+    {
+        if (_isDisposed)
+            return;
+
+        await FlushAsync();
+        Dispose();
+    }
+
     public void Dispose()
     {
+        if (_isDisposed)
+            return;
+
+        _isDisposed = true;
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
         _syncLock.Dispose();
@@ -60,5 +76,10 @@ public sealed class CardOrderAutoSyncCoordinator : IDisposable
         {
             _syncLock.Release();
         }
+    }
+
+    private void ThrowIfDisposed()
+    {
+        ObjectDisposedException.ThrowIf(_isDisposed, typeof(CardOrderAutoSyncCoordinator));
     }
 }

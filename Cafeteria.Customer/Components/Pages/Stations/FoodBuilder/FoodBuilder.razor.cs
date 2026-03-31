@@ -3,10 +3,11 @@ using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.FoodBuilder;
 
-public partial class FoodBuilder : ComponentBase, IDisposable
+public partial class FoodBuilder : ComponentBase, IAsyncDisposable
 {
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
@@ -22,6 +23,9 @@ public partial class FoodBuilder : ComponentBase, IDisposable
 
     [Inject]
     private FoodOptionStagingStore StagingStore { get; set; } = default!;
+
+    [Inject]
+    private CartNotificationService CartNotification { get; set; } = default!;
 
     private List<EntreeDto> Entrees { get; set; } = new();
     private List<SideWithOptionsDto> Sides { get; set; } = new();
@@ -41,10 +45,14 @@ public partial class FoodBuilder : ComponentBase, IDisposable
 
     private CardOrderDraftManager _cardDraft = new();
     private CardOrderAutoSyncCoordinator _cardAutoSync = default!;
+    private IDisposable? _locationChangingRegistration;
+    private bool _isNavigatingToCart;
+    private bool _cardDraftDirty;
 
     protected override void OnInitialized()
     {
         _cardAutoSync = new CardOrderAutoSyncCoordinator(SyncCardOrderAsync);
+        _locationChangingRegistration = NavigationManager.RegisterLocationChangingHandler(HandleLocationChangingAsync);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -303,6 +311,7 @@ public partial class FoodBuilder : ComponentBase, IDisposable
 
     private async Task GoToCartForCardOrderAsync()
     {
+        _isNavigatingToCart = true;
         await FlushCardAutoSyncAsync();
         NavigationManager.NavigateTo("/place-order");
     }
@@ -312,6 +321,7 @@ public partial class FoodBuilder : ComponentBase, IDisposable
         if (!IsCardOrder)
             return;
 
+        _cardDraftDirty = true;
         _cardAutoSync.Schedule();
     }
 
@@ -322,12 +332,14 @@ public partial class FoodBuilder : ComponentBase, IDisposable
 
     private async Task SyncCardOrderAsync()
     {
-        if (!IsCardOrder)
+        if (!IsCardOrder || !_cardDraftDirty)
             return;
 
         var draft = CreateCardDraftSnapshot();
         var mapped = StationDraftToOrderMapper.MapCardSelections(draft);
         await Cart.UpdateCardOrderItems("order", mapped.Entrees, mapped.Sides, mapped.Drinks);
+        _cardDraftDirty = false;
+        CartNotification.NotifyCartChanged();
     }
 
     private CardStationDraft CreateCardDraftSnapshot()
@@ -335,9 +347,18 @@ public partial class FoodBuilder : ComponentBase, IDisposable
         return _cardDraft.CreateSnapshot(Entrees, Sides, Drinks);
     }
 
-    public void Dispose()
+    private async ValueTask HandleLocationChangingAsync(LocationChangingContext context)
     {
-        _cardAutoSync.Dispose();
+        if (!IsCardOrder || _isNavigatingToCart)
+            return;
+
+        await FlushCardAutoSyncAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _locationChangingRegistration?.Dispose();
+        await _cardAutoSync.FlushAndDisposeAsync();
     }
 
     private bool IsTabCompleted(string tabId)

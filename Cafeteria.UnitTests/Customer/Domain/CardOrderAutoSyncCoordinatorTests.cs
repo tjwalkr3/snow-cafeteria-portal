@@ -67,4 +67,31 @@ public class CardOrderAutoSyncCoordinatorTests
         Assert.Equal(2, executionCount);
         Assert.Equal(1, maxConcurrent);
     }
+
+    [Fact]
+    public async Task FlushAndDisposeAsync_FlushesPendingDebounceBeforeDispose()
+    {
+        var executionCount = 0;
+        var coordinator = new CardOrderAutoSyncCoordinator(
+            () =>
+            {
+                Interlocked.Increment(ref executionCount);
+                return Task.CompletedTask;
+            },
+            debounceMs: 100);
+
+        coordinator.Schedule();
+        await coordinator.FlushAndDisposeAsync();
+
+        Assert.Equal(1, executionCount);
+    }
+
+    [Fact]
+    public async Task Schedule_AfterDispose_ThrowsObjectDisposedException()
+    {
+        var coordinator = new CardOrderAutoSyncCoordinator(() => Task.CompletedTask);
+        await coordinator.FlushAndDisposeAsync();
+
+        Assert.Throws<ObjectDisposedException>(() => coordinator.Schedule());
+    }
 }

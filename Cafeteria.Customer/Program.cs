@@ -14,6 +14,7 @@ using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Storage;
 using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,12 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.Configure<HubOptions>(options =>
+{
+    // Large in-browser cart payloads can exceed the default SignalR receive limit.
+    options.MaximumReceiveMessageSize = 2 * 1024 * 1024;
+});
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(Cafeteria.Shared.Controllers.AuthController).Assembly);
