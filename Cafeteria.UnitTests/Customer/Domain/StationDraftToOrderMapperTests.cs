@@ -264,4 +264,46 @@ public class StationDraftToOrderMapperTests
         Assert.Empty(result.Sides);
         Assert.Empty(result.Drinks);
     }
+
+    [Fact]
+    public void MapCardSelections_UsesSideFallbackOptionTypes_WhenSideOptionTypesMapMissing()
+    {
+        // Arrange
+        var sides = new List<SideWithOptionsDto>
+        {
+            new()
+            {
+                Side = new SideDto { Id = 2, SideName = "Fries", SidePrice = 1.99m },
+                OptionTypes =
+                [
+                    new FoodOptionTypeWithOptionsDto
+                    {
+                        OptionType = new FoodOptionTypeDto { Id = 200, FoodOptionTypeName = "Sauce", MaxAmount = 3 },
+                        Options =
+                        [
+                            new FoodOptionDto { Id = 201, FoodOptionName = "Ketchup" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        var result = StationDraftToOrderMapper.MapCardSelections(new CardStationDraft
+        {
+            Sides = sides,
+            SideQuantities = new Dictionary<int, int> { [2] = 1 },
+            SideOptions = new Dictionary<int, Dictionary<int, HashSet<string>>>
+            {
+                [2] = new Dictionary<int, HashSet<string>>
+                {
+                    [200] = ["Ketchup"]
+                }
+            }
+        });
+
+        // Assert
+        Assert.Single(result.Sides);
+        Assert.Single(result.Sides[0].SelectedOptions);
+        Assert.Equal("Ketchup", result.Sides[0].SelectedOptions[0].Option.FoodOptionName);
+    }
 }
