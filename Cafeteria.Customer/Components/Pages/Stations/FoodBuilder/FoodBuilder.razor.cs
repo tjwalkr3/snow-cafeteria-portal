@@ -48,6 +48,7 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
     private IDisposable? _locationChangingRegistration;
     private bool _isNavigatingToCart;
     private bool _cardDraftDirty;
+    private bool _isGoToCartInProgress;
 
     protected override void OnInitialized()
     {
@@ -289,11 +290,13 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
     {
         if (!IsCardOrder && !SelectionValidator.IsValid(State, OptionTypes, false))
             return;
-        if (IsCardOrder && !HasAnySelection())
+        if (IsCardOrder && (!HasAnySelection() || _isGoToCartInProgress))
             return;
 
         if (IsCardOrder)
         {
+            _isGoToCartInProgress = true;
+            StateHasChanged();
             await GoToCartForCardOrderAsync();
             return;
         }
