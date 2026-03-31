@@ -16,11 +16,10 @@ public class CartSubmitter
     public async Task SubmitAsync(
         SelectionState state,
         List<FoodOptionTypeWithOptionsDto> optionTypes,
-        List<FoodOptionDto> allEntreeOptions,
         List<FoodOptionTypeWithOptionsDto>? sideOptionTypes = null)
     {
         if (state.SelectedEntree != null)
-            await AddEntreeAsync(state, optionTypes, allEntreeOptions);
+            await AddEntreeAsync(state, optionTypes);
 
         if (state.SelectedSide != null)
             await AddSideAsync(state, sideOptionTypes);
@@ -54,8 +53,7 @@ public class CartSubmitter
 
     private async Task AddEntreeAsync(
         SelectionState state,
-        List<FoodOptionTypeWithOptionsDto> optionTypes,
-        List<FoodOptionDto> allEntreeOptions)
+        List<FoodOptionTypeWithOptionsDto> optionTypes)
     {
         await _cartService.AddEntree(CART_KEY, state.SelectedEntree!);
 

@@ -286,19 +286,24 @@ public partial class FoodBuilder : ComponentBase, IDisposable
 
         if (IsCardOrder)
         {
-            await FlushCardAutoSyncAsync();
-            NavigationManager.NavigateTo("/place-order");
+            await GoToCartForCardOrderAsync();
             return;
         }
 
         var sideWithOptions = Sides.FirstOrDefault(s => s.Side.Id == State.SelectedSide?.Id);
-        await CartSubmitter.SubmitAsync(State, OptionTypes, new List<FoodOptionDto>(), sideWithOptions?.OptionTypes);
+        await CartSubmitter.SubmitAsync(State, OptionTypes, sideWithOptions?.OptionTypes);
 
         State.Clear();
         _entreeQuantity = 0;
         _sideQuantity = 0;
         _drinkQuantity = 0;
         ActiveTab = Tabs.FirstOrDefault()?.Id ?? "entrees";
+        NavigationManager.NavigateTo("/place-order");
+    }
+
+    private async Task GoToCartForCardOrderAsync()
+    {
+        await FlushCardAutoSyncAsync();
         NavigationManager.NavigateTo("/place-order");
     }
 
@@ -333,14 +338,6 @@ public partial class FoodBuilder : ComponentBase, IDisposable
     public void Dispose()
     {
         _cardAutoSync.Dispose();
-    }
-
-    private SelectionState EntreeOnlyState()
-    {
-        var s = new SelectionState { SelectedEntree = State.SelectedEntree };
-        foreach (var kv in State.SingleSelectOptions) s.SingleSelectOptions[kv.Key] = kv.Value;
-        foreach (var kv in State.MultiSelectOptions) s.MultiSelectOptions[kv.Key] = new List<string>(kv.Value);
-        return s;
     }
 
     private bool IsTabCompleted(string tabId)
