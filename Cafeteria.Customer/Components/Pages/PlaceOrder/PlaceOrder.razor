@@ -211,7 +211,7 @@
                                         <i class="bi bi-exclamation-triangle"></i> You do not have enough swipes for this order. Please remove some items or choose a different payment method.
                                     </div>
                                 }
-                                <button @onclick="HandlePlaceOrder" class="place-order-btn" disabled="@(!CanPlaceOrder)">Place Order</button>
+                                <button @onclick="HandlePlaceOrder" class="place-order-btn" disabled="@(!CanPlaceOrder || _hasAttemptedPlaceOrder)">Place Order</button>
                                 <a href="@GetStationSelectUrl()" class="continue-shopping-btn d-block text-center"><i class="bi bi-chevron-left me-1"></i> Continue Shopping</a>
                             </div>
                         </div>
