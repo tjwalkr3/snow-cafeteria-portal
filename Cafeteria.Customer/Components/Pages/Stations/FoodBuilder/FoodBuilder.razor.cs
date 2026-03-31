@@ -43,11 +43,11 @@ public partial class FoodBuilder : ComponentBase
     private Dictionary<int, int> _cardSideQtys = new();
     private Dictionary<int, int> _cardDrinkQtys = new();
 
-    private Dictionary<int, Dictionary<int, string>> _cardEntreeSingleOpts = new();
-    private Dictionary<int, Dictionary<int, List<string>>> _cardEntreeMultiOpts = new();
+    private Dictionary<int, Dictionary<int, HashSet<string>>> _cardEntreeOpts = new();
     private Dictionary<int, List<FoodOptionTypeWithOptionsDto>> _cardEntreeOptionTypes = new();
 
     private Dictionary<int, Dictionary<int, HashSet<string>>> _cardSideOpts = new();
+    private Dictionary<int, List<FoodOptionTypeWithOptionsDto>> _cardSideOptionTypes = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -142,25 +142,19 @@ public partial class FoodBuilder : ComponentBase
                     _cardSideOpts[sideId][id] = new HashSet<string>(
                         StagingStore.StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>());
                 }
+                _cardSideOptionTypes[sideId] = StagingStore.StagedSide.OptionTypes;
                 if (!_cardSideQtys.ContainsKey(sideId))
                     _cardSideQtys[sideId] = 1;
             }
             else if (StagingStore.StagedEntree != null)
             {
                 var entreeId = StagingStore.StagedEntree.Id;
-                _cardEntreeSingleOpts[entreeId] = new Dictionary<int, string>();
-                _cardEntreeMultiOpts[entreeId] = new Dictionary<int, List<string>>();
+                _cardEntreeOpts[entreeId] = new Dictionary<int, HashSet<string>>();
                 foreach (var ot in OptionTypes)
                 {
                     var id = ot.OptionType.Id;
                     var staged = StagingStore.StagedSelections.GetValueOrDefault(id) ?? new HashSet<string>();
-                    if (ot.OptionType.MaxAmount > 1)
-                        _cardEntreeMultiOpts[entreeId][id] = staged.ToList();
-                    else
-                    {
-                        var first = staged.FirstOrDefault();
-                        if (first != null) _cardEntreeSingleOpts[entreeId][id] = first;
-                    }
+                    _cardEntreeOpts[entreeId][id] = new HashSet<string>(staged);
                 }
                 if (!_cardEntreeQtys.ContainsKey(entreeId))
                     _cardEntreeQtys[entreeId] = 1;
@@ -240,8 +234,7 @@ public partial class FoodBuilder : ComponentBase
         if (newQty <= 0)
         {
             _cardEntreeQtys.Remove(entreeId);
-            _cardEntreeSingleOpts.Remove(entreeId);
-            _cardEntreeMultiOpts.Remove(entreeId);
+            _cardEntreeOpts.Remove(entreeId);
             _cardEntreeOptionTypes.Remove(entreeId);
         }
         else
@@ -255,6 +248,7 @@ public partial class FoodBuilder : ComponentBase
         {
             _cardSideQtys.Remove(sideId);
             _cardSideOpts.Remove(sideId);
+            _cardSideOptionTypes.Remove(sideId);
         }
         else
             _cardSideQtys[sideId] = newQty;
@@ -316,11 +310,25 @@ public partial class FoodBuilder : ComponentBase
                 var entree = Entrees.FirstOrDefault(e => e.Id == entreeId);
                 if (entree == null) continue;
                 var entreeState = new SelectionState { SelectedEntree = entree };
-                if (_cardEntreeSingleOpts.TryGetValue(entreeId, out var single))
-                    foreach (var kv in single) entreeState.SingleSelectOptions[kv.Key] = kv.Value;
-                if (_cardEntreeMultiOpts.TryGetValue(entreeId, out var multi))
-                    foreach (var kv in multi) entreeState.MultiSelectOptions[kv.Key] = new List<string>(kv.Value);
                 var optTypes = _cardEntreeOptionTypes.GetValueOrDefault(entreeId) ?? new List<FoodOptionTypeWithOptionsDto>();
+                if (_cardEntreeOpts.TryGetValue(entreeId, out var selectionsByType))
+                {
+                    foreach (var ot in optTypes)
+                    {
+                        var optionTypeId = ot.OptionType.Id;
+                        if (!selectionsByType.TryGetValue(optionTypeId, out var selectedNames) || selectedNames.Count == 0)
+                            continue;
+
+                        if (ot.OptionType.MaxAmount > 1)
+                            entreeState.MultiSelectOptions[optionTypeId] = selectedNames.ToList();
+                        else
+                        {
+                            var singleSelection = selectedNames.FirstOrDefault();
+                            if (!string.IsNullOrEmpty(singleSelection))
+                                entreeState.SingleSelectOptions[optionTypeId] = singleSelection;
+                        }
+                    }
+                }
                 for (int i = 0; i < qty; i++)
                     await CartSubmitter.SubmitAsync(entreeState, optTypes, new List<FoodOptionDto>(), null);
             }
@@ -332,8 +340,9 @@ public partial class FoodBuilder : ComponentBase
                 var sideState = new SelectionState { SelectedSide = sideWithOpts.Side };
                 if (_cardSideOpts.TryGetValue(sideId, out var sideOpts))
                     foreach (var kv in sideOpts) sideState.SideOptions[kv.Key] = new HashSet<string>(kv.Value);
+                var sideOptionTypes = _cardSideOptionTypes.GetValueOrDefault(sideId) ?? sideWithOpts.OptionTypes;
                 for (int i = 0; i < qty; i++)
-                    await CartSubmitter.SubmitAsync(sideState, new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), sideWithOpts.OptionTypes);
+                    await CartSubmitter.SubmitAsync(sideState, new List<FoodOptionTypeWithOptionsDto>(), new List<FoodOptionDto>(), sideOptionTypes);
             }
 
             foreach (var (drinkId, qty) in _cardDrinkQtys)
@@ -348,10 +357,10 @@ public partial class FoodBuilder : ComponentBase
             _cardEntreeQtys.Clear();
             _cardSideQtys.Clear();
             _cardDrinkQtys.Clear();
-            _cardEntreeSingleOpts.Clear();
-            _cardEntreeMultiOpts.Clear();
+            _cardEntreeOpts.Clear();
             _cardEntreeOptionTypes.Clear();
             _cardSideOpts.Clear();
+            _cardSideOptionTypes.Clear();
         }
 
         State.Clear();
