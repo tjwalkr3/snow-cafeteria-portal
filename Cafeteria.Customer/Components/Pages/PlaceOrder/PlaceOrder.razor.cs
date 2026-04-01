@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Shared.DTOs.Order;
+using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Customer.Services.Order;
 using Cafeteria.Customer.Services.Swipe;
 using Cafeteria.Shared.Utilities;
@@ -186,20 +187,13 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task IncreaseSwipeQuantity(SwipeGroup swipe)
     {
-        await Cart.AddEntree("order", swipe.Entree.Entree);
-        foreach (var option in swipe.Entree.SelectedOptions)
-        {
-            await Cart.AddEntreeOption("order", swipe.Entree.Entree.Id,
-                option.Option, option.OptionType);
-        }
+        var entreeOptions = swipe.Entree.SelectedOptions.Select(o => 
+            new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
+        var sideOptions = swipe.Side.SelectedOptions.Select(o => 
+            new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
 
-        await Cart.AddSide("order", swipe.Side.Side);
-        foreach (var option in swipe.Side.SelectedOptions)
-        {
-            await Cart.AddSideOption("order", swipe.Side.Side.Id,
-                option.Option, option.OptionType);
-        }
-
+        await Cart.AddEntreeWithOptions("order", swipe.Entree.Entree, entreeOptions);
+        await Cart.AddSideWithOptions("order", swipe.Side.Side, sideOptions);
         await Cart.AddDrink("order", swipe.Drink);
 
         Order = await Cart.GetOrder("order");
@@ -251,11 +245,9 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task AddEntreeItem(EntreeGroup group)
     {
-        await Cart.AddEntree("order", group.Entree.Entree);
-        foreach (var option in group.Entree.SelectedOptions)
-        {
-            await Cart.AddEntreeOption("order", group.Entree.Entree.Id, option.Option, option.OptionType);
-        }
+        var options = group.Entree.SelectedOptions.Select(o => 
+            new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
+        await Cart.AddEntreeWithOptions("order", group.Entree.Entree, options);
         await RefreshCardOrder();
     }
 
@@ -278,11 +270,9 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task AddSideItem(SideGroup group)
     {
-        await Cart.AddSide("order", group.Side.Side);
-        foreach (var option in group.Side.SelectedOptions)
-        {
-            await Cart.AddSideOption("order", group.Side.Side.Id, option.Option, option.OptionType);
-        }
+        var options = group.Side.SelectedOptions.Select(o => 
+            new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
+        await Cart.AddSideWithOptions("order", group.Side.Side, options);
         await RefreshCardOrder();
     }
 
