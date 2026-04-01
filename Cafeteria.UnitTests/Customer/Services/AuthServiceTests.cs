@@ -202,7 +202,7 @@ public class AuthServiceTests
         Assert.Single(claimsPrincipal.Claims);
 
         Assert.NotNull(authProperties);
-        Assert.Equal(currentTime.AddSeconds(300), authProperties.ExpiresUtc);
+        Assert.Equal(currentTime.AddHours(1), authProperties.ExpiresUtc);
 
         var tokens = authProperties.GetTokens().ToList();
         Assert.Contains(tokens, t => t.Name == "access_token" && t.Value == "access-token-123");
@@ -284,7 +284,7 @@ public class AuthServiceTests
     }
 
     [Fact]
-    public void ParseTokenAndCreateAuthData_UsesProvidedCurrentTime_ForExpiresUtc()
+    public void ParseTokenAndCreateAuthData_UsesConfiguredCookieLifetime_ForExpiresUtc()
     {
         var userInfo = new Dictionary<string, JsonElement>
         {
@@ -307,7 +307,7 @@ public class AuthServiceTests
         Assert.NotNull(result);
         var (_, authProperties) = result.Value;
 
-        Assert.Equal(currentTime.AddSeconds(7200), authProperties.ExpiresUtc);
+        Assert.Equal(currentTime.AddHours(1), authProperties.ExpiresUtc);
     }
 
     [Fact]
