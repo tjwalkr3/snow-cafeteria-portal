@@ -89,6 +89,15 @@ public class CartService : ICartService
         }
     }
 
+    public async Task UpdateCardOrderItems(string key, List<OrderEntreeItem> entrees, List<OrderSideItem> sides, List<DrinkDto> drinks)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        order.Entrees = [.. entrees];
+        order.Sides = [.. sides];
+        order.Drinks = [.. drinks];
+        await _protectedStorage.SetAsync(key, order);
+    }
+
     public async Task RemoveEntree(string key, int entreeId)
     {
         var order = await GetOrder(key);

@@ -43,6 +43,7 @@ public partial class PlaceOrder : ComponentBase
     private List<DrinkGroup> DrinkGroups { get; set; } = new();
 
     private int AccountSwipeBalance { get; set; } = 0;
+    private bool _hasAttemptedPlaceOrder;
 
     public bool IsInitialized { get; set; } = false;
 
@@ -120,10 +121,16 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task HandlePlaceOrder()
     {
+        if (_hasAttemptedPlaceOrder)
+            return;
+
         if (Order == null)
         {
             return;
         }
+
+        _hasAttemptedPlaceOrder = true;
+        StateHasChanged();
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;

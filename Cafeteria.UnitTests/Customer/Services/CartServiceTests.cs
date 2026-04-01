@@ -12,6 +12,10 @@ public class CartServiceTests
     {
         private readonly Dictionary<string, object> _storage = new();
 
+        public int GetCallCount { get; private set; }
+        public int SetCallCount { get; private set; }
+        public int DeleteCallCount { get; private set; }
+
         public void SetValue<T>(string key, T value)
         {
             _storage[key] = value!;
@@ -19,6 +23,7 @@ public class CartServiceTests
 
         public ValueTask<StorageResult<T>> GetAsync<T>(string key)
         {
+            GetCallCount++;
             if (_storage.TryGetValue(key, out var value) && value is T typedValue)
             {
                 return ValueTask.FromResult(new StorageResult<T>(true, typedValue));
@@ -28,12 +33,14 @@ public class CartServiceTests
 
         public ValueTask SetAsync<T>(string key, T value)
         {
+            SetCallCount++;
             _storage[key] = value!;
             return ValueTask.CompletedTask;
         }
 
         public ValueTask DeleteAsync(string key)
         {
+            DeleteCallCount++;
             _storage.Remove(key);
             return ValueTask.CompletedTask;
         }
@@ -238,5 +245,128 @@ public class CartServiceTests
         var order = await cartService.GetOrder("test-order");
         Assert.NotNull(order);
         Assert.True(order.IsCardOrder);
+    }
+
+    [Fact]
+    public async Task UpdateCardOrderItems_ReplacesAllCardOrderItemsInSingleReadWrite()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var existingOrder = new BrowserOrder
+        {
+            IsCardOrder = true,
+            StationId = 3,
+            StationName = "Grill"
+        };
+        existingOrder.Entrees.Add(new OrderEntreeItem
+        {
+            Entree = new EntreeDto { Id = 100, EntreeName = "Old Entree", EntreePrice = 4.99m }
+        });
+        existingOrder.Sides.Add(new OrderSideItem
+        {
+            Side = new SideDto { Id = 200, SideName = "Old Side", SidePrice = 1.99m }
+        });
+        existingOrder.Drinks.Add(new DrinkDto { Id = 300, DrinkName = "Old Drink", DrinkPrice = 1.49m });
+        storage.SetValue("test-order", existingOrder);
+
+        var cartService = new CartService(storage);
+
+        var entrees = new List<OrderEntreeItem>
+        {
+            new()
+            {
+                Entree = new EntreeDto { Id = 1, EntreeName = "New Entree", EntreePrice = 5.49m },
+                SelectedOptions =
+                [
+                    new SelectedFoodOption
+                    {
+                        Option = new FoodOptionDto { Id = 10, FoodOptionName = "No Onions" },
+                        OptionType = new FoodOptionTypeDto { Id = 11, FoodOptionTypeName = "Toppings", FoodOptionPrice = 0m }
+                    }
+                ]
+            }
+        };
+        var sides = new List<OrderSideItem>
+        {
+            new()
+            {
+                Side = new SideDto { Id = 2, SideName = "New Side", SidePrice = 2.49m },
+                SelectedOptions =
+                [
+                    new SelectedFoodOption
+                    {
+                        Option = new FoodOptionDto { Id = 12, FoodOptionName = "Ketchup" },
+                        OptionType = new FoodOptionTypeDto { Id = 13, FoodOptionTypeName = "Sauce", FoodOptionPrice = 0m }
+                    }
+                ]
+            }
+        };
+        var drinks = new List<DrinkDto>
+        {
+            new() { Id = 3, DrinkName = "New Drink", DrinkPrice = 1.99m }
+        };
+
+        // Capture counts after seed setup so we only measure method behavior.
+        var initialGetCount = storage.GetCallCount;
+        var initialSetCount = storage.SetCallCount;
+
+        // Act
+        await cartService.UpdateCardOrderItems("test-order", entrees, sides, drinks);
+
+        // Assert
+        Assert.Equal(initialGetCount + 1, storage.GetCallCount);
+        Assert.Equal(initialSetCount + 1, storage.SetCallCount);
+
+        var order = await cartService.GetOrder("test-order");
+        Assert.NotNull(order);
+        Assert.True(order.IsCardOrder);
+        Assert.Equal(3, order.StationId);
+        Assert.Equal("Grill", order.StationName);
+
+        Assert.Single(order.Entrees);
+        Assert.Equal("New Entree", order.Entrees[0].Entree.EntreeName);
+        Assert.Single(order.Entrees[0].SelectedOptions);
+        Assert.Equal("No Onions", order.Entrees[0].SelectedOptions[0].Option.FoodOptionName);
+
+        Assert.Single(order.Sides);
+        Assert.Equal("New Side", order.Sides[0].Side.SideName);
+        Assert.Single(order.Sides[0].SelectedOptions);
+        Assert.Equal("Ketchup", order.Sides[0].SelectedOptions[0].Option.FoodOptionName);
+
+        Assert.Single(order.Drinks);
+        Assert.Equal("New Drink", order.Drinks[0].DrinkName);
+    }
+
+    [Fact]
+    public async Task UpdateCardOrderItems_CreatesOrderWhenMissing()
+    {
+        // Arrange
+        var storage = new DictionaryStorageWrapper();
+        var cartService = new CartService(storage);
+
+        var entrees = new List<OrderEntreeItem>();
+        var sides = new List<OrderSideItem>();
+        var drinks = new List<DrinkDto>
+        {
+            new() { Id = 42, DrinkName = "Water", DrinkPrice = 0.00m }
+        };
+
+        // Capture counts before method call.
+        var initialGetCount = storage.GetCallCount;
+        var initialSetCount = storage.SetCallCount;
+
+        // Act
+        await cartService.UpdateCardOrderItems("missing-order", entrees, sides, drinks);
+
+        // Assert
+        Assert.Equal(initialGetCount + 1, storage.GetCallCount);
+        Assert.Equal(initialSetCount + 1, storage.SetCallCount);
+
+        var order = await cartService.GetOrder("missing-order");
+        Assert.NotNull(order);
+        Assert.Empty(order.Entrees);
+        Assert.Empty(order.Sides);
+        Assert.Single(order.Drinks);
+        Assert.Equal("Water", order.Drinks[0].DrinkName);
     }
 }

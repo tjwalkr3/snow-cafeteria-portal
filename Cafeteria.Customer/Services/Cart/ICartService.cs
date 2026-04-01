@@ -15,6 +15,7 @@ public interface ICartService
     Task AddDrink(string key, DrinkDto drink);
     Task AddEntreeOption(string key, int entreeId, FoodOptionDto option, FoodOptionTypeDto optionType);
     Task AddSideOption(string key, int sideId, FoodOptionDto option, FoodOptionTypeDto optionType);
+    Task UpdateCardOrderItems(string key, List<OrderEntreeItem> entrees, List<OrderSideItem> sides, List<DrinkDto> drinks);
     Task RemoveEntree(string key, int entreeId);
     Task RemoveSide(string key, int sideId);
     Task RemoveDrink(string key, int drinkId);
