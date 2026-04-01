@@ -9,6 +9,8 @@ namespace Cafeteria.Shared.Services.Auth;
 
 public class AuthService : IAuthService
 {
+    private static readonly TimeSpan AppCookieLifetime = TimeSpan.FromHours(1);
+
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
 
@@ -217,8 +219,6 @@ public class AuthService : IAuthService
             var accessToken = sessionData.GetProperty("AccessToken").GetString();
             var refreshToken = sessionData.TryGetProperty("RefreshToken", out var rt) ? rt.GetString() : string.Empty;
             var tokenType = sessionData.TryGetProperty("TokenType", out var tt) ? tt.GetString() : "Bearer";
-            var expiresIn = sessionData.TryGetProperty("ExpiresIn", out var ei) ? ei.GetInt32() : 300;
-
             var claims = BuildClaimsFromUserInfo(userInfo);
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -227,7 +227,9 @@ public class AuthService : IAuthService
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = true,
-                ExpiresUtc = currentTime.AddSeconds(expiresIn)
+                IssuedUtc = currentTime,
+                ExpiresUtc = currentTime.Add(AppCookieLifetime),
+                AllowRefresh = true
             };
 
             authProperties.StoreTokens([
