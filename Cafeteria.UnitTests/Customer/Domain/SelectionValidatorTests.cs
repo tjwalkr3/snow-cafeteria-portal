@@ -158,6 +158,52 @@ public class SelectionValidatorTests
     }
 
     [Fact]
+    public void IsValid_SwipeOrderNoSidesAvailable_EntreeAndDrink_ReturnsTrue()
+    {
+        // Arrange
+        var state = new SelectionState
+        {
+            SelectedEntree = CreateEntree(),
+            SelectedDrink = CreateDrink()
+        };
+        var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
+
+        // Act
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false, hasSides: false);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsValid_SwipeOrderNoSidesAvailable_MissingDrink_ReturnsFalse()
+    {
+        // Arrange
+        var state = new SelectionState { SelectedEntree = CreateEntree() };
+        var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
+
+        // Act
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false, hasSides: false);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsValid_SwipeOrderNoSidesAvailable_MissingEntree_ReturnsFalse()
+    {
+        // Arrange
+        var state = new SelectionState { SelectedDrink = CreateDrink() };
+        var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
+
+        // Act
+        var result = SelectionValidator.IsValid(state, optionTypes, isCardOrder: false, hasSides: false);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
     public void IsValid_NormalOrderWithoutEntree_ReturnsFalse()
     {
         // Arrange
