@@ -8,10 +8,15 @@ public class CardOrderAutoSyncCoordinatorTests
     public async Task Schedule_DebouncesRapidCalls_ToSingleExecution()
     {
         var executionCount = 0;
+        var firstExecution = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var coordinator = new CardOrderAutoSyncCoordinator(
             () =>
             {
-                Interlocked.Increment(ref executionCount);
+                if (Interlocked.Increment(ref executionCount) == 1)
+                {
+                    firstExecution.TrySetResult();
+                }
+
                 return Task.CompletedTask;
             },
             debounceMs: 25);
@@ -20,7 +25,7 @@ public class CardOrderAutoSyncCoordinatorTests
         coordinator.Schedule();
         coordinator.Schedule();
 
-        await Task.Delay(120);
+        await firstExecution.Task.WaitAsync(TimeSpan.FromSeconds(2));
 
         Assert.Equal(1, executionCount);
     }
