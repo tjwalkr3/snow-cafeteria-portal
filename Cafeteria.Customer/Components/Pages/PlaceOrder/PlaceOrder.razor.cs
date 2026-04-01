@@ -193,11 +193,14 @@ public partial class PlaceOrder : ComponentBase
                 option.Option, option.OptionType);
         }
 
-        await Cart.AddSide("order", swipe.Side.Side);
-        foreach (var option in swipe.Side.SelectedOptions)
+        if (swipe.Side != null)
         {
-            await Cart.AddSideOption("order", swipe.Side.Side.Id,
-                option.Option, option.OptionType);
+            await Cart.AddSide("order", swipe.Side.Side);
+            foreach (var option in swipe.Side.SelectedOptions)
+            {
+                await Cart.AddSideOption("order", swipe.Side.Side.Id,
+                    option.Option, option.OptionType);
+            }
         }
 
         await Cart.AddDrink("order", swipe.Drink);
@@ -214,7 +217,8 @@ public partial class PlaceOrder : ComponentBase
     private async Task DecreaseSwipeQuantity(SwipeGroup swipe)
     {
         await Cart.RemoveEntree("order", swipe.Entree.Entree.Id);
-        await Cart.RemoveSide("order", swipe.Side.Side.Id);
+        if (swipe.Side != null)
+            await Cart.RemoveSide("order", swipe.Side.Side.Id);
         await Cart.RemoveDrink("order", swipe.Drink.Id);
 
         Order = await Cart.GetOrder("order");
@@ -231,7 +235,8 @@ public partial class PlaceOrder : ComponentBase
         for (int i = 0; i < swipe.Quantity; i++)
         {
             await Cart.RemoveEntree("order", swipe.Entree.Entree.Id);
-            await Cart.RemoveSide("order", swipe.Side.Side.Id);
+            if (swipe.Side != null)
+                await Cart.RemoveSide("order", swipe.Side.Side.Id);
             await Cart.RemoveDrink("order", swipe.Drink.Id);
         }
 

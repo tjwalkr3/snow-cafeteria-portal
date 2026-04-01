@@ -288,7 +288,7 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
 
     private async Task AddToOrder()
     {
-        if (!IsCardOrder && !SelectionValidator.IsValid(State, OptionTypes, false))
+        if (!IsCardOrder && !SelectionValidator.IsValid(State, OptionTypes, false, Sides.Any()))
             return;
         if (IsCardOrder && (!HasAnySelection() || _isGoToCartInProgress))
             return;

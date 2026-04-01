@@ -153,10 +153,13 @@
                                             </div>
                                         }
                                         <div class="pt-2 border-top">
-                                            <span class="small fw-bold">Drink and Side(s):</span>
+                                            <span class="small fw-bold">@(swipe.Side != null ? "Drink and Side(s):" : "Drink:")</span>
                                             <ul class="mb-0 mt-1 ps-3 small text-secondary">
                                                 <li>@swipe.Drink.DrinkName</li>
-                                                <li>@swipe.Side.Side.SideName</li>
+                                                @if (swipe.Side != null)
+                                                {
+                                                    <li>@swipe.Side.Side.SideName</li>
+                                                }
                                             </ul>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center mt-3">
