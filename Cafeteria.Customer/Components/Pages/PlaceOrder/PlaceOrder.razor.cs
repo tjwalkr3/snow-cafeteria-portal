@@ -189,11 +189,14 @@ public partial class PlaceOrder : ComponentBase
     {
         var entreeOptions = swipe.Entree.SelectedOptions.Select(o =>
             new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
-        var sideOptions = swipe.Side.SelectedOptions.Select(o =>
-            new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
+        var sideOptions = swipe.Side?.SelectedOptions.Select(o => 
+            new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList() ?? new List<SelectedFoodOption>();
 
         await Cart.AddEntreeWithOptions("order", swipe.Entree.Entree, entreeOptions);
-        await Cart.AddSideWithOptions("order", swipe.Side.Side, sideOptions);
+        if (swipe.Side != null)
+        {
+            await Cart.AddSideWithOptions("order", swipe.Side.Side, sideOptions);
+        }
         await Cart.AddDrink("order", swipe.Drink);
 
         Order = await Cart.GetOrder("order");
