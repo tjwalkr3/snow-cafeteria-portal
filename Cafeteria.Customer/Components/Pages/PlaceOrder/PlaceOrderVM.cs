@@ -48,16 +48,18 @@ public class PlaceOrderVM : IPlaceOrderVM
             return new List<SwipeGroup>();
 
         var groupMap = new Dictionary<string, SwipeGroup>();
+        bool hasSides = order.Sides.Any();
 
-        int swipeCount = Math.Min(order.Entrees.Count,
-                         Math.Min(order.Sides.Count, order.Drinks.Count));
+        int swipeCount = hasSides
+            ? Math.Min(order.Entrees.Count, Math.Min(order.Sides.Count, order.Drinks.Count))
+            : Math.Min(order.Entrees.Count, order.Drinks.Count);
 
         for (int i = 0; i < swipeCount; i++)
         {
             var swipe = new SwipeGroup
             {
                 Entree = order.Entrees[i],
-                Side = order.Sides[i],
+                Side = hasSides ? order.Sides[i] : null,
                 Drink = order.Drinks[i],
                 Quantity = 1
             };
@@ -163,7 +165,7 @@ public class PlaceOrderVM : IPlaceOrderVM
 public class SwipeGroup
 {
     public OrderEntreeItem Entree { get; set; } = new();
-    public OrderSideItem Side { get; set; } = new();
+    public OrderSideItem? Side { get; set; }
     public DrinkDto Drink { get; set; } = new();
     public int Quantity { get; set; } = 1;
 

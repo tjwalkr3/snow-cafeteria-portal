@@ -2,10 +2,29 @@
 
 set -euo pipefail
 
-VENDOR_ID="${PRINTER_VENDOR_ID:-04b8}"
-PRODUCT_ID="${PRINTER_PRODUCT_ID:-}"
+VENDOR_ID="04b8"
+PRODUCT_ID=""
+TIMEZONE="America/Denver"
 RULE_FILE="/etc/udev/rules.d/99-escpos.rules"
 BLACKLIST_FILE="/etc/modprobe.d/blacklist-usblp.conf"
+
+set_system_timezone() {
+  local timezone="$1"
+
+  if [ ! -e "/usr/share/zoneinfo/$timezone" ]; then
+    echo "Timezone '$timezone' was not found in /usr/share/zoneinfo"
+    return 1
+  fi
+
+  if command -v timedatectl >/dev/null 2>&1; then
+    timedatectl set-timezone "$timezone"
+  else
+    ln -snf "/usr/share/zoneinfo/$timezone" /etc/localtime
+    echo "$timezone" > /etc/timezone
+  fi
+
+  echo "Configured system timezone to $timezone"
+}
 
 write_vendor_product_rule() {
   local product_id="$1"
@@ -93,13 +112,15 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+set_system_timezone "$TIMEZONE"
+
 if detected_product_id="$(detect_product_id)"; then
   write_vendor_product_rule "$detected_product_id"
   echo "Configured udev rule for Epson vendor $VENDOR_ID product $detected_product_id"
 else
   write_vendor_rule
   echo "Could not auto-detect product ID. Configured vendor-wide Epson rule for $VENDOR_ID."
-  echo "Set PRINTER_PRODUCT_ID if you want to target a single USB product ID."
+  echo "Set PRODUCT_ID at the top of this script if you want to target a single USB product ID."
 fi
 
 udevadm control --reload-rules
