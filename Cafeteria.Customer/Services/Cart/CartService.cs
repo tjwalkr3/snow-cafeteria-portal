@@ -176,4 +176,20 @@ public class CartService : ICartService
         }
     }
 
+    public async Task AddEntreeWithOptions(string key, EntreeDto entree, List<SelectedFoodOption> options)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        var item = new OrderEntreeItem { Entree = entree, SelectedOptions = options };
+        order.Entrees.Add(item);
+        await _protectedStorage.SetAsync(key, order);
+    }
+
+    public async Task AddSideWithOptions(string key, SideDto side, List<SelectedFoodOption> options)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        var item = new OrderSideItem { Side = side, SelectedOptions = options };
+        order.Sides.Add(item);
+        await _protectedStorage.SetAsync(key, order);
+    }
+
 }
