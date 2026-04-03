@@ -2,6 +2,7 @@ using Cafeteria.Customer.Components.Pages.Stations.Domain;
 using Cafeteria.Customer.Services.Cart;
 using Cafeteria.Customer.Services.Menu;
 using Cafeteria.Shared.DTOs.Menu;
+using Cafeteria.Shared.DTOs.Order;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
@@ -49,6 +50,9 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
     private bool _isNavigatingToCart;
     private bool _cardDraftDirty;
     private bool _isGoToCartInProgress;
+    private List<OrderEntreeItem> _cardBaselineEntrees = new();
+    private List<OrderSideItem> _cardBaselineSides = new();
+    private List<DrinkDto> _cardBaselineDrinks = new();
 
     protected override void OnInitialized()
     {
@@ -65,6 +69,13 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
             int locationId = order?.Location?.Id ?? 0;
             IsCardOrder = order?.IsCardOrder ?? false;
             PageTitle = string.IsNullOrEmpty(order?.StationName) ? "Station" : order.StationName;
+
+            if (IsCardOrder && order != null)
+            {
+                _cardBaselineEntrees = [.. order.Entrees];
+                _cardBaselineSides = [.. order.Sides];
+                _cardBaselineDrinks = [.. order.Drinks];
+            }
 
             State.Clear();
 
@@ -340,7 +351,10 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
 
         var draft = CreateCardDraftSnapshot();
         var mapped = StationDraftToOrderMapper.MapCardSelections(draft);
-        await Cart.UpdateCardOrderItems("order", mapped.Entrees, mapped.Sides, mapped.Drinks);
+        var mergedEntrees = _cardBaselineEntrees.Concat(mapped.Entrees).ToList();
+        var mergedSides = _cardBaselineSides.Concat(mapped.Sides).ToList();
+        var mergedDrinks = _cardBaselineDrinks.Concat(mapped.Drinks).ToList();
+        await Cart.UpdateCardOrderItems("order", mergedEntrees, mergedSides, mergedDrinks);
         _cardDraftDirty = false;
         CartNotification.NotifyCartChanged();
     }
