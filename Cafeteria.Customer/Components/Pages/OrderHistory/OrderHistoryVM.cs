@@ -10,6 +10,7 @@ public class OrderHistoryVM : IOrderHistoryVM
     private readonly IApiMenuService _menuService;
     private List<OrderDto>? _allOrders;
     private Dictionary<int, string> _stationNames = new();
+    private Dictionary<int, string> _locationNames = new();
     private const int PageSize = 5;
 
     public OrderHistoryVM(IApiOrderService orderService, IApiMenuService menuService)
@@ -50,7 +51,6 @@ public class OrderHistoryVM : IOrderHistoryVM
             _allOrders = await _orderService.GetOrdersByCustomerEmail();
             _allOrders = _allOrders.OrderByDescending(o => o.OrderTime).ToList();
 
-            // Load station names for all unique station IDs (drinks have null StationId, skip them)
             var stationIds = _allOrders
                 .SelectMany(o => o.FoodItems)
                 .Select(f => f.StationId)
@@ -62,7 +62,23 @@ public class OrderHistoryVM : IOrderHistoryVM
             {
                 if (!_stationNames.ContainsKey(stationId))
                 {
-                    _stationNames[stationId] = GetStationNameFromApi(stationId);
+                    var station = await _menuService.GetStationById(stationId);
+                    _stationNames[stationId] = station?.StationName ?? $"Station {stationId}";
+                }
+            }
+
+            var locationIds = _allOrders
+                .SelectMany(o => o.FoodItems)
+                .Where(f => !f.StationId.HasValue && f.LocationId.HasValue)
+                .Select(f => f.LocationId!.Value)
+                .Distinct();
+
+            foreach (var locationId in locationIds)
+            {
+                if (!_locationNames.ContainsKey(locationId))
+                {
+                    var location = await _menuService.GetLocationById(locationId);
+                    _locationNames[locationId] = location?.LocationName ?? $"Location {locationId}";
                 }
             }
 
@@ -103,7 +119,6 @@ public class OrderHistoryVM : IOrderHistoryVM
         FilterType = filterType;
         ApplyFilter();
 
-        // Update selected order if current selection is filtered out
         if (SelectedOrder != null && Orders?.Contains(SelectedOrder) != true)
         {
             SelectedOrder = Orders?.FirstOrDefault();
@@ -144,25 +159,16 @@ public class OrderHistoryVM : IOrderHistoryVM
         return order.TotalSwipe ?? order.FoodItems.Sum(f => f.SwipeCost ?? 0);
     }
 
-    public string GetStationName(int? stationId)
+    public string GetLocationLabel(int? stationId, int? locationId)
     {
-        if (!stationId.HasValue) return string.Empty;
-        return _stationNames.TryGetValue(stationId.Value, out var name) ? name : "Unknown Station";
+        if (stationId.HasValue)
+            return _stationNames.TryGetValue(stationId.Value, out var name) ? name : $"Station {stationId}";
+
+        if (locationId.HasValue)
+            return _locationNames.TryGetValue(locationId.Value, out var locName) ? locName : $"Location {locationId}";
+
+        return string.Empty;
     }
 
-    private string GetStationNameFromApi(int stationId)
-    {
-        // Since we don't have a direct GetStationById, we'll use a placeholder
-        // In a real implementation, you'd want to add that API method
-        return stationId switch
-        {
-            1 => "Main Street Grill",
-            2 => "Salad Bar",
-            3 => "Beverages",
-            4 => "Pizza Station",
-            5 => "Deli",
-            6 => "Breakfast",
-            _ => $"Station {stationId}"
-        };
-    }
+
 }

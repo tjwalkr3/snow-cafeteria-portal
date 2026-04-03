@@ -13,7 +13,7 @@ public class LocationSelectVM : ILocationSelectVM
     private Dictionary<int, List<LocationBusinessHoursDto>> _businessHoursCache = new();
     private Dictionary<int, List<LocationExceptionHoursDto>> _exceptionsCache = new();
 
-    public List<LocationDto> Locations { get; private set; } = new();
+    public List<LocationDto>? Locations { get; private set; }
 
     public LocationSelectVM(IApiMenuService menuService)
     {
