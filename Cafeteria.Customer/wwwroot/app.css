@@ -129,6 +129,7 @@ body {
 }
 
     .meal-card.selected {
+        background-color: #e0e4e8;
         border-color: #a8b2c8;
         box-shadow: 0 4px 14px rgba(30, 54, 108, 0.15);
     }

@@ -20,6 +20,10 @@ public sealed class CardOrderDraftManager
 
     public IReadOnlyDictionary<int, int> DrinkQuantities => _drinkQtys;
 
+    public IReadOnlyDictionary<int, Dictionary<int, HashSet<string>>> EntreeOptions => _entreeOptions;
+
+    public IReadOnlyDictionary<int, Dictionary<int, HashSet<string>>> SideOptions => _sideOptions;
+
     public bool HasAnySelection() => _entreeQtys.Any() || _sideQtys.Any() || _drinkQtys.Any();
 
     public bool HasEntreeSelection() => _entreeQtys.Any();

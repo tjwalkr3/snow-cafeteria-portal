@@ -24,6 +24,19 @@
                             }
                         </div>
                     }
+                    @if (IsCardOrder && cardQty > 0)
+                    {
+                        var cardOptions = GetCardEntreeOptions(entree.Id);
+                        @if (cardOptions.Any())
+                        {
+                            <div class="d-flex flex-wrap gap-1 mt-2">
+                                @foreach (var badge in cardOptions)
+                                {
+                                    <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.75rem;">@badge</span>
+                                }
+                            </div>
+                        }
+                    }
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     @if (IsCardOrder)
