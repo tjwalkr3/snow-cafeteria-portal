@@ -121,7 +121,7 @@ else
                                         <div class="order-item-info flex-grow-1">
                                             <h4 class="order-item-name">@item.Name</h4>
                                             <span class="order-item-station d-inline-flex align-items-center gap-1">
-                                                <i class="bi bi-geo-alt"></i> @OrderHistoryVM.GetStationName(item.StationId)
+                                                <i class="bi bi-geo-alt"></i> @OrderHistoryVM.GetLocationLabel(item.StationId, item.LocationId)
                                             </span>
                                         </div>
                                         @if (OrderHistoryVM.IsCardPayment(selectedOrder) && item.CardCost.HasValue)

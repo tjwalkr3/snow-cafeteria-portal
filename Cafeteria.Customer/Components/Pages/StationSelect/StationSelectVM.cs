@@ -17,7 +17,6 @@ public class StationSelectVM : IStationSelectVM
     public StationSelectVM(IApiMenuService menuService)
     {
         _menuService = menuService;
-        Stations = new List<StationDto>();
     }
 
     public async Task InitializeStations(int locationId)

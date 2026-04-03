@@ -73,7 +73,7 @@ public partial class PaymentSelect : ComponentBase
         }
 
         await LocationVM.InitializeLocationsAsync();
-        AnyLocationsOpen = LocationVM.Locations.Any();
+        AnyLocationsOpen = LocationVM.Locations?.Any() ?? false;
     }
 
     public async Task HandlePaymentSelected(bool isCard)
