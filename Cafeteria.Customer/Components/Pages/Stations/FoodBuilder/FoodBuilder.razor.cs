@@ -28,6 +28,9 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
     [Inject]
     private CartNotificationService CartNotification { get; set; } = default!;
 
+    [Inject]
+    private ICartKeyService CartKeyService { get; set; } = default!;
+
     private List<EntreeDto> Entrees { get; set; } = new();
     private List<SideWithOptionsDto> Sides { get; set; } = new();
     private List<DrinkDto> Drinks { get; set; } = new();
@@ -64,7 +67,8 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
     {
         if (firstRender)
         {
-            var order = await Cart.GetOrder("order");
+            var cartKey = await CartKeyService.GetCartKey();
+            var order = await Cart.GetOrder(cartKey);
             int stationId = order?.StationId ?? 0;
             int locationId = order?.Location?.Id ?? 0;
             IsCardOrder = order?.IsCardOrder ?? false;
@@ -299,6 +303,7 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
 
     private async Task AddToOrder()
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (!IsCardOrder && !SelectionValidator.IsValid(State, OptionTypes, false, Sides.Any()))
             return;
         if (IsCardOrder && (!HasAnySelection() || _isGoToCartInProgress))
@@ -313,7 +318,7 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
         }
 
         var sideWithOptions = Sides.FirstOrDefault(s => s.Side.Id == State.SelectedSide?.Id);
-        await CartSubmitter.SubmitAsync(State, OptionTypes, sideWithOptions?.OptionTypes);
+        await CartSubmitter.SubmitAsync(cartKey, State, OptionTypes, sideWithOptions?.OptionTypes);
 
         State.Clear();
         _entreeQuantity = 0;
@@ -346,6 +351,7 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
 
     private async Task SyncCardOrderAsync()
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (!IsCardOrder || !_cardDraftDirty)
             return;
 
@@ -354,7 +360,7 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
         var mergedEntrees = _cardBaselineEntrees.Concat(mapped.Entrees).ToList();
         var mergedSides = _cardBaselineSides.Concat(mapped.Sides).ToList();
         var mergedDrinks = _cardBaselineDrinks.Concat(mapped.Drinks).ToList();
-        await Cart.UpdateCardOrderItems("order", mergedEntrees, mergedSides, mergedDrinks);
+        await Cart.UpdateCardOrderItems(cartKey, mergedEntrees, mergedSides, mergedDrinks);
         _cardDraftDirty = false;
         CartNotification.NotifyCartChanged();
     }

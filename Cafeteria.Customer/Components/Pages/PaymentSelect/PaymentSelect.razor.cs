@@ -26,6 +26,9 @@ public partial class PaymentSelect : ComponentBase
     private ICartService Cart { get; set; } = default!;
 
     [Inject]
+    private ICartKeyService CartKeyService { get; set; } = default!;
+
+    [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
     [Inject]
@@ -78,6 +81,7 @@ public partial class PaymentSelect : ComponentBase
 
     public async Task HandlePaymentSelected(bool isCard)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (CurrentIsCardOrder.HasValue && CurrentIsCardOrder.Value != isCard)
         {
             PendingIsCardOrder = isCard;
@@ -85,16 +89,17 @@ public partial class PaymentSelect : ComponentBase
             return;
         }
         CurrentIsCardOrder = isCard;
-        await Cart.SetIsCardOrder("order", isCard);
+        await Cart.SetIsCardOrder(cartKey, isCard);
         Navigation.NavigateTo("/location-select");
     }
 
     public async Task ConfirmPaymentChange()
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (!PendingIsCardOrder.HasValue) return;
-        await Cart.ClearOrder("order");
+        await Cart.ClearOrder(cartKey);
         CurrentIsCardOrder = PendingIsCardOrder.Value;
-        await Cart.SetIsCardOrder("order", PendingIsCardOrder.Value);
+        await Cart.SetIsCardOrder(cartKey, PendingIsCardOrder.Value);
         PendingIsCardOrder = null;
         Navigation.NavigateTo("/location-select");
     }
@@ -111,7 +116,8 @@ public partial class PaymentSelect : ComponentBase
         {
             await InvokeAsync(async () =>
             {
-                var order = await Cart.GetOrder("order");
+                var cartKey = await CartKeyService.GetCartKey();
+                var order = await Cart.GetOrder(cartKey);
                 if (order != null)
                 {
                     CurrentIsCardOrder = order.IsCardOrder;
