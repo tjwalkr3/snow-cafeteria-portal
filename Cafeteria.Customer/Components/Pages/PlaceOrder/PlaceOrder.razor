@@ -20,9 +20,12 @@
     else if (Order == null || (!Order.Entrees.Any() && !Order.Sides.Any() && !Order.Drinks.Any()))
     {
         <div class="empty-state text-center mx-auto my-5">
+            <div class="empty-state-icon mb-4">
+                <i class="bi bi-cart3"></i>
+            </div>
             <h4>Your Order is Empty</h4>
             <p>You haven't added any items yet. Start building your order!</p>
-            <a href="/" class="btn btn-primary">Start an Order</a>
+            <a href="/" class="empty-state-btn">Start an Order</a>
         </div>
     }
     else
