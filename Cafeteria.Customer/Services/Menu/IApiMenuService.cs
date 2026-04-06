@@ -9,6 +9,7 @@ public interface IApiMenuService
     Task<List<LocationBusinessHoursDto>> GetLocationBusinessHours(int locationId);
     Task<List<LocationExceptionHoursDto>> GetLocationExceptions(int locationId);
     Task<List<StationDto>> GetStationsByLocation(int locationId);
+    Task<StationDto?> GetStationById(int stationId);
     Task<List<StationBusinessHoursDto>> GetStationBusinessHours(int stationId);
     Task<List<StationExceptionHoursDto>> GetStationExceptions(int stationId);
     Task<List<EntreeDto>> GetEntreesByStation(int stationId);

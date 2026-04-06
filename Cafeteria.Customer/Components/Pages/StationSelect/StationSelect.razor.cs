@@ -14,14 +14,18 @@ public partial class StationSelect : ComponentBase
     [Inject]
     private ICartService Cart { get; set; } = default!;
 
+    [Inject]
+    private ICartKeyService CartKeyService { get; set; } = default!;
+
     public bool IsInitialized { get; set; } = false;
 
     public async Task HandleStationSelected(int stationId)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         var station = StationSelectVM.Stations?.FirstOrDefault(s => s.Id == stationId);
         if (station == null) return;
 
-        await Cart.SetStation("order", station.Id, station.StationName);
+        await Cart.SetStation(cartKey, station.Id, station.StationName);
         Navigation.NavigateTo("/station");
     }
 
@@ -33,7 +37,8 @@ public partial class StationSelect : ComponentBase
         {
             await InvokeAsync(async () =>
             {
-                var order = await Cart.GetOrder("order");
+                var cartKey = await CartKeyService.GetCartKey();
+                var order = await Cart.GetOrder(cartKey);
                 int locationId = order?.Location?.Id ?? 0;
                 await StationSelectVM.InitializeStations(locationId);
                 IsInitialized = true;

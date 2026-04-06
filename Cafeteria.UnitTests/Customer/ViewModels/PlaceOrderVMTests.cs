@@ -232,6 +232,76 @@ public class PlaceOrderVMTests
     }
 
     [Fact]
+    public void GroupItemsIntoSwipes_NoSides_CreatesGroupsWithNullSide()
+    {
+        // Arrange
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+        var order = new BrowserOrder
+        {
+            IsCardOrder = false,
+            Entrees = [new OrderEntreeItem { Entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 8m } }],
+            Sides = [],
+            Drinks = [new DrinkDto { Id = 1, DrinkName = "Soda", DrinkPrice = 1m }]
+        };
+
+        // Act
+        var groups = vm.GroupItemsIntoSwipes(order);
+
+        // Assert
+        Assert.Single(groups);
+        Assert.Null(groups[0].Side);
+    }
+
+    [Fact]
+    public void GroupItemsIntoSwipes_NoSides_SwipeCountMatchesEntreesAndDrinks()
+    {
+        // Arrange
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+        var order = new BrowserOrder
+        {
+            IsCardOrder = false,
+            Entrees =
+            [
+                new OrderEntreeItem { Entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 8m } },
+                new OrderEntreeItem { Entree = new EntreeDto { Id = 2, EntreeName = "Wrap", EntreePrice = 7m } }
+            ],
+            Sides = [],
+            Drinks =
+            [
+                new DrinkDto { Id = 1, DrinkName = "Soda", DrinkPrice = 1m },
+                new DrinkDto { Id = 2, DrinkName = "Water", DrinkPrice = 0m }
+            ]
+        };
+
+        // Act
+        var groups = vm.GroupItemsIntoSwipes(order);
+
+        // Assert
+        Assert.Equal(2, groups.Sum(g => g.Quantity));
+    }
+
+    [Fact]
+    public void GroupItemsIntoSwipes_WithSides_SideIsNotNull()
+    {
+        // Arrange
+        var vm = new PlaceOrderVM(_mockMenuService.Object);
+        var order = new BrowserOrder
+        {
+            IsCardOrder = false,
+            Entrees = [new OrderEntreeItem { Entree = new EntreeDto { Id = 1, EntreeName = "Burger", EntreePrice = 8m } }],
+            Sides = [new OrderSideItem { Side = new SideDto { Id = 1, SideName = "Fries", SidePrice = 2m } }],
+            Drinks = [new DrinkDto { Id = 1, DrinkName = "Soda", DrinkPrice = 1m }]
+        };
+
+        // Act
+        var groups = vm.GroupItemsIntoSwipes(order);
+
+        // Assert
+        Assert.Single(groups);
+        Assert.NotNull(groups[0].Side);
+    }
+
+    [Fact]
     public async Task ErrorOccurred_ReturnsTrue_WhenInitializeLocationsFails()
     {
         _mockMenuService.Setup(m => m.GetAllLocations())

@@ -7,7 +7,8 @@ public static class SelectionValidator
     public static bool IsValid(
         SelectionState state,
         List<FoodOptionTypeWithOptionsDto> optionTypes,
-        bool isCardOrder)
+        bool isCardOrder,
+        bool hasSides = true)
     {
         bool primaryComplete = IsPrimaryItemComplete(state, optionTypes);
         bool primaryStarted = state.SelectedEntree != null;
@@ -20,7 +21,7 @@ public static class SelectionValidator
             return primaryComplete || state.SelectedSide != null || state.SelectedDrink != null;
         }
 
-        return primaryComplete && state.SelectedSide != null && state.SelectedDrink != null;
+        return primaryComplete && (!hasSides || state.SelectedSide != null) && state.SelectedDrink != null;
     }
 
     public static bool AreOptionsComplete(

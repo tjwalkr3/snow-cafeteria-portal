@@ -61,7 +61,9 @@ public static class OrderCalculations
         if (order == null)
             return 0;
 
-        return Math.Min(order.Entrees.Count,
-                Math.Min(order.Sides.Count, order.Drinks.Count));
+        bool hasSides = order.Sides.Any();
+        return hasSides
+            ? Math.Min(order.Entrees.Count, Math.Min(order.Sides.Count, order.Drinks.Count))
+            : Math.Min(order.Entrees.Count, order.Drinks.Count);
     }
 }

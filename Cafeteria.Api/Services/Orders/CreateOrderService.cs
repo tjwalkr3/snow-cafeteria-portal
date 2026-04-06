@@ -49,14 +49,15 @@ public class CreateOrderService(IDbConnection dbConnection, IPrintService printS
                 for (int i = 0; i < swipeCount; i++)
                 {
                     order.FoodItems.Add(await InsertEntreeAsync(browserOrder.Entrees[i], order.Id, null, saleSwipeId, transaction, swipeCost: 1));
-                    order.FoodItems.Add(await InsertSideAsync(browserOrder.Sides[i], order.Id, null, saleSwipeId, transaction, swipeCost: 0));
+                    if (i < browserOrder.Sides.Count)
+                        order.FoodItems.Add(await InsertSideAsync(browserOrder.Sides[i], order.Id, null, saleSwipeId, transaction, swipeCost: 0));
                     order.FoodItems.Add(await InsertDrinkAsync(browserOrder.Drinks[i], order.Id, null, saleSwipeId, transaction, swipeCost: 0));
                 }
             }
 
             transaction.Commit();
             var orderId = order.Id;
-            await _printService.PrintOrder(browserOrder, orderId);
+            _ = _printService.PrintOrder(browserOrder, orderId);
             return order;
         }
         catch

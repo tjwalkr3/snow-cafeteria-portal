@@ -121,7 +121,7 @@ else
                                         <div class="order-item-info flex-grow-1">
                                             <h4 class="order-item-name">@item.Name</h4>
                                             <span class="order-item-station d-inline-flex align-items-center gap-1">
-                                                <i class="bi bi-geo-alt"></i> @OrderHistoryVM.GetStationName(item.StationId)
+                                                <i class="bi bi-geo-alt"></i> @OrderHistoryVM.GetLocationLabel(item.StationId, item.LocationId)
                                             </span>
                                         </div>
                                         @if (OrderHistoryVM.IsCardPayment(selectedOrder) && item.CardCost.HasValue)
@@ -165,15 +165,6 @@ else
                                     <span class="totals-value total-amount">@OrderHistoryVM.GetSwipeCount(selectedOrder) Swipe@(OrderHistoryVM.GetSwipeCount(selectedOrder) != 1 ? "s" : "")</span>
                                 </div>
                             }
-                        </div>
-
-                        <div class="order-actions d-flex flex-column flex-lg-row gap-3">
-                            <button class="btn btn-outline-primary action-btn flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2">
-                                <i class="bi bi-printer"></i> Print Receipt
-                            </button>
-                            <button class="btn btn-primary action-btn reorder-btn flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2">
-                                <i class="bi bi-arrow-repeat"></i> Reorder Items
-                            </button>
                         </div>
                     </div>
                 }

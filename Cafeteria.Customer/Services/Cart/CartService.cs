@@ -89,6 +89,15 @@ public class CartService : ICartService
         }
     }
 
+    public async Task UpdateCardOrderItems(string key, List<OrderEntreeItem> entrees, List<OrderSideItem> sides, List<DrinkDto> drinks)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        order.Entrees = [.. entrees];
+        order.Sides = [.. sides];
+        order.Drinks = [.. drinks];
+        await _protectedStorage.SetAsync(key, order);
+    }
+
     public async Task RemoveEntree(string key, int entreeId)
     {
         var order = await GetOrder(key);
@@ -165,6 +174,22 @@ public class CartService : ICartService
                 }
             }
         }
+    }
+
+    public async Task AddEntreeWithOptions(string key, EntreeDto entree, List<SelectedFoodOption> options)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        var item = new OrderEntreeItem { Entree = entree, SelectedOptions = options };
+        order.Entrees.Add(item);
+        await _protectedStorage.SetAsync(key, order);
+    }
+
+    public async Task AddSideWithOptions(string key, SideDto side, List<SelectedFoodOption> options)
+    {
+        var order = await GetOrder(key) ?? new BrowserOrder();
+        var item = new OrderSideItem { Side = side, SelectedOptions = options };
+        order.Sides.Add(item);
+        await _protectedStorage.SetAsync(key, order);
     }
 
 }

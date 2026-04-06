@@ -43,6 +43,7 @@ After=network.target
 [Service]
 Type=simple
 User=$USER_NAME
+SupplementaryGroups=lp plugdev
 WorkingDirectory=$PROJECT_DIR
 Environment=LD_LIBRARY_PATH=${USER_HOME}/.nix-profile/lib
 ExecStart=$UVICORN main:app --host $HOST --port $PORT

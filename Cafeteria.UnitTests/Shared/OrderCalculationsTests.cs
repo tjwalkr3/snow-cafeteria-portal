@@ -258,6 +258,20 @@ public class OrderCalculationsTests
         Assert.Equal(0, OrderCalculations.CalculateTotalSwipe(order));
     }
 
+    [Fact]
+    public void CalculateTotalSwipe_NoSides_ReturnsMinOfEntreesAndDrinks()
+    {
+        var order = BuildSwipeOrder(entrees: 2, sides: 0, drinks: 2);
+        Assert.Equal(2, OrderCalculations.CalculateTotalSwipe(order));
+    }
+
+    [Fact]
+    public void CalculateTotalSwipe_NoSides_DrinkIsLimitingFactor()
+    {
+        var order = BuildSwipeOrder(entrees: 3, sides: 0, drinks: 1);
+        Assert.Equal(1, OrderCalculations.CalculateTotalSwipe(order));
+    }
+
     // ---------------------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------------------

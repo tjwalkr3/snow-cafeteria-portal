@@ -20,9 +20,12 @@
     else if (Order == null || (!Order.Entrees.Any() && !Order.Sides.Any() && !Order.Drinks.Any()))
     {
         <div class="empty-state text-center mx-auto my-5">
+            <div class="empty-state-icon mb-4">
+                <i class="bi bi-cart3"></i>
+            </div>
             <h4>Your Order is Empty</h4>
             <p>You haven't added any items yet. Start building your order!</p>
-            <a href="/" class="btn btn-primary">Start an Order</a>
+            <a href="/" class="empty-state-btn">Start an Order</a>
         </div>
     }
     else
@@ -153,10 +156,13 @@
                                             </div>
                                         }
                                         <div class="pt-2 border-top">
-                                            <span class="small fw-bold">Drink and Side(s):</span>
+                                            <span class="small fw-bold">@(swipe.Side != null ? "Drink and Side(s):" : "Drink:")</span>
                                             <ul class="mb-0 mt-1 ps-3 small text-secondary">
                                                 <li>@swipe.Drink.DrinkName</li>
-                                                <li>@swipe.Side.Side.SideName</li>
+                                                @if (swipe.Side != null)
+                                                {
+                                                    <li>@swipe.Side.Side.SideName</li>
+                                                }
                                             </ul>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center mt-3">
@@ -211,7 +217,7 @@
                                         <i class="bi bi-exclamation-triangle"></i> You do not have enough swipes for this order. Please remove some items or choose a different payment method.
                                     </div>
                                 }
-                                <button @onclick="HandlePlaceOrder" class="place-order-btn" disabled="@(!CanPlaceOrder)">Place Order</button>
+                                <button @onclick="HandlePlaceOrder" class="place-order-btn" disabled="@(!CanPlaceOrder || _hasAttemptedPlaceOrder)">Place Order</button>
                                 <a href="@GetStationSelectUrl()" class="continue-shopping-btn d-block text-center"><i class="bi bi-chevron-left me-1"></i> Continue Shopping</a>
                             </div>
                         </div>

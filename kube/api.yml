@@ -42,6 +42,8 @@ spec:
                 secretKeyRef:
                   name: tailscale-auth
                   key: TS_AUTHKEY
+            - name: TZ
+              value: "America/Denver"
             - name: TS_KUBE_SECRET
               value: ""
             - name: TS_STATE_DIR

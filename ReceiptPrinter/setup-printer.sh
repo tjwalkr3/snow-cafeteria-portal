@@ -1,27 +1,144 @@
 #!/bin/bash
 
-VENDOR_ID=04b8
-PRODUCT_ID=0202
+set -euo pipefail
+
+VENDOR_ID="04b8"
+PRODUCT_ID=""
+TIMEZONE="America/Denver"
 RULE_FILE="/etc/udev/rules.d/99-escpos.rules"
 BLACKLIST_FILE="/etc/modprobe.d/blacklist-usblp.conf"
+
+set_system_timezone() {
+  local timezone="$1"
+
+  if [ ! -e "/usr/share/zoneinfo/$timezone" ]; then
+    echo "Timezone '$timezone' was not found in /usr/share/zoneinfo"
+    return 1
+  fi
+
+  if command -v timedatectl >/dev/null 2>&1; then
+    timedatectl set-timezone "$timezone"
+  else
+    ln -snf "/usr/share/zoneinfo/$timezone" /etc/localtime
+    echo "$timezone" > /etc/timezone
+  fi
+
+  echo "Configured system timezone to $timezone"
+}
+
+write_vendor_product_rule() {
+  local product_id="$1"
+  cat > "$RULE_FILE" <<EOF
+# Epson TM printer access (USB)
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="$VENDOR_ID", ATTR{idProduct}=="$product_id", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="$VENDOR_ID", ATTRS{idProduct}=="$product_id", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+EOF
+}
+
+write_vendor_rule() {
+  cat > "$RULE_FILE" <<EOF
+# Epson TM printer access (USB, vendor-wide fallback)
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="$VENDOR_ID", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="$VENDOR_ID", MODE:="0666", GROUP:="lp", TAG+="uaccess"
+EOF
+}
+
+print_detected_usb_nodes() {
+  if ! command -v lsusb >/dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "Current Epson USB devices and permissions:"
+  while IFS= read -r line; do
+    local bus
+    local dev
+    local node
+
+    bus=$(awk '{print $2}' <<< "$line")
+    dev=$(awk '{print $4}' <<< "$line" | tr -d ':')
+    node="/dev/bus/usb/$bus/$dev"
+
+    echo "  $line"
+    if [ -e "$node" ]; then
+      ls -l "$node"
+    fi
+  done < <(lsusb -d "${VENDOR_ID,,}:")
+}
+
+detect_product_id() {
+  if [ -n "$PRODUCT_ID" ]; then
+    echo "${PRODUCT_ID,,}"
+    return 0
+  fi
+
+  if ! command -v lsusb >/dev/null 2>&1; then
+    return 1
+  fi
+
+  local first_epson_pid=""
+  while IFS= read -r line; do
+    local id
+    local pid
+    local description
+
+    id=$(awk '{print $6}' <<< "$line")
+    description=$(cut -d' ' -f7- <<< "$line")
+
+    if [[ "${id,,}" =~ ^${VENDOR_ID,,}:[0-9a-f]{4}$ ]]; then
+      pid="${id#*:}"
+      pid="${pid,,}"
+
+      if [ -z "$first_epson_pid" ]; then
+        first_epson_pid="$pid"
+      fi
+
+      if grep -Eqi "TM-?m30III" <<< "$description"; then
+        echo "$pid"
+        return 0
+      fi
+    fi
+  done < <(lsusb)
+
+  if [ -n "$first_epson_pid" ]; then
+    echo "$first_epson_pid"
+    return 0
+  fi
+
+  return 1
+}
 
 if [ "$EUID" -ne 0 ]; then
   echo "Please run as root or with sudo"
   exit 1
 fi
 
-echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"$VENDOR_ID\", ATTRS{idProduct}==\"$PRODUCT_ID\", MODE=\"0666\"" > "$RULE_FILE"
+set_system_timezone "$TIMEZONE"
+
+if detected_product_id="$(detect_product_id)"; then
+  write_vendor_product_rule "$detected_product_id"
+  echo "Configured udev rule for Epson vendor $VENDOR_ID product $detected_product_id"
+else
+  write_vendor_rule
+  echo "Could not auto-detect product ID. Configured vendor-wide Epson rule for $VENDOR_ID."
+  echo "Set PRODUCT_ID at the top of this script if you want to target a single USB product ID."
+fi
 
 udevadm control --reload-rules
-udevadm trigger
+udevadm trigger --subsystem-match=usb --action=add
 
 if lsmod | grep -q "usblp"; then
   rmmod usblp
 fi
 
-if [ ! -f "$BLACKLIST_FILE" ]; then
+if [ ! -f "$BLACKLIST_FILE" ] || ! grep -q "^blacklist usblp$" "$BLACKLIST_FILE"; then
   echo "blacklist usblp" > "$BLACKLIST_FILE"
-  update-initramfs -u
+  if command -v update-initramfs >/dev/null 2>&1; then
+    update-initramfs -u
+  else
+    echo "update-initramfs not found; reboot may be required for blacklist changes to apply."
+  fi
 fi
+
+print_detected_usb_nodes
 
 echo "Setup complete! Unplug and replug the printer if needed."

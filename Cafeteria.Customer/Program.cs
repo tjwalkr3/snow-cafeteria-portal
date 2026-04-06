@@ -14,6 +14,7 @@ using Cafeteria.Customer.Services.Printer;
 using Cafeteria.Customer.Services.Storage;
 using Cafeteria.Customer.Services.Swipe;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,12 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.Configure<HubOptions>(options =>
+{
+    // Large in-browser cart payloads can exceed the default SignalR receive limit.
+    options.MaximumReceiveMessageSize = 2 * 1024 * 1024;
+});
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(Cafeteria.Shared.Controllers.AuthController).Assembly);
@@ -69,6 +76,7 @@ builder.Services.AddScoped<FoodOptionStagingStore>();
 // Register cart service and storage wrapper
 builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartKeyService, CartKeyService>();
 builder.Services.AddSingleton<CartNotificationService>();
 
 // Add authentication services
@@ -80,7 +88,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/signin";
         options.LogoutPath = "/auth/signout";
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
         options.SlidingExpiration = true;
     });
 

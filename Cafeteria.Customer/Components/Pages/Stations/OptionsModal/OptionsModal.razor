@@ -31,7 +31,7 @@
                             </span>
                             @if (IsCardOrder && optType.FoodOptionPrice > 0 && optType.MaxAmount > optType.IncludedAmount)
                             {
-                                <span class="text-danger" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
+                                <span class="text-muted" style="font-size: 0.8rem; font-weight: 500;">+$@optType.FoodOptionPrice.ToString("F2") each extra</span>
                             }
                             @if (isMulti && optType.RequiredAmount > 0)
                             {
@@ -83,7 +83,7 @@
                         </div>
                         @if (IsCardOrder && extraCost > 0)
                         {
-                            <div class="info-banner warning mt-2">
+                            <div class="info-banner warning-danger mt-2">
                                 <div>
                                     <i class="bi bi-exclamation-triangle me-2"></i>
                                     +$@extraCost.ToString("F2") for @(stagedCount - optType.IncludedAmount)
