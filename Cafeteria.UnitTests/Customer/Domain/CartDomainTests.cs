@@ -7,7 +7,7 @@ namespace Cafeteria.UnitTests.Customer.Domain;
 
 public class CartSubmitterTests
 {
-    private const string CART_KEY = "order";
+    private const string CART_KEY = "test@example.com";
     private readonly Mock<ICartService> _mockCartService;
     private readonly CartSubmitter _cartSubmitter;
 
@@ -28,7 +28,7 @@ public class CartSubmitterTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(x => x.AddEntree(CART_KEY, entree), Times.Once);
@@ -45,7 +45,7 @@ public class CartSubmitterTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes, new List<FoodOptionTypeWithOptionsDto>());
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes, new List<FoodOptionTypeWithOptionsDto>());
 
         // Assert
         _mockCartService.Verify(x => x.AddSide(CART_KEY, side), Times.Once);
@@ -62,7 +62,7 @@ public class CartSubmitterTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(x => x.AddDrink(CART_KEY, drink), Times.Once);
@@ -84,7 +84,7 @@ public class CartSubmitterTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes, new List<FoodOptionTypeWithOptionsDto>());
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes, new List<FoodOptionTypeWithOptionsDto>());
 
         // Assert
         _mockCartService.Verify(x => x.AddEntree(CART_KEY, entree), Times.Once);
@@ -108,7 +108,7 @@ public class CartSubmitterTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes, new List<FoodOptionTypeWithOptionsDto>());
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes, new List<FoodOptionTypeWithOptionsDto>());
 
         // Assert
         _mockCartService.Verify(x => x.AddEntree(CART_KEY, entree), Times.Once);
@@ -124,7 +124,7 @@ public class CartSubmitterTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(x => x.AddEntree(It.IsAny<string>(), It.IsAny<EntreeDto>()), Times.Never);
@@ -157,7 +157,7 @@ public class CartSubmitterTests
         };
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(
@@ -187,7 +187,7 @@ public class CartSubmitterTests
         };
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(
@@ -219,7 +219,7 @@ public class CartSubmitterTests
         };
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(
@@ -252,14 +252,14 @@ public class CartSubmitterTests
         };
 
         // Act
-        await _cartSubmitter.SubmitAsync(new SelectionState { SelectedSide = side }, new List<FoodOptionTypeWithOptionsDto>(), sideOptionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", new SelectionState { SelectedSide = side }, new List<FoodOptionTypeWithOptionsDto>(), sideOptionTypes);
 
         // Assert
         // Update the state with side options for the actual submit
         var stateWithOptions = new SelectionState { SelectedSide = side };
         stateWithOptions.SideOptions[sideOptionType.Id] = new HashSet<string> { "Large" };
 
-        await _cartSubmitter.SubmitAsync(stateWithOptions, new List<FoodOptionTypeWithOptionsDto>(), sideOptionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", stateWithOptions, new List<FoodOptionTypeWithOptionsDto>(), sideOptionTypes);
 
         _mockCartService.Verify(
             x => x.AddSideOption(CART_KEY, side.Id, sideOption, sideOptionType),
@@ -274,7 +274,7 @@ public class CartSubmitterTests
         var state = new SelectionState { SelectedSide = side };
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, new List<FoodOptionTypeWithOptionsDto>(), null);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, new List<FoodOptionTypeWithOptionsDto>(), null);
 
         // Assert
         _mockCartService.Verify(x => x.AddSide(CART_KEY, side), Times.Once);
@@ -292,7 +292,7 @@ public class CartSubmitterTests
         var sideOptionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, new List<FoodOptionTypeWithOptionsDto>(), sideOptionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, new List<FoodOptionTypeWithOptionsDto>(), sideOptionTypes);
 
         // Assert
         _mockCartService.Verify(x => x.AddSide(CART_KEY, side), Times.Once);
@@ -326,7 +326,7 @@ public class CartSubmitterTests
         };
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(
@@ -354,7 +354,7 @@ public class CartSubmitterTests
         };
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(
@@ -373,7 +373,7 @@ public class CartSubmitterTests
         var optionTypes = new List<FoodOptionTypeWithOptionsDto>();
 
         // Act
-        await _cartSubmitter.SubmitAsync(state, optionTypes);
+        await _cartSubmitter.SubmitAsync("test@example.com", state, optionTypes);
 
         // Assert
         _mockCartService.Verify(x => x.AddEntree(CART_KEY, entree), Times.Once);

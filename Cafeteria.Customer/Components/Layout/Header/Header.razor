@@ -1,3 +1,5 @@
+@rendermode InteractiveServer
+
 <header class="header py-3">
     <div class="header-content px-4">
         <div class="d-flex align-items-center">
@@ -61,91 +63,3 @@
         </nav>
     </div>
 </header>
-
-@using Cafeteria.Customer.Components.Layout.SigninButton
-@using Cafeteria.Customer.Services
-@using Cafeteria.Customer.Services.Cart
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.Routing
-@implements IDisposable
-@rendermode InteractiveServer
-@inject ICartService CartService
-@inject NavigationManager NavigationManager
-@inject CartNotificationService CartNotification
-
-@code {
-    private int cartItemCount = 0;
-    private bool showUserMenu = false;
-
-    private void ToggleUserMenu()
-    {
-        showUserMenu = !showUserMenu;
-    }
-
-    private void CloseUserMenu()
-    {
-        showUserMenu = false;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadCartCount();
-        NavigationManager.LocationChanged += OnLocationChanged;
-        CartNotification.OnCartChanged += OnCartChanged;
-    }
-
-    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        showUserMenu = false;
-        await LoadCartCount();
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async void OnCartChanged()
-    {
-        await LoadCartCount();
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task LoadCartCount()
-    {
-        var order = await CartService.GetOrder("order");
-        if (order != null)
-        {
-            if (!order.IsCardOrder)
-            {
-                cartItemCount = Math.Min(order.Entrees.Count,
-                Math.Min(order.Sides.Count, order.Drinks.Count));
-            }
-            else
-            {
-                cartItemCount = order.Entrees.Count + order.Sides.Count + order.Drinks.Count;
-            }
-        }
-        else
-        {
-            cartItemCount = 0;
-        }
-    }
-
-    private void NavigateToCart()
-    {
-        NavigationManager.NavigateTo("/place-order");
-    }
-
-    private void NavigateToOrderHistory()
-    {
-        NavigationManager.NavigateTo("/order-history");
-    }
-
-    private void SignOut()
-    {
-        NavigationManager.NavigateTo("/auth/signout", forceLoad: true);
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-        CartNotification.OnCartChanged -= OnCartChanged;
-    }
-}

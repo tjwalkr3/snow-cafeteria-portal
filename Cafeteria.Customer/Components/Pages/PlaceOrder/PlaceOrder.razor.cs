@@ -22,6 +22,9 @@ public partial class PlaceOrder : ComponentBase
     private ICartService Cart { get; set; } = default!;
 
     [Inject]
+    private ICartKeyService CartKeyService { get; set; } = default!;
+
+    [Inject]
     private CartNotificationService CartNotification { get; set; } = default!;
 
     [Inject]
@@ -62,7 +65,7 @@ public partial class PlaceOrder : ComponentBase
         {
             await InvokeAsync(async () =>
             {
-                string userName = "order";
+                var cartKey = await CartKeyService.GetCartKey();
 
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var user = authState.User;
@@ -87,7 +90,7 @@ public partial class PlaceOrder : ComponentBase
                     }
                 }
 
-                Order = await GetOrder(userName);
+                Order = await GetOrder(cartKey);
 
                 if (Order != null)
                 {
@@ -122,6 +125,7 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task HandlePlaceOrder()
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (_hasAttemptedPlaceOrder)
             return;
 
@@ -139,7 +143,7 @@ public partial class PlaceOrder : ComponentBase
 
         await OrderService.CreateOrder(Order);
 
-        await Cart.ClearOrder("order");
+        await Cart.ClearOrder(cartKey);
 
         Navigation.NavigateTo("/thank-you", true);
     }
@@ -187,19 +191,20 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task IncreaseSwipeQuantity(SwipeGroup swipe)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         var entreeOptions = swipe.Entree.SelectedOptions.Select(o =>
             new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
         var sideOptions = swipe.Side?.SelectedOptions.Select(o =>
             new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList() ?? new List<SelectedFoodOption>();
 
-        await Cart.AddEntreeWithOptions("order", swipe.Entree.Entree, entreeOptions);
+        await Cart.AddEntreeWithOptions(cartKey, swipe.Entree.Entree, entreeOptions);
         if (swipe.Side != null)
         {
-            await Cart.AddSideWithOptions("order", swipe.Side.Side, sideOptions);
+            await Cart.AddSideWithOptions(cartKey, swipe.Side.Side, sideOptions);
         }
-        await Cart.AddDrink("order", swipe.Drink);
+        await Cart.AddDrink(cartKey, swipe.Drink);
 
-        Order = await Cart.GetOrder("order");
+        Order = await Cart.GetOrder(cartKey);
         if (Order != null)
         {
             SwipeGroups = PlaceOrderVM.GroupItemsIntoSwipes(Order);
@@ -210,12 +215,13 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task DecreaseSwipeQuantity(SwipeGroup swipe)
     {
-        await Cart.RemoveEntree("order", swipe.Entree.Entree.Id);
+        var cartKey = await CartKeyService.GetCartKey();
+        await Cart.RemoveEntree(cartKey, swipe.Entree.Entree.Id);
         if (swipe.Side != null)
-            await Cart.RemoveSide("order", swipe.Side.Side.Id);
-        await Cart.RemoveDrink("order", swipe.Drink.Id);
+            await Cart.RemoveSide(cartKey, swipe.Side.Side.Id);
+        await Cart.RemoveDrink(cartKey, swipe.Drink.Id);
 
-        Order = await Cart.GetOrder("order");
+        Order = await Cart.GetOrder(cartKey);
         if (Order != null)
         {
             SwipeGroups = PlaceOrderVM.GroupItemsIntoSwipes(Order);
@@ -226,15 +232,16 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task RemoveSwipeGroup(SwipeGroup swipe)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         for (int i = 0; i < swipe.Quantity; i++)
         {
-            await Cart.RemoveEntree("order", swipe.Entree.Entree.Id);
+            await Cart.RemoveEntree(cartKey, swipe.Entree.Entree.Id);
             if (swipe.Side != null)
-                await Cart.RemoveSide("order", swipe.Side.Side.Id);
-            await Cart.RemoveDrink("order", swipe.Drink.Id);
+                await Cart.RemoveSide(cartKey, swipe.Side.Side.Id);
+            await Cart.RemoveDrink(cartKey, swipe.Drink.Id);
         }
 
-        Order = await Cart.GetOrder("order");
+        Order = await Cart.GetOrder(cartKey);
         if (Order != null)
         {
             SwipeGroups = PlaceOrderVM.GroupItemsIntoSwipes(Order);
@@ -250,80 +257,90 @@ public partial class PlaceOrder : ComponentBase
 
     private async Task AddEntreeItem(EntreeGroup group)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         var options = group.Entree.SelectedOptions.Select(o =>
             new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
-        await Cart.AddEntreeWithOptions("order", group.Entree.Entree, options);
+        await Cart.AddEntreeWithOptions(cartKey, group.Entree.Entree, options);
         await RefreshCardOrder();
     }
 
     private async Task RemoveEntreeItem(EntreeGroup group)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (Order == null) return;
-        await Cart.RemoveEntree("order", group.Entree.Entree.Id);
+        await Cart.RemoveEntree(cartKey, group.Entree.Entree.Id);
         await RefreshCardOrder();
     }
 
     private async Task RemoveAllEntreeItems(EntreeGroup group)
     {
         if (Order == null) return;
+        var cartKey = await CartKeyService.GetCartKey();
         for (int i = 0; i < group.Quantity; i++)
         {
-            await Cart.RemoveEntree("order", group.Entree.Entree.Id);
+            await Cart.RemoveEntree(cartKey, group.Entree.Entree.Id);
         }
         await RefreshCardOrder();
     }
 
     private async Task AddSideItem(SideGroup group)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         var options = group.Side.SelectedOptions.Select(o =>
             new SelectedFoodOption { Option = o.Option, OptionType = o.OptionType }).ToList();
-        await Cart.AddSideWithOptions("order", group.Side.Side, options);
+        await Cart.AddSideWithOptions(cartKey, group.Side.Side, options);
         await RefreshCardOrder();
     }
 
     private async Task RemoveSideItem(SideGroup group)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (Order == null) return;
-        await Cart.RemoveSide("order", group.Side.Side.Id);
+        await Cart.RemoveSide(cartKey, group.Side.Side.Id);
         await RefreshCardOrder();
     }
 
     private async Task RemoveAllSideItems(SideGroup group)
     {
         if (Order == null) return;
+        var cartKey = await CartKeyService.GetCartKey();
         for (int i = 0; i < group.Quantity; i++)
         {
-            await Cart.RemoveSide("order", group.Side.Side.Id);
+            await Cart.RemoveSide(cartKey, group.Side.Side.Id);
         }
         await RefreshCardOrder();
     }
 
     private async Task AddDrinkItem(DrinkGroup group)
     {
-        await Cart.AddDrink("order", group.Drink);
+        var cartKey = await CartKeyService.GetCartKey();
+        await Cart.AddDrink(cartKey, group.Drink);
         await RefreshCardOrder();
     }
 
     private async Task RemoveDrinkItem(DrinkGroup group)
     {
+        var cartKey = await CartKeyService.GetCartKey();
         if (Order == null) return;
-        await Cart.RemoveDrink("order", group.Drink.Id);
+        await Cart.RemoveDrink(cartKey, group.Drink.Id);
         await RefreshCardOrder();
     }
 
     private async Task RemoveAllDrinkItems(DrinkGroup group)
     {
         if (Order == null) return;
+        var cartKey = await CartKeyService.GetCartKey();
         for (int i = 0; i < group.Quantity; i++)
         {
-            await Cart.RemoveDrink("order", group.Drink.Id);
+            await Cart.RemoveDrink(cartKey, group.Drink.Id);
         }
         await RefreshCardOrder();
     }
 
     private async Task RefreshCardOrder()
     {
-        Order = await Cart.GetOrder("order");
+        var cartKey = await CartKeyService.GetCartKey();
+        Order = await Cart.GetOrder(cartKey);
         if (Order != null)
         {
             Price = PlaceOrderVM.CalculateTotalPrice(Order);

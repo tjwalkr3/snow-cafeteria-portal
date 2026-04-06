@@ -10,6 +10,9 @@ public partial class Error : ComponentBase
     [Inject]
     private ICartService CartService { get; set; } = default!;
 
+    [Inject]
+    private ICartKeyService CartKeyService { get; set; } = default!;
+
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
 
@@ -24,7 +27,8 @@ public partial class Error : ComponentBase
         {
             await InvokeAsync(async () =>
             {
-                await CartService.ClearOrder("order");
+                var cartKey = await CartKeyService.GetCartKey();
+                await CartService.ClearOrder(cartKey);
                 StateHasChanged();
             });
         }

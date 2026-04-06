@@ -76,6 +76,7 @@ builder.Services.AddScoped<FoodOptionStagingStore>();
 // Register cart service and storage wrapper
 builder.Services.AddScoped<IStorageWrapper, StorageWrapper>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartKeyService, CartKeyService>();
 builder.Services.AddSingleton<CartNotificationService>();
 
 // Add authentication services
