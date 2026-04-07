@@ -44,7 +44,7 @@ public partial class FoodType : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await FoodTypeVM.InitializeFoodTypesAsync();
+        await RefreshFoodTypesAsync();
         IsInitialized = true;
     }
 
@@ -84,7 +84,7 @@ public partial class FoodType : ComponentBase
             var isEdit = SelectedFoodType?.Id > 0;
             var foodTypeName = SelectedFoodType?.FoodOptionTypeName ?? "Food Type";
 
-            await FoodTypeVM.InitializeFoodTypesAsync();
+            await RefreshFoodTypesAsync();
 
             toastMessage = isEdit
                 ? $"'{foodTypeName}' has been updated successfully."
@@ -94,7 +94,6 @@ public partial class FoodType : ComponentBase
 
             ShowModal = false;
             SelectedFoodType = null;
-            StateHasChanged();
         }
         catch
         {
@@ -127,13 +126,11 @@ public partial class FoodType : ComponentBase
 
                 if (await FoodTypeVM.DeleteFoodTypeAsync(FoodTypeToDelete.Id))
                 {
-                    await FoodTypeVM.InitializeFoodTypesAsync();
+                    await RefreshFoodTypesAsync();
 
                     toastMessage = $"'{foodTypeName}' has been deleted successfully.";
                     toastType = ToastType.Success;
                     showToast = true;
-
-                    StateHasChanged();
                 }
             }
             catch
@@ -151,5 +148,10 @@ public partial class FoodType : ComponentBase
     {
         ShowDeleteModal = false;
         FoodTypeToDelete = null;
+    }
+
+    private async Task RefreshFoodTypesAsync()
+    {
+        await FoodTypeVM.InitializeFoodTypesAsync();
     }
 }

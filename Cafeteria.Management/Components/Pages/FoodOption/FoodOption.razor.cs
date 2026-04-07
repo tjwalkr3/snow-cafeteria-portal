@@ -83,9 +83,7 @@ public partial class FoodOption : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await FoodOptionVM.InitializeFoodOptionsAsync();
-        await FoodTypeVM.InitializeFoodTypesAsync();
-        await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+        await RefreshPageDataAsync();
         IsInitialized = true;
     }
 
@@ -236,13 +234,7 @@ public partial class FoodOption : ComponentBase
             var isEdit = SelectedFoodOption?.Id > 0;
             var foodOptionName = SelectedFoodOption?.FoodOptionName ?? "Food Option";
 
-            if (!isEdit && CurrentFoodTypeId > 0 && SelectedFoodOption != null)
-            {
-                await FoodOptionVM.InitializeFoodOptionsAsync();
-            }
-
-            await FoodOptionVM.InitializeFoodOptionsAsync();
-            await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+            await RefreshPageDataAsync();
 
             toastMessage = isEdit
                 ? $"'{foodOptionName}' has been updated successfully."
@@ -253,7 +245,6 @@ public partial class FoodOption : ComponentBase
             ShowOptionModal = false;
             SelectedFoodOption = null;
             CurrentFoodTypeId = 0;
-            StateHasChanged();
         }
         catch
         {
@@ -277,7 +268,7 @@ public partial class FoodOption : ComponentBase
             var isEdit = SelectedFoodType?.Id > 0;
             var typeName = SelectedFoodType?.FoodOptionTypeName ?? "Food Type";
 
-            await FoodTypeVM.InitializeFoodTypesAsync();
+            await RefreshPageDataAsync();
 
             toastMessage = isEdit
                 ? $"'{typeName}' has been updated successfully."
@@ -287,7 +278,6 @@ public partial class FoodOption : ComponentBase
 
             ShowTypeModal = false;
             SelectedFoodType = null;
-            StateHasChanged();
         }
         catch
         {
@@ -313,14 +303,11 @@ public partial class FoodOption : ComponentBase
 
                 if (await FoodOptionVM.DeleteFoodOptionAsync(FoodOptionToDelete.Id))
                 {
-                    await FoodOptionVM.InitializeFoodOptionsAsync();
-                    await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+                    await RefreshPageDataAsync();
 
                     toastMessage = $"'{foodOptionName}' has been deleted successfully.";
                     toastType = ToastType.Success;
                     showToast = true;
-
-                    StateHasChanged();
                 }
             }
             catch
@@ -351,14 +338,11 @@ public partial class FoodOption : ComponentBase
 
                 if (await FoodTypeVM.DeleteFoodTypeAsync(FoodTypeToDelete.Id))
                 {
-                    await FoodTypeVM.InitializeFoodTypesAsync();
-                    await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+                    await RefreshPageDataAsync();
 
                     toastMessage = $"'{typeName}' has been deleted successfully.";
                     toastType = ToastType.Success;
                     showToast = true;
-
-                    StateHasChanged();
                 }
             }
             catch
@@ -391,14 +375,14 @@ public partial class FoodOption : ComponentBase
 
                 if (mapping != null)
                 {
-                    await OptionOptionTypeVM.DeleteOptionOptionTypeAsync(mapping.Id);
-                    await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
+                    if (await OptionOptionTypeVM.DeleteOptionOptionTypeAsync(mapping.Id))
+                    {
+                        await RefreshPageDataAsync();
 
-                    toastMessage = "Food option removed from type successfully.";
-                    toastType = ToastType.Success;
-                    showToast = true;
-
-                    StateHasChanged();
+                        toastMessage = "Food option removed from type successfully.";
+                        toastType = ToastType.Success;
+                        showToast = true;
+                    }
                 }
             }
             catch
@@ -417,5 +401,12 @@ public partial class FoodOption : ComponentBase
         ShowRemoveFromTypeModal = false;
         OptionToRemoveId = 0;
         TypeToRemoveFromId = 0;
+    }
+
+    private async Task RefreshPageDataAsync()
+    {
+        await FoodOptionVM.InitializeFoodOptionsAsync();
+        await FoodTypeVM.InitializeFoodTypesAsync();
+        await OptionOptionTypeVM.InitializeOptionOptionTypesAsync();
     }
 }
