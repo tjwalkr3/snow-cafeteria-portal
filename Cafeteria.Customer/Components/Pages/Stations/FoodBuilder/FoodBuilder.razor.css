@@ -72,3 +72,10 @@
     margin-top: 16px;
     margin-bottom: 100px;
 }
+
+@media (max-width: 576px) {
+    .swipe-info-banner,
+    .card-info-banner {
+        display: none !important;
+    }
+}
