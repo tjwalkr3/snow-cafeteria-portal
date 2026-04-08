@@ -19,25 +19,70 @@ spec:
         - name: cafeteria-keycloak-container
           image: keycloak/keycloak:26.5
           args:
-            - "start-dev"
+            - "start"
             - "--import-realm"
+            - "--proxy-headers=xforwarded"
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
-              value: "admin"
+              valueFrom:
+                secretKeyRef:
+                  name: cafeteria-keycloak-admin
+                  key: username
             - name: KC_BOOTSTRAP_ADMIN_PASSWORD
-              value: "password123"
+              valueFrom:
+                secretKeyRef:
+                  name: cafeteria-keycloak-admin
+                  key: password
             - name: KC_HOSTNAME
-              value: "http://cafeteria-keycloak-svc:8080"
+              value: "auth.${BASE_DOMAIN}"
             - name: KC_HOSTNAME_STRICT
-              value: "false"
+              value: "true"
             - name: KC_HTTP_ENABLED
               value: "true"
-            - name: KC_HTTP_RELATIVE_PATH
-              value: "/"
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"
             - name: TZ
               value: "America/Denver"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /health/started
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 6
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
           volumeMounts:
             - name: realm-config
               mountPath: /opt/keycloak/data/import
@@ -67,6 +112,32 @@ spec:
       targetPort: 8080
 
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cafeteria-keycloak-ingress
+  namespace: cafeteria
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - auth.${BASE_DOMAIN}
+      secretName: dragonbytes-wildcard-tls
+  rules:
+    - host: auth.${BASE_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cafeteria-keycloak-svc
+                port:
+                  number: 8080
+
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -92,18 +163,26 @@ data:
     {
       "realm": "AppRealm",
       "enabled": true,
-      "sslRequired": "none",
+      "sslRequired": "external",
       "registrationAllowed": false,
       "loginWithEmailAllowed": true,
       "duplicateEmailsAllowed": false,
       "resetPasswordAllowed": true,
       "userManagedAccessAllowed": false,
+      "bruteForceProtected": true,
+      "permanentLockout": false,
+      "failureFactor": 10,
+      "quickLoginCheckMilliSeconds": 1000,
+      "minimumQuickLoginWaitSeconds": 60,
+      "waitIncrementSeconds": 60,
+      "maxFailureWaitSeconds": 900,
+      "maxDeltaTimeSeconds": 43200,
       "accessTokenLifespan": 3600,
       "accessTokenLifespanForImplicitFlow": 3600,
       "ssoSessionIdleTimeout": 3600,
-      "ssoSessionMaxLifespan": 3600,
+      "ssoSessionMaxLifespan": 28800,
       "clientSessionIdleTimeout": 3600,
-      "clientSessionMaxLifespan": 3600,
+      "clientSessionMaxLifespan": 28800,
       "clients": [
         {
           "clientId": "management",
@@ -116,15 +195,16 @@ data:
           "standardFlowEnabled": true,
           "implicitFlowEnabled": false,
           "frontchannelLogout": false,
-          "fullScopeAllowed": true,
+          "fullScopeAllowed": false,
           "redirectUris": [
-            "http://localhost:5248/*"
+            "https://admin.${BASE_DOMAIN}/*"
           ],
           "webOrigins": [
-            "http://localhost:5248"
+            "https://admin.${BASE_DOMAIN}"
           ],
           "attributes": {
-            "post.logout.redirect.uris": "http://localhost:5248/*"
+            "post.logout.redirect.uris": "https://admin.${BASE_DOMAIN}/*",
+            "pkce.code.challenge.method": "S256"
           },
           "protocolMappers": [
             {
@@ -151,15 +231,16 @@ data:
           "standardFlowEnabled": true,
           "implicitFlowEnabled": false,
           "frontchannelLogout": false,
-          "fullScopeAllowed": true,
+          "fullScopeAllowed": false,
           "redirectUris": [
-            "http://localhost:5087/*"
+            "https://food.${BASE_DOMAIN}/*"
           ],
           "webOrigins": [
-            "http://localhost:5087"
+            "https://food.${BASE_DOMAIN}"
           ],
           "attributes": {
-            "post.logout.redirect.uris": "http://localhost:5087/*"
+            "post.logout.redirect.uris": "https://food.${BASE_DOMAIN}/*",
+            "pkce.code.challenge.method": "S256"
           },
           "protocolMappers": [
             {

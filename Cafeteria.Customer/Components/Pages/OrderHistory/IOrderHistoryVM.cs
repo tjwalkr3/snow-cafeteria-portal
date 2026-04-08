@@ -14,6 +14,7 @@ public interface IOrderHistoryVM
 
     Task InitializeAsync();
     void SelectOrder(OrderDto order);
+    OrderDto? FindOrderById(int id);
     void LoadMoreOrders();
     void SetFilter(string? filterType);
     bool IsCardPayment(OrderDto order);

@@ -13,7 +13,7 @@
 }
 else
 {
-    <div class="container px-4 py-4">
+    <div class="container px-0 py-4">
         <div class="mb-3">
             <a href="/" class="back-link d-inline-flex align-items-center gap-2">
                 <i class="bi bi-arrow-left"></i> Back to Menu
@@ -87,7 +87,7 @@ else
                 </div>
             </div>
 
-            <div class="col-lg-7 col-xl-8">
+            <div class="col-lg-7 col-xl-8 d-none d-lg-block">
                 @if (OrderHistoryVM.SelectedOrder != null)
                 {
                     var selectedOrder = OrderHistoryVM.SelectedOrder;

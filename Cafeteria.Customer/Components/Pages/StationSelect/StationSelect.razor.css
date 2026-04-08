@@ -20,3 +20,9 @@
     font-size: 1rem;
     color: #856404;
 }
+
+@media (max-width: 768px) {
+    .station-subtitle {
+        display: none;
+    }
+}
