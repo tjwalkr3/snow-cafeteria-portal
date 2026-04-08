@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using Cafeteria.Shared.DTOs.Order;
 
 namespace Cafeteria.Customer.Components.Pages.OrderHistory;
@@ -11,6 +12,9 @@ public partial class OrderHistory : ComponentBase
 
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
 
     [Inject]
     private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
@@ -30,9 +34,16 @@ public partial class OrderHistory : ComponentBase
         IsInitialized = true;
     }
 
-    private void SelectOrder(OrderDto order)
+    private async Task SelectOrder(OrderDto order)
     {
-        OrderHistoryVM.SelectOrder(order);
+        var isMobile = await JS.InvokeAsync<bool>("isMobileView");
+        if (isMobile)
+            Navigation.NavigateTo($"/order-history/{order.Id}");
+        else
+        {
+            OrderHistoryVM.SelectOrder(order);
+            StateHasChanged();
+        }
     }
 
     private void ApplyFilter(string? filterType)

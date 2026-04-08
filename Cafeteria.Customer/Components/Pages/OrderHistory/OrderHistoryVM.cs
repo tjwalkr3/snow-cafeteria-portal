@@ -107,6 +107,11 @@ public class OrderHistoryVM : IOrderHistoryVM
         SelectedOrder = order;
     }
 
+    public OrderDto? FindOrderById(int id)
+    {
+        return _allOrders?.FirstOrDefault(o => o.Id == id);
+    }
+
     public void LoadMoreOrders()
     {
         var filtered = FilteredOrders ?? new List<OrderDto>();

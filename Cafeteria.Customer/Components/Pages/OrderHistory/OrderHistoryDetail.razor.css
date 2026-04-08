@@ -1,0 +1,128 @@
+.loading-container {
+    min-height: 60vh;
+}
+
+.back-link {
+    color: #1e366c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.order-details-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.order-details-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e366c;
+    margin: 0 0 0.25rem 0;
+}
+
+.order-details-date {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.payment-badge-lg {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+}
+
+.card-badge-lg {
+    background-color: white;
+    color: #1e366c;
+    border: 2px solid #1e366c;
+}
+
+.swipe-badge-lg {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.items-heading {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.order-items-section {
+    margin-bottom: 1.5rem;
+}
+
+.order-item-card {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.order-item-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.25rem 0;
+}
+
+.order-item-station {
+    font-size: 0.8125rem;
+    color: #6b7280;
+}
+
+.order-item-price {
+    font-weight: 600;
+    color: #1e366c;
+    font-size: 1rem;
+}
+
+.option-badge {
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+}
+
+.order-totals-section {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.totals-label {
+    color: #6b7280;
+}
+
+.totals-value {
+    color: #374151;
+}
+
+.total-final {
+    border-top: 1px solid #e5e7eb;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+}
+
+.total-final .totals-label {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.total-amount {
+    font-weight: 700;
+    color: #1e366c;
+    font-size: 1.125rem;
+}
