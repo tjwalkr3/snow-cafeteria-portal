@@ -84,7 +84,46 @@
                                             </div>
                                         </div>
 
+                                        @{
+                                            var foodItemName = GetFoodItemName(foodType);
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(foodItemName))
+                                        {
+                                            <div class="mb-3 pb-3 border-bottom">
+                                                <span class="detail-label text-muted text-uppercase small fw-medium d-block mb-2">Assigned To:</span>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach (var itemName in foodItemName.Split(", "))
+                                                    {
+                                                        <span class="badge bg-success">@itemName</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @{
+                                            var assignedOptions = GetOptionsForType(foodType.Id);
+                                        }
+
+                                        @if (assignedOptions.Any())
+                                        {
+                                            <div class="mb-3 pb-3 border-bottom">
+                                                <span class="detail-label text-muted text-uppercase small fw-medium d-block mb-2">Food Options:</span>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach (var option in assignedOptions)
+                                                    {
+                                                        <span class="badge bg-info text-dark">@option.FoodOptionName</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+
                                         <div class="d-flex gap-2 pt-3 border-top">
+                                            <button type="button"
+                                                class="btn btn-outline-info btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
+                                                @onclick="() => ShowAddOptionToTypeModal(foodType.Id)">
+                                                <i class="bi bi-plus-circle me-1"></i>Options
+                                            </button>
                                             <button type="button"
                                                 class="btn btn-outline-primary btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
                                                 @onclick="() => ShowEditTypeModal(foodType)">
