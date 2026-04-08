@@ -107,7 +107,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/signin";
         options.LogoutPath = "/auth/signout";
         options.ExpireTimeSpan = TimeSpan.FromHours(1);
-        options.SlidingExpiration = true;
+        options.SlidingExpiration = false;
     });
 
 var app = builder.Build();
