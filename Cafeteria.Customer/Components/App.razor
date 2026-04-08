@@ -17,6 +17,12 @@
 <body>
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+    <script>
+        window.scrollContentToTop = function () {
+            const el = document.querySelector('.content-area');
+            if (el) el.scrollTop = 0;
+        };
+    </script>
 </body>
 
 </html>
