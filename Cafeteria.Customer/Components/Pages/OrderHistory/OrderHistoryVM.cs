@@ -138,7 +138,6 @@ public class OrderHistoryVM : IOrderHistoryVM
     public decimal GetSubtotal(OrderDto order)
     {
         if (!IsCardPayment(order)) return 0;
-
         return order.FoodItems.Sum(f => f.CardCost ?? 0);
     }
 
@@ -150,7 +149,6 @@ public class OrderHistoryVM : IOrderHistoryVM
     public decimal GetTotal(OrderDto order)
     {
         if (!IsCardPayment(order)) return 0;
-
         return (order.TotalPrice ?? 0);
     }
 
@@ -169,6 +167,4 @@ public class OrderHistoryVM : IOrderHistoryVM
 
         return string.Empty;
     }
-
-
 }

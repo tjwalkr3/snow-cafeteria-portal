@@ -75,7 +75,8 @@
 
 @media (max-width: 576px) {
     .swipe-info-banner,
-    .card-info-banner {
+    .card-info-banner,
+    .step-hint {
         display: none !important;
     }
 }

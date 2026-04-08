@@ -5,6 +5,7 @@ using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.JSInterop;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.FoodBuilder;
 
