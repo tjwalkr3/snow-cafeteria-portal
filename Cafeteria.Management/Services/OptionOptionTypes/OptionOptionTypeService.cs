@@ -24,8 +24,7 @@ public class OptionOptionTypeService(IHttpClientAuth client) : IOptionOptionType
             throw new ArgumentOutOfRangeException(nameof(id));
 
         var response = await client.DeleteAsync<object>($"OptionOptionType/{id}");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<bool>();
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<OptionOptionTypeDto> CreateOptionOptionType(OptionOptionTypeDto optionOptionTypeDto)

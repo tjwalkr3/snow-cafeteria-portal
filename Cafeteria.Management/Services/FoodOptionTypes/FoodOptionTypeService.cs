@@ -41,8 +41,7 @@ public class FoodOptionTypeService(IHttpClientAuth client) : IFoodOptionTypeServ
             throw new ArgumentOutOfRangeException(nameof(id));
 
         var response = await client.DeleteAsync<object>($"FoodOptionType/{id}");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<bool>();
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<List<EntreeDto>> GetAllEntrees()
