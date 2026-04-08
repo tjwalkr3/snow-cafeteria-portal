@@ -5,11 +5,15 @@ using Cafeteria.Shared.DTOs.Menu;
 using Cafeteria.Shared.DTOs.Order;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.JSInterop;
 
 namespace Cafeteria.Customer.Components.Pages.Stations.FoodBuilder;
 
 public partial class FoodBuilder : ComponentBase, IAsyncDisposable
 {
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
 
@@ -110,10 +114,11 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
 
     public string CreateBackUrl() => "/station-select";
 
-    private void SetActiveTab(string tab)
+    private async Task SetActiveTab(string tab)
     {
         ActiveTab = tab;
         StateHasChanged();
+        await JS.InvokeVoidAsync("scrollContentToTop");
     }
 
     private async Task SelectEntree(EntreeDto entree)
@@ -400,13 +405,14 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
         return Tabs.Count == 0 || Tabs.Last().Id == ActiveTab;
     }
 
-    private void GoToNextTab()
+    private async Task GoToNextTab()
     {
         var currentIndex = Tabs.FindIndex(t => t.Id == ActiveTab);
         if (currentIndex >= 0 && currentIndex < Tabs.Count - 1)
         {
             ActiveTab = Tabs[currentIndex + 1].Id;
             StateHasChanged();
+            await JS.InvokeVoidAsync("scrollContentToTop");
         }
     }
 
@@ -431,13 +437,14 @@ public partial class FoodBuilder : ComponentBase, IAsyncDisposable
         return Tabs.Count == 0 || Tabs.First().Id == ActiveTab;
     }
 
-    private void GoToPreviousTab()
+    private async Task GoToPreviousTab()
     {
         var currentIndex = Tabs.FindIndex(t => t.Id == ActiveTab);
         if (currentIndex > 0)
         {
             ActiveTab = Tabs[currentIndex - 1].Id;
             StateHasChanged();
+            await JS.InvokeVoidAsync("scrollContentToTop");
         }
     }
 

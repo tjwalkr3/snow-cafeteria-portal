@@ -1,0 +1,106 @@
+@page "/order-history/{Id:int}"
+@rendermode InteractiveServer
+@using Cafeteria.Shared.DTOs.Order
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>Order Details</PageTitle>
+
+@if (!_isInitialized || _isLoading)
+{
+    <div class="loading-container d-flex justify-content-center align-items-center">
+        <Spinner Message="Loading order..." />
+    </div>
+}
+else if (_order == null)
+{
+    <div class="container py-4 px-0">
+        <a href="/order-history" class="back-link d-inline-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-arrow-left"></i> Back to Order History
+        </a>
+        <p class="text-muted">Order not found.</p>
+    </div>
+}
+else
+{
+    <div class="container py-4 px-0">
+        <a href="/order-history" class="back-link d-inline-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-arrow-left"></i> Back to Order History
+        </a>
+
+        <div class="order-details-card p-3">
+            <div class="order-details-header d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                <div>
+                    <h2 class="order-details-title">Order #@_order.Id</h2>
+                    <span class="order-details-date">@_order.OrderTime.ToString("MMMM dd, yyyy") · @_order.OrderTime.ToString("h:mm tt")</span>
+                </div>
+                @if (OrderHistoryVM.IsCardPayment(_order))
+                {
+                    <span class="badge payment-badge-lg card-badge-lg d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-credit-card"></i> Card Payment
+                    </span>
+                }
+                else
+                {
+                    <span class="badge payment-badge-lg swipe-badge-lg d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-wallet2"></i> Meal Swipe
+                    </span>
+                }
+            </div>
+
+            <div class="order-items-section">
+                <h3 class="items-heading">ITEMS</h3>
+                @foreach (var item in _order.FoodItems)
+                {
+                    <div class="order-item-card">
+                        <div class="order-item-header d-flex justify-content-between align-items-start">
+                            <div class="order-item-info flex-grow-1">
+                                <h4 class="order-item-name">@item.Name</h4>
+                                <span class="order-item-station d-inline-flex align-items-center gap-1">
+                                    <i class="bi bi-geo-alt"></i> @OrderHistoryVM.GetLocationLabel(item.StationId, item.LocationId)
+                                </span>
+                            </div>
+                            @if (OrderHistoryVM.IsCardPayment(_order) && item.CardCost.HasValue)
+                            {
+                                <span class="order-item-price">$@item.CardCost.Value.ToString("F2")</span>
+                            }
+                        </div>
+                        @if (item.Options.Any())
+                        {
+                            <div class="order-item-options d-flex flex-wrap gap-2 mt-3">
+                                @foreach (var option in item.Options)
+                                {
+                                    <span class="option-badge">@option.FoodOptionName</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="order-totals-section">
+                @if (OrderHistoryVM.IsCardPayment(_order))
+                {
+                    <div class="totals-row d-flex justify-content-between py-2">
+                        <span class="totals-label">Subtotal</span>
+                        <span class="totals-value">$@OrderHistoryVM.GetSubtotal(_order).ToString("F2")</span>
+                    </div>
+                    <div class="totals-row d-flex justify-content-between py-2">
+                        <span class="totals-label">Tax (7.75%)</span>
+                        <span class="totals-value">$@OrderHistoryVM.GetTax(_order).ToString("F2")</span>
+                    </div>
+                    <div class="totals-row total-final d-flex justify-content-between">
+                        <span class="totals-label">Total</span>
+                        <span class="totals-value total-amount">$@OrderHistoryVM.GetTotal(_order).ToString("F2")</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="totals-row total-final d-flex justify-content-between">
+                        <span class="totals-label">Total</span>
+                        <span class="totals-value total-amount">@OrderHistoryVM.GetSwipeCount(_order) Swipe@(OrderHistoryVM.GetSwipeCount(_order) != 1 ? "s" : "")</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

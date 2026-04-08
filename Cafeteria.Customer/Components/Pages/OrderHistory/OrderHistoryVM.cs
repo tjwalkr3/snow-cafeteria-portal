@@ -107,6 +107,11 @@ public class OrderHistoryVM : IOrderHistoryVM
         SelectedOrder = order;
     }
 
+    public OrderDto? FindOrderById(int id)
+    {
+        return _allOrders?.FirstOrDefault(o => o.Id == id);
+    }
+
     public void LoadMoreOrders()
     {
         var filtered = FilteredOrders ?? new List<OrderDto>();
@@ -138,7 +143,6 @@ public class OrderHistoryVM : IOrderHistoryVM
     public decimal GetSubtotal(OrderDto order)
     {
         if (!IsCardPayment(order)) return 0;
-
         return order.FoodItems.Sum(f => f.CardCost ?? 0);
     }
 
@@ -150,7 +154,6 @@ public class OrderHistoryVM : IOrderHistoryVM
     public decimal GetTotal(OrderDto order)
     {
         if (!IsCardPayment(order)) return 0;
-
         return (order.TotalPrice ?? 0);
     }
 
@@ -169,6 +172,4 @@ public class OrderHistoryVM : IOrderHistoryVM
 
         return string.Empty;
     }
-
-
 }
