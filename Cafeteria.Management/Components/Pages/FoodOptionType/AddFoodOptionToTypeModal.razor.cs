@@ -40,7 +40,7 @@ public partial class AddFoodOptionToTypeModal : ComponentBase
     private List<FoodOptionDto> FilteredAvailableOptions =>
         string.IsNullOrWhiteSpace(SearchText)
             ? AvailableOptions
-            : AvailableOptions.Where(o => 
+            : AvailableOptions.Where(o =>
                 o.FoodOptionName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
 
     protected override void OnInitialized()
@@ -69,7 +69,7 @@ public partial class AddFoodOptionToTypeModal : ComponentBase
             };
 
             await OptionOptionTypeService.CreateOptionOptionType(mapping);
-            
+
             // Add to assigned options list for display
             var selectedOption = AllOptions.FirstOrDefault(o => o.Id == foodOptionId);
             if (selectedOption != null)
@@ -77,7 +77,7 @@ public partial class AddFoodOptionToTypeModal : ComponentBase
                 AssignedOptions.Add(selectedOption);
                 HasChanges = true;
             }
-            
+
             SearchText = string.Empty; // Clear search
             IsSaving = false;
             StateHasChanged();
@@ -95,7 +95,7 @@ public partial class AddFoodOptionToTypeModal : ComponentBase
         try
         {
             // Find the OptionOptionType record
-            var mapping = OptionOptionTypeVM.OptionOptionTypes?.FirstOrDefault(oot => 
+            var mapping = OptionOptionTypeVM.OptionOptionTypes?.FirstOrDefault(oot =>
                 oot.FoodOptionId == foodOptionId && oot.FoodOptionTypeId == FoodTypeId);
 
             if (mapping != null)
