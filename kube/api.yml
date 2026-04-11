@@ -24,10 +24,8 @@ spec:
               value: "https://auth.${BASE_DOMAIN}/realms/AppRealm"
             - name: Keycloak__Audience
               value: "cafeteria"
-            - name: Keycloak__MetadataAddress
-              value: "http://cafeteria-keycloak-svc:8080/realms/AppRealm/.well-known/openid-configuration"
             - name: Keycloak__RequireHttpsMetadata
-              value: "false"
+              value: "true"
             - name: TZ
               value: "America/Denver"
           ports:
