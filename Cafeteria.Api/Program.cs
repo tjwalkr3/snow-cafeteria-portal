@@ -29,10 +29,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         var requireHttpsMetadata = builder.Configuration.GetValue<bool?>("Keycloak:RequireHttpsMetadata")
             ?? !builder.Environment.IsDevelopment();
+        var metadataAddress = builder.Configuration["Keycloak:MetadataAddress"];
 
         options.Authority = builder.Configuration["Keycloak:Authority"];
         options.Audience = builder.Configuration["Keycloak:Audience"];
         options.RequireHttpsMetadata = requireHttpsMetadata;
+
+        if (!string.IsNullOrWhiteSpace(metadataAddress))
+        {
+            options.MetadataAddress = metadataAddress;
+        }
     });
 
 builder.Services.AddControllers();
