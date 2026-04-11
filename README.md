@@ -32,6 +32,8 @@ To run the deploy workflow in [.github/workflows/deploy-main.yml](.github/workfl
 | `ACME_EMAIL` | Email used by Let's Encrypt ACME registration in cert-manager. |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API token used by cert-manager DNS-01 challenge. |
 | `TAILSCALE_KEY` | Tailscale auth key used by the API pod sidecar to join your Tailnet and reach printers. |
+| `KEYCLOAK_ADMIN_USERNAME` | Bootstrap admin username used to create/update the `cafeteria-keycloak-admin` Kubernetes secret. |
+| `KEYCLOAK_ADMIN_PASSWORD` | Bootstrap admin password used to create/update the `cafeteria-keycloak-admin` Kubernetes secret. |
 | `DEPLOY_MAIN_DISCORD` | Discord webhook URL used by the deployment notification step. |
 
 ### GitHub Variables (required)

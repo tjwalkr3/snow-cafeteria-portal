@@ -117,6 +117,8 @@ jobs:
         ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         TAILSCALE_KEY: ${{ secrets.TAILSCALE_KEY }}
+        KEYCLOAK_ADMIN_USERNAME: ${{ secrets.KEYCLOAK_ADMIN_USERNAME }}
+        KEYCLOAK_ADMIN_PASSWORD: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
         BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
       run: |
         if [[ -z "${BASE_DOMAIN}" ]]; then
@@ -129,6 +131,11 @@ jobs:
           exit 1
         fi
 
+        if [[ -z "${KEYCLOAK_ADMIN_USERNAME}" || -z "${KEYCLOAK_ADMIN_PASSWORD}" ]]; then
+          echo "KEYCLOAK_ADMIN_USERNAME and KEYCLOAK_ADMIN_PASSWORD GitHub secrets are required." >&2
+          exit 1
+        fi
+
         kubectl apply -f kube/namespace.yml
 
         kubectl -n cert-manager create secret generic cloudflare-api-token-secret \
@@ -137,6 +144,11 @@ jobs:
 
         kubectl -n cafeteria create secret generic tailscale-auth \
           --from-literal=TS_AUTHKEY="${TAILSCALE_KEY}" \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+        kubectl -n cafeteria create secret generic cafeteria-keycloak-admin \
+          --from-literal=username="${KEYCLOAK_ADMIN_USERNAME}" \
+          --from-literal=password="${KEYCLOAK_ADMIN_PASSWORD}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
         envsubst < kube/certs.yml | kubectl apply -f -
