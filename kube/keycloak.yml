@@ -34,7 +34,7 @@ spec:
                   name: cafeteria-keycloak-admin
                   key: password
             - name: KC_HOSTNAME
-              value: "auth.${BASE_DOMAIN}"
+              value: "https://auth.${BASE_DOMAIN}"
             - name: KC_HOSTNAME_STRICT
               value: "true"
             - name: KC_DB
