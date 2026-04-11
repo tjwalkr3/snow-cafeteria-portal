@@ -37,6 +37,8 @@ spec:
               value: "auth.${BASE_DOMAIN}"
             - name: KC_HOSTNAME_STRICT
               value: "true"
+            - name: KC_DB
+              value: "dev-file"
             - name: KC_HTTP_ENABLED
               value: "true"
             - name: KC_HEALTH_ENABLED
