@@ -27,9 +27,12 @@ builder.AddNpgsqlDataSource("cafeteria");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        var requireHttpsMetadata = builder.Configuration.GetValue<bool?>("Keycloak:RequireHttpsMetadata")
+            ?? !builder.Environment.IsDevelopment();
+
         options.Authority = builder.Configuration["Keycloak:Authority"];
         options.Audience = builder.Configuration["Keycloak:Audience"];
-        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+        options.RequireHttpsMetadata = requireHttpsMetadata;
     });
 
 builder.Services.AddControllers();
