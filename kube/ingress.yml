@@ -11,6 +11,7 @@ spec:
     - hosts:
         - food.${BASE_DOMAIN}
         - admin.${BASE_DOMAIN}
+        - auth.${BASE_DOMAIN}
       secretName: dragonbytes-wildcard-tls
   rules:
     - host: food.${BASE_DOMAIN}
@@ -31,5 +32,15 @@ spec:
             backend:
               service:
                 name: cafeteria-management-svc
+                port:
+                  number: 8080
+    - host: auth.${BASE_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cafeteria-keycloak-svc
                 port:
                   number: 8080
