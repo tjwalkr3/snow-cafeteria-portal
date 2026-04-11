@@ -139,12 +139,12 @@ jobs:
           --from-literal=TS_AUTHKEY="${TAILSCALE_KEY}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-        envsubst < kube/cert-manager-clusterissuer.yml | kubectl apply -f -
+        envsubst < kube/certs.yml | kubectl apply -f -
 
         for FILE in kube/*.yml
         do
           BASE_NAME="$(basename "$FILE")"
-          if [[ "$BASE_NAME" == "namespace.yml" || "$BASE_NAME" == "cert-manager-clusterissuer.yml" ]]; then
+          if [[ "$BASE_NAME" == "namespace.yml" || "$BASE_NAME" == "certs.yml" ]]; then
             continue
           fi
 
