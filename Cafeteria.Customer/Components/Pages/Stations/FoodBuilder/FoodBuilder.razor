@@ -30,13 +30,6 @@ else
                 </a>
             </div>
 
-            @if (!IsCardOrder)
-            {
-                <div class="swipe-info-banner d-flex align-items-start gap-2 my-3">
-                    <i class="bi bi-info-circle flex-shrink-0" style="margin-top: 2px;"></i>
-                    <span>Your meal swipe includes one entree, one side, and a drink. Follow the steps below to build your meal.</span>
-                </div>
-            }
 
             @if (IsCardOrder)
             {
@@ -60,11 +53,7 @@ else
                               OnTabSelected="@SetActiveTab" />
             }
 
-            @if (!IsCardOrder)
-            {
-                <p class="step-hint text-muted mt-4 mb-0">@GetStepHint()</p>
-            }
-            else
+            @if (IsCardOrder)
             {
                 <p class="step-hint text-muted mt-4 mb-0">@GetCardStepHint()</p>
             }
