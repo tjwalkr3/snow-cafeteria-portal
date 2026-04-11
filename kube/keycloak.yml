@@ -87,15 +87,15 @@ spec:
             - name: realm-config
               mountPath: /opt/keycloak/data/import
               readOnly: true
-            - name: keycloak-data
-              mountPath: /opt/keycloak/data
+            # - name: keycloak-data
+            #   mountPath: /opt/keycloak/data
       volumes:
         - name: realm-config
           configMap:
             name: cafeteria-keycloak-realm
-        - name: keycloak-data
-          persistentVolumeClaim:
-            claimName: cafeteria-keycloak-pvc
+        # - name: keycloak-data
+        #   persistentVolumeClaim:
+        #     claimName: cafeteria-keycloak-pvc
 
 ---
 apiVersion: v1
@@ -111,45 +111,19 @@ spec:
       port: 8080
       targetPort: 8080
 
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: cafeteria-keycloak-ingress
-  namespace: cafeteria
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - auth.${BASE_DOMAIN}
-      secretName: dragonbytes-wildcard-tls
-  rules:
-    - host: auth.${BASE_DOMAIN}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: cafeteria-keycloak-svc
-                port:
-                  number: 8080
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: cafeteria-keycloak-pvc
-  namespace: cafeteria
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: managed-csi
-  resources:
-    requests:
-      storage: 2Gi
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: cafeteria-keycloak-pvc
+#   namespace: cafeteria
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   storageClassName: managed-csi
+#   resources:
+#     requests:
+#       storage: 2Gi
 
 
 ---
