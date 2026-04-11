@@ -18,17 +18,17 @@ spec:
       - name: schema-init
         configMap:
           name: cafeteria-db-init-sql
-      - name: postgres-data
-        persistentVolumeClaim:
-          claimName: cafeteria-db-pvc
+      # - name: postgres-data
+      #   persistentVolumeClaim:
+      #     claimName: cafeteria-db-pvc
       containers:
       - name: cafeteria-postgres
         volumeMounts:
         - mountPath: /docker-entrypoint-initdb.d/init.sql
           subPath: init.sql
           name: schema-init
-        - mountPath: /var/lib/postgresql
-          name: postgres-data
+        # - mountPath: /var/lib/postgresql
+        #   name: postgres-data
         image: postgres:18-alpine
         ports:
         - containerPort: 5432
@@ -56,19 +56,19 @@ spec:
     port: 5432
     targetPort: 5432
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: cafeteria-db-pvc
-  namespace: cafeteria
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: managed-csi
-  resources:
-    requests:
-      storage: 5Gi
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: cafeteria-db-pvc
+#   namespace: cafeteria
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   storageClassName: managed-csi
+#   resources:
+#     requests:
+#       storage: 5Gi
 
 ---
 apiVersion: v1
