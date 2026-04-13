@@ -131,7 +131,7 @@
                             <div class="swipe-group @(i + 1 < groupedSwipes.Count ? "mb-4 pb-4 border-bottom" : "")">
                                 @if (groupedSwipes.Count > 1 || groupedSwipe.Count > 1)
                                 {
-                                    <p class="swipe-label mb-2">Swipe @swipeNum@(groupedSwipe.Count > 1 ? $" x{groupedSwipe.Count}" : string.Empty)</p>
+                                    <p class="swipe-label mb-2">@swipeNum Swipe @(groupedSwipe.Count > 1 ? $" x{groupedSwipe.Count}" : string.Empty)</p>
                                 }
                                 <div class="detail-row">
                                     <span class="detail-label">Entree</span>
