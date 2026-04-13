@@ -162,6 +162,22 @@ public class OrderHistoryVM : IOrderHistoryVM
         return order.TotalSwipe ?? order.FoodItems.Sum(f => f.SwipeCost ?? 0);
     }
 
+    public List<(FoodItemDto Item, int Count)> GetGroupedFoodItems(OrderDto order)
+    {
+        return order.FoodItems
+            .GroupBy(item => new
+            {
+                item.Name,
+                item.StationId,
+                item.LocationId,
+                item.CardCost,
+                item.SwipeCost,
+                OptionsKey = string.Join("|", item.Options.Select(o => o.FoodOptionName ?? string.Empty).OrderBy(o => o))
+            })
+            .Select(group => (group.First(), group.Count()))
+            .ToList();
+    }
+
     public string GetLocationLabel(int? stationId, int? locationId)
     {
         if (stationId.HasValue)
