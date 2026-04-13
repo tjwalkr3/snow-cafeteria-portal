@@ -1,6 +1,5 @@
 .progress-stepper {
-    padding: 0rem 0.5rem;
-    border-radius: 8px;
+    padding: 0rem 0.5rem 0.75rem;
 }
 
 .stepper-step {
