@@ -56,7 +56,6 @@
     flex: 0 0 auto;
     background-color: #f3f4f6;
     padding-top: 1rem;
-    padding-bottom: 0.25rem;
 }
 
 .content-area {
@@ -69,10 +68,10 @@
 }
 
 .card-tab-panel {
-    border: 2px solid #c5cad8;
-    border-radius: 0 0 8px 8px;
+    border: 1px solid #c5cad8;
+    border-radius: 8px 8px 8px 8px;
     padding: 1.25rem;
-    margin-top: 16px;
+    margin-top: 0px;
     margin-bottom: 100px;
 }
 

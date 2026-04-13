@@ -12,6 +12,7 @@ from utilities.format_order import (
     format_drink_item,
     format_footer,
     format_order,
+    group_order_items,
     RECEIPT_WIDTH,
 )
 from DTOs.BrowserOrder import BrowserOrder
@@ -388,3 +389,99 @@ class TestFormatOrder:
         receipt_text = "\n".join(result)
         assert "Water" in receipt_text
         assert "OJ" in receipt_text
+
+    def test_format_order_displays_grouped_right_aligned_counts(self):
+        order = BrowserOrder(
+            userName="Taylor Jordan",
+            entrees=[
+                OrderEntreeItem(
+                    entree=EntreeDto(id=1, stationId=1, entreeName="Burger"),
+                    selectedOptions=[],
+                ),
+                OrderEntreeItem(
+                    entree=EntreeDto(id=1, stationId=1, entreeName="Burger"),
+                    selectedOptions=[],
+                ),
+            ],
+            sides=[
+                OrderSideItem(
+                    side=SideDto(id=2, stationId=1, sideName="Fries"),
+                    selectedOptions=[],
+                ),
+                OrderSideItem(
+                    side=SideDto(id=2, stationId=1, sideName="Fries"),
+                    selectedOptions=[],
+                ),
+            ],
+            drinks=[
+                DrinkDto(id=3, locationId=1, drinkName="Coke"),
+                DrinkDto(id=3, locationId=1, drinkName="Coke"),
+            ],
+        )
+
+        result = format_order(order, 999)
+
+        burger_line = next(line for line in result if "Burger" in line)
+        fries_line = next(line for line in result if "Fries" in line)
+        coke_line = next(line for line in result if "Coke" in line)
+
+        assert burger_line.rstrip().endswith("x2")
+        assert fries_line.rstrip().endswith("x2")
+        assert coke_line.rstrip().endswith("x2")
+
+
+class TestGroupOrderItems:
+    def test_group_order_items_groups_exact_duplicates(self):
+        order = BrowserOrder(
+            entrees=[
+                OrderEntreeItem(
+                    entree=EntreeDto(id=1, stationId=1, entreeName="Burger"),
+                    selectedOptions=[
+                        SelectedFoodOption(
+                            option=FoodOptionDto(id=1, foodOptionName="Cheese"),
+                            optionType=make_option_type(),
+                        )
+                    ],
+                ),
+                OrderEntreeItem(
+                    entree=EntreeDto(id=1, stationId=1, entreeName="Burger"),
+                    selectedOptions=[
+                        SelectedFoodOption(
+                            option=FoodOptionDto(id=1, foodOptionName="Cheese"),
+                            optionType=make_option_type(),
+                        )
+                    ],
+                ),
+            ],
+            sides=[
+                OrderSideItem(
+                    side=SideDto(id=2, stationId=1, sideName="Fries"),
+                    selectedOptions=[],
+                ),
+                OrderSideItem(
+                    side=SideDto(id=2, stationId=1, sideName="Fries"),
+                    selectedOptions=[],
+                ),
+            ],
+            drinks=[
+                DrinkDto(id=3, locationId=1, drinkName="Coke"),
+                DrinkDto(id=3, locationId=1, drinkName="Coke"),
+                DrinkDto(id=4, locationId=1, drinkName="Water"),
+            ],
+        )
+
+        grouped_entrees, grouped_sides, grouped_drinks = group_order_items(order)
+
+        assert len(grouped_entrees) == 1
+        assert grouped_entrees[0][0].entree.entreeName == "Burger"
+        assert grouped_entrees[0][1] == 2
+
+        assert len(grouped_sides) == 1
+        assert grouped_sides[0][0].side.sideName == "Fries"
+        assert grouped_sides[0][1] == 2
+
+        assert len(grouped_drinks) == 2
+        assert grouped_drinks[0][0].drinkName == "Coke"
+        assert grouped_drinks[0][1] == 2
+        assert grouped_drinks[1][0].drinkName == "Water"
+        assert grouped_drinks[1][1] == 1

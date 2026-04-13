@@ -119,17 +119,19 @@
                 </div>
                 @if (Order.PaymentType == "Swipe")
                 {
+                    var groupedSwipes = GetGroupedSwipeItems(Order.FoodItems);
                     <div class="card-body p-4">
-                        @for (int i = 0; i + 2 < Order.FoodItems.Count; i += 3)
+                        @for (int i = 0; i < groupedSwipes.Count; i++)
                         {
-                            var entree = Order.FoodItems[i];
-                            var side = Order.FoodItems[i + 1];
-                            var drink = Order.FoodItems[i + 2];
-                            var swipeNum = i / 3 + 1;
-                            <div class="swipe-group @(i + 3 < Order.FoodItems.Count ? "mb-4 pb-4 border-bottom" : "")">
-                                @if (Order.FoodItems.Count > 3)
+                            var groupedSwipe = groupedSwipes[i];
+                            var entree = groupedSwipe.Entree;
+                            var side = groupedSwipe.Side;
+                            var drink = groupedSwipe.Drink;
+                            var swipeNum = i + 1;
+                            <div class="swipe-group @(i + 1 < groupedSwipes.Count ? "mb-4 pb-4 border-bottom" : "")">
+                                @if (groupedSwipes.Count > 1 || groupedSwipe.Count > 1)
                                 {
-                                    <p class="swipe-label mb-2">Swipe @swipeNum</p>
+                                    <p class="swipe-label mb-2">@swipeNum Swipe @(groupedSwipe.Count > 1 ? $" x{groupedSwipe.Count}" : string.Empty)</p>
                                 }
                                 <div class="detail-row">
                                     <span class="detail-label">Entree</span>
@@ -180,11 +182,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Order.FoodItems)
+                                @foreach (var groupedItem in GetGroupedCardItems(Order.FoodItems))
                                 {
-                                    <tr @key="item.Name">
+                                    var item = groupedItem.Item;
+                                    <tr @key="item.Id">
                                         <td>
-                                            <span class="fw-medium">@item.Name</span>
+                                            <span class="fw-medium">@item.Name@(groupedItem.Count > 1 ? $" x{groupedItem.Count}" : string.Empty)</span>
                                             @if (item.Options.Any())
                                             {
                                                 <ul class="mb-0 mt-1 ps-3 small text-muted">

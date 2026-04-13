@@ -23,5 +23,6 @@ public interface IOrderHistoryVM
     decimal GetTax(OrderDto order);
     decimal GetTotal(OrderDto order);
     int GetSwipeCount(OrderDto order);
+    List<(FoodItemDto Item, int Count)> GetGroupedFoodItems(OrderDto order);
     string GetLocationLabel(int? stationId, int? locationId);
 }
