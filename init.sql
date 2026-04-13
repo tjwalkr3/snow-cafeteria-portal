@@ -1429,7 +1429,7 @@ VALUES
   (20, 18), -- Wheat Deli Sandwich Bread option
   (20, 19), -- Garlic Flat Bread Deli Sandwich Bread option
   (20, 20), -- White Deli Sandwich Bread option
-  (33, 21), -- Gluten Free Deli Sandwich Bread option
+  (20, 21), -- Gluten Free Deli Sandwich Bread option
   (21, 2), -- Ham Deli Sandwich Meat option
   (21, 5), -- Turkey Deli Sandwich Meat option
   (21, 4), -- Pastrami Deli Sandwich Meat option
@@ -1851,5 +1851,5 @@ VALUES
   (1009012, 8, '2024-12-31 23:59:59'),
   (1003456, 9, '2026-12-31 23:59:59'),
   (1007890, 0, '2027-12-31 23:59:59'),
-  (1000001, 5, '2028-12-31 23:59:59'),
-  (1000002, 2, '2026-2-28 23:59:59');
+  (1000001, 500, '2028-12-31 23:59:59'),
+  (1000002, 200, '2026-4-30 23:59:59');
